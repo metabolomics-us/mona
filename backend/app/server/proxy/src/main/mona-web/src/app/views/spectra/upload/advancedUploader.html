@@ -34,12 +34,14 @@
                 </div>
 
                 <span class="help-block">Supports MSP and MGF mass spectral library files and MassBank Records Format</span>
+                <hr/>
                 <div class="form-check">
                   <input type="checkbox" class="form-check-input" id="libraryBool" name="librayBool" [(ngModel)]="showLibraryForm">
-                  <label class="form-check-label" for="libraryBool">Create New Library</label>
+                  <label class="form-check-label" for="libraryBool">Create New Library  </label> <fa-icon [icon]="faQuestionCircle" (click)="goToDocumentation()" ngbTooltip="Creates new spectra library for easy search and download. Click for more details."></fa-icon>
                 </div>
                 <div *ngIf="showLibraryForm">
                   <br/>
+                  <h3 class="text-info font-weight-bold">See Documentation <a [routerLink]="['/documentation/uploadLibrary']">Here</a></h3>
                   <form #libForm="ngForm"  id="libForm" class="form-horizontal" novalidate role="form">
                     <div class="form-group row">
                       <label for="libraryLink" class="col-sm-3 col-form-label"><strong>Library</strong></label>

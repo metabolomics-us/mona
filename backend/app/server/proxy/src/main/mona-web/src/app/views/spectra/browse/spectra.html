@@ -154,6 +154,9 @@
                         <div *ngIf="spectrum.similarity !== undefined">
                             <h4><span class="label label-primary" >Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}}</span></h4>
                         </div>
+                        <div>
+                          <h6><spectrum-feedback-results-curation [spectrumID]="spectrum.id"></spectrum-feedback-results-curation></h6>
+                        </div>
                     </div>
                 </td>
                 <td>

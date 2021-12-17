@@ -105,12 +105,6 @@ body {
     margin: 0 0 4px;
 }
 
-h2 {
-    font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
-    color: #022851;
-    font-weight: bold;
-}
-
 .btn.btn-primary:hover,
 .btn.btn-primary:focus,
 .btn.btn-primary:active,
@@ -120,11 +114,11 @@ h2 {
   border-color: #355B85 !important;
 
 }
-.news-title > h4 {
-    color: #4D688C;
-    font-weight: bold;
-    margin: 0 0 2px 0;
-    font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
+.news-title > h4, h2 {
+  font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
+  color: #022851;
+  font-weight: bold;
+  margin: 0 0 2px 0;
 }
 
 .bor-bot {

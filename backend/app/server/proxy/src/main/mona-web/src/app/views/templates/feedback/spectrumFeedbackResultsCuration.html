@@ -1,0 +1,11 @@
+<span *ngIf="curated_feedback !== null">
+  <strong><span [ngClass]="curated_feedback.value === 'noisy' ? 'text-danger' : 'text-success'">
+    {{curated_feedback.value.toUpperCase()}} <span *ngIf="isCurated"><fa-icon [icon]="faFlask" ngbTooltip="Calculated by MoNA Auto Curation"></fa-icon></span>
+  </span></strong>
+</span>
+
+<span *ngIf="community_feedback !== null">
+  <strong><span [ngClass]="community_feedback.value === 'noisy' ? 'text-danger' : (community_feedback.value === 'neutral' ? 'text-secondary' : 'text-success')">
+    {{community_feedback.value.toUpperCase()}} <span *ngIf="!isCurated"><fa-icon [icon]="faUserCircle" ngbTooltip="Reviewed by MoNA Users"></fa-icon></span>
+  </span></strong>
+</span>
