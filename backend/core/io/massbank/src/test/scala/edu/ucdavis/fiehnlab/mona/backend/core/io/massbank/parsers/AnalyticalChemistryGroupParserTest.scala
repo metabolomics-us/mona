@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.parsers
 
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.groups._
-import org.scalatest._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class AnalyticalChemistryGroupParserTest extends WordSpec with Matchers with AnalyticalChemistryGroupParser {
+class AnalyticalChemistryGroupParserTest extends AnyWordSpec with Matchers with AnalyticalChemistryGroupParser {
   "An `AnalyticalChemistryGroupParser`" should {
     "correctly parse complete base metadata" in {
       val input =

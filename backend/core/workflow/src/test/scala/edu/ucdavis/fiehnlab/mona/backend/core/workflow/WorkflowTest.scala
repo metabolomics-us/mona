@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.config.WorkflowConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.listener.WorkflowListener
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.test.context.SpringBootTest
@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TestWorkflowConfig]))
-class WorkflowTest extends WordSpec {
+class WorkflowTest extends AnyWordSpec {
 
   @Autowired
   @Qualifier("linearTestWorkflow")

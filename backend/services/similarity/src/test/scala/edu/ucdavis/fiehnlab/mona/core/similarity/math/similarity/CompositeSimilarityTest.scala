@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity
 
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
   * Created by singh on 1/28/2016.
   */
-class CompositeSimilarityTest extends FlatSpec with Matchers {
+class CompositeSimilarityTest extends AnyFlatSpec with Matchers {
   val EPSILON: Double = 0.0001
 
 

@@ -14,7 +14,8 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.types.AlgorithmTypes.AlgorithmT
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{IndexType, PeakSearchRequest, SearchResult, SimilaritySearchRequest}
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
 import org.junit.runner.RunWith
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
@@ -27,7 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[SimilarityService]), webEnvironment = WebEnvironment.DEFINED_PORT)
-class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
+class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLogging {
 
   @LocalServerPort
   private val port = 0

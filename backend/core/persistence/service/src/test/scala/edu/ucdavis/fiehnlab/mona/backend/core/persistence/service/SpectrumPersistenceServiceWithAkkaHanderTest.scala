@@ -12,7 +12,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config.Embedde
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.listener.AkkaEventScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -21,7 +21,7 @@ import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.Properties
@@ -31,7 +31,7 @@ import scala.util.Properties
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[EmbeddedServiceConfig]))
-class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLogging with Eventually {
+class SpectrumPersistenceServiceWithAkkaHanderTest extends AnyWordSpec with LazyLogging with Eventually {
 
   val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
 

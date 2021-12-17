@@ -9,7 +9,7 @@ import org.springframework.cloud.commons.util.InetUtils
 import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean
 import org.springframework.context.annotation.{Bean, Configuration, Primary, Profile}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Identifies the correct ip address associated with the docker container's hostname to

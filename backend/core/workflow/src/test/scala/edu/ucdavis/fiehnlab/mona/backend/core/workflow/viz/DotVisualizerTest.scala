@@ -3,12 +3,12 @@ package edu.ucdavis.fiehnlab.mona.backend.core.workflow.viz
 import java.io.FileOutputStream
 
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph.{AbstractVertex, Edge, Graph}
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * just tests if the file can be written, no guarantee for correctness
   */
-class DotVisualizerTest extends WordSpec {
+class DotVisualizerTest extends AnyWordSpec {
 
   case class Vertex(id: String) extends AbstractVertex[String]
 

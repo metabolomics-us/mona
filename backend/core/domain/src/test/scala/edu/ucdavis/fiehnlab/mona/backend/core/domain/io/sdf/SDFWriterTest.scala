@@ -4,12 +4,12 @@ import java.io.{InputStreamReader, StringWriter}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by sajjan on 2/21/18.
   */
-class SDFWriterTest extends WordSpec {
+class SDFWriterTest extends AnyWordSpec {
 
   "a writer" should {
     "export monaRecord.json" must {

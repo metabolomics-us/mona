@@ -5,12 +5,12 @@ import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by sajjan on 2/4/19.
   */
-class NormalizePrecursorValuesTest extends WordSpec {
+class NormalizePrecursorValuesTest extends AnyWordSpec {
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 

@@ -14,7 +14,7 @@ import org.springframework.http.{HttpStatus, MediaType, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 5/25/16.

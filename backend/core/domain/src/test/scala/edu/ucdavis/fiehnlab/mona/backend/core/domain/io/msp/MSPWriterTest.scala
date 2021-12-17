@@ -4,12 +4,12 @@ import java.io.{InputStreamReader, StringWriter}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by wohlg_000 on 5/27/2016.
   */
-class MSPWriterTest extends WordSpec {
+class MSPWriterTest extends AnyWordSpec {
 
   "we should be able to create an instance of the writer" when {
     val writer: MSPWriter = new MSPWriter

@@ -1,8 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types
 
-import org.scalatest._
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
-class PeakDataTest extends WordSpec with Matchers {
+class PeakDataTest extends AnyWordSpec with Matchers {
   "`PeakData` types" should {
     "correctly compute for relative intensities given absolute intensities only" in {
       PeakData(List(

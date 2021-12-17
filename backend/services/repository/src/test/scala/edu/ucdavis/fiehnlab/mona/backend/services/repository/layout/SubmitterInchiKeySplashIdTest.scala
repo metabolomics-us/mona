@@ -6,12 +6,12 @@ import java.nio.file.Paths
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by wohlgemuth on 5/20/16.
   */
-class SubmitterInchiKeySplashIdTest extends WordSpec with LazyLogging {
+class SubmitterInchiKeySplashIdTest extends AnyWordSpec with LazyLogging {
   val reader = JSONDomainReader.create[Spectrum]
 
   "SubmitterInchiKeySplashIdTest" should {

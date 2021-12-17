@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.Res
 import org.junit.runner.RunWith
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
@@ -21,7 +21,7 @@ import scala.collection.mutable.ArrayBuffer
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[CompoundTestApplication], classOf[RestClientConfig]))
-class CompoundProcessorTest extends WordSpec {
+class CompoundProcessorTest extends AnyWordSpec {
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 

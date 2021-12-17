@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.r
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.embedded.LocalServerPort
@@ -230,19 +230,19 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
         //reset the database
         spectrumPersistenceService.deleteAll()
 
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(15 seconds)) {
           assert(spectrumPersistenceService.count() == 0)
         }
 
         webHookRepository.deleteAll()
 
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(15 seconds)) {
           assert(webHookRepository.count() == 0)
         }
 
         webHookResultRepository.deleteAll()
 
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(15 seconds)) {
           assert(webHookResultRepository.count() == 0)
         }
 
@@ -272,7 +272,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
       "able to handle add events " in {
         spectrumPersistenceService.deleteAll()
 
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(15 seconds)) {
           assert(spectrumPersistenceService.count() == 0)
         }
 
@@ -283,7 +283,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
         given().body(getValue).when().get(s"/webhooks/sync?id=AU100601&type=add").`then`().statusCode(200)
 
         //ensure the new spectra is now added
-        eventually(timeout(5 seconds), interval(500 millis)) {
+        eventually(timeout(15 seconds), interval(500 millis)) {
           spectrumPersistenceService.count() shouldBe 1
         }
       }
@@ -292,29 +292,29 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 
         webHookRepository.deleteAll()
 
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(20 seconds)) {
           assert(webHookRepository.count() == 0)
         }
 
         spectrumPersistenceService.deleteAll()
 
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(20 seconds)) {
           assert(spectrumPersistenceService.count() == 0)
         }
 
         authenticate().contentType("application/json; charset=UTF-8").body(WebHook("mona-sync", s"http://localhost:$port/rest/webhooks/sync", "mona synchronization hook", "test")).when().post(s"/webhooks").`then`().statusCode(200)
 
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(20 seconds)) {
           assert(webHookRepository.count() == 1)
         }
 
         val result: Array[WebHookResult] = authenticate().log().all(true).contentType("application/json; charset=UTF-8").when().post(s"/webhooks/trigger/AU100601/add").`then`().log().all(true).statusCode(200).extract().body().as(classOf[Array[WebHookResult]])
 
         result.foreach { hook => logger.info(hook.toString) }
-
+        Thread.sleep(2000)
         assert(result.length == 1)
 
-        eventually(timeout(20 seconds)) {
+        eventually(timeout(60 seconds)) {
           assert(spectrumPersistenceService.count() == 1)
         }
       }
@@ -323,21 +323,21 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 
         webHookRepository.deleteAll()
 
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(30 seconds)) {
           assert(webHookRepository.count() == 0)
         }
 
         spectrumPersistenceService.deleteAll()
 
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(30 seconds)) {
           assert(spectrumPersistenceService.count() == 0)
         }
 
         //add mona spectrum
         given().body(getValue).when().get(s"/webhooks/sync?id=AU100601&type=add").`then`().statusCode(200)
-
+        Thread.sleep(5000)
         //ensure the new spectra is now added
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(30 seconds)) {
           spectrumPersistenceService.count() shouldBe 1
         }
 
@@ -345,7 +345,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
         given().body(getValue).when().get(s"/webhooks/sync?id=AU100601&type=update").`then`().statusCode(200)
 
         //ensure the new spectra is now update
-        eventually(timeout(5 seconds)) {
+        eventually(timeout(30 seconds)) {
           Thread.sleep(2000)
           spectrumPersistenceService.count() shouldBe 1
         }

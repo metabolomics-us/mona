@@ -4,7 +4,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.{EmbeddedAuthConfig, JWTAuthenticationConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
@@ -17,7 +17,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
 @RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
-class UserRepositoryTest extends WordSpec {
+class UserRepositoryTest extends AnyWordSpec {
 
   @Autowired
   val userRepository: UserRepository = null

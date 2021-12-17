@@ -11,8 +11,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation._
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Repository
-
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 @Repository
 class IStatisticsMongoRepositoryImpl extends StatisticsMongoRepository with LazyLogging {
@@ -64,7 +63,7 @@ class IStatisticsMongoRepositoryImpl extends StatisticsMongoRepository with Lazy
     val results = mongoOperations.aggregate(aggregationQuery, classOf[Spectrum],
       classOf[LinkedHashMap[String, Object]]).getMappedResults.asScala
 
-    val typedResults = results.map(x => (asScalaType(x.get("value")), x.get("total").asInstanceOf[Int]))
+    val typedResults = results.map(x => (asScalaType(x.get("value")), x.get("total").asInstanceOf[Int])).toSeq
 
     typedResults
   }

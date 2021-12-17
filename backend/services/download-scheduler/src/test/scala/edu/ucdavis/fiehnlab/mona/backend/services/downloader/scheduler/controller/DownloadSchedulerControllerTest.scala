@@ -14,7 +14,7 @@ import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{Pr
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import org.junit.runner.RunWith
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest

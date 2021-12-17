@@ -8,14 +8,14 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Properties
 
 /**
@@ -23,7 +23,7 @@ import scala.util.Properties
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
-class RestLoginServiceTest extends WordSpec with LazyLogging {
+class RestLoginServiceTest extends AnyWordSpec with LazyLogging {
 
   val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
 

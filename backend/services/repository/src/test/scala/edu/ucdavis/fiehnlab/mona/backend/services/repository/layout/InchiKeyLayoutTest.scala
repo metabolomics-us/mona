@@ -5,12 +5,12 @@ import java.io.{File, InputStreamReader}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by wohlg_000 on 5/18/2016.
   */
-class InchiKeyLayoutTest extends WordSpec with LazyLogging {
+class InchiKeyLayoutTest extends AnyWordSpec with LazyLogging {
 
   val reader = JSONDomainReader.create[Spectrum]
 

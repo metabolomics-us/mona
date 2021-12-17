@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
@@ -17,7 +17,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
 @RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
-class MongoLoginServiceTest extends WordSpec {
+class MongoLoginServiceTest extends AnyWordSpec {
 
   @Autowired
   val loginService: LoginService = null
