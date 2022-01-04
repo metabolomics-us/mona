@@ -1,25 +1,42 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum, SpectrumFeedback}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.util.MetaDataSynonyms
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 
+import scala.math._
 import scala.util.control.Breaks._
 import org.springframework.batch.item.ItemProcessor
 
-@Step(description = "this step will calculate entropy for a given spectrum and update the metadata and add feedback")
-class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging{
+@Step(description = "this step will calculate entropy for a given spectrum and update the metadata")
+class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   override def process(spectrum: Spectrum): Spectrum = {
     val spec_a: String = spectrum.spectrum
+    logger.info(s"Original Spectrum is: ${spec_a}")
     val array_a: Array[Array[Double]] = toArray(spec_a)
 
     val clean_a: Array[Array[Double]] = clean_spectrum(array_a)
-    var spec_merged_a: Array[Double] = Array()
-    logger.info(s"${clean_a}")
+    var intensity_a: Array[Double] = Array()
+    val peak_a: Int = clean_a.length
+    for (x <- clean_a) {
+      intensity_a = intensity_a :+ x(1)
+    }
+    logger.info(s"After cleaning, array is: ${clean_a}")
+    logger.info(s"Peak number is: ${peak_a}")
 
-    spectrum
+    val entropy_a: Double = entropy(intensity_a)
+    val normalized_entropy_a: Double = entropy_a/log(peak_a)
+
+    logger.info(s"Calculated Spectral Entropy is: ${entropy_a}")
+    logger.info(s"Calculated Normalized Entropy is: ${normalized_entropy_a}")
+
+    val updatedMetaData: Array[MetaData] = spectrum.metaData :+
+      MetaData("computed", computed = true, hidden = false, CommonMetaData.SPECTRAL_ENTROPY, null, null, null, entropy_a) :+
+      MetaData("computed", computed = true, hidden = false, CommonMetaData.NORMALIZED_ENTROPY, null, null, null, normalized_entropy_a)
+
+    spectrum.copy(metaData = updatedMetaData)
   }
 
   private def toArray(spec: String): Array[Array[Double]] = {
@@ -30,7 +47,7 @@ class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging
     }
   }
 
-  private def clean_spectrum(spec: Array[Array[Double]], ms2_da: Double = -1, ms2_ppm: Double = -1): Array[Array[Double]] = {
+  private def clean_spectrum(spec: Array[Array[Double]], ms2_da: Double = 0.05, ms2_ppm: Double = -1): Array[Array[Double]] = {
     var intensity_sum: Double = 0
     for (peak <- spec) {
       intensity_sum += peak(1)
