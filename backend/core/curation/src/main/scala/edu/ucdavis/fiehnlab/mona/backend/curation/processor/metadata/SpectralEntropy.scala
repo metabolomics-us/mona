@@ -14,7 +14,6 @@ class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging
 
   override def process(spectrum: Spectrum): Spectrum = {
     val spec_a: String = spectrum.spectrum
-    logger.info(s"Original Spectrum is: ${spec_a}")
     val array_a: Array[Array[Double]] = toArray(spec_a)
 
     val clean_a: Array[Array[Double]] = clean_spectrum(array_a)
@@ -23,7 +22,6 @@ class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging
     for (x <- clean_a) {
       intensity_a = intensity_a :+ x(1)
     }
-    logger.info(s"After cleaning, array is: ${clean_a}")
     logger.info(s"Peak number is: ${peak_a}")
 
     val entropy_a: Double = entropy(intensity_a)

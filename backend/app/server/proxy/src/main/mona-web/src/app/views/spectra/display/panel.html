@@ -40,8 +40,8 @@
                 <div class="card-text p-2 text-left" *ngIf="spectrum.library">
                   <h6><display-library-reference [spectrum]="spectrum"></display-library-reference></h6>
                 </div>
-                <div class="card-text p-2 text-left" *ngIf="currentFeedback.length > 0">
-                  <h6><spectrum-feedback-results-curation [spectrumID]="spectrum.id"></spectrum-feedback-results-curation></h6>
+                <div class="card-text p-2 text-left">
+                  <h5><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h5>
                 </div>
             </div>
 

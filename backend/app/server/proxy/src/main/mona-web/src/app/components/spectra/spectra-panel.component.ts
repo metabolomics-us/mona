@@ -28,7 +28,8 @@ export class SpectraPanelComponent implements OnInit{
         // Top 10 important metadata fields
         this.IMPORTANT_METADATA = [
             'ms level', 'precursor type', 'precursor m/z', 'instrument', 'instrument type',
-            'ionization', 'ionization mode', 'collision energy', 'retention time', 'retention index'
+            'ionization', 'ionization mode', 'collision energy', 'retention time', 'retention index',
+            'spectral entropy', 'normalized entropy'
         ];
 
         this.importantMetadata = [];
@@ -60,7 +61,7 @@ export class SpectraPanelComponent implements OnInit{
             }
         });
 
-        this.spectrum.metaData = this.importantMetadata.concat(this.secondaryMetadata).slice(0, 10);
+        this.spectrum.metaData = this.importantMetadata.concat(this.secondaryMetadata).slice(0, 12);
 
         this.feedbackCache.resolveFeedback(this.spectrum.id).subscribe((res) => {
           this.currentFeedback = res;

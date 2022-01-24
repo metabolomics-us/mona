@@ -122,6 +122,13 @@
 </div>
 
 <div class="row top17">
+    <div class="col-md-12">
+      <p>
+        <ngb-alert type="success" [dismissible]="true">
+          <strong>MoNA has new features! Click <a [routerLink]="['/documentation/entropy']">here</a> for an update on the latest.</strong>
+        </ngb-alert>
+      </p>
+    </div>
     <!-- display spectra as list -->
     <div class="col-md-12" *ngIf="pagination.table !== true">
         <div *ngFor="let spectrum of spectra" class="m-md-3">
@@ -155,7 +162,7 @@
                             <h4><span class="label label-primary" >Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}}</span></h4>
                         </div>
                         <div>
-                          <h6><spectrum-feedback-results-curation [spectrumID]="spectrum.id"></spectrum-feedback-results-curation></h6>
+                          <h6><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h6>
                         </div>
                     </div>
                 </td>
