@@ -1,10 +1,10 @@
 <span *ngIf="curated_feedback !== null">
   <strong>
     <span *ngIf="curated_feedback.value === 'noisy'" class="text-danger">
-      {{curated_feedback.value.toUpperCase()}} <span><fa-icon [icon]="faFlask" ngbTooltip="Calculated by MoNA Auto Curation. Noisy rating is (Normalized Entropy >= 0.8 AND Spectral Entropy >= 3.0)"></fa-icon></span>
+      {{curated_feedback.value.toUpperCase()}} <span><a style="color: inherit" [routerLink]="['/documentation/entropy']"><fa-icon [icon]="faFlask" ngbTooltip="Calculated by MoNA Auto Curation. Noisy rating is (Normalized Entropy >= 0.8 AND Spectral Entropy >= 3.0)"></fa-icon></a></span>
     </span>
     <span *ngIf="curated_feedback.value === 'clean'" class="text-success">
-      {{curated_feedback.value.toUpperCase()}} <span><fa-icon [icon]="faFlask" ngbTooltip="Calculated by MoNA Auto Curation. Clean rating is (Normalized Entropy <= 0.8 AND Spectral Entropy <= 3.0)"></fa-icon></span>
+      {{curated_feedback.value.toUpperCase()}} <span><a style="color: inherit" [routerLink]="['/documentation/entropy']"><fa-icon [icon]="faFlask" ngbTooltip="Calculated by MoNA Auto Curation. Clean rating is (Normalized Entropy <= 0.8 AND Spectral Entropy <= 3.0)"></fa-icon></a></span>
     </span>
   </strong>
 </span>
