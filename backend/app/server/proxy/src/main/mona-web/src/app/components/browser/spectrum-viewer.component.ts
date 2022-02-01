@@ -12,7 +12,7 @@ import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {FeedbackCacheService} from "../../services/feedback/feedback-cache.service";
 import {AuthenticationService} from '../../services/authentication.service';
 import {NGXLogger} from 'ngx-logger';
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {OrderbyPipe} from '../../filters/orderby.pipe';
@@ -26,7 +26,7 @@ import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
     selector: 'spectrum-viewer',
     templateUrl: '../../views/spectra/display/viewSpectrum.html'
 })
-export class SpectrumViewerComponent implements OnInit, AfterViewInit{
+export class SpectrumViewerComponent implements OnInit, AfterViewInit, OnChanges{
     @ViewChild('acc') accordion: NgbAccordion;
     delayedspectrum;
     spectrum;
@@ -60,11 +60,11 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     }
 
     ngOnInit() {
-
       this.delayedspectrum = this.route.snapshot.data.spectrum;
-      this.feedbackCache.resolveFeedback(this.delayedspectrum.id).pipe(first()).subscribe((res) => {
+      this.feedbackCache.resolveFeedback(this.delayedspectrum.id).subscribe((res) => {
         this.currentFeedback = res;
-      })
+      });
+
       this.accordionStatus = {
         isSpectraOpen: true,
         isIonTableOpen: false,
@@ -117,7 +117,13 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
       }, 100);
     }
 
-    setAccordionStatus() {
+    ngOnChanges(changes: SimpleChanges) {
+      this.feedbackCache.resolveFeedback(this.delayedspectrum.id).pipe(first()).subscribe((res) => {
+        this.currentFeedback = res;
+      });
+    }
+
+  setAccordionStatus() {
       this.accordion.expand('masspecPanel');
     }
 

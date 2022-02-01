@@ -60,4 +60,8 @@ object CommonMetaData {
   val RETENTION_INDEX: String = "retention index"
 
   val FLOW_RATE: String = "flow rate"
+
+  val SPECTRAL_ENTROPY: String = "spectral entropy"
+
+  val NORMALIZED_ENTROPY: String = "normalized entropy"
 }

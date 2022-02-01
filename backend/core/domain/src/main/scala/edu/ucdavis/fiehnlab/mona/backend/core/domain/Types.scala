@@ -281,6 +281,7 @@ case class Spectrum(
                      @(TextIndexed@field)
                      @(Size@field)(min = 1)
                      @BeanProperty
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      id: String,
 
                      dateCreated: Date,

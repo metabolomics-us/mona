@@ -97,6 +97,9 @@ import {SpectraDatabaseIndexComponent} from './app/components/browser/spectra-da
 import {SpectrumFeedbackResultsCuration} from "./app/components/feedback/spectrum-feedback-results-curation";
 import {SpectrumFeedbackResultsCommunity} from "./app/components/feedback/spectrum-feedback-results-community";
 import {DocumentationUploadLibraryComponent} from "./app/components/documentation/documentation-upload-library.component";
+import {DocumentationEntropyComponent} from "./app/components/documentation/documentation-entropy.component";
+
+import {PrefixValidator} from "./app/directives/PrefixValidatorDirective";
 
 import {FilterPipe} from './app/filters/filter.pipe';
 import {CurlPipe} from './app/filters/curl.pipe';
@@ -245,7 +248,9 @@ const cookieConfig: NgcCookieConsentConfig = {
         AdvancedUploadModalComponent,
         SpectrumFeedbackResultsCuration,
         SpectrumFeedbackResultsCommunity,
-        DocumentationUploadLibraryComponent
+        DocumentationUploadLibraryComponent,
+        DocumentationEntropyComponent,
+        PrefixValidator
     ],
     bootstrap: [
         AppRootComponent

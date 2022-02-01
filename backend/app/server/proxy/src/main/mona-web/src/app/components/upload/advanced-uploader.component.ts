@@ -292,6 +292,10 @@ export class AdvancedUploaderComponent implements OnInit{
     }
   }
 
+  getFileOriginName(s): string {
+	  return s.hiddenMetadata.find((e) => e.name === 'origin').value;
+  }
+
 	batchProcessSTP(data, origin): Promise<any> {
 	  return new Promise((resolve, reject) => {
       this.uploadLibraryService.processData(data, (spectrum) => {

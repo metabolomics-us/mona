@@ -13,7 +13,7 @@ services:
   mongodb:
     image: mongo:3.2.4
     ports:
-      - 27017:27017
+      - "27017:27017"
     volumes:
       - mongo-data:/data/db
     command: --wiredTigerCacheSizeGB 48
@@ -23,8 +23,8 @@ services:
     image: elasticsearch:2.4
     command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Des.node.master=true, -Des.index.query.bool.max_clause_count=10240 ]
     ports:
-      - 9200:9200
-      - 9300:9300
+      - "9200:9200"
+      - "9300:9300"
 
   # Elasticsearch node, which may be scaled
   elasticsearch_node:
@@ -34,8 +34,8 @@ services:
   rabbitmq:
     image: rabbitmq:3.6-management
     ports:
-      - 15672:15672
-      - 5672:5672
+      - "15672:15672"
+      - "5672:5672"
 
 
   #
@@ -45,8 +45,8 @@ services:
   nginx:
     image: public.ecr.aws/fiehnlab/nginx-letsencrypt:latest
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     environment:
       - DOMAIN=mona.fiehnlab.ucdavis.edu,massbank.us
       - EMAIL=noguzman@ucdavis.edu
@@ -63,9 +63,9 @@ services:
   # The discovery service provided us with a local overview of our services
   # and allows for easy scaling and load balancing using our proxy at a later stage
   discovery:
-    image: public.ecr.aws/fiehnlab/mona-discovery:latest
+    image: public.ecr.aws/fiehnlab/mona-discovery:prod
     ports:
-      - 8761:8761
+      - "8761:8761"
     depends_on:
       - mongodb
       - rabbitmq
@@ -82,7 +82,7 @@ services:
 
   # Bootstrap service which pre-populated and synchronizes the databases
   bootstrap:
-    image: public.ecr.aws/fiehnlab/mona-bootstrap:latest
+    image: public.ecr.aws/fiehnlab/mona-bootstrap:prod
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
@@ -91,25 +91,25 @@ services:
   webhooks:
     image: public.ecr.aws/fiehnlab/mona-webhooks-server:latest
     ports:
-      - 4444:4444
+      - "4444:4444"
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # Scheduler for curation jobs
   curationScheduler:
-    image: public.ecr.aws/fiehnlab/mona-curation-scheduler:latest
+    image: public.ecr.aws/fiehnlab/mona-curation-scheduler:prod
     ports:
-      - 5555:5555
+      - "5555:5555"
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # Serves the content of MoNA as a repository
   repository:
-    image: public.ecr.aws/fiehnlab/mona-repository:latest
+    image: public.ecr.aws/fiehnlab/mona-repository:prod
     ports:
-      - 8888:8888
+      - "8888:8888"
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
@@ -123,26 +123,26 @@ services:
 
   # Persistence service with query interface
   persistence:
-    image: public.ecr.aws/fiehnlab/mona-persistence-server:latest
+    image: public.ecr.aws/fiehnlab/mona-persistence-server:prod
     depends_on:
       - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # Main authentication service
   auth:
-    image: public.ecr.aws/fiehnlab/mona-auth-server:latest
+    image: public.ecr.aws/fiehnlab/mona-auth-server:prod
     depends_on:
       - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # MoNA similarity service
   similarity:
-    image: public.ecr.aws/fiehnlab/mona-similarity:latest
+    image: public.ecr.aws/fiehnlab/mona-similarity:prod
     ports:
-      - 9999:9999
+      - "9999:9999"
     depends_on:
       - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
 
   #
@@ -151,29 +151,29 @@ services:
 
   # The main entrypoint for MoNA
   proxy:
-    image: public.ecr.aws/fiehnlab/mona-proxy:latest
+    image: public.ecr.aws/fiehnlab/mona-proxy:prod
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
       - persistence
     environment:
       - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xss4m -Xmx4g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xss4m -Xmx4g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # Download service for scheduling and running download jobs
   downloader:
-    image: public.ecr.aws/fiehnlab/mona-download-scheduler:latest
+    image: public.ecr.aws/fiehnlab/mona-download-scheduler:prod
     ports:
-      - 7777:7777
+      - "7777:7777"
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
     volumes:
       - downloader-data:/data
 
   # Run scheduled curation tasks
   curationRunner:
-    image: public.ecr.aws/fiehnlab/mona-curation-runner:latest
+    image: public.ecr.aws/fiehnlab/mona-curation-runner:prod
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"

@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit} from "@angular/core";
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
 import {faAngleDown, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import {Feedback} from "../../services/persistence/feedback.resource";
 import * as d3 from 'd3';
@@ -9,7 +9,7 @@ import 'nvd3';
   templateUrl: '../../views/templates/feedback/spectrumFeedbackResultsCommunity.html'
 })
 
-export class SpectrumFeedbackResultsCommunity implements OnInit {
+export class SpectrumFeedbackResultsCommunity implements OnInit, OnChanges {
   @Input() spectrumID;
   @Input() currentFeedback;
   feedbackResults;
@@ -56,6 +56,9 @@ export class SpectrumFeedbackResultsCommunity implements OnInit {
         showLabels: true
       }
     }
+    this.createChart();
+  }
+  ngOnChanges(changes: SimpleChanges) {
     this.createChart();
   }
 
