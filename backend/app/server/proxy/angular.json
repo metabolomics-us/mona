@@ -114,7 +114,14 @@
               "src/main/mona-web/src/assets"
             ],
             "styles": [
-              "src/main/mona-web/src/styles.scss"
+              "src/main/mona-web/src/styles/main.scss",
+              "src/main/mona-web/src/styles/theme.scss",
+              "src/main/mona-web/src/styles/search.scss",
+              "src/main/mona-web/src/styles/autocomplete.scss",
+              "src/main/mona-web/lib/ChemDoodleWeb/ChemDoodleWeb.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/angular2-toaster/toaster.scss",
+              "node_modules/cookieconsent/build/cookieconsent.min.css"
             ],
             "scripts": []
           }

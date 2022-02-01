@@ -4,12 +4,11 @@
 import {HttpClient} from '@angular/common/http';
 import {AuthenticationService} from '../../services/authentication.service';
 import {RegistrationService} from '../../services/registration.service';
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {SubmitterFormComponent} from '../submitter/submitter-form.component';
 import {NGXLogger} from 'ngx-logger';
 import { first } from 'rxjs/operators';
-import {faSpinner, faCheck, faExclamation, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
+import {faSpinner, faCheck, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'registration-modal',
@@ -19,7 +18,6 @@ export class RegistrationModalComponent implements OnInit{
     errors;
     state;
     submitterFormStatus: boolean;
-    @ViewChild(SubmitterFormComponent) submitterForm: SubmitterFormComponent;
     faSpinner = faSpinner;
     faCheck = faCheck;
     faExclamationTriangle = faExclamationTriangle;

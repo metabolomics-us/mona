@@ -59,8 +59,8 @@ export class SpectraBrowserComponent implements OnInit{
     constructor(public spectrum: Spectrum, public spectraQueryBuilderService: SpectraQueryBuilderService,  public location: Location,
                 public spectrumCache: SpectrumCacheService,  public metadata: Metadata,  public cookie: CookieMain,
                 public logger: NGXLogger,  public toaster: ToasterService,  public $gaProvider: GoogleAnalyticsService,
-                public route: ActivatedRoute,  public router: Router, public feedbackCache: FeedbackCacheService,
-                public authenticationService: AuthenticationService, public activatedRoute: ActivatedRoute) {
+                public router: Router, public feedbackCache: FeedbackCacheService, public authenticationService: AuthenticationService,
+                public activatedRoute: ActivatedRoute) {
     }
 
     ngOnInit() {
