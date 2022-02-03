@@ -16,7 +16,7 @@ class EuclideanSimilarity extends Similarity {
     * @param reference
     * @return
     */
-  def compute(unknown: SimpleSpectrum, reference: SimpleSpectrum): Double = {
+  def compute(unknown: SimpleSpectrum, reference: SimpleSpectrum, removePrecursorIon: Boolean): Double = {
 
     val zeroIon: Ion = Ion(0.0, 0.0)
 
