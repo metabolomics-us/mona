@@ -27,7 +27,6 @@ class CompositeSimilarity extends Similarity {
   //Removes precursor ion if removePrecursorIon flag is set else returns spectrum as is
   protected def removePrecursor(spectrum: SimpleSpectrum): SimpleSpectrum = {
     val precursorRemovedIons: Array[Ion] = spectrum.ions.filter(_.mz < spectrum.precursorMZ - (5 / 1000))
-    logger.info(s"New ion set is: ${precursorRemovedIons}")
 
     new SimpleSpectrum(spectrum.id, precursorRemovedIons, spectrum.precursorMZ, spectrum.tags, spectrum.public)
   }
