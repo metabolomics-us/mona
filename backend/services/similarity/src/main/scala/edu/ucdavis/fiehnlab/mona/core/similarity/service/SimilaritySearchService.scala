@@ -39,7 +39,7 @@ class SimilaritySearchService extends LazyLogging {
     logger.info(s"Starting similarity search with minimum similarity $minSimilarity")
 
     // Perform similarity search, order by score and return a maximum of 50 or a default 25 hits
-    val results: Array[ComputationalResult] = indexUtils.search(spectrum, AlgorithmTypes.DEFAULT, minSimilarity).toArray
+    val results: Array[ComputationalResult] = indexUtils.search(spectrum, AlgorithmTypes.DEFAULT, minSimilarity, request.removePrecursorIon).toArray
 
 
     logger.info(s"Search discovered ${results.length} hits")
