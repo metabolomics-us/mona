@@ -18,7 +18,9 @@ class CompositeSimilarity extends Similarity {
    */
   override final def compute(unknown: SimpleSpectrum, reference: SimpleSpectrum, removePrecursorIon: Boolean): Double = {
     if(removePrecursorIon) {
-      doCompute(removePrecursor(unknown), removePrecursor(reference))
+      val newUnknown: SimpleSpectrum = removePrecursor(unknown)
+      val newReference: SimpleSpectrum = removePrecursor(reference)
+      doCompute(newUnknown, newReference)
     } else {
       doCompute(unknown, reference)
     }
