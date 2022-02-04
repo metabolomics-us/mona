@@ -85,6 +85,14 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
       assert(result.head.score > 0.99)
     }
 
+    "perform simple similarity query with precursor removal" in {
+      val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100 160.001:100", 0.99, 160, 0.0, 0.0, true)
+      val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+      assert(result.length == 1)
+      assert(result.head.score > 0.99)
+    }
+
     "perform a similarity query with a JSON string body with only the spectrum" in {
       val request: String = """{"spectrum": "108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100"}"""
       val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
