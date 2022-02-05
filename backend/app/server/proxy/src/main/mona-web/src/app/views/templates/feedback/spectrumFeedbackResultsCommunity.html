@@ -1,0 +1,19 @@
+<div *ngIf="currentFeedback.length !== 0">
+    <ngb-accordion #ac="ngbAccordion" [closeOthers]="false">
+      <ngb-panel id="feedbackPanel">
+        <ng-template ngbPanelHeader>
+          <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
+            <strong>Spectrum Community Feedback ({{totalReviews | number: '1.0':'en-US'}} User Reviews)</strong>
+            <fa-icon [icon]="faAngleDown" pull="right" *ngIf="ac.isExpanded('feedbackPanel')"></fa-icon>
+            <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!ac.isExpanded('feedbackPanel')"></fa-icon>
+          </button>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div style="height: 500px; width: 100%" class="float-center">
+            <nvd3 [options]="feedbackResultsChartOptions"
+              [data]="feedbackResults"></nvd3>
+          </div>
+        </ng-template>
+      </ngb-panel>
+    </ngb-accordion>
+</div>

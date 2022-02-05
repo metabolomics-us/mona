@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchAutoConfiguration, ElasticsearchDataAutoConfiguration}
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 3/23/16.
@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
 @RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[Config]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
-class ISubmitterMongoRepositoryTest extends WordSpec {
+class ISubmitterMongoRepositoryTest extends AnyWordSpec {
 
   @Autowired
   val submitterMongoRepository: ISubmitterMongoRepository = null

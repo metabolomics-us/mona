@@ -12,11 +12,11 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * An abstract test to provides us with a simple way to test complex controllers
@@ -102,7 +102,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 /**
   * provides us with a simple, elegant way to refresh the application context between runs
   */
-abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
+abstract class AbstractSpringControllerTest extends AnyWordSpec with LazyLogging {
 
   @Autowired
   val userRepository: UserRepository = null

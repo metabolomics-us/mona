@@ -16,6 +16,8 @@ import {SpectraBrowserComponent} from './browser/spectra-browser.component';
 import {SpectraDatabaseIndexComponent} from './browser/spectra-database-index.component';
 import {SpectrumResolver} from '../resolvers/spectrum.resolver';
 import {QueryTreeComponent} from './browser/query-tree.component';
+import {DocumentationUploadLibraryComponent} from "./documentation/documentation-upload-library.component";
+import {DocumentationEntropyComponent} from "./documentation/documentation-entropy.component";
 
 export const routes: Routes = [
     {path: '', component: MainComponent},
@@ -33,6 +35,8 @@ export const routes: Routes = [
     {path: 'spectra/inchikey/:inchikey', redirectTo: '/spectra/browse'},
     {path: 'spectra/querytree', redirectTo: '/downloads'},
     {path: 'documentation/terms', component: DocumentationTermComponent},
+    {path: 'documentation/uploadLibrary', component: DocumentationUploadLibraryComponent},
+    {path: 'documentation/entropy', component: DocumentationEntropyComponent},
     {path: '500', redirectTo: 'documentation/terms'},
     {
       path: 'spectra/display/:id',

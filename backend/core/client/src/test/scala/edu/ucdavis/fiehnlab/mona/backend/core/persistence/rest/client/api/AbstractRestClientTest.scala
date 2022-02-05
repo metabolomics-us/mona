@@ -8,19 +8,20 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.concurrent.Eventually
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.test.context.TestContextManager
 import org.springframework.web.client.HttpClientErrorException
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
 /**
   * Created by wohlgemuth on 3/2/16.
   */
-abstract class AbstractRestClientTest extends WordSpec with Eventually with LazyLogging with Matchers {
+abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with LazyLogging with Matchers {
 
   @Autowired
   val spectrumRestClient: GenericRestClient[Spectrum, String] = null

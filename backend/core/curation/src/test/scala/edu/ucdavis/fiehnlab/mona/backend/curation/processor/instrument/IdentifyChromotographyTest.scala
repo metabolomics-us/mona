@@ -5,12 +5,12 @@ import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonTags
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by sajjan on 3/21/16.
   */
-class IdentifyChromotographyTest extends WordSpec {
+class IdentifyChromotographyTest extends AnyWordSpec {
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 

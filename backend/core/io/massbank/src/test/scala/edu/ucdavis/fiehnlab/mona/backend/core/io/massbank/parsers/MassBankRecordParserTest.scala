@@ -2,12 +2,14 @@ package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.parsers
 
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types.MassBankRecord
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.{MassBankRecordParsingException, MassBankRecordReader}
-import org.scalatest._
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.Inside
 
 import scala.io.Source
 import scala.util.Try
 
-class MassBankRecordParserTest extends WordSpec with Matchers with MassBankRecordParser with Inside {
+class MassBankRecordParserTest extends AnyWordSpec with Matchers with MassBankRecordParser with Inside {
   protected val rootPath = "/testdata"
 
   "A `MassBankRecordParser`" should {

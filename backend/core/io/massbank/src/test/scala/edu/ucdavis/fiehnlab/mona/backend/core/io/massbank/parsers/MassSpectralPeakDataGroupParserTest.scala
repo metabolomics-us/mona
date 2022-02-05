@@ -2,9 +2,11 @@ package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.parsers
 
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.groups._
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types.{PeakData, PeakTriple}
-import org.scalatest._
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.Inside
 
-class MassSpectralPeakDataGroupParserTest extends WordSpec with Matchers with Inside with MassSpectralPeakDataGroupParser {
+class MassSpectralPeakDataGroupParserTest extends AnyWordSpec with Matchers with Inside with MassSpectralPeakDataGroupParser {
   "An `MassSpectralPeakDataGroupParser`" should {
     "correctly parse complete base metadata" in {
       val input =

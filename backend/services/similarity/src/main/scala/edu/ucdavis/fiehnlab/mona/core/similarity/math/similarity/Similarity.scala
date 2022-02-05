@@ -6,16 +6,17 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 /**
   * Created by sajjan on 10/11/16.
   */
-trait Similarity extends LazyLogging {
+trait Similarity extends SimilarityComputation with LazyLogging {
 
   /**
-    * Computes the similarity between two mass spectra
+    * Computes the similarity between two mass spectra with an option to remove precursor ion mass
     *
     * @param unknown
     * @param reference
     * @return
     */
-  def compute(unknown: SimpleSpectrum, reference: SimpleSpectrum): Double
+  def compute(unknown: SimpleSpectrum, reference: SimpleSpectrum, removePrecursorIon: Boolean = false): Double
+
 
   /**
     * Computes the similarity between two SPLASH histogram blocks
@@ -25,6 +26,6 @@ trait Similarity extends LazyLogging {
     * @param reference
     * @return
     */
-  def compute(unknown: String, reference: String): Double = 0.0
+  def compute(unknown: String, reference: String, removePrecursorIon: Boolean): Double = 0.0
 }
 

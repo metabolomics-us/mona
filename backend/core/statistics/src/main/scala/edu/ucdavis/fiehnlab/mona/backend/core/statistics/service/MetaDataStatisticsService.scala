@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.aggregation.{AggregationOperation, 
 import org.springframework.data.mongodb.core.query.{Criteria, Query}
 import org.springframework.stereotype.Service
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 
 /**

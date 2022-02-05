@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.parsers
 
-import org.scalatest._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
-class FieldParsersTest extends WordSpec with GeneratorDrivenPropertyChecks with Matchers with FieldParsers {
+class FieldParsersTest extends AnyWordSpec with ScalaCheckDrivenPropertyChecks with Matchers with FieldParsers {
   "`numPeakField` parser" should {
     "accept integer inputs" in {
       forAll(Generators.validInt) { i: Int =>

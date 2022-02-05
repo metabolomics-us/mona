@@ -281,6 +281,7 @@ case class Spectrum(
                      @(TextIndexed@field)
                      @(Size@field)(min = 1)
                      @BeanProperty
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      id: String,
 
                      dateCreated: Date,
@@ -485,6 +486,9 @@ case class BlacklistedSplash(@(Id@field) splash: String)
 case class SpectrumFeedback(
                             @(Id@field)
                             id: String,
+                            @(Indexed@field)
+                            @(TextIndexed@field)
+                            @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                             monaID: String,
                             userID: String,
                             name: String,

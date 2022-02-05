@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.event
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * handles the execution and processing of event for our services. This is the simplest possible implementation

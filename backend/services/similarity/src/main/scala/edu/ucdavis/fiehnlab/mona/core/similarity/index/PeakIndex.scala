@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.math.binning.{BinByRoundingMeth
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{BinnedSimpleSpectrum, SimpleSpectrum}
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.SpectrumUtils
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 2/7/17.

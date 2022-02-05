@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.PredefinedQuery
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.Downloader
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.core.MongoOperations
@@ -17,7 +17,7 @@ import org.springframework.test.context.{TestContextManager, TestPropertySource}
 @RunWith(classOf[SpringRunner])
 @TestPropertySource(locations = Array("classpath:application.properties"))
 @SpringBootTest(classes = Array(classOf[Downloader]))
-class PredefinedQueryMongoRepositoryTest extends WordSpec {
+class PredefinedQueryMongoRepositoryTest extends AnyWordSpec {
 
   @Autowired
   val predefinedQueryMongoRepository: PredefinedQueryMongoRepository = null

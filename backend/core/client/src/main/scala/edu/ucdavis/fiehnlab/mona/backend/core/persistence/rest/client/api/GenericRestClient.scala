@@ -12,7 +12,7 @@ import org.springframework.data.domain.{Page, PageImpl, Pageable}
 import org.springframework.http._
 import org.springframework.web.client.RestOperations
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.reflect.{ClassTag, _}
 
 

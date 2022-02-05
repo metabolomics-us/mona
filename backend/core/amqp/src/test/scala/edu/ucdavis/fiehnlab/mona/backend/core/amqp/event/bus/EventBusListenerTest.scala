@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -27,7 +27,7 @@ import scala.reflect.ClassTag
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[StringTestConfig], classOf[MonaNotificationBusCounterConfiguration], classOf[MonaEventBusCounterConfiguration]))
-class EventBusListenerTest extends WordSpec with Eventually {
+class EventBusListenerTest extends AnyWordSpec with Eventually {
 
   @Autowired
   val eventBus: EventBus[Spectrum] = null

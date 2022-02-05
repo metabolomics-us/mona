@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.util
 
-import java.lang.Iterable
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
@@ -9,7 +8,7 @@ import org.springframework.data.domain.{Page, PageRequest, Pageable}
 /**
   * Created by wohlgemuth on 3/18/16.
   */
-abstract class DynamicIterable[T, Q](val query: Q, val fetchSize: Int = 10, val transformer: (T) => T) extends Iterable[T] with LazyLogging {
+abstract class DynamicIterable[T, Q](val query: Q, val fetchSize: Int = 10, val transformer: T => T) extends java.lang.Iterable[T] with LazyLogging {
 
   def this(query: Q, fetchSize: Int) = this(query, fetchSize, { t: T => t })
 

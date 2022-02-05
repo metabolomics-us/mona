@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ArrayBuffer
 
 

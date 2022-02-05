@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExport
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.Downloader
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
@@ -16,7 +16,7 @@ import org.springframework.test.context.{TestContextManager, TestPropertySource}
 @RunWith(classOf[SpringRunner])
 @TestPropertySource(locations = Array("classpath:application.properties"))
 @SpringBootTest(classes = Array(classOf[Downloader]))
-class QueryExportMongoRepositoryTest extends WordSpec {
+class QueryExportMongoRepositoryTest extends AnyWordSpec {
 
   @Autowired
   val queryExportMongoRepository: QueryExportMongoRepository = null

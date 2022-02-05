@@ -101,6 +101,7 @@ class CurationConfig extends LazyLogging {
           new SpectrumIonCountScoringRule,
 
           // Metadata curation
+          new SpectralEntropy,
           new NormalizeMetaDataNames,
           new IdentifyChromatography,
           new NormalizeIonizationModeValue,

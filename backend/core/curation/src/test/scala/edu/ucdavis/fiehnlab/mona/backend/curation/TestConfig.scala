@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 
 /**

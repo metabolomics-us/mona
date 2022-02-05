@@ -16,7 +16,7 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * a simple service to ensure we can trigger the internally defined webhooks
