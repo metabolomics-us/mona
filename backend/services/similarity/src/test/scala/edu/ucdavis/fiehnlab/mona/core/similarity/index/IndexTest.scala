@@ -5,12 +5,13 @@ import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by sajjan on 12/28/16.
   */
-abstract class IndexTest extends WordSpec with Matchers {
+abstract class IndexTest extends AnyWordSpec with Matchers {
 
   def createIndex(): Index
 

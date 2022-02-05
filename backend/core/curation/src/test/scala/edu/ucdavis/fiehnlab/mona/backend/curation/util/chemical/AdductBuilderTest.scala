@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical
 
 import com.typesafe.scalalogging.LazyLogging
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class AdductBuilderTest extends WordSpec with Matchers with LazyLogging {
+class AdductBuilderTest extends AnyWordSpec with Matchers with LazyLogging {
 
   "adduct builder" must {
     "find an adduct should handle null" in {

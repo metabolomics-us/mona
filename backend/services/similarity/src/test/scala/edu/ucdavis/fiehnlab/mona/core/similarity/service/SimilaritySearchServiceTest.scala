@@ -9,7 +9,8 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.index.IndexRegistry
 import edu.ucdavis.fiehnlab.mona.core.similarity.types._
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
 import org.junit.runner.RunWith
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{ComponentScan, Configuration}
@@ -21,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TestConfig], classOf[SimilarityConfig]))
-class SimilaritySearchServiceTest extends WordSpec with Matchers with LazyLogging {
+class SimilaritySearchServiceTest extends AnyWordSpec with Matchers with LazyLogging {
 
   @Autowired
   val similaritySearchService: SimilaritySearchService = null

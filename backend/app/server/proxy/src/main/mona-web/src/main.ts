@@ -19,6 +19,7 @@ import {LoggerModule} from 'ngx-logger';
 import {FormsModule} from '@angular/forms';
 import {NvD3Module} from 'ng2-nvd3';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {NgcCookieConsentModule, NgcCookieConsentConfig} from "ngx-cookieconsent";
 
 import {CtsService, CtsConstants, ChemifyService} from 'angular-cts-service/dist/cts-lib';
 import {NgMassSpecPlotterModule} from '@wcmc/ng-mass-spec-plotter';
@@ -42,6 +43,8 @@ import {UploadLibraryService} from './app/services/upload/upload-library.service
 import {AuthenticationService} from './app/services/authentication.service';
 import {CompoundConversionService} from './app/services/compound-conversion.service';
 import {RegistrationService} from './app/services/registration.service';
+import {Feedback} from "./app/services/persistence/feedback.resource";
+import {FeedbackCacheService} from "./app/services/feedback/feedback-cache.service"
 
 import {SpectrumReviewComponent} from './app/components/feedback/spectrum-review.component';
 import {ErrorHandleComponent} from './app/components/compound/error-handle.component';
@@ -91,6 +94,13 @@ import {DocumentationQueryComponent} from './app/components/documentation/docume
 import {DocumentationLicenseComponent} from './app/components/documentation/documentation-license.component';
 import {SpectraBrowserComponent} from './app/components/browser/spectra-browser.component';
 import {SpectraDatabaseIndexComponent} from './app/components/browser/spectra-database-index.component';
+import {SpectrumFeedbackResultsCuration} from "./app/components/feedback/spectrum-feedback-results-curation";
+import {SpectrumFeedbackResultsCommunity} from "./app/components/feedback/spectrum-feedback-results-community";
+import {DocumentationUploadLibraryComponent} from "./app/components/documentation/documentation-upload-library.component";
+import {DocumentationEntropyComponent} from "./app/components/documentation/documentation-entropy.component";
+
+import {PrefixValidator} from "./app/directives/PrefixValidatorDirective";
+
 import {FilterPipe} from './app/filters/filter.pipe';
 import {CurlPipe} from './app/filters/curl.pipe';
 import {OrderbyPipe} from './app/filters/orderby.pipe';
@@ -101,6 +111,23 @@ import {environment} from './environments/environment';
 import {routes} from './app/components/app.routes';
 import {SpectrumResolver} from './app/resolvers/spectrum.resolver';
 import {AdvancedUploadModalComponent} from './app/components/upload/advanced-upload-modal.component';
+
+const cookieConfig: NgcCookieConsentConfig = {
+  cookie: {
+    domain: window.location.hostname // or 'your.domain.com' // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
+  },
+  position: 'bottom',
+  palette: {
+    popup: {
+      background: '#022851'
+    },
+    button: {
+      background: '#FFBF00'
+    }
+  },
+  theme: 'classic',
+  type: 'info'
+};
 
 @NgModule({
     imports: [
@@ -126,7 +153,8 @@ import {AdvancedUploadModalComponent} from './app/components/upload/advanced-upl
         RouterModule.forRoot(routes, {useHash: false}),
         TagInputModule,
         NvD3Module,
-        FontAwesomeModule
+        FontAwesomeModule,
+        NgcCookieConsentModule.forRoot(cookieConfig)
 
     ],
     providers: [
@@ -158,7 +186,9 @@ import {AdvancedUploadModalComponent} from './app/components/upload/advanced-upl
         OrderbyPipe,
         BytesPipe,
         SlicePipe,
-        SpectrumResolver
+        SpectrumResolver,
+        Feedback,
+        FeedbackCacheService
     ],
 
     declarations: [
@@ -215,7 +245,12 @@ import {AdvancedUploadModalComponent} from './app/components/upload/advanced-upl
         SpectraBrowserComponent,
         SpectraDatabaseIndexComponent,
         AppRootComponent,
-        AdvancedUploadModalComponent
+        AdvancedUploadModalComponent,
+        SpectrumFeedbackResultsCuration,
+        SpectrumFeedbackResultsCommunity,
+        DocumentationUploadLibraryComponent,
+        DocumentationEntropyComponent,
+        PrefixValidator
     ],
     bootstrap: [
         AppRootComponent

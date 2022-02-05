@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.mapreduce.MapReduceOptions
 import org.springframework.stereotype.Service
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 9/27/16.

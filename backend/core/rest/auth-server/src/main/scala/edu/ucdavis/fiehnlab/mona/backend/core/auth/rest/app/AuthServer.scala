@@ -14,7 +14,7 @@ import org.springframework.boot.{CommandLineRunner, SpringApplication}
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.stereotype.Component
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 3/28/16.

@@ -5,8 +5,8 @@ import java.util
 import edu.ucdavis.fiehnlab.mona.core.similarity.index.cache.SpectrumCache
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.binning.{BinningMethod, NoBinningMethod}
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
-
-import scala.collection.JavaConverters._
+import scala.collection.parallel.CollectionConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 1/28/16.

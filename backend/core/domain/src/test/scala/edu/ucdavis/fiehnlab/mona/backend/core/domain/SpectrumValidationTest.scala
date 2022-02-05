@@ -7,19 +7,19 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlg_000 on 5/5/2016.
   */
 @RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[DomainConfig]))
-class SpectrumValidationTest extends WordSpec with LazyLogging {
+class SpectrumValidationTest extends AnyWordSpec with LazyLogging {
 
   @Autowired
   val validator: Validator = null

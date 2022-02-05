@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity
 
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
   * Created by singh on 1/28/2016.
   */
-class CompositeSimilarityTest extends FlatSpec with Matchers {
+class CompositeSimilarityTest extends AnyFlatSpec with Matchers {
   val EPSILON: Double = 0.0001
 
 
@@ -53,5 +54,15 @@ class CompositeSimilarityTest extends FlatSpec with Matchers {
 
     val similarity = new CompositeSimilarity().compute(unknown, library)
     similarity shouldBe 0.0 +- EPSILON
+  }
+
+  it should "remove precursor ions" in {
+    val unknown = new SimpleSpectrum("", "10:100 15:20 16:5", 16.0, null)
+    val library = new SimpleSpectrum("", "10:100 15:25 20:5 25:2", 25.0, null)
+    unknown.ions.length shouldEqual 3
+    library.ions.length shouldEqual 4
+
+    val similarity = new CompositeSimilarity().compute(unknown, library, true)
+    similarity shouldBe 0.9476 +- EPSILON
   }
 }

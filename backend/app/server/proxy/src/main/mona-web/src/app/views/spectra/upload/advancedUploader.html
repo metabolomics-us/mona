@@ -34,12 +34,14 @@
                 </div>
 
                 <span class="help-block">Supports MSP and MGF mass spectral library files and MassBank Records Format</span>
+                <hr/>
                 <div class="form-check">
                   <input type="checkbox" class="form-check-input" id="libraryBool" name="librayBool" [(ngModel)]="showLibraryForm">
-                  <label class="form-check-label" for="libraryBool">Create New Library</label>
+                  <label class="form-check-label" for="libraryBool">Create New Library  </label> <fa-icon [icon]="faQuestionCircle" (click)="goToDocumentation()" ngbTooltip="Creates new spectra library for easy search and download. Click for more details."></fa-icon>
                 </div>
                 <div *ngIf="showLibraryForm">
                   <br/>
+                  <h3 class="text-info font-weight-bold">See Documentation <a [routerLink]="['/documentation/uploadLibrary']">Here</a></h3>
                   <form #libForm="ngForm"  id="libForm" class="form-horizontal" novalidate role="form">
                     <div class="form-group row">
                       <label for="libraryLink" class="col-sm-3 col-form-label"><strong>Library</strong></label>
@@ -49,9 +51,9 @@
                       <label for="libraryPre" class="col-sm-2 col-form-label" ngbTooltip="The unique prefix used to create a unique ID for every spectrum. Accepts numbers and letters.">Library ID Prefix: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="libraryPre" name="libraryPre"
-                               placeholder="Required" [(ngModel)]="libraryPrefix" #libraryPre = "ngModel" required />
-                        <p *ngIf="!libraryPre.valid && !libraryPre.pristine" class="help-block">
-                          Library ID Prefix is required.
+                               placeholder="Required" [(ngModel)]="libraryPrefix"  [ngModelOptions]="{updateOn: 'blur'}" #libraryPre = "ngModel" required prefixValidator/>
+                        <p *ngIf="!libraryPre.valid && !libraryPre.pristine" class="help-block text-warning">
+                          {{libForm.controls['libraryPre']?.errors?.prefixValidator}}
                         </p>
                       </div>
                     </div>
@@ -148,20 +150,20 @@
         <!-- Show cleaner/uploader if spectra are found -->
         <div *ngIf="spectraLoaded === 2 && spectra.length > 0" class="card">
             <div class="card-header">
-                <nav class="navbar navbar-expand-md" style="width: 100%;">
-                    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                <nav class="navbar navbar-expand" style="width: 100%;">
+                    <div class="navbar-collapse collapse w-auto order-1 order-md-0 dual-collapse2">
                         <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
                             <li class="nav-item">
                               <button class="fakeRef" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button>
                             </li>
                         </ul>
                     </div>
-                    <div class="mx-auto order-0">
-                        <ul class="navbar-nav mx-auto ">
-                            <li><strong>Spectrum {{spectraIndex + 1}} / {{spectra.length}}</strong></li>
+                    <div class="mx-auto w-auto order-0">
+                        <ul class="navbar-nav mx-auto list-inline d-flex justify-content-center">
+                            <li class="list-inline-item"><strong><h5>Spectrum: <em>{{spectraIndex + 1}} / {{spectra.length}}</em> | Origin: <em>{{getFileOriginName(currentSpectrum)}}</em></h5></strong></li>
                         </ul>
                     </div>
-                   <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                   <div class="navbar-collapse collapse w-auto order-3 dual-collapse2">
                        <ul class="navbar-nav ml-auto">
                            <li class="nav-item"><button class="fakeRef" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                        </ul>

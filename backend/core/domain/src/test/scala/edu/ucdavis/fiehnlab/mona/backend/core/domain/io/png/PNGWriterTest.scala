@@ -4,12 +4,12 @@ import java.io.{InputStreamReader, StringWriter}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by sajjan on 4/30/2018.
   */
-class PNGWriterTest extends WordSpec {
+class PNGWriterTest extends AnyWordSpec {
 
   "we should be able to create an instance of the writer" when {
     val writer: PNGWriter = new PNGWriter

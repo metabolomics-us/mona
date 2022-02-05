@@ -3,7 +3,10 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h3>
+                  <div class="card-title">
+                    <h3 class="float-left">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h3>
+                    <h3 class="float-right"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h3>
+                  </div>
                 </div>
 
                 <div class="card-body">
@@ -95,10 +98,12 @@
                         </div>
                     </div>
 
-
                     <!-- mass spectral properties -->
                     <div class="row">
                         <div class="col-md-12">
+                            <div *ngIf="currentFeedback.length > 0">
+                              <spectrum-feedback-results-community [spectrumID]="spectrum.id" [currentFeedback]="currentFeedback"></spectrum-feedback-results-community>
+                            </div>
                             <ngb-accordion #acc="ngbAccordion" [closeOthers]="false">
                                 <ngb-panel id="masspecPanel">
                                     <ng-template ngbPanelHeader>

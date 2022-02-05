@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph._
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.listener.WorkflowListener
 import org.springframework.batch.item.ItemProcessor
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.reflect.ClassTag
 
 /**

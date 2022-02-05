@@ -1,15 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.util
 
 import com.typesafe.scalalogging.LazyLogging
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.data.domain.{Page, PageImpl, Pageable}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 3/18/16.
   */
-class DynamicIterableTest extends WordSpec with LazyLogging {
+class DynamicIterableTest extends AnyWordSpec with LazyLogging {
 
   "a dynamic iterable when given a list " when {
     val data = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)

@@ -12,7 +12,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.{Authentication, GrantedAuthority}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * provides us with a token based authorization service

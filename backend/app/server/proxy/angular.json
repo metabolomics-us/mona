@@ -39,7 +39,8 @@
               "src/main/mona-web/src/styles/autocomplete.scss",
               "src/main/mona-web/lib/ChemDoodleWeb/ChemDoodleWeb.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/angular2-toaster/toaster.scss"
+              "node_modules/angular2-toaster/toaster.scss",
+              "node_modules/cookieconsent/build/cookieconsent.min.css"
             ],
             "scripts": [
               "node_modules/jquery/jquery.js",
@@ -48,7 +49,8 @@
               "node_modules/flot/jquery.flot.selection.js",
               "src/main/mona-web/lib/ChemDoodleWeb/ChemDoodleWeb.js",
               "node_modules/popper.js/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/cookieconsent/build/cookieconsent.min.js"
             ]
           },
           "configurations": {

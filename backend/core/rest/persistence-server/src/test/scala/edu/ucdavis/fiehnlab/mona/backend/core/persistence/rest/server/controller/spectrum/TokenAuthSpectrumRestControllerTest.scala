@@ -295,7 +295,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we need to be authenticated for PUT requests" in {
-        given().contentType("application/json; charset=UTF-8").when().body(Spectrum).put(s"/spectra/TADA_NEW_ID").`then`().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().put(s"/spectra/TADA_NEW_ID").`then`().statusCode(401)
       }
 
       "we should be able to update a spectrum at a given path using PUT at /rest/spectra " in {

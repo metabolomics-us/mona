@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{Pr
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.Downloader
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[Downloader]))
-class QueryExportListenerTest extends WordSpec with LazyLogging {
+class QueryExportListenerTest extends AnyWordSpec with LazyLogging {
 
   @Autowired
   val mongoRepository: ISpectrumMongoRepositoryCustom = null

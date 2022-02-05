@@ -4,6 +4,7 @@
  */
 import {Component, Input, OnInit} from '@angular/core';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
+import {FeedbackCacheService} from "../../services/feedback/feedback-cache.service";
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -13,18 +14,22 @@ import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 
 export class SpectraPanelComponent implements OnInit{
     @Input() spectrum;
+    currentFeedback;
     IMPORTANT_METADATA;
     importantMetadata;
     secondaryMetadata;
     faExternalLinkAlt = faExternalLinkAlt;
 
-    constructor( public spectrumCache: SpectrumCacheService) {}
+    constructor( public spectrumCache: SpectrumCacheService, public feedbackCache: FeedbackCacheService) {
+      this.currentFeedback = [];
+    }
 
     ngOnInit() {
         // Top 10 important metadata fields
         this.IMPORTANT_METADATA = [
             'ms level', 'precursor type', 'precursor m/z', 'instrument', 'instrument type',
-            'ionization', 'ionization mode', 'collision energy', 'retention time', 'retention index'
+            'ionization', 'ionization mode', 'collision energy', 'retention time', 'retention index',
+            'spectral entropy', 'normalized entropy'
         ];
 
         this.importantMetadata = [];
@@ -56,7 +61,11 @@ export class SpectraPanelComponent implements OnInit{
             }
         });
 
-        this.spectrum.metaData = this.importantMetadata.concat(this.secondaryMetadata).slice(0, 10);
+        this.spectrum.metaData = this.importantMetadata.concat(this.secondaryMetadata).slice(0, 12);
+
+        this.feedbackCache.resolveFeedback(this.spectrum.id).subscribe((res) => {
+          this.currentFeedback = res;
+        });
     }
 
   truncateDecimal(s, length) {

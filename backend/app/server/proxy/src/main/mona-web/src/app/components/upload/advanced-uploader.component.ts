@@ -19,7 +19,7 @@ import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {faSpinner, faExclamationTriangle, faMinusSquare, faPlusSquare,
         faSave, faCloudUploadAlt, faUser, faArrowLeft, faArrowRight,
-        faSignInAlt, faFolderOpen} from '@fortawesome/free-solid-svg-icons';
+        faSignInAlt, faFolderOpen, faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import {first} from 'rxjs/operators';
 import {ToasterConfig, ToasterService} from 'angular2-toaster';
 
@@ -90,6 +90,7 @@ export class AdvancedUploaderComponent implements OnInit{
   faArrowRight = faArrowRight;
   faSignInAlt = faSignInAlt;
   faFolderOpen = faFolderOpen;
+  faQuestionCircle = faQuestionCircle;
 
 	constructor( public authenticationService: AuthenticationService,  public location: Location,
 				          public uploadLibraryService: UploadLibraryService,  public ctsService: CtsService,
@@ -289,6 +290,10 @@ export class AdvancedUploaderComponent implements OnInit{
 	    this.files = undefined;
 	    this.fileUpload = null;
     }
+  }
+
+  getFileOriginName(s): string {
+	  return s.hiddenMetadata.find((e) => e.name === 'origin').value;
   }
 
 	batchProcessSTP(data, origin): Promise<any> {
@@ -740,4 +745,9 @@ export class AdvancedUploaderComponent implements OnInit{
 		// Scroll to top of the page
 		window.scrollTo(0, 0);
 	}
+
+	goToDocumentation() {
+	  this.router.navigate(['/documentation/uploadLibrary']).then();
+  }
+
 }

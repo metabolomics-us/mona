@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorSystem, Props}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventScheduler, PersistenceEventListener}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Akka based event scheduler to send events using an actor and so allows for higher throughput

@@ -9,3 +9,4 @@ node_modules
 backend/load_test/*.hprof
 ./data
 git.properties
+target/

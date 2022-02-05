@@ -4,6 +4,7 @@ import java.util.Date
 
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
@@ -26,7 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[JWTAuthenticationConfig], classOf[TestConfig], classOf[AuthSecurityConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
-class LoginControllerTest extends AbstractSpringControllerTest {
+class LoginControllerTest extends AbstractSpringControllerTest with LazyLogging {
 
   @LocalServerPort
   private val port = 0

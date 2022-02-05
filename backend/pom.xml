@@ -6,14 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona</groupId>
     <artifactId>backend</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <name>backend</name>
 
     <parent>
-        <groupId>edu.ucdavis.fiehnlab</groupId>
-        <artifactId>fiehnlab-pom</artifactId>
-        <version>1.4.5-SNAPSHOT</version>
-        <relativePath/>
+        <groupId>edu.ucdavis.fiehnlab.mona</groupId>
+        <artifactId>mona</artifactId>
+        <version>1.6-SNAPSHOT</version>
     </parent>
 
     <packaging>pom</packaging>

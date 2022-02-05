@@ -5,12 +5,12 @@ import java.io.StringWriter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.core.{JsonFactory, JsonParser}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.MetaData
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 /**
   * Created by wohlg_000 on 3/10/2016.
   */
-class ElasticMetaDataDeserializerTest extends FunSuite {
+class ElasticMetaDataDeserializerTest extends AnyFunSuite {
 
   def getJson(metaData: MetaData): String = {
     val serializer = new ElasticMetaDataSerializer

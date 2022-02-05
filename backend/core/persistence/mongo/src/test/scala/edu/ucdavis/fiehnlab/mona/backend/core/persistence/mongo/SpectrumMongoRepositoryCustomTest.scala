@@ -12,7 +12,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlg_000 on 3/9/2016.

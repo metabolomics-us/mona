@@ -25,7 +25,7 @@ class SimilaritySearchService extends LazyLogging {
     * @return
     */
   def search(request: SimilaritySearchRequest, size: Int): Array[SearchResult] = {
-    val spectrum: SimpleSpectrum = new SimpleSpectrum(null, request.spectrum)
+    val spectrum: SimpleSpectrum = new SimpleSpectrum(null, request.spectrum, request.precursorMZ)
 
     val minSimilarity: Double =
       if (request.minSimilarity > 0.0 && request.minSimilarity <= 1.0) {
@@ -39,13 +39,13 @@ class SimilaritySearchService extends LazyLogging {
     logger.info(s"Starting similarity search with minimum similarity $minSimilarity")
 
     // Perform similarity search, order by score and return a maximum of 50 or a default 25 hits
-    val results: Array[ComputationalResult] = indexUtils.search(spectrum, AlgorithmTypes.DEFAULT, minSimilarity).toArray
+    val results: Array[ComputationalResult] = indexUtils.search(spectrum, AlgorithmTypes.DEFAULT, minSimilarity, request.removePrecursorIon).toArray
 
 
     logger.info(s"Search discovered ${results.length} hits")
 
     // Filter by precursor m/z if available
-    (if (request.precursorMZ > 0.0) filterSimilaritySearchResults(request, results) else results)
+    (if (request.precursorMZ > 0.0 && request.removePrecursorIon != true) filterSimilaritySearchResults(request, results) else results)
 
       // Filter by tags
       .filter(x => request.requiredTags == null || request.requiredTags.forall(t => x.hit.tags.contains(t)))
