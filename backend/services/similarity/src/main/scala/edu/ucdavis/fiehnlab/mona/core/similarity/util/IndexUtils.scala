@@ -100,7 +100,7 @@ class IndexUtils extends LazyLogging {
     * @param threshold
     * @return
     */
-  def search(spectrum: SimpleSpectrum, indexName: String, indexType: IndexType, algorithm: AlgorithmType, threshold: Double): Iterable[ComputationalResult] = {
+  def search(spectrum: SimpleSpectrum, indexName: String, indexType: IndexType, algorithm: AlgorithmType, threshold: Double, removePrecursorIon: Boolean): Iterable[ComputationalResult] = {
 
     // Instantiate the specified similarity algorithm
     val similarityAlgorithm: Similarity = algorithm match {
@@ -126,7 +126,7 @@ class IndexUtils extends LazyLogging {
     logger.info(s"Index $indexType $indexName, algorithm $algorithm")
 
     // Get the specified index and perform a search
-    indexRegistry.getIndex(indexType, indexName).search(spectrum, similarityAlgorithm, threshold)
+    indexRegistry.getIndex(indexType, indexName).search(spectrum, similarityAlgorithm, threshold, removePrecursorIon)
   }
 
   /**
@@ -135,6 +135,6 @@ class IndexUtils extends LazyLogging {
     * @param spectrum
     * @return
     */
-  def search(spectrum: SimpleSpectrum, algorithm: AlgorithmType, threshold: Double): Iterable[ComputationalResult] =
-    search(spectrum, null, null, algorithm, threshold)
+  def search(spectrum: SimpleSpectrum, algorithm: AlgorithmType, threshold: Double, removePrecursorIon: Boolean): Iterable[ComputationalResult] =
+    search(spectrum, null, null, algorithm, threshold, removePrecursorIon)
 }

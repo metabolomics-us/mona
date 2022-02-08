@@ -3,6 +3,7 @@ import {faUserCircle, faFlask} from "@fortawesome/free-solid-svg-icons";
 import {Feedback} from "../../services/persistence/feedback.resource";
 import {FeedbackCacheService} from "../../services/feedback/feedback-cache.service";
 import {first} from "rxjs/operators";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'spectrum-feedback-results-curation',
@@ -21,7 +22,7 @@ export class SpectrumFeedbackResultsCuration implements OnInit, OnChanges {
   normalized_entropy;
   spectral_entropy;
 
-  constructor(public feedback: Feedback, public feedbackCache: FeedbackCacheService) {
+  constructor(public feedback: Feedback, public feedbackCache: FeedbackCacheService, public router: Router) {
     this.currentFeedback = [];
     this.normalized_entropy = 0.0;
     this.spectral_entropy = 0.0;

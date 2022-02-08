@@ -46,6 +46,8 @@ class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Doub
 
   def this(id: String, spectrumString: String) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, Array(), true)
 
+  def this(id: String, spectrumString: String, precursorMZ: Double) = this(id, SpectrumUtils.stringToIons(spectrumString), precursorMZ, Array(), true)
+
   def this(spectrum: StoredSpectrum) = this(spectrum.id, spectrum.spectrum)
 
 
