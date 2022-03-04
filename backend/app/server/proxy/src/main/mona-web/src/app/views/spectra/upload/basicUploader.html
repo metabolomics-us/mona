@@ -520,23 +520,17 @@
                 <div id="metadata_editor" style="margin-top: 10px;">
                     <div *ngFor="let meta of currentSpectrum.meta; index as i">
                       <div class="row">
-                        <div class="col-sm-5 form-group" [ngClass]="{'has-error': !meta.name && meta.name != ''}">
+                        <div class="col-sm-5 form-group" [ngClass]="{'has-error': !meta.name && meta.name !== ''}">
                           <input type="text"
                                  [(ngModel)]="meta.name"
                                  placeholder="Metadata Name"
-                                 [ngbTypeahead]="metadataNames"
-                                 [showHint]="true"
-                                 [minlength]="3"
                                  class="form-control" />
                         </div>
                         <div class="col-sm-5 form-group">
                           <input type="text"
                                  [(ngModel)]="meta.value"
-                                 [disabled]="!meta.name || meta.name == ''"
+                                 [disabled]="!meta.name || meta.name === ''"
                                  placeholder="Metadata Value"
-                                 [ngbTypeahead]="queryMetadataValues(meta.name)"
-                                 [showHint]="true"
-                                 [minLength]="3"
                                  class="form-control" />
                         </div>
                         <div class="col-sm-5 form-group">

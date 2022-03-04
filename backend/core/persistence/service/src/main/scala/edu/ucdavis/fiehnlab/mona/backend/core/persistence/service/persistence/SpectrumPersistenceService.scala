@@ -212,6 +212,8 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     */
   def findAll(query: String, textQuery: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, textQuery, pageable)
 
+  def findAllWithoutPaging(query: String, textQuery: String): java.util.List[Spectrum] = spectrumElasticRepository.query(query, textQuery)
+
   /**
     * returns the count of all spectra
     *
@@ -228,6 +230,16 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   @Cacheable(value = Array("spectra"))
   def count(query: String, textQuery: String): Long = {
     spectrumElasticRepository.queryCount(query, textQuery)
+  }
+
+  @CacheEvict(value = Array("spectra"), allEntries = true)
+  def deleteSpectrumsByIdIn(ids: lang.Iterable[String]): Unit = {
+    spectrumMongoRepository.findAll(ids).asScala.foreach(delete)
+  }
+
+  @CacheEvict(value = Array("spectra"), allEntries = true)
+  def deleteSpectrumsByQuery(rsqlQuery: String, textQuery: String): Unit = {
+    findAllWithoutPaging(rsqlQuery, textQuery).asScala.foreach(delete)
   }
 
   /**

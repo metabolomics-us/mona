@@ -19,7 +19,7 @@ import {LoggerModule} from 'ngx-logger';
 import {FormsModule} from '@angular/forms';
 import {NvD3Module} from 'ng2-nvd3';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {NgcCookieConsentModule, NgcCookieConsentConfig} from "ngx-cookieconsent";
+import {NgcCookieConsentModule, NgcCookieConsentConfig} from 'ngx-cookieconsent';
 
 import {CtsService, CtsConstants, ChemifyService} from 'angular-cts-service/dist/cts-lib';
 import {NgMassSpecPlotterModule} from '@wcmc/ng-mass-spec-plotter';
@@ -43,8 +43,10 @@ import {UploadLibraryService} from './app/services/upload/upload-library.service
 import {AuthenticationService} from './app/services/authentication.service';
 import {CompoundConversionService} from './app/services/compound-conversion.service';
 import {RegistrationService} from './app/services/registration.service';
-import {Feedback} from "./app/services/persistence/feedback.resource";
-import {FeedbackCacheService} from "./app/services/feedback/feedback-cache.service"
+import {Feedback} from './app/services/persistence/feedback.resource';
+import {FeedbackCacheService} from './app/services/feedback/feedback-cache.service';
+import {AdminService} from './app/services/persistence/admin.resource';
+import {MassDeletionService} from './app/services/persistence/mass-deletion.service';
 
 import {SpectrumReviewComponent} from './app/components/feedback/spectrum-review.component';
 import {ErrorHandleComponent} from './app/components/compound/error-handle.component';
@@ -94,12 +96,14 @@ import {DocumentationQueryComponent} from './app/components/documentation/docume
 import {DocumentationLicenseComponent} from './app/components/documentation/documentation-license.component';
 import {SpectraBrowserComponent} from './app/components/browser/spectra-browser.component';
 import {SpectraDatabaseIndexComponent} from './app/components/browser/spectra-database-index.component';
-import {SpectrumFeedbackResultsCuration} from "./app/components/feedback/spectrum-feedback-results-curation";
-import {SpectrumFeedbackResultsCommunity} from "./app/components/feedback/spectrum-feedback-results-community";
-import {DocumentationUploadLibraryComponent} from "./app/components/documentation/documentation-upload-library.component";
-import {DocumentationEntropyComponent} from "./app/components/documentation/documentation-entropy.component";
+import {SpectrumFeedbackResultsCurationComponent} from './app/components/feedback/spectrum-feedback-results-curation';
+import {SpectrumFeedbackResultsCommunityComponent} from './app/components/feedback/spectrum-feedback-results-community';
+import {DocumentationUploadLibraryComponent} from './app/components/documentation/documentation-upload-library.component';
+import {DocumentationEntropyComponent} from './app/components/documentation/documentation-entropy.component';
+import {ManageSpectraComponent} from './app/components/admin/manage-spectra.component';
+import {MassDeleteModalComponent} from './app/components/browser/mass-delete-modal.component';
 
-import {PrefixValidator} from "./app/directives/PrefixValidatorDirective";
+import {PrefixValidator} from './app/directives/PrefixValidatorDirective';
 
 import {FilterPipe} from './app/filters/filter.pipe';
 import {CurlPipe} from './app/filters/curl.pipe';
@@ -114,7 +118,7 @@ import {AdvancedUploadModalComponent} from './app/components/upload/advanced-upl
 
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
-    domain: window.location.hostname // or 'your.domain.com' // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
+    domain: window.location.hostname
   },
   position: 'bottom',
   palette: {
@@ -188,7 +192,9 @@ const cookieConfig: NgcCookieConsentConfig = {
         SlicePipe,
         SpectrumResolver,
         Feedback,
-        FeedbackCacheService
+        FeedbackCacheService,
+        AdminService,
+        MassDeletionService
     ],
 
     declarations: [
@@ -246,11 +252,13 @@ const cookieConfig: NgcCookieConsentConfig = {
         SpectraDatabaseIndexComponent,
         AppRootComponent,
         AdvancedUploadModalComponent,
-        SpectrumFeedbackResultsCuration,
-        SpectrumFeedbackResultsCommunity,
+        SpectrumFeedbackResultsCurationComponent,
+        SpectrumFeedbackResultsCommunityComponent,
         DocumentationUploadLibraryComponent,
         DocumentationEntropyComponent,
-        PrefixValidator
+        PrefixValidator,
+        ManageSpectraComponent,
+        MassDeleteModalComponent
     ],
     bootstrap: [
         AppRootComponent

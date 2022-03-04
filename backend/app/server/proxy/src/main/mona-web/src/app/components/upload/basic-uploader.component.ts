@@ -541,35 +541,43 @@ export class BasicUploaderComponent implements OnInit{
 
     finalizeAndValidateSpectra() {
         // Add additional components to spectrum object
-        if (typeof this.metadata.chromatography !== 'undefined' && this.metadata.chromatography !== '') {
+        if (typeof this.metadata.chromatography !== 'undefined' && this.metadata.chromatography !== ''
+          && this.metadata.chromatography !== null) {
             this.currentSpectrum.meta.push({name: 'sample introduction', value: this.metadata.chromatography});
         }
 
-        if (typeof this.metadata.derivatization !== 'undefined' && this.metadata.derivatization !== '') {
+        if (typeof this.metadata.derivatization !== 'undefined' && this.metadata.derivatization !== ''
+          && this.metadata.chromatography !== null) {
             this.currentSpectrum.meta.push({name: 'derivatization', value: this.metadata.derivatization});
         }
 
-        if (typeof this.metadata.mslevel !== 'undefined' && this.metadata.mslevel !== '') {
+        if (typeof this.metadata.mslevel !== 'undefined' && this.metadata.mslevel !== '' && this.metadata.chromatography !== null
+          && this.metadata.chromatography !== null) {
             this.currentSpectrum.meta.push({name: 'ms level', value: this.metadata.mslevel});
         }
 
-        if (typeof this.metadata.precursormz !== 'undefined' && this.metadata.precursormz !== '') {
+        if (typeof this.metadata.precursormz !== 'undefined' && this.metadata.precursormz !== ''
+          && this.metadata.chromatography !== null) {
             this.currentSpectrum.meta.push({name: 'precursor m/z', value: this.metadata.precursormz});
         }
 
-        if (typeof this.metadata.precursortype !== 'undefined' && this.metadata.precursortype !== '') {
+        if (typeof this.metadata.precursortype !== 'undefined' && this.metadata.precursortype !== ''
+          && this.metadata.chromatography !== null) {
             this.currentSpectrum.meta.push({name: 'precursor type', value: this.metadata.precursortype});
         }
 
-        if (typeof this.metadata.ionization !== 'undefined' && this.metadata.ionization !== '') {
+        if (typeof this.metadata.ionization !== 'undefined' && this.metadata.ionization !== ''
+          && this.metadata.chromatography !== null) {
             this.currentSpectrum.meta.push({name: 'ionization', value: this.metadata.ionization});
         }
 
-        if (typeof this.metadata.ionmode !== 'undefined' && this.metadata.ionmode !== '') {
+        if (typeof this.metadata.ionmode !== 'undefined' && this.metadata.ionmode !== ''
+          && this.metadata.chromatography !== null) {
             this.currentSpectrum.meta.push({name: 'ionization mode', value: this.metadata.ionmode});
         }
 
-        if (typeof this.metadata.authors !== 'undefined' && this.metadata.authors !== '') {
+        if (typeof this.metadata.authors !== 'undefined' && this.metadata.authors !== ''
+          && this.metadata.chromatography !== null) {
             this.currentSpectrum.meta.push({name: 'authors', value: this.metadata.authors});
         }
 

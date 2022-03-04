@@ -131,7 +131,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div *ngIf="compound.tags.length">
+            <div *ngIf="compound.tags">
                 <ul class="list-inline">
                     <li *ngFor="let tag of compound.tags">
                       <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="compound"></tag-query>

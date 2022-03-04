@@ -123,7 +123,7 @@ export class AdvancedUploaderComponent implements OnInit{
       this.setSpectrum(this.spectraIndex);
 		});
 
-		this.tagService.query().subscribe(
+		this.tagService.allTags().subscribe(
 			(data) => {
 			  if (data.length > 0) {
 			    this.tags = data.map(x => x.text);
