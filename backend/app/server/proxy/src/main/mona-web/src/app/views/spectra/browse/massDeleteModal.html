@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <h4 class="modal-title"> Are you sure you want to delete the following?</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss(false)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <li *ngFor="let x of massDelete.showCurrentSelected()">{{x}}</li>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger mr-1" (click)="activeModal.close(true)">Confirm</button>
+  <button type="button" class="btn btn-dark" (click)="activeModal.close(false)">Not yet...</button>
+</div>

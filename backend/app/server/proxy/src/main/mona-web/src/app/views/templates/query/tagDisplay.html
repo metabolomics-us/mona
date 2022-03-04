@@ -2,19 +2,17 @@
     <ul class="list-inline" style="text-align: center;">
         <li class="" *ngFor="let tag of tags">
 
-            <div class="btn-group" ngbDropdown>
-
+            <div class="btn-group" ngbDropdown placement="right">
                 <button type="button" class="btn dropdown-toggle" ngbDropdownToggle [ngClass]="tagClass(tag)">
                     {{tag.text}}
-                    <fa-icon [icon]="faFlask" [hidden]="tag.ruleBased"></fa-icon>
-
-                    <span class="caret left30"></span>
+                    <fa-icon [icon]="faFlask" *ngIf="tag.ruleBased"></fa-icon>
+                    <fa-icon [icon]="faTag"></fa-icon>
                 </button>
-                <ul class="uib-dropdown-menu" ngbDropdownMenu>
-                    <li><a (click)="tag.selected = '+'">+ Has Tag</a></li>
-                    <li><a (click)="tag.selected ='-'">- Does Not Have Tag</a></li>
-                    <li *ngIf="tag.selected"><a (click)="tag.selected = false">Remove from Query</a></li>
-                </ul>
+                <div class="uib-dropdown-menu" ngbDropdownMenu>
+                    <button ngbDropdownItem type="button" (click)="tag.selected = '+'"><fa-icon [icon]="faPlusSquare"></fa-icon> Has Tag</button>
+                    <button ngbDropdownItem type="button" (click)="tag.selected ='-'"><fa-icon [icon]="faMinusSquare"></fa-icon> Does Not Have Tag</button>
+                    <button ngbDropdownItem type="button" *ngIf="tag.selected" (click)="tag.selected = false"><fa-icon [icon]="faTrash"></fa-icon> Remove from Query</button>
+                </div>
             </div>
         </li>
     </ul>

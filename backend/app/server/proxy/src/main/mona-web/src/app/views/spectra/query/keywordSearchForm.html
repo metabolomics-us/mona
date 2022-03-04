@@ -153,14 +153,13 @@
         </div>
     </div>
 
-    <div class="row" *ngIf="queryTags.length">
-        <div class="col-md-12">
-            <ngb-accordion>
-                <ngb-panel is-open="false">
-                    <ng-template ngbPanelHeader>
-                        <div>Add Additional Tags to Query</div>
+    <div class="row mb-2" *ngIf="queryTags.length > 0">
+        <div class="col-md-12 h-auto">
+            <ngb-accordion #acc activeIds="additionalTags">
+                <ngb-panel id="additionalTags" title="Add Additional Tags to Query">
+                    <ng-template ngbPanelContent>
+                        <tag-display [tags]="queryTags"></tag-display>
                     </ng-template>
-                  <tag-display [tags]="queryTags"></tag-display>
                 </ngb-panel>
             </ngb-accordion>
         </div>

@@ -16,4 +16,8 @@ export class TagService {
     query(): Observable<any> {
         return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/tags/library`);
     }
+
+    allTags(): Observable<any> {
+      return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/tags`);
+    }
 }

@@ -62,7 +62,7 @@ class CurationController extends LazyLogging {
   @Async
   def curateByQuery(@RequestParam(required = false, name = "query") query: String): Future[ResponseEntity[CurationJobScheduled]] = {
 
-    val it = new DynamicIterable[Spectrum, String](query, 10) {
+    val it = new DynamicIterable[Spectrum, String](query, 100) {
       /**
         * Loads more data from the server for the given query
         */

@@ -1,17 +1,19 @@
 /**
  * Updated by nolanguzman on 10/31/2021
  */
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {TagService} from '../../services/persistence/tag.resource';
 import {NGXLogger} from 'ngx-logger';
 import {faSpinner, faSearch} from '@fortawesome/free-solid-svg-icons';
+import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'keyword-search-form',
     templateUrl: '../../views/spectra/query/keywordSearchForm.html'
 })
-export class KeywordSearchFormComponent implements OnInit{
+export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
+    @ViewChild('acc') accordion: NgbAccordion;
     query;
     sourceIntroduction;
     ionizationMethod;
@@ -54,7 +56,7 @@ export class KeywordSearchFormComponent implements OnInit{
         this.msType = [{name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
         this.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
 
-        this.tagService.query().subscribe(
+        this.tagService.allTags().subscribe(
              (tags: any) => {
                  if (tags.length > 0) {
                    this.queryTags = tags.filter((x) => {
@@ -72,7 +74,13 @@ export class KeywordSearchFormComponent implements OnInit{
         );
     }
 
-    submitQuery() {
+    ngAfterViewInit() {
+      setTimeout(() => {
+        this.accordion.expand('additionalTags');
+      }, 1000);
+    }
+
+  submitQuery() {
         this.spectraQueryBuilderService.prepareQuery();
 
         // Query Name/InChIKey search

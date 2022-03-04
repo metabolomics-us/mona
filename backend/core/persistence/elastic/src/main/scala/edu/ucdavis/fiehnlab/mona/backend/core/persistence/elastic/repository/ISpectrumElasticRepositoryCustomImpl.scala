@@ -31,14 +31,14 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     */
   override def nativeQuery(query: QueryBuilder): util.List[Spectrum] = {
     val search = getSearch(query)
-    search.setPageable(new PageRequest(0, 25))
+    search.setPageable(new PageRequest(0, 50))
 
-    val scrollId: String = elasticsearchTemplate.scan(search, 60000, false)
+    val scrollId: String = elasticsearchTemplate.scan(search, 100000, false)
     val result: ArrayBuffer[Spectrum] = ArrayBuffer[Spectrum]()
     var hasRecords = true
 
     while(hasRecords) {
-      val page: Page[Spectrum] = elasticsearchTemplate.scroll(scrollId, 60000, classOf[Spectrum])
+      val page: Page[Spectrum] = elasticsearchTemplate.scroll(scrollId, 100000, classOf[Spectrum])
 
       if (page.hasContent) {
         result ++= page.asScala

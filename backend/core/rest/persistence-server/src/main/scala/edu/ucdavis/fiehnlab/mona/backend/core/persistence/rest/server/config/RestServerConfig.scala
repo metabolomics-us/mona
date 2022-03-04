@@ -58,7 +58,7 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.POST, "/rest/news/**").hasAuthority("ADMIN")
 
       //deletes need authentication
-      .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.DELETE).authenticated()
 
       //update statistics need authentication
       .antMatchers(HttpMethod.POST, "/rest/statistics/update").hasAuthority("ADMIN")
