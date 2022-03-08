@@ -44,6 +44,7 @@ export class BasicUploaderComponent implements OnInit{
     filenames;
     pastedSpectrum;
     fileUpload;
+    metaDataErrors;
 
     faCloudUpload = faCloudUploadAlt;
     faSpinner = faSpinner;
@@ -67,6 +68,7 @@ export class BasicUploaderComponent implements OnInit{
         this.page = 0;
         this.fileHasMultipleSpectra = false;
         this.showIonTable = true;
+        this.metaDataErrors = [];
 
         /**
          * Sort order for the ion table - default m/z ascending
@@ -645,5 +647,19 @@ export class BasicUploaderComponent implements OnInit{
         return new Promise((resolve) => {
            resolve(this.filterPipe.transform(this.tags, query));
         });
+    }
+
+    validateMetadata() {
+      const emptyPieces = this.currentSpectrum.meta.filter((x) => {
+        return x.name.replace(/\s+/g, '') === '' || x.value.replace(/\s+/g, '') === '';
+      });
+
+      if (emptyPieces.length > 0) {
+        this.metaDataErrors = [];
+        this.metaDataErrors.push('One or more metadata entries are missing data, please provide entries in both fields of remove entry with minus button');
+      } else {
+        this.metaDataErrors = [];
+        this.nextPage();
+      }
     }
 }
