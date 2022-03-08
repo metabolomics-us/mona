@@ -4,9 +4,8 @@
     </div>
 </div>
 
-<div *ngIf="auth.isLoggedIn()">
+<div *ngIf="auth.isLoggedIn() && auth.isAdmin()">
     <div #error></div>
-
     <form role="form">
         <div class="input-group" *ngFor="let sub of submitters; index as i"> <!-- filter:submitter.query -->
             <span class="form-check-label"> <label [for]="'query_'+i">Filter</label></span>

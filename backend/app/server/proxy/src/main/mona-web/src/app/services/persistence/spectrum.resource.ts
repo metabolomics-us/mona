@@ -96,4 +96,28 @@ export class Spectrum {
 	associateSpectraByQuery(data: any): Observable<any> {
 		return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra/associate/allByQuery`, data);
 	}
+
+  batchDelete(data: any, token: any): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      params: this.cleanParameters(data),
+      responseType: 'text' as 'json'
+    };
+    return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/spectra/search`, config);
+  }
+
+  batchDeleteByIds(data: any, token: any): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      body: data,
+      responseType: 'text' as 'json'
+    };
+    return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/spectra`, config);
+  }
 }

@@ -517,26 +517,24 @@
                 </div>
                 <br />
 
+                <div *ngIf="metaDataErrors.length > 0">
+                  <h3 class="text-danger">{{metaDataErrors[0]}}</h3>
+                </div>
+
                 <div id="metadata_editor" style="margin-top: 10px;">
                     <div *ngFor="let meta of currentSpectrum.meta; index as i">
                       <div class="row">
-                        <div class="col-sm-5 form-group" [ngClass]="{'has-error': !meta.name && meta.name != ''}">
-                          <input type="text"
+                        <div class="col-sm-5 form-group" [ngClass]="{'has-error': !meta.name && meta.name !== ''}">
+                          <input required type="text"
                                  [(ngModel)]="meta.name"
                                  placeholder="Metadata Name"
-                                 [ngbTypeahead]="metadataNames"
-                                 [showHint]="true"
-                                 [minlength]="3"
                                  class="form-control" />
                         </div>
                         <div class="col-sm-5 form-group">
-                          <input type="text"
+                          <input required type="text"
                                  [(ngModel)]="meta.value"
-                                 [disabled]="!meta.name || meta.name == ''"
+                                 [disabled]="!meta.name || meta.name === ''"
                                  placeholder="Metadata Value"
-                                 [ngbTypeahead]="queryMetadataValues(meta.name)"
-                                 [showHint]="true"
-                                 [minLength]="3"
                                  class="form-control" />
                         </div>
                         <div class="col-sm-5 form-group">
@@ -561,7 +559,7 @@
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef" (click)="validateMetadata()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>

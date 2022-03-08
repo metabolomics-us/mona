@@ -1,6 +1,6 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
-import {faAngleDown, faAngleRight} from "@fortawesome/free-solid-svg-icons";
-import {Feedback} from "../../services/persistence/feedback.resource";
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {faAngleDown, faAngleRight} from '@fortawesome/free-solid-svg-icons';
+import {Feedback} from '../../services/persistence/feedback.resource';
 import * as d3 from 'd3';
 import 'nvd3';
 
@@ -9,7 +9,7 @@ import 'nvd3';
   templateUrl: '../../views/templates/feedback/spectrumFeedbackResultsCommunity.html'
 })
 
-export class SpectrumFeedbackResultsCommunity implements OnInit, OnChanges {
+export class SpectrumFeedbackResultsCommunityComponent implements OnInit, OnChanges {
   @Input() spectrumID;
   @Input() currentFeedback;
   feedbackResults;
@@ -52,10 +52,10 @@ export class SpectrumFeedbackResultsCommunity implements OnInit, OnChanges {
           showMaxMin: false
 
         },
-        yDomain: [0,1],
+        yDomain: [0, 1],
         showLabels: true
       }
-    }
+    };
     this.createChart();
   }
   ngOnChanges(changes: SimpleChanges) {
@@ -65,28 +65,28 @@ export class SpectrumFeedbackResultsCommunity implements OnInit, OnChanges {
   createChart() {
     this.feedbackResults = [];
     if (this.currentFeedback.length !== 0) {
-      let noisy_count = 0;
-      let clean_count = 0;
-      let total_count = 0;
+      let noisyCount = 0;
+      let cleanCount = 0;
+      let totalCount = 0;
       this.currentFeedback.forEach((x: any) => {
-        total_count++;
+        totalCount++;
         if (x.value === 'noisy') {
-          noisy_count++;
+          noisyCount++;
         } else if (x.value === 'clean') {
-          clean_count++;
+          cleanCount++;
         }
       });
-      this.totalReviews = total_count;
+      this.totalReviews = totalCount;
       this.feedbackResults = [{
         key: 'Community Spectrum Feedback Ratings',
         values: [
           {
-            "label": "Noisy",
-            "value": (noisy_count/total_count)
+            label: 'Noisy',
+            value: (noisyCount / totalCount)
           },
           {
-            "label": "Clean",
-            "value": (clean_count/total_count)
+            label: 'Clean',
+            value: (cleanCount / totalCount)
           }]
       }];
     }

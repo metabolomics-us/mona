@@ -1,38 +1,38 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
-import {faUserCircle, faFlask} from "@fortawesome/free-solid-svg-icons";
-import {Feedback} from "../../services/persistence/feedback.resource";
-import {FeedbackCacheService} from "../../services/feedback/feedback-cache.service";
-import {first} from "rxjs/operators";
-import {Router} from "@angular/router";
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {faUserCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
+import {Feedback} from '../../services/persistence/feedback.resource';
+import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
+import {first} from 'rxjs/operators';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'spectrum-feedback-results-curation',
   templateUrl: '../../views/templates/feedback/spectrumFeedbackResultsCuration.html'
 })
 
-export class SpectrumFeedbackResultsCuration implements OnInit, OnChanges {
+export class SpectrumFeedbackResultsCurationComponent implements OnInit, OnChanges {
   @Input() spectrum;
   currentFeedback;
-  curated_feedback;
-  community_feedback;
+  curatedFeedback;
+  communityFeedback;
   faUserCircle = faUserCircle;
   faFlask = faFlask;
-  clean_count;
-  noisy_count;
-  normalized_entropy;
-  spectral_entropy;
+  cleanCount;
+  noisyCount;
+  normalizedEntropy;
+  spectralEntropy;
 
   constructor(public feedback: Feedback, public feedbackCache: FeedbackCacheService, public router: Router) {
     this.currentFeedback = [];
-    this.normalized_entropy = 0.0;
-    this.spectral_entropy = 0.0;
+    this.normalizedEntropy = 0.0;
+    this.spectralEntropy = 0.0;
   }
 
   ngOnInit() {
-    this.curated_feedback = null;
-    this.community_feedback = null;
-    this.clean_count = 0;
-    this.noisy_count = 0;
+    this.curatedFeedback = null;
+    this.communityFeedback = null;
+    this.cleanCount = 0;
+    this.noisyCount = 0;
 
     this.feedbackCache.resolveFeedback(this.spectrum.id).pipe(first()).subscribe((res) => {
       this.currentFeedback = res;
@@ -47,38 +47,50 @@ export class SpectrumFeedbackResultsCuration implements OnInit, OnChanges {
   }
 
   calculateCommunity() {
-    if(this.currentFeedback.length > 0) {
-      for(let x of this.currentFeedback) {
-        if(x.value === 'clean') {
-          this.clean_count++;
+    if (this.currentFeedback.length > 0) {
+      for (const x of this.currentFeedback) {
+        if (x.value === 'clean') {
+          this.cleanCount++;
         } else if (x.value === 'noisy') {
-          this.noisy_count++;
+          this.noisyCount++;
         }
       }
 
-      if (this.clean_count > this.noisy_count) {
-        this.community_feedback = {value: 'clean'};
-      } else if (this.clean_count === this.noisy_count) {
-        this.community_feedback = {value: 'neutral'};
+      if (this.cleanCount > this.noisyCount) {
+        this.communityFeedback = {value: 'clean'};
+      } else if (this.cleanCount === this.noisyCount) {
+        this.communityFeedback = {value: 'neutral'};
       } else {
-        this.community_feedback = {value: 'noisy'};
+        this.communityFeedback = {value: 'noisy'};
       }
     }
   }
 
   calculateCurated() {
-    this.normalized_entropy = this.spectrum.metaData.filter((metadata) => {
+    this.normalizedEntropy = this.spectrum.metaData.filter((metadata) => {
       return metadata.name === 'normalized entropy';
     });
 
-    this.spectral_entropy = this.spectrum.metaData.filter((metadata) => {
+    this.spectralEntropy = this.spectrum.metaData.filter((metadata) => {
       return metadata.name === 'spectral entropy';
     });
 
-    if(this.normalized_entropy[0].value >= 0.8 && this.spectral_entropy[0].value >= 3.0) {
-      this.curated_feedback = {value: 'noisy'};
+    if (this.normalizedEntropy.length > 0 && this.spectralEntropy.length > 0) {
+      if (this.normalizedEntropy[0].value >= 0.8 && this.spectralEntropy[0].value >= 3.0 && !this.isGCMS()) {
+        this.curatedFeedback = {value: 'noisy'};
+      } else {
+        this.curatedFeedback = {value: 'clean'};
+      }
     } else {
-      this.curated_feedback = {value: 'clean'};
+      this.normalizedEntropy = null;
+      this.spectralEntropy = null;
     }
+  }
+
+  isGCMS(): boolean {
+    if (this.spectrum.tags.filter(x => x.text === 'GC-MS').length > 0) {
+      return true;
+    }
+    return false;
   }
 }

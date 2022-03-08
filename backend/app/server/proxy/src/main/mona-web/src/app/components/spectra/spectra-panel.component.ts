@@ -4,8 +4,10 @@
  */
 import {Component, Input, OnInit} from '@angular/core';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
-import {FeedbackCacheService} from "../../services/feedback/feedback-cache.service";
+import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
+import {MassDeletionService} from '../../services/persistence/mass-deletion.service';
+import {AuthenticationService} from '../../services/authentication.service';
 
 @Component({
     selector: 'display-spectra-panel',
@@ -19,8 +21,10 @@ export class SpectraPanelComponent implements OnInit{
     importantMetadata;
     secondaryMetadata;
     faExternalLinkAlt = faExternalLinkAlt;
+    deletionMark;
 
-    constructor( public spectrumCache: SpectrumCacheService, public feedbackCache: FeedbackCacheService) {
+    constructor( public spectrumCache: SpectrumCacheService, public feedbackCache: FeedbackCacheService,
+                 public massDelete: MassDeletionService, public auth: AuthenticationService) {
       this.currentFeedback = [];
     }
 
@@ -34,6 +38,15 @@ export class SpectraPanelComponent implements OnInit{
 
         this.importantMetadata = [];
         this.secondaryMetadata = [];
+
+        this.deletionMark = this.massDelete.getObject(this.spectrum.id);
+        if (typeof this.deletionMark === 'undefined') {
+          this.deletionMark = {
+            id: this.spectrum.id,
+            selected: false
+          };
+          this.massDelete.addForDeletion(this.deletionMark);
+        }
 
         if (typeof this.spectrum.score === 'undefined') {
           this.spectrum.score = {score: 0};
@@ -68,7 +81,7 @@ export class SpectraPanelComponent implements OnInit{
         });
     }
 
-  truncateDecimal(s, length) {
+    truncateDecimal(s, length) {
         return (typeof(s) === 'number') ?  s.toFixed(length) :  s;
     }
 
@@ -80,4 +93,17 @@ export class SpectraPanelComponent implements OnInit{
         return '/spectra/display/' + this.spectrum.id;
     }
 
+    massDeleteToggle(e: any) {
+      this.massDelete.toggleCheckbox(this.spectrum.id);
+      this.deletionMark.selected = !this.deletionMark.selected;
+    }
+
+    sameSubmitter(): boolean {
+      if (this.auth.isLoggedIn()) {
+        if (this.auth.getCurrentUser().emailAddress === this.spectrum.submitter.id) {
+          return true;
+        }
+      }
+      return false;
+    }
 }
