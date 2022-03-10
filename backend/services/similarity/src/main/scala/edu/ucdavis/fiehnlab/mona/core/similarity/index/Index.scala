@@ -84,9 +84,9 @@ abstract class Index(val binningMethod: BinningMethod, val cache: SpectrumCache)
     * @param threshold
     * @return
     */
-  final def search(spectrum: SimpleSpectrum, similarity: Similarity, threshold: Double = 0.5, removePrecursorIon: Boolean): Iterable[ComputationalResult] = {
+  final def search(spectrum: SimpleSpectrum, similarity: Similarity, threshold: Double = 0.5, precursorToleranceDa: Double = 0.10, removePrecursorIon: Boolean): Iterable[ComputationalResult] = {
 
-    Calculate.create.calculate(spectrum, this, threshold, similarity, removePrecursorIon)
+    Calculate.create.calculate(spectrum, this, threshold, similarity, precursorToleranceDa, removePrecursorIon)
   }
 
   /**

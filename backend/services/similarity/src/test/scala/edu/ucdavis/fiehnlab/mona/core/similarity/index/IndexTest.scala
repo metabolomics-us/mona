@@ -23,11 +23,11 @@ abstract class IndexTest extends AnyWordSpec with Matchers {
       .read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
       .map(s => new SimpleSpectrum(s.id, s.spectrum))
 
-    "be populated with 58 spectra" in {
+    "be populated with 59 spectra" in {
       // Populate the database
       records.foreach(index.index)
 
-      index.size shouldEqual 58
+      index.size shouldEqual 59
     }
 
     "have a decent lookup time of the head record" in {
