@@ -18,8 +18,8 @@ class CompositeSimilarity extends Similarity {
    */
   override final def compute(unknown: SimpleSpectrum, reference: SimpleSpectrum, removePrecursorIon: Boolean): Double = {
     if(removePrecursorIon) {
-      val newUnknown: SimpleSpectrum = removePrecursor(unknown)
-      val newReference: SimpleSpectrum = removePrecursor(reference)
+      val newUnknown: SimpleSpectrum = removePrecursor(unknown, unknown.precursorMZ)
+      val newReference: SimpleSpectrum = removePrecursor(reference, unknown.precursorMZ)
       doCompute(newUnknown, newReference)
     } else {
       doCompute(unknown, reference)
@@ -27,8 +27,8 @@ class CompositeSimilarity extends Similarity {
   }
 
   //Removes precursor ion if removePrecursorIon flag is set else returns spectrum as is
-  protected def removePrecursor(spectrum: SimpleSpectrum): SimpleSpectrum = {
-    val precursorRemovedIons: Array[Ion] = spectrum.ions.filter(_.mz < spectrum.precursorMZ - (5 / 1000))
+  protected def removePrecursor(spectrum: SimpleSpectrum, unknownPrecursorMz: Double): SimpleSpectrum = {
+    val precursorRemovedIons: Array[Ion] = spectrum.ions.filter(_.mz < unknownPrecursorMz - (5 / 1000))
 
     new SimpleSpectrum(spectrum.id, precursorRemovedIons, spectrum.precursorMZ, spectrum.tags, spectrum.public)
   }

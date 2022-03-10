@@ -39,14 +39,10 @@ class SimilaritySearchService extends LazyLogging {
     logger.info(s"Starting similarity search with minimum similarity $minSimilarity")
 
     // Perform similarity search, order by score and return a maximum of 50 or a default 25 hits
-    val results: Array[ComputationalResult] = indexUtils.search(spectrum, AlgorithmTypes.DEFAULT, minSimilarity, request.removePrecursorIon).toArray
-
-
+    val results: Array[ComputationalResult] = indexUtils.search(spectrum, AlgorithmTypes.DEFAULT, minSimilarity, request.precursorToleranceDa, request.removePrecursorIon).toArray
     logger.info(s"Search discovered ${results.length} hits")
 
-    // Filter by precursor m/z if available
-    (if (request.precursorMZ > 0.0 && request.removePrecursorIon != true) filterSimilaritySearchResults(request, results) else results)
-
+    results
       // Filter by tags
       .filter(x => request.requiredTags == null || request.requiredTags.forall(t => x.hit.tags.contains(t)))
       .filter(x => request.filterTags == null || request.filterTags.isEmpty || request.filterTags.exists(t => x.hit.tags.contains(t)))
@@ -55,32 +51,6 @@ class SimilaritySearchService extends LazyLogging {
       .sortBy(-_.score)
       .take(size)
       .map(x => SearchResult(spectrumMongoRepository.findOne(x.hit.id), x.score))
-  }
-
-  /**
-    *
-    * @param request
-    * @param results
-    * @return
-    */
-  private def filterSimilaritySearchResults(request: SimilaritySearchRequest, results: Array[ComputationalResult]): Array[ComputationalResult] = {
-
-    // Determine tolerance value based on precursor m/z and ppm value,
-    // get provided tolerance value or use default of 0.5 Da
-    val tolerance: Double =
-    if (request.precursorTolerancePPM > 0.0) {
-      request.precursorMZ / 1.0e6 * request.precursorTolerancePPM
-    } else if (request.precursorToleranceDa > 0.0) {
-      request.precursorToleranceDa
-    } else {
-      0.5
-    }
-
-    logger.info(s"Filtering by precursor m/z ${request.precursorMZ} with tolerance +/-$tolerance Da" +
-      (if (request.precursorTolerancePPM > 0.0) s" (+/- ${request.precursorTolerancePPM} ppm)" else ""))
-
-    results
-      .filter(x => Math.abs(x.hit.precursorMZ - request.precursorMZ) <= tolerance)
   }
 
   /**

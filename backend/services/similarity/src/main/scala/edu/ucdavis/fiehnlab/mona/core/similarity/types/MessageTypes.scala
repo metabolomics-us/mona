@@ -22,7 +22,7 @@ case class SimilaritySearchRequest(
 
 object SimilaritySearchRequest {
   def apply(spectrum: String, minSimilarity: Double): SimilaritySearchRequest =
-    SimilaritySearchRequest(spectrum, minSimilarity, 0.0, 0.0, 0.0, Array(), Array(), false)
+    SimilaritySearchRequest(spectrum, minSimilarity, 0.0, 0.01, 0.0, Array(), Array(), false)
 
   def apply(spectrum: String, minSimilarity: Double, precursorMZ: Double, precursorToleranceDa: Double, precursorTolerancePPM: Double, removePrecursorIon: Boolean): SimilaritySearchRequest =
     SimilaritySearchRequest(spectrum, minSimilarity, precursorMZ, precursorToleranceDa, precursorTolerancePPM, Array(), Array(), removePrecursorIon)
