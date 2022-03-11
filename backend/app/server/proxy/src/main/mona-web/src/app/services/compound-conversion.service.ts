@@ -4,16 +4,17 @@
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {CtsService} from 'angular-cts-service/dist/cts-lib';
-import {CtsConstants} from 'angular-cts-service/dist/cts-lib';
 import {ChemifyService} from 'angular-cts-service/dist/cts-lib';
 import {NGXLogger} from 'ngx-logger';
 import {Injectable} from '@angular/core';
 
 @Injectable()
 export class CompoundConversionService{
-    constructor(public ctsService: CtsService, public ctsConstants: CtsConstants,
-                public chemifyService: ChemifyService, public logger: NGXLogger,
-                public http: HttpClient) {}
+    private apiUrl;
+    constructor(public ctsService: CtsService, public chemifyService: ChemifyService,
+                public logger: NGXLogger, public http: HttpClient) {
+      this.apiUrl = environment.ctsUrl;
+    }
 
     /**
      * Converts the given name to an InChIKey via Chemify
@@ -26,7 +27,7 @@ export class CompoundConversionService{
      * Returns high ranking names for given InChIKey from the CTS
      */
     InChIKeyToName(inchiKey, callback, errorCallback) {
-        this.http.get(`${CtsConstants.apiUrl}/service/convert/InChIKey/Chemical%20Name/${inchiKey}`).subscribe(
+        this.http.get(`${this.apiUrl}/service/convert/InChIKey/Chemical%20Name/${inchiKey}`).subscribe(
             (res: any) => {
                 if (res.length > 0 && res[0].results.length > 0) {
                     callback(res[0].results);
@@ -42,7 +43,7 @@ export class CompoundConversionService{
      * Look up the InChI for given InChIKey from the CTS
      */
     getInChIByInChIKey(inchiKey, callback, errorCallback) {
-        this.http.get(`${CtsConstants.apiUrl}/service/convert/InChIKey/InChI%20Code/${inchiKey}`).subscribe(
+        this.http.get(`${this.apiUrl}/service/convert/InChIKey/InChI%20Code/${inchiKey}`).subscribe(
             (response: any) => {
                 if (response.length > 0 && response[0].result.length > 0) {
                     callback(response[0].result);
