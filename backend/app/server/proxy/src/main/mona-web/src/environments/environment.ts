@@ -11,7 +11,8 @@ export const environment = {
   APP_VERSION: 'v1.1',
   google_analytics: '',
   loggerLevel: NgxLoggerLevel.DEBUG,
-  serverLevel: NgxLoggerLevel.OFF
+  serverLevel: NgxLoggerLevel.OFF,
+  ctsUrl: 'http://cts.fiehnlab.ucdavis.edu'
 };
 
 /*

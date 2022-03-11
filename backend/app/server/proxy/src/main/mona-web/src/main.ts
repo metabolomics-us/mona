@@ -140,7 +140,7 @@ const cookieConfig: NgcCookieConsentConfig = {
         HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
-        CtsLibModule,
+        CtsLibModule.forRoot({apiUrl: environment.ctsUrl}),
         NgMassSpecPlotterModule,
         MassbankParserLibModule,
         MgfParserLibModule,
