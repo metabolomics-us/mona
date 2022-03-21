@@ -21,7 +21,7 @@ import {NvD3Module} from 'ng2-nvd3';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {NgcCookieConsentModule, NgcCookieConsentConfig} from 'ngx-cookieconsent';
 
-import {CtsService, CtsConstants, ChemifyService} from 'angular-cts-service/dist/cts-lib';
+import {CtsService, ChemifyService} from 'angular-cts-service/dist/cts-lib';
 import {NgMassSpecPlotterModule} from '@wcmc/ng-mass-spec-plotter';
 import {MassbankParserLibService, MassbankParserLibModule} from 'angular-massbank-parser/dist/massbank-parser-lib';
 import {MgfParserLibModule, MgfParserLibService} from 'angular-mgf-parser/dist/mgf-parser-lib';
@@ -176,7 +176,6 @@ const cookieConfig: NgcCookieConsentConfig = {
         QueryCacheService,
         AsyncService,
         UploadLibraryService,
-        CtsConstants,
         CtsService,
         ChemifyService,
         AuthenticationService,
@@ -265,7 +264,11 @@ const cookieConfig: NgcCookieConsentConfig = {
     ]
 })
 
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log(environment.ctsUrl);
+  }
+}
 
 if (environment.production) {
   enableProdMode();

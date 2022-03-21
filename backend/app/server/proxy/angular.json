@@ -101,6 +101,9 @@
           "configurations": {
             "production": {
               "browserTarget": "proxy:build:production"
+            },
+            "staging": {
+              "browserTarget": "proxy:build:staging"
             }
           }
         },
