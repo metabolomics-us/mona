@@ -22,7 +22,7 @@
 
     <properties>
         <docker.expose>8080</docker.expose>
-        <environment>${environment}</environment>
+        <ng.env>staging</ng.env>
     </properties>
 
     <dependencies>
@@ -137,7 +137,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run ${environment}</arguments>
+                            <arguments>run ${ng.env}</arguments>
                         </configuration>
                     </execution>
                 </executions>
