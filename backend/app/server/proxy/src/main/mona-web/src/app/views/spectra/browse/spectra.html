@@ -95,6 +95,9 @@
         </div>
 
         <div class="float-right">
+            <button class="btn btn-danger mr-1" *ngIf="authenticationService.isLoggedIn() " type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
+              <fa-icon [icon]="faTrash" size="2x"></fa-icon> <strong>Batch Delete</strong>
+            </button>
             <button class="btn btn-primary" (click)="acc.isExpanded('display-panel')? acc.collapse('display-panel'): acc.expand('display-panel')" placement="left"
                     ngbTooltip="Number of spectra retrieved in this query, click to see additional details">
 
@@ -109,14 +112,16 @@
 
 <div class="row top7">
     <div class="col-md-12">
-        <div ngbDropdown class="d-inline-block">
+        <div ngbDropdown class="d-inline-block float-left">
             <button class="btn btn-primary" ngbDropdownToggle [disabled]="isSimilaritySearch()">
                {{pagination.itemsPerPage}} Records Per Page
             </button>
             <div ngbDropdownMenu>
                 <button (click)="setPageSize(option)" *ngFor="let option of pagination.itemsPerPageOptions" ngbDropdownItem>{{option+' records/page'}}</button>
             </div>
-
+        </div>
+        <div class="float-right" *ngIf="authenticationService.isLoggedIn()">
+          <button class="btn btn-primary" type="button" (click)="queryUserSpectra()">My Submitted Spectra <fa-icon [icon]="faSearch"></fa-icon></button>
         </div>
     </div>
 </div>

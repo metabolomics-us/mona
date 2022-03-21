@@ -13,13 +13,16 @@ import {NGXLogger} from 'ngx-logger';
 import {ToasterConfig, ToasterService} from 'angular2-toaster';
 import {GoogleAnalyticsService} from 'ngx-google-analytics';
 import {AuthenticationService} from '../../services/authentication.service';
-import {FeedbackCacheService} from "../../services/feedback/feedback-cache.service";
+import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
+import {MassDeletionService} from '../../services/persistence/mass-deletion.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
-import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {faBookmark} from '@fortawesome/free-regular-svg-icons';
 import {BehaviorSubject} from 'rxjs';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {MassDeleteModalComponent} from './mass-delete-modal.component';
 
 @Component({
     selector: 'spectra-browser',
@@ -55,12 +58,14 @@ export class SpectraBrowserComponent implements OnInit{
     faServer = faServer;
     faSpinner = faSpinner;
     faBookmark = faBookmark;
+    faTrash = faTrash;
 
     constructor(public spectrum: Spectrum, public spectraQueryBuilderService: SpectraQueryBuilderService,  public location: Location,
                 public spectrumCache: SpectrumCacheService,  public metadata: Metadata,  public cookie: CookieMain,
                 public logger: NGXLogger,  public toaster: ToasterService,  public $gaProvider: GoogleAnalyticsService,
                 public route: ActivatedRoute,  public router: Router, public feedbackCache: FeedbackCacheService,
-                public authenticationService: AuthenticationService, public activatedRoute: ActivatedRoute) {
+                public authenticationService: AuthenticationService, public activatedRoute: ActivatedRoute,
+                public massDeletion: MassDeletionService, public modalService: NgbModal) {
     }
 
     ngOnInit() {
@@ -490,5 +495,35 @@ export class SpectraBrowserComponent implements OnInit{
       this.feedbackCache.resolveFeedback(id).pipe(first()).subscribe((res) => {
         return res;
       });
+    }
+
+    executeBatchDelete() {
+      const modalRef = this.modalService.open(MassDeleteModalComponent, {scrollable: true});
+      modalRef.result.then((x) => {
+        if (x) {
+          this.massDeletion.executeDeletion(this.authenticationService.getCurrentUser().accessToken).subscribe((res) => {
+            this.toaster.pop({
+              type: 'success',
+              title: 'Batch Delete Executed',
+              body: `Batch Delete was successful, refreshing page.`
+            });
+            setTimeout(() => {
+              this.resetQuery();
+            }, 2000);
+          }, (error) => {
+            this.toaster.pop({
+              type: 'error',
+              title: 'Problem Executing Batch Delete',
+              body: `${error.message}`
+            });
+          });
+        }
+      });
+    }
+
+    queryUserSpectra() {
+      this.spectraQueryBuilderService.prepareQuery();
+      this.spectraQueryBuilderService.addUserToQuery(this.authenticationService.getCurrentUser().emailAddress);
+      this.spectraQueryBuilderService.executeQuery();
     }
 }

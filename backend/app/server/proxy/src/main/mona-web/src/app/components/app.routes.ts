@@ -16,8 +16,9 @@ import {SpectraBrowserComponent} from './browser/spectra-browser.component';
 import {SpectraDatabaseIndexComponent} from './browser/spectra-database-index.component';
 import {SpectrumResolver} from '../resolvers/spectrum.resolver';
 import {QueryTreeComponent} from './browser/query-tree.component';
-import {DocumentationUploadLibraryComponent} from "./documentation/documentation-upload-library.component";
-import {DocumentationEntropyComponent} from "./documentation/documentation-entropy.component";
+import {DocumentationUploadLibraryComponent} from './documentation/documentation-upload-library.component';
+import {DocumentationEntropyComponent} from './documentation/documentation-entropy.component';
+import {ManageSpectraComponent} from './admin/manage-spectra.component';
 
 export const routes: Routes = [
     {path: '', component: MainComponent},
@@ -29,6 +30,7 @@ export const routes: Routes = [
     {path: 'spectra/search', component: SearchComponent},
     {path: 'profile', component: SubmitterProfileComponent},
     {path: 'admin/submitters', component: SubmitterComponent},
+    {path: 'admin/manage-spectra', component: ManageSpectraComponent},
     {path: 'documentation/license', component: DocumentationLicenseComponent},
     {path: 'documentation/query', component: DocumentationQueryComponent},
     {path: 'spectra/splash/:splash', redirectTo: '/spectra/browse'},

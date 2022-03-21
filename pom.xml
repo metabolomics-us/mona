@@ -631,7 +631,7 @@
 
                             <imageTags>
                                 <imageTag>${project.version}</imageTag>
-                                <imageTag>latest</imageTag>
+                                <imageTag>test</imageTag>
                             </imageTags>
 
                             <runs>
@@ -665,7 +665,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <imageName>${docker.registry}/${docker.imageName}:latest</imageName>
+                                    <imageName>${docker.registry}/${docker.imageName}:test</imageName>
                                 </configuration>
                             </execution>
 

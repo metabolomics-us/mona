@@ -5,48 +5,51 @@
 import {TagService} from '../../services/persistence/tag.resource';
 import {NGXLogger} from 'ngx-logger';
 import {Component, Input, OnInit} from '@angular/core';
-import {faFlask} from '@fortawesome/free-solid-svg-icons';
+import {faFlask, faTag, faMinusSquare, faPlusSquare, faTrash} from '@fortawesome/free-solid-svg-icons';
+
 
 @Component({
     selector: 'tag-display',
     templateUrl: '../../views/templates/query/tagDisplay.html'
 })
-export class TagDisplayComponent implements OnInit{
+export class TagDisplayComponent implements OnInit {
     maxTagsCount;
     @Input() tags;
     faFlask = faFlask;
+    faTag = faTag;
+    faMinusSquare = faMinusSquare;
+    faPlusSquare = faPlusSquare;
+    faTrash = faTrash;
 
     constructor( public logger: NGXLogger,   public tagService: TagService) {}
 
     ngOnInit() {
-        setTimeout(() => {
-            this.maxTagsCount = 0;
+      this.maxTagsCount = 0;
 
-            if (typeof this.tags === 'undefined') {
-                this.tags = [];
+      if (typeof this.tags === 'undefined') {
+        this.tags = [];
 
-                this.tagService.query().subscribe(
-                    (data: any) => {
-                        this.tags = data;
+        this.tagService.allTags().subscribe(
+          (data: any) => {
+            this.tags = data;
 
-                        for (let i = 0; i < data.length; i++) {
-                            if (data[i].count > this.maxTagsCount) {
-                              this.maxTagsCount = data[i].count;
-                            }
-                        }
-                    },
-                    (error) => {
-                        this.logger.error('Tag pull failed: ' + error);
-                    }
-                );
-            } else {
-                for (let i = 0; i < this.tags.length; i++) {
-                    if (this.tags[i].count > this.maxTagsCount) {
-                        this.maxTagsCount = this.tags[i].count;
-                    }
-                }
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].count > this.maxTagsCount) {
+                this.maxTagsCount = data[i].count;
+              }
             }
-        });
+            },
+          (error) => {
+            this.logger.error('Tag pull failed: ' + error);
+          }
+          );
+      } else {
+        for (let i = 0; i < this.tags.length; i++) {
+          if (this.tags[i].count > this.maxTagsCount) {
+            this.maxTagsCount = this.tags[i].count;
+          }
+        }
+      }
     }
 
     tagClass(tag) {

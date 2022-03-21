@@ -123,6 +123,24 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
     }
   }
 
+  @RequestMapping(path = Array(""), method = Array(RequestMethod.DELETE))
+  @Async
+  @ResponseBody
+  def massDeleteByID(@RequestBody ids: java.lang.Iterable[String]): Future[String] = {
+    spectrumPersistenceService.deleteSpectrumsByIdIn(ids)
+    new AsyncResult[String]("Delete request received.")
+  }
+
+  @RequestMapping(path = Array("/search"), method = Array(RequestMethod.DELETE))
+  @Async
+  @ResponseBody
+  def massDeleteBySearch(@RequestParam(value = "query", required = false) rsqlQuery: WrappedString,
+                     @RequestParam(value = "text", required = false) textQuery: WrappedString): Future[String] = {
+    val rsqlQueryString = if (rsqlQuery != null) rsqlQuery.string else ""
+    val textQueryString = if (textQuery != null) textQuery.string else ""
+    spectrumPersistenceService.deleteSpectrumsByQuery(rsqlQueryString, textQueryString)
+    new AsyncResult[String]("Delete request received.")
+  }
 
   /**
     * Saves a spectrum

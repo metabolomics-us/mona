@@ -167,7 +167,7 @@ services:
       - "7777:7777"
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
     volumes:
       - downloader-data:/data
 
@@ -176,4 +176,4 @@ services:
     image: public.ecr.aws/fiehnlab/mona-curation-runner:prod
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
