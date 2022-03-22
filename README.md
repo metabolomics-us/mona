@@ -24,6 +24,9 @@
       how quickly these expire).
   - Access to AWS account and ability to push to ECR
   - Admin access to public mona repo
+  - You'll need a settings.xml file for your maven 'User Settings File' this will include the nexus profile
+    and all the necessary repo's for pulling down libraries. Please ask a developer on the team for this config
+    and store file at `~/.m2`
 
 
 ## Starting Development:
@@ -63,6 +66,9 @@
 - Make sure you added framework support for scala 2.13 in IntelliJ for the mona project
 - When making a new branch for git, naming convention should typically have a ticket number (i.e. FIEHN-1234) following
   a slash and a description of the ticket (i.e. FIEHN-1234/ThisIsATicket).
+- If your having issues pulling packages with maven, you can troubleshoot with deleting your `~/.m2/repository` directory.
+  Additionally, ensure you have the correct 'settings.xml' file in `~/.m2`. If problems still persist, try the 'Invalidate
+  Caches' under File tab in IntelliJ IDEA.
 
 
 ### ports for cluster service nodes:
