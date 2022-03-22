@@ -1,6 +1,6 @@
-#MassBank of North America Application
+# MassBank of North America Application
 
-##Common:
+## Common:
 - Highly Recommended to use Linux OS (Preferably Ubuntu LTS 18.04 or 20.04)
 - Ensure you have the following installed
   - Node Version Manager(NVM)
@@ -26,7 +26,7 @@
   - Admin access to public mona repo
 
 
-##Starting Development:
+## Starting Development:
 - There are 3 scripts in the project to easily start development
   - `./start_corsproxy.sh`
     - Solves CORS issues when connecting the frontend to the microservices
@@ -35,19 +35,19 @@
   - `./start_frontend.sh`
     - Starts the Angular 10 frontend with ng serve to develop on the fly
 
-##PROD Deployment:
+## PROD Deployment:
 - Production deployment is simple with docker
   - Bring down the application with: `docker stack rm mona`
   - Bring the application back up with `docker stack deploy -c docker-compose-prod.yml`
   - Note: You may need to force the newest images to pull down with `docker-compose -f docker-compose-prod.yml pull`
 
-##Running Test Suite With IntelliJ and Maven:
+## Running Test Suite With IntelliJ and Maven:
 - Using the built-in Maven tab, we can run the full scala test suite
   - Make sure the following Maven profiles are selected (and only those): nexus, scala, scala-test
   - Run the following docker-compose file: `docker-compose -f docker-compose-test.yml -d`
   - Finally, run `mvn clean install` on the 'backend(root)'
 
-##Generate new Docker Images:
+## Generate new Docker Images:
 - Make sure the following Maven profiles are selected (and only those): nexus, scala, docker
 - The following services can be built into docker images: discovery, bootstrap, webhooks-server,curation-scheduler,
   repository, persistence-server, auth-server, similarity, proxy, download-scheduler, and curation-runner
@@ -57,7 +57,7 @@
 - NOTE: For the proxy service pom.xml, you'll need to configure the 'ng.env' variable to 'staging' or 'prod' 
   depending on if the build is for IPA('staging') or GOSE('prod');
 
-##Important Development Notes:
+## Important Development Notes:
 - Make sure project sdk/jdk is set to Java 1.8_292
 - Make sure to configure Maven in IntelliJ IDEA to use the same project jdk which should be Java 1.8_292
 - Make sure you added framework support for scala 2.13 in IntelliJ for the mona project
@@ -65,14 +65,14 @@
   a slash and a description of the ticket (i.e. FIEHN-1234/ThisIsATicket).
 
 
-###ports for cluster service nodes:
+### ports for cluster service nodes:
 - persistence svr: 2222
 - configuration svr: 1111
 - discovery service: 8761
 - auth server: 3333
 - proxy service: 8080 (entry point)
 
-###ports for in-memory node:
+### ports for in-memory node:
 - embedded mongo db: 27017
 - mona rest client: 8080
 - elasticsearch client: 9200
