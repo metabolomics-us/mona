@@ -14,7 +14,6 @@ export class FeedbackCacheService {
 
   resolveFeedback(id: string): Observable<any> {
     if (this.currentFeedback[id]) {
-      this.logger.info('Returning cached feedback');
       return this.currentFeedback[id];
     } else {
       this.currentFeedback[id] = this.feedback.get(id).pipe(

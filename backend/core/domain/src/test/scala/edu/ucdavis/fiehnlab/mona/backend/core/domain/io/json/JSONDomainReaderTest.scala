@@ -76,7 +76,7 @@ class JSONDomainReaderTest extends AnyWordSpec {
       val result: Array[Spectrum] = reader.read(input)
 
       "it's lenght of reqd objects should fit the expsectations" in {
-        assert(result.length == 58)
+        assert(result.length == 59)
       }
     }
   }

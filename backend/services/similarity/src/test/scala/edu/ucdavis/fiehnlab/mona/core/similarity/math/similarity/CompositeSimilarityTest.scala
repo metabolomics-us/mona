@@ -63,6 +63,6 @@ class CompositeSimilarityTest extends AnyFlatSpec with Matchers {
     library.ions.length shouldEqual 4
 
     val similarity = new CompositeSimilarity().compute(unknown, library, true)
-    similarity shouldBe 0.9476 +- EPSILON
+    similarity shouldBe 0.948868778280543 +- EPSILON
   }
 }
