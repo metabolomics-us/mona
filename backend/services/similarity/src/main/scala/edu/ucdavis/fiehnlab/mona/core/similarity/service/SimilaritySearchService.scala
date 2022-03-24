@@ -25,7 +25,14 @@ class SimilaritySearchService extends LazyLogging {
     * @return
     */
   def search(request: SimilaritySearchRequest, size: Int): Array[SearchResult] = {
-    val spectrum: SimpleSpectrum = new SimpleSpectrum(null, request.spectrum, request.precursorMZ)
+    val spectrum: SimpleSpectrum =
+    if (request.removePrecursorIon == false && request.precursorMZ == 0.0) {
+      logger.info(s"remove Precursor False and No PrecursorMZ")
+      new SimpleSpectrum(null, request.spectrum)
+    } else {
+      new SimpleSpectrum(null, request.spectrum, request.precursorMZ)
+    }
+
 
     val minSimilarity: Double =
       if (request.minSimilarity > 0.0 && request.minSimilarity <= 1.0) {

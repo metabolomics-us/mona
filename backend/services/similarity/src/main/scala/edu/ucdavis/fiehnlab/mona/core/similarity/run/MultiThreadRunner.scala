@@ -16,11 +16,19 @@ class MultiThreadRunner extends Calculate {
     * @return
     */
   override def calculate(unknown: SimpleSpectrum, library: Iterable[SimpleSpectrum], threshold: Double, algorithm: Similarity, precursorToleranceDa: Double = .01, removePrecursorIon: Boolean): Iterable[ComputationalResult] = {
-      library.par
-        .filter(!_.precursorMZ.isNaN)
-        .filter(x => {calculateAbsolute(unknown.precursorMZ, x.precursorMZ) <= precursorToleranceDa})
-        .map(spectrum => ComputationalResult(unknown, spectrum, algorithm.compute(unknown, spectrum, removePrecursorIon)))
-        .filter(_.score >= threshold)
-        .seq
+      if(removePrecursorIon) {
+        library.par
+          .filter(!_.precursorMZ.isNaN)
+          .filter(x => {calculateAbsolute(unknown.precursorMZ, x.precursorMZ) <= precursorToleranceDa})
+          .map(spectrum => ComputationalResult(unknown, spectrum, algorithm.compute(unknown, spectrum, removePrecursorIon)))
+          .filter(_.score >= threshold)
+          .seq
+      } else {
+        library.par
+          .map(spectrum => ComputationalResult(unknown, spectrum, algorithm.compute(unknown, spectrum, removePrecursorIon)))
+          .filter(_.score >= threshold)
+          .seq
+      }
+
   }
 }
