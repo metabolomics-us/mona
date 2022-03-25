@@ -17,7 +17,7 @@ trait Calculate extends LazyLogging {
     * @param library
     * @return
     */
-  protected def calculate(unknown: SimpleSpectrum, library: Iterable[SimpleSpectrum], threshold: Double, algorithm: Similarity, removePrecursorIon: Boolean): Iterable[ComputationalResult]
+  protected def calculate(unknown: SimpleSpectrum, library: Iterable[SimpleSpectrum], threshold: Double, algorithm: Similarity, precursorToleranceDa: Double, removePrecursorIon: Boolean): Iterable[ComputationalResult]
 
   /**
     *
@@ -26,10 +26,14 @@ trait Calculate extends LazyLogging {
     * @param threshold
     * @return
     */
-  final def calculate(unknown: SimpleSpectrum, index: Index, threshold: Double, algorithm: Similarity, removePrecursorIon: Boolean): Iterable[ComputationalResult] = {
+  final def calculate(unknown: SimpleSpectrum, index: Index, threshold: Double, algorithm: Similarity, precursorToleranceDa: Double, removePrecursorIon: Boolean): Iterable[ComputationalResult] = {
 
     // Utilize the internal index
-    calculate(index.binningMethod.binSpectrum(unknown), index.get(unknown), threshold, algorithm, removePrecursorIon)
+    calculate(index.binningMethod.binSpectrum(unknown), index.get(unknown), threshold, algorithm, precursorToleranceDa, removePrecursorIon)
+  }
+
+  def calculateAbsolute(unknownPrecursorMZ: Double, referencePrecursorMZ: Double): Double = {
+    Math.abs(unknownPrecursorMZ - referencePrecursorMZ)
   }
 }
 

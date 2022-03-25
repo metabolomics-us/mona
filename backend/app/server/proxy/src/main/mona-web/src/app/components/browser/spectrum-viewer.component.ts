@@ -60,54 +60,54 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     }
 
     ngOnInit() {
-      this.delayedspectrum = this.route.snapshot.data.spectrum;
-      this.feedbackCache.resolveFeedback(this.delayedspectrum.id).subscribe((res) => {
-        this.currentFeedback = res;
+      this.route.params.subscribe((data) => {
+        this.delayedspectrum = this.route.snapshot.data.spectrum;
+        this.feedbackCache.resolveFeedback(this.delayedspectrum.id).subscribe((res) => {
+          this.currentFeedback = res;
+        });
+        this.accordionStatus = {
+          isSpectraOpen: true,
+          isIonTableOpen: false,
+          isSimilarSpectraOpen: false,
+          isCompoundOpen: []
+        };
+        /**
+         * Sort order for the ion table - default m/z ascending
+         */
+        this.ionTableSort = '-ion';
+
+        /**
+         * quality score of our spectrum
+         * number
+         */
+        this.score = 0;
+
+        this.massSpec = [];
+
+        this.showScore = false;
+
+        this.massRegex = /^\s*(\d+\.\d{4})\d*\s*$/;
+        /**
+         * Loading of similar spectra
+         */
+        this.loadingSimilarSpectra = true;
+        this.similarSpectra = [];
+
+        /**
+         * Decimal truncation routines
+         */
+        this.truncateDecimal = (s, length) => {
+          return (typeof(s) === 'number') ? s.toFixed(length) : s;
+        };
+
+        /**
+         * Truncate the
+         */
+        this.truncateMass = (mass) => {
+          return this.truncateDecimal(mass, 4);
+        };
+        this.setSpectrum();
       });
-
-      this.accordionStatus = {
-        isSpectraOpen: true,
-        isIonTableOpen: false,
-        isSimilarSpectraOpen: false,
-        isCompoundOpen: []
-      };
-      /**
-       * Sort order for the ion table - default m/z ascending
-       */
-      this.ionTableSort = '-ion';
-
-      /**
-       * quality score of our spectrum
-       * number
-       */
-      this.score = 0;
-
-      this.massSpec = [];
-
-      this.showScore = false;
-
-      this.massRegex = /^\s*(\d+\.\d{4})\d*\s*$/;
-      /**
-       * Loading of similar spectra
-       */
-      this.loadingSimilarSpectra = true;
-      this.similarSpectra = [];
-
-      /**
-       * Decimal truncation routines
-       */
-      this.truncateDecimal = (s, length) => {
-        return (typeof(s) === 'number') ? s.toFixed(length) : s;
-      };
-
-      /**
-       * Truncate the
-       */
-      this.truncateMass = (mass) => {
-        return this.truncateDecimal(mass, 4);
-      };
-
-      this.setSpectrum();
     }
 
     ngAfterViewInit() {
@@ -242,7 +242,8 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
      * @param id string containing spectrum id
      */
     viewSpectrum(id) {
-        this.router.navigate(['/spectra/display'], {queryParams: {id}}).then();
+        this.accordion.collapse('similarityPanel');
+        this.router.navigate([`/spectra/display/${id}`]).then();
     }
 
     checkNumber(check: any) {
