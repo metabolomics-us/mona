@@ -102,6 +102,7 @@ import {DocumentationUploadLibraryComponent} from './app/components/documentatio
 import {DocumentationEntropyComponent} from './app/components/documentation/documentation-entropy.component';
 import {ManageSpectraComponent} from './app/components/admin/manage-spectra.component';
 import {MassDeleteModalComponent} from './app/components/browser/mass-delete-modal.component';
+import {SearchMetadataComponent} from './app/components/search/search-metadata.component';
 
 import {PrefixValidator} from './app/directives/PrefixValidatorDirective';
 
@@ -257,7 +258,8 @@ const cookieConfig: NgcCookieConsentConfig = {
         DocumentationEntropyComponent,
         PrefixValidator,
         ManageSpectraComponent,
-        MassDeleteModalComponent
+        MassDeleteModalComponent,
+        SearchMetadataComponent
     ],
     bootstrap: [
         AppRootComponent

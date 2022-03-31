@@ -36,9 +36,9 @@ export class Metadata {
             headers: {
                 'Content-Type': 'application/json'
             },
-            params: {query: '@query'}
+            params: {name: data.name, search: data.search}
         };
-        return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/meta/data/search?max=10`, data);
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/values`, config);
     }
 
     metaDataNames(): Observable<any> {

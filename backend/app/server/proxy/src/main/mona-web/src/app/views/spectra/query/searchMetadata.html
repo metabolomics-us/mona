@@ -1,0 +1,72 @@
+<h3><fa-icon [icon]="faSearch"></fa-icon> Metadata Search</h3>
+
+<form (ngSubmit)="submitQuery()">
+  <div class="row mb-4">
+    <div class="col-md-4 input-group">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="select-metadata">Metadata</label>
+      </div>
+      <select class="form-control" id="select-metadata" name="select-metadata" [(ngModel)]="metadataCurrentSelection"
+        (change)="queryValues()">
+        <option *ngFor="let m of metadataResults" [value]="m">{{m}}</option>
+      </select>
+    </div>
+    <div class="col-md-3 input-group">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="select-metadata-operator">Operator</label>
+      </div>
+      <select class="form-control" name="select-metadata-operator" id="select-metadata-operator" [(ngModel)]="metadataOperatorSelection">
+        <option *ngFor="let o of metadataOperators" [value]="o.value">{{o.display}}</option>
+
+      </select>
+    </div>
+    <div class="col-md-3 input-group">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="metadata-value">Value</label>
+      </div>
+      <input
+        id="metadata-value"
+        type="text"
+        class="form-control"
+        name="metadata-value"
+        [(ngModel)]="metadataValueSelection"
+        [ngbTypeahead]="search"
+        (focus)="focus$.next($any($event).target.value)"
+        (click)="click$.next($any($event).target.value)"
+        (keyup)="queryValues()"
+        #instance="ngbTypeahead"
+      />
+    </div>
+    <div class="col-md-2 input-group">
+      <button name="addButton" type="button" class="btn btn-info" (click)="addQuery()"><fa-icon [icon]="faPlusSquare"></fa-icon></button>
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-8">
+      <div class="card align-items-center" *ngIf="metadataQueries.length > 0">
+        <ul class="list-group list-group-flush w-100 align-items-stretch">
+          <li *ngFor="let q of metadataQueries; index as i" class="list-group-item text-center d-inline-block mr-2">
+            Metadata: {{q.metadata}}, Operator: {{q.operator}}, Value: {{q.value}}
+            <button class="btn btn-danger" type="button" (click)="removeQuery(i)"><fa-icon [icon]="faTrash"></fa-icon></button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-2">
+    </div>
+  </div>
+  <div class="row" [hidden]="metadataQueries.length === 0">
+    <div class="col-md-6">
+      <div class="form-group row">
+        <div class="col-sm-2 mr-2">
+          <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+        <div class="col-sm-2">
+          <button type="button" class="btn btn-secondary" (click)="resetQueries()">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
