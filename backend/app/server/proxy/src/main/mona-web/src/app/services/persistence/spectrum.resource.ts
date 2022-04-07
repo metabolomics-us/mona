@@ -17,7 +17,9 @@ export class Spectrum {
 		// Filter our undefined values and place the others in HttpParams value
 		let params = new HttpParams();
 		// Ternary case, we use a truthy check on data[k] to see if the value is not undefined, if so add to HttpParams
-		Object.keys(data).forEach(k => {data[k] ? params = params.set(k, data[k]) : {}; });
+		Object.keys(data).forEach(k => {
+      typeof data[k] !== 'undefined' ? params = params.set(k, data[k]) : {};
+    });
 
 		return params;
 	}
@@ -30,19 +32,19 @@ export class Spectrum {
 		return this.http.put(`${environment.REST_BACKEND_SERVER}/rest/spectra/${data.id}`, data);
 	}
 
-	searchSpectra(data: any): Observable<any> {
+	searchSpectra(data: any, isRSQL: boolean = false): Observable<any> {
 		const params = this.cleanParameters(data);
-		if (data.endpoint === undefined) {
-			return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra`, { params});
+		if (!isRSQL) {
+			return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra`, { params, observe: 'response'});
 		}
 		else{
-			return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/${params.get('endpoint')}`, { params});
+			return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/search`, { params, observe: 'response'});
 		}
 	}
 
 	searchSpectraCount(data: any): Observable<any> {
 		const params = this.cleanParameters(data);
-		return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/search/${params.get('endpoint')}`, { params })
+		return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/search/count`, { params })
 			// TransformResponse no longer available, so pipe the map function to our observable and change the data before shipping to a promise
 			.pipe(map((res) => {
 				return {count: res};
@@ -55,15 +57,7 @@ export class Spectrum {
 				'Content-Type': 'application/json'
 			}
 		};
-		return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/similarity/search`, data, config)
-			.pipe(first(), map((res: any) => {
-				 let result;
-				 result = res.map((spectrum) => {
-					spectrum.hit.similarity = spectrum.score;
-					return spectrum.hit;
-				  });
-				 return result;
-			}));
+		return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/similarity/search`, data, {headers: config.headers, observe: 'response'});
 	}
 
 	batchSave(token: string): Observable<any> {

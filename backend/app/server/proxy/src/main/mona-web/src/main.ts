@@ -20,6 +20,7 @@ import {FormsModule} from '@angular/forms';
 import {NvD3Module} from 'ng2-nvd3';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {NgcCookieConsentModule, NgcCookieConsentConfig} from 'ngx-cookieconsent';
+import {ClipboardModule} from 'ngx-clipboard';
 
 import {CtsService, ChemifyService} from 'angular-cts-service/dist/cts-lib';
 import {NgMassSpecPlotterModule} from '@wcmc/ng-mass-spec-plotter';
@@ -159,8 +160,8 @@ const cookieConfig: NgcCookieConsentConfig = {
         TagInputModule,
         NvD3Module,
         FontAwesomeModule,
-        NgcCookieConsentModule.forRoot(cookieConfig)
-
+        NgcCookieConsentModule.forRoot(cookieConfig),
+        ClipboardModule
     ],
     providers: [
         CookieService,
@@ -268,7 +269,6 @@ const cookieConfig: NgcCookieConsentConfig = {
 
 export class AppModule {
   constructor() {
-    console.log(environment.ctsUrl);
   }
 }
 

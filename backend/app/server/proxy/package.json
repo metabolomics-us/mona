@@ -46,6 +46,7 @@
     "json3": "~3.3.3",
     "ng2-nvd3": "^2.0.0",
     "ngx-chips": "^2.2.2",
+    "ngx-clipboard": "^14.0.2",
     "ngx-cookie-service": "10.0.1",
     "ngx-cookieconsent": "^2.2.3",
     "ngx-google-analytics": "^11.2.1",

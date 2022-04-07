@@ -27,12 +27,13 @@ export class SearchMetadataComponent implements OnInit {
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
 
-  constructor(public metadata: Metadata) {
+  constructor(public metadata: Metadata, public spectraQueryBuilderService: SpectraQueryBuilderService) {
     this.metadataValueSelection = '';
     this.metadataQueries = [];
   }
 
   ngOnInit() {
+    this.spectraQueryBuilderService.prepareQuery();
     this.metadataResults = [];
     this.metaDataValueResults = [];
     this.metadataOperators = [
@@ -45,18 +46,23 @@ export class SearchMetadataComponent implements OnInit {
       {value: '=gt=', display: 'Greater than'},
       {value: '=ge=', display: 'Greater than or Equal to'}
     ];
-    this.metadataOperatorSelection = this.metadataOperators[0];
     this.metadata.metaDataNames().subscribe((data) => {
       this.metadataResults = data.map((x) => {
-        return x.name;
+        return {name: x.name, count: x.count};
       });
-      this.metadataCurrentSelection = data[0].name;
+      this.metadataCurrentSelection = this.metadataResults[0];
+      this.metadataOperatorSelection = this.metadataOperators[0];
       this.queryValues();
     });
   }
 
   submitQuery() {
-    console.log('submitted');
+    this.spectraQueryBuilderService.prepareQuery();
+    for (let i = 0; i < this.metadataQueries.length; i++) {
+      this.spectraQueryBuilderService.addMetaDataToQuery(this.metadataQueries[i].metadata.name,
+        this.metadataQueries[i].value, null, this.metadataQueries[i].operator.value);
+    }
+    this.spectraQueryBuilderService.executeQuery();
   }
 
   search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
@@ -71,7 +77,7 @@ export class SearchMetadataComponent implements OnInit {
   }
 
   queryValues(): void {
-    this.metadata.queryValues({name: this.metadataCurrentSelection, search: this.metadataValueSelection})
+    this.metadata.queryValues({name: this.metadataCurrentSelection.name, search: this.metadataValueSelection})
       .subscribe((res) => {
         this.metaDataValueResults = res.values.map((x) => {
           return x.value;

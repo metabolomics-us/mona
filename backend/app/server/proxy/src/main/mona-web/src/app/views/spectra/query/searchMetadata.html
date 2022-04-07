@@ -1,4 +1,4 @@
-<h3><fa-icon [icon]="faSearch"></fa-icon> Metadata Search</h3>
+<h3 class="mb-4"><fa-icon [icon]="faSearch"></fa-icon> Metadata Search</h3>
 
 <form (ngSubmit)="submitQuery()">
   <div class="row mb-4">
@@ -8,7 +8,7 @@
       </div>
       <select class="form-control" id="select-metadata" name="select-metadata" [(ngModel)]="metadataCurrentSelection"
         (change)="queryValues()">
-        <option *ngFor="let m of metadataResults" [value]="m">{{m}}</option>
+        <option *ngFor="let m of metadataResults" [ngValue]="m">{{m.name}} ({{m.count}} count)</option>
       </select>
     </div>
     <div class="col-md-3 input-group">
@@ -16,7 +16,7 @@
         <label class="input-group-text" for="select-metadata-operator">Operator</label>
       </div>
       <select class="form-control" name="select-metadata-operator" id="select-metadata-operator" [(ngModel)]="metadataOperatorSelection">
-        <option *ngFor="let o of metadataOperators" [value]="o.value">{{o.display}}</option>
+        <option *ngFor="let o of metadataOperators" [ngValue]="o">{{o.display}}</option>
 
       </select>
     </div>
@@ -38,23 +38,37 @@
       />
     </div>
     <div class="col-md-2 input-group">
-      <button name="addButton" type="button" class="btn btn-info" (click)="addQuery()"><fa-icon [icon]="faPlusSquare"></fa-icon></button>
+      <button name="addButton" type="button" class="btn btn-info" ngbTooltip="Add to search table" (click)="addQuery()">
+        <fa-icon [icon]="faPlusSquare"></fa-icon>
+      </button>
     </div>
   </div>
   <div class="row mb-2">
-    <div class="col-md-2">
-    </div>
-    <div class="col-md-8">
+    <div class="col-md-12 mb-2">
       <div class="card align-items-center" *ngIf="metadataQueries.length > 0">
-        <ul class="list-group list-group-flush w-100 align-items-stretch">
-          <li *ngFor="let q of metadataQueries; index as i" class="list-group-item text-center d-inline-block mr-2">
-            Metadata: {{q.metadata}}, Operator: {{q.operator}}, Value: {{q.value}}
-            <button class="btn btn-danger" type="button" (click)="removeQuery(i)"><fa-icon [icon]="faTrash"></fa-icon></button>
-          </li>
-        </ul>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Metadata Field</th>
+              <th scope="col">Operator</th>
+              <th scope="col">Value</th>
+              <th scope="col">Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let q of metadataQueries; index as i">
+              <td>{{q.metadata.name}}</td>
+              <td>{{q.operator.display}}</td>
+              <td>{{q.value}}</td>
+              <td>
+                <button class="btn btn-danger" type="button" ngbTooltip="Remove from search table" (click)="removeQuery(i)">
+                  <fa-icon [icon]="faTrash"></fa-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
-    <div class="col-md-2">
     </div>
   </div>
   <div class="row" [hidden]="metadataQueries.length === 0">
