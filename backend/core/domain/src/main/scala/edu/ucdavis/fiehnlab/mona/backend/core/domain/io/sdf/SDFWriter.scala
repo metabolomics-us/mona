@@ -1,14 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf
 
 import java.io.{PrintWriter, Writer}
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 
 /**
   * Created by sajjan on 2/21/18.
   */
-class SDFWriter extends DomainWriter {
+class SDFWriter extends DomainWriter{
 
   override val CRLF: Boolean = true
 
@@ -95,6 +94,14 @@ class SDFWriter extends DomainWriter {
     }
   }
 
+  def buildCompoundInChI(compound: Compound, writer: PrintWriter): Unit = {
+    if (compound.inchi != null && compound.inchiKey.nonEmpty) {
+      printMetaData("INCHI", compound.inchi, writer)
+    } else {
+      buildMetaData(compound.metaData, "InChI", "INCHI", writer)
+    }
+  }
+
   /**
     * Writes the comment string containing all available metadata in the format "name=value"
     *
@@ -158,6 +165,7 @@ class SDFWriter extends DomainWriter {
     buildMetaData(spectrum.metaData, "COLLISION ENERGY", "collision energy", p)
     buildMetaData(spectrum.metaData, "ION MODE", "ionization mode", p, x => x.charAt(0).toUpper.toString)
     buildCompoundInchiKey(compound, p)
+    buildCompoundInChI(compound, p)
     buildMetaData(compound.metaData, "FORMULA", "molecular formula", p)
     buildMetaData(compound.metaData, "EXACT MASS", "total exact mass", p)
     buildMetaData(compound.metaData, "MW", "total exact mass", p, x => (x.toDouble + 0.2).toInt.toString)
