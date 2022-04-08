@@ -40093,11 +40093,11 @@
       "splash": "splash10-0udi-0037900000-24e9d598116abf61643a"
     },
     "submitter": {
-      "id": "ntho@chem.uoa.gr",
-      "emailAddress": "ntho@chem.uoa.gr",
-      "firstName": "Nikolaos",
-      "institution": "University of Athens",
-      "lastName": "Thomaidis"
+      "id": "test2@ucdavis.edu",
+      "emailAddress": "test2@ucdavis.edu",
+      "firstName": "Test",
+      "institution": "UC Davis",
+      "lastName": "2"
     },
     "tags": [
       {
@@ -41765,11 +41765,11 @@
       "splash": "splash10-0zfs-0196200000-7e5e7b2e464e8cee97c2"
     },
     "submitter": {
-      "id": "ntho@chem.uoa.gr",
-      "emailAddress": "ntho@chem.uoa.gr",
-      "firstName": "Nikolaos",
-      "institution": "University of Athens",
-      "lastName": "Thomaidis"
+      "id": "test1@ucdavis.edu",
+      "emailAddress": "test1@ucdavis.edu",
+      "firstName": "Test",
+      "institution": "UC Davis",
+      "lastName": "1"
     },
     "tags": [
       {
