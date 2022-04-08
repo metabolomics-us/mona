@@ -45,8 +45,9 @@ class SimilaritySearchService extends LazyLogging {
 
     logger.info(s"Starting similarity search with minimum similarity $minSimilarity")
 
+    val algorithmType: AlgorithmTypes.Value = getSimilarityType(request.algorithm)
     // Perform similarity search, order by score and return a maximum of 50 or a default 25 hits
-    val results: Array[ComputationalResult] = indexUtils.search(spectrum, AlgorithmTypes.DEFAULT, minSimilarity, request.precursorToleranceDa, request.removePrecursorIon).toArray
+    val results: Array[ComputationalResult] = indexUtils.search(spectrum, algorithmType, minSimilarity, request.precursorToleranceDa, request.removePrecursorIon).toArray
     logger.info(s"Search discovered ${results.length} hits")
 
     results
@@ -74,5 +75,18 @@ class SimilaritySearchService extends LazyLogging {
       .take(size)
       .map(x => SearchResult(spectrumMongoRepository.findOne(x.id), 1))
       .toArray
+  }
+
+  def getSimilarityType(algorithm: String): AlgorithmTypes.Value = {
+    val algType = algorithm match {
+      case "absolute" => AlgorithmTypes.ABSOLUTE_VALUE_SIMILARITY
+      case "composite" => AlgorithmTypes.COMPOSITE_SIMILARITY
+      case "cosine" => AlgorithmTypes.COSINE_SIMILARITY
+      case "entropy" => AlgorithmTypes.ENTROPY_SIMILARITY
+      case "euclidean" => AlgorithmTypes.EUCLIDEAN_DISTANCE_SIMILARITY
+      case "default" => AlgorithmTypes.DEFAULT
+      case _ => AlgorithmTypes.DEFAULT
+    }
+    algType
   }
 }

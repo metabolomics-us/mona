@@ -17,9 +17,15 @@ class CosineSimilarity extends Similarity {
     * @return
     */
   def compute(unknown: SimpleSpectrum, reference: SimpleSpectrum, removePrecursorIon: Boolean): Double = {
-    val sharedIons: Set[Double] = unknown.fragments.keySet intersect reference.fragments.keySet
-
-    compute(unknown, reference, sharedIons)
+    if(removePrecursorIon) {
+      val newUnknown: SimpleSpectrum = removePrecursor(unknown, unknown.precursorMZ)
+      val newReference: SimpleSpectrum = removePrecursor(reference, unknown.precursorMZ)
+      val newSharedIons: Set[Double] = newUnknown.fragments.keySet intersect newReference.fragments.keySet
+      compute(newUnknown, newReference, newSharedIons)
+    } else {
+      val sharedIons: Set[Double] = unknown.fragments.keySet intersect reference.fragments.keySet
+      compute(unknown, reference, sharedIons)
+    }
   }
 
   /**
