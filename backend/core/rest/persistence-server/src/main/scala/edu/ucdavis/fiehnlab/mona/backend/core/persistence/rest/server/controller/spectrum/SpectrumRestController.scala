@@ -186,7 +186,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
       val existingSpectrum: Spectrum = getRepository.findOne(spectrum.id)
 
       if (existingSpectrum == null) {
-        super.doSave(spectrum.copy(submitter = existingSubmitter))
+        super.doSave(spectrum)
       } else if (existingSpectrum.submitter.id == loginInfo.username) {
         super.doSave(spectrum.copy(dateCreated = existingSpectrum.dateCreated, submitter = existingSubmitter))
       } else {

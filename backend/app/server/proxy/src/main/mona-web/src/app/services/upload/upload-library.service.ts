@@ -199,6 +199,10 @@ export class UploadLibraryService{
                 if (spectra.inchi !== null) {
                   s.biologicalCompound.inchi = spectra.inchi;
                 }
+                if (spectra.smiles !== null) {
+                  s.biologicalCompound.metaData.push({category: 'none', computed: false, hidden: false,
+                    name: 'SMILES', value: spectra.smiles});
+                }
 
                 if (typeof spectra.molFile !== 'undefined' && spectra.molFile !== null) {
                     s.biologicalCompound.molFile = spectra.molFile.toString();
@@ -221,7 +225,6 @@ export class UploadLibraryService{
                     }
                 }
 
-                s.biologicalCompound.metaData = [];
                 s.biologicalCompound.kind = 'biological';
 
                 s.compound = [s.biologicalCompound];

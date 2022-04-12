@@ -599,15 +599,12 @@ export class BasicUploaderComponent implements OnInit{
 
             this.uploadLibraryService.uploadSpectra([this.currentSpectrum],  (spectrum) => {
                 this.logger.info('submitting spectrum');
-                this.logger.info(spectrum);
-                this.logger.info(this.authenticationService.getCurrentUser().accessToken);
                 this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, spectrum,
                     {headers: {
                             Authorization: `Bearer ${this.authenticationService.getCurrentUser().accessToken}`
                     }}).pipe(first()).subscribe((data: any) => {
                     this.logger.info('Spectra successfully Upload!');
                     this.logger.info('Reference ID: ' + data.id);
-                    this.logger.info(data);
                     this.uploadLibraryService.uploadedSpectra.push(data.id);
                 }, (err) => {
                         this.logger.info('ERROR', err);
