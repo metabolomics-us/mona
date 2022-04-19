@@ -29,6 +29,24 @@ case class MetaDataValueCount(
                                count: Int
                              )
 
+@Document(collection = "STATISTICS_COMPOUND_METADATA")
+case class CompoundMetaDataStatistics(
+                                       @(Id@field)
+                                       name: String,
+                                       count: Int,
+                                       values: Array[MetaDataValueCount]
+                                     )
+case class CompoundMetaDataStatisticsSummary(
+                                      @(Id@field)
+                                      name: String,
+                                      count: Int
+                                    )
+
+case class CompoundMetaDataValueCount(
+                               value: String,
+                               count: Int
+                             )
+
 @Document(collection = "STATISTICS_TAGS")
 case class TagStatistics(
                           @(Id@field)

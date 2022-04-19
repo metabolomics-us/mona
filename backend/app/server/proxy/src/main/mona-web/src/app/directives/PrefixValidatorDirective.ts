@@ -40,7 +40,6 @@ export class PrefixValidator implements AsyncValidator {
     // Make query to backend to see if a spectrum with given ID prefix exists, if so return error
     const searchQuery = `id==\'${val}000001\'`;
     const call = this.spectrum.searchSpectraCount({
-      endpoint: 'count',
       query: searchQuery,
       text: ''
     }).pipe(

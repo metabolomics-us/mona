@@ -3,8 +3,8 @@
  */
 import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {NGXLogger} from 'ngx-logger';
-import {NgcCookieConsentService} from "ngx-cookieconsent";
-import {Subscription} from "rxjs";
+import {NgcCookieConsentService} from 'ngx-cookieconsent';
+import {Subscription} from 'rxjs';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {faSearch, faChartBar, faExclamationTriangle, faSpinner} from '@fortawesome/free-solid-svg-icons';
@@ -29,23 +29,20 @@ export class MainComponent implements OnInit, OnDestroy{
 
     ngOnInit() {
       this.calculateResultCount();
-        this.popupOpenSubscription = this.ccService.popupOpen$.subscribe(() => {
+      this.popupOpenSubscription = this.ccService.popupOpen$.subscribe(() => {});
+      this.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
+      this.showcaseSpectra = [];
 
-        });
-        this.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
-        this.showcaseSpectra = [];
-
-        this.showcaseSpectraIds.forEach((id) => {
-            this.spectrum.get(
-                id).pipe(first()).subscribe(
-                (data) => {
-                    this.showcaseSpectra.push(data);
-                },
-                (error) => {
-                    this.logger.error('Failed to obtain spectrum ' + id);
-                }
-            );
-        });
+      this.showcaseSpectraIds.forEach((id) => {
+        this.spectrum.get(
+          id).pipe(first()).subscribe(
+            (data) => {
+              this.showcaseSpectra.push(data);
+              },
+          (error) => {
+              this.logger.error('Failed to obtain spectrum ' + id);
+            });
+      });
     }
 
     ngOnDestroy() {
@@ -54,7 +51,6 @@ export class MainComponent implements OnInit, OnDestroy{
 
     calculateResultCount() {
       this.spectrum.searchSpectraCount({
-        endpoint: 'count'
       }).pipe(first()).subscribe((res: any) => {
         this.totalCount = res.count;
       });

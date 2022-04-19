@@ -13,11 +13,11 @@ export class CurlPipe implements PipeTransform {
     transform(input: any): any {
         const host = environment.REST_BACKEND_SERVER === '' ? location.origin : environment.REST_BACKEND_SERVER;
 
-        const query = input && typeof(input.query) === 'string' ? input.query.replace(/"/g, '\\"') : '';
-        const text = input && typeof(input.text) === 'string' ? input.text : '';
+        const query = encodeURIComponent(input && typeof(input.query) === 'string' ? input.query.replace(/"/g, '\\"') : '');
+        const text = encodeURIComponent(input && typeof(input.text) === 'string' ? input.text : '');
 
         if (query !== '' || text !== '') {
-            let cmd = 'curl "' + host + '/rest/spectra/search?';
+            let cmd = 'curl ' + host + '/rest/spectra/search?';
 
             if (query !== '') {
                 cmd += 'query=' + query;
@@ -29,11 +29,11 @@ export class CurlPipe implements PipeTransform {
                 cmd += 'text=' + text;
             }
 
-            cmd += '"';
+            cmd += '';
 
             return cmd;
         } else {
-            return 'curl "' + host + '/rest/spectra"';
+            return 'curl ' + host + '/rest/spectra';
         }
     }
 }

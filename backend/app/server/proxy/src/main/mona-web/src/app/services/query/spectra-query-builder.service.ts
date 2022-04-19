@@ -150,19 +150,22 @@ export class SpectraQueryBuilderService {
      * @param partialQuery whether to perform a partial string search
      * @returns string metadata query
      */
-    buildMetaDataQuery(name, value, collection, tolerance, partialQuery) {
+    buildMetaDataQuery(name, value, collection, tolerance, partialQuery, operator?) {
         // Handle array of values
         if (Array.isArray(value)) {
             const subqueries = value.map((x) => {
                 return this.buildMetaDataQuery(name, x, collection, tolerance, partialQuery);
             });
 
-            return '(' + subqueries.join(' or ') + ')';
+            return subqueries.join(' or ');
         }
 
         // Handle individual values
         else {
-            if (typeof tolerance !== 'undefined') {
+            if (typeof operator !== 'undefined') {
+              return collection + '=q=\'name=="' + name + '" and value' + operator + '"' + value + '"\'';
+            }
+            else if (typeof tolerance !== 'undefined') {
                 const leftBoundary = parseFloat(value) - tolerance;
                 const rightBoundary = parseFloat(value) + tolerance;
 
@@ -175,16 +178,24 @@ export class SpectraQueryBuilderService {
         }
     }
 
-    addMetaDataToQuery(name, value, partialQuery) {
+    addMetaDataToQuery(name, value, partialQuery, operator?) {
+      if (typeof operator !== 'undefined') {
+        this.query.push(this.buildMetaDataQuery(name, value, 'metaData', undefined, partialQuery, operator));
+      } else {
         this.query.push(this.buildMetaDataQuery(name, value, 'metaData', undefined, partialQuery));
+      }
     }
 
     addNumericalMetaDataToQuery(name, value, tolerance) {
         this.query.push(this.buildMetaDataQuery(name, value, 'metaData', tolerance, undefined));
     }
 
-    addCompoundMetaDataToQuery(name, value, partialQuery) {
+    addCompoundMetaDataToQuery(name, value, partialQuery, operator?) {
+      if (typeof operator !== 'undefined') {
+        this.query.push(this.buildMetaDataQuery(name, value, 'compound.metaData', undefined, partialQuery, operator));
+      } else {
         this.query.push(this.buildMetaDataQuery(name, value, 'compound.metaData', undefined, partialQuery));
+      }
     }
 
     addNumericalCompoundMetaDataToQuery(name, value, tolerance) {

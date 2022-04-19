@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import com.mongodb.{BasicDBObject, DBObject}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}

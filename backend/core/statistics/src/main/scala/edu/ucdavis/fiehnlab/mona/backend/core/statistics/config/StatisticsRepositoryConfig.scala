@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.config
 
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.aggregation.IStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{CompoundMetaDataStatisticsMongoRepository, MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
 import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
@@ -10,5 +10,5 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
   */
 @ComponentScan(Array("edu.ucdavis.fiehnlab.mona.backend.core.statistics"))
 @Configuration
-@EnableMongoRepositories(basePackageClasses = Array(classOf[IStatisticsMongoRepository], classOf[MetaDataStatisticsMongoRepository], classOf[TagStatisticsMongoRepository]), excludeFilters = Array())
+@EnableMongoRepositories(basePackageClasses = Array(classOf[IStatisticsMongoRepository], classOf[MetaDataStatisticsMongoRepository], classOf[TagStatisticsMongoRepository], classOf[CompoundMetaDataStatisticsMongoRepository]), excludeFilters = Array())
 class StatisticsRepositoryConfig

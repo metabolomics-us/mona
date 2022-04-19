@@ -17,8 +17,8 @@ import {FeedbackCacheService} from '../../services/feedback/feedback-cache.servi
 import {MassDeletionService} from '../../services/persistence/mass-deletion.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
-import {first} from 'rxjs/operators';
-import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {first, map} from 'rxjs/operators';
+import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faCopy} from '@fortawesome/free-solid-svg-icons';
 import {faBookmark} from '@fortawesome/free-regular-svg-icons';
 import {BehaviorSubject} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -50,6 +50,8 @@ export class SpectraBrowserComponent implements OnInit{
     tableColumnSelectedSubject;
     initial;
     status;
+    curlLink;
+    curlDLink;
     faEdit = faEdit;
     faTable = faTable;
     faList = faList;
@@ -59,6 +61,7 @@ export class SpectraBrowserComponent implements OnInit{
     faSpinner = faSpinner;
     faBookmark = faBookmark;
     faTrash = faTrash;
+    faCopy = faCopy;
 
     constructor(public spectrum: Spectrum, public spectraQueryBuilderService: SpectraQueryBuilderService,  public location: Location,
                 public spectrumCache: SpectrumCacheService,  public metadata: Metadata,  public cookie: CookieMain,
@@ -81,6 +84,8 @@ export class SpectraBrowserComponent implements OnInit{
       this.spectra = [];
 
       this.initial = true;
+      this.curlLink = '';
+      this.curlDLink = '';
       /**
        * loads more spectra into the given view
        */
@@ -376,10 +381,18 @@ export class SpectraBrowserComponent implements OnInit{
       } else {
         this.spectrum.searchSimilarSpectra(
           this.spectraQueryBuilderService.getSimilarityQuery())
+          .pipe(first(), map((res: any) => {
+            let result;
+            result = res.body.map((spectrum) => {
+              spectrum.hit.similarity = spectrum.score;
+              return spectrum.hit;
+            });
+            return {body: result, url: res.url};
+          }))
           .subscribe(
             (res) => {
-              this.pagination.itemsPerPage = res.length;
-              this.pagination.totalSize = res.length;
+              this.pagination.itemsPerPage = res.body.length;
+              this.pagination.totalSize = res.body.length;
               this.searchSuccess(res);
             },
             this.searchError
@@ -392,7 +405,6 @@ export class SpectraBrowserComponent implements OnInit{
      */
     calculateResultCount() {
         this.spectrum.searchSpectraCount({
-            endpoint: 'count',
             query: this.query,
             text: this.textQuery
         }).pipe(first()).subscribe((res: any) => {
@@ -445,28 +457,35 @@ export class SpectraBrowserComponent implements OnInit{
         } else if (this.query === undefined && this.textQuery === undefined) {
             this.logger.info('submitting empty query');
             this.spectrum.searchSpectra({
-                size: this.pagination.itemsPerPage,
-                page: currentPage
-            }).pipe(first()).subscribe(this.searchSuccess, this.searchError);
+                page: currentPage,
+                size: this.pagination.itemsPerPage
+            }, false).pipe(first()).subscribe(this.searchSuccess, this.searchError);
 
         } else {
             this.logger.info('fetching spectra from query');
             this.spectrum.searchSpectra({
-                endpoint: 'search',
                 query: this.query,
                 text: this.textQuery,
                 page: currentPage,
                 size: this.pagination.itemsPerPage
-            }).pipe(first()).subscribe(this.searchSuccess, this.searchError);
+            }, true).pipe(first()).subscribe(this.searchSuccess, this.searchError);
         }
     }
 
     searchSuccess = (res) => {
         this.duration = (Date.now() - this.startTime) / 1000;
 
-        if (res.length > 0) {
+        if (res.body.length > 0) {
             // Add data to spectra object
-            this.spectra = this.addMetadataMap(res);
+            const splitTest = res.url.split('&page=');
+            if (splitTest.length === 1) {
+              this.curlLink = 'curl "' + res.url.split('?page=')[0] + '"';
+              this.curlDLink = 'curl -H "Accept: text/msp" "' + res.url.split('?page=')[0] + '"';
+            } else {
+              this.curlLink = 'curl "' + splitTest[0] + '"';
+              this.curlDLink = 'curl -H "Accept: text/msp" "' + splitTest[0] + '"';
+            }
+            this.spectra = this.addMetadataMap(res.body);
         }
         this.hideSplash();
         this.pagination.loading = false;
