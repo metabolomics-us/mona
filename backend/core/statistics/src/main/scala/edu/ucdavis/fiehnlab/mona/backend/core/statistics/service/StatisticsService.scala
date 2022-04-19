@@ -46,6 +46,9 @@ class StatisticsService extends LazyLogging {
   @Autowired
   val compoundClassStatisticsService: CompoundClassStatisticsService = null
 
+  @Autowired
+  val compoundMetaDataStatisticsService: CompoundMetaDataStatisticsService = null
+
 
   /**
     * Update the data in the global statistics repository
@@ -175,6 +178,7 @@ class StatisticsService extends LazyLogging {
   @Scheduled(cron = "0 0 0 * * *")
   def updateStatistics(): Unit = {
     metaDataStatisticsService.updateMetaDataStatistics()
+    compoundMetaDataStatisticsService.updateCompoundMetaDataStatistics()
     tagStatisticsService.updateTagStatistics()
     submitterStatisticsService.updateSubmitterStatistics()
     compoundClassStatisticsService.updateCompoundClassStatistics()

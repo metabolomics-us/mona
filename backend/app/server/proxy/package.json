@@ -27,7 +27,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@ng-bootstrap/ng-bootstrap": "^8.0.4",
+    "@ng-bootstrap/ng-bootstrap": "^10.0.0",
     "@wcmc/ng-chemdoodle": "^0.1.1",
     "@wcmc/ng-mass-spec-plotter": "^0.3.1",
     "angular-cts-service": "git+https://github.com/metabolomics-us/angular-cts-service.git",

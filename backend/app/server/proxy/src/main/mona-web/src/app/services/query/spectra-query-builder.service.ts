@@ -190,8 +190,12 @@ export class SpectraQueryBuilderService {
         this.query.push(this.buildMetaDataQuery(name, value, 'metaData', tolerance, undefined));
     }
 
-    addCompoundMetaDataToQuery(name, value, partialQuery) {
+    addCompoundMetaDataToQuery(name, value, partialQuery, operator?) {
+      if (typeof operator !== 'undefined') {
+        this.query.push(this.buildMetaDataQuery(name, value, 'compound.metaData', undefined, partialQuery, operator));
+      } else {
         this.query.push(this.buildMetaDataQuery(name, value, 'compound.metaData', undefined, partialQuery));
+      }
     }
 
     addNumericalCompoundMetaDataToQuery(name, value, tolerance) {

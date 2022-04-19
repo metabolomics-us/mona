@@ -3,10 +3,11 @@
  */
 
 import {HttpClient, HttpParams} from '@angular/common/http';
-import { map, first } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
+import {CustomURLEncoder} from '../../components/encoder.component';
 
 @Injectable()
 export class Spectrum {
@@ -15,7 +16,7 @@ export class Spectrum {
 
 	private cleanParameters(data: any): HttpParams {
 		// Filter our undefined values and place the others in HttpParams value
-		let params = new HttpParams();
+		let params = new HttpParams({encoder: new CustomURLEncoder()});
 		// Ternary case, we use a truthy check on data[k] to see if the value is not undefined, if so add to HttpParams
 		Object.keys(data).forEach(k => {
       typeof data[k] !== 'undefined' ? params = params.set(k, data[k]) : {};
