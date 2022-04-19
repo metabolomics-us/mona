@@ -13,8 +13,17 @@ export class FilterPipe implements PipeTransform {
             }
             return value.filter(item => item.toString().indexOf(args.toString()) !== -1);
         } else {
-            Object.keys(args).forEach((key) => {
-                value = value.filter(item => {
+            // Remove duplicates and only allow computed to display, i.e. 2 InChI codes, 1 computed, 1 not
+            // so the computed InChI will display instead of the none-computed
+             const lookup = value.reduce((a, e) => {
+               a[e.name] = ++a[e.name] || 0;
+               return a;
+             }, {});
+             let finalResult = value.filter((x) => {
+               return !lookup[x.name] || (lookup[x.name] && x.computed);
+             });
+             Object.keys(args).forEach((key) => {
+                finalResult = finalResult.filter(item => {
                     if (args[key].charAt(0) === '!'){
                         const arg = args[key].slice(1);
                         if (typeof item[key] !== 'undefined') {
@@ -27,11 +36,9 @@ export class FilterPipe implements PipeTransform {
                         }
                         return true;
                     }
-
                 });
-            });
-            return value;
-
+              });
+             return finalResult;
         }
     }
 }

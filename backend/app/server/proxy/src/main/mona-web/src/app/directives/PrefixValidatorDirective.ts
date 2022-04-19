@@ -32,7 +32,7 @@ export class PrefixValidator implements AsyncValidator {
     }
 
     // Ensure that only numbers and letters are used, if not return error
-    const hasNumAndLetterOnly = /[^A-Za-z0-9]+/.test(val);
+    const hasNumAndLetterOnly = /[^A-Za-z0-9-_]+/.test(val);
     if (hasNumAndLetterOnly) {
       return of({prefixValidator: 'Prefix contains invalid characters'});
     }
