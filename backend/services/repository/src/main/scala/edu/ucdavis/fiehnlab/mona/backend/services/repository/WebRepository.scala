@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.services.repository
 
 import java.io.File
 import javax.servlet.http.HttpServletRequest
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
@@ -21,6 +20,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.embedded._
 import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory
+import org.springframework.boot.web.servlet.ServletRegistrationBean
 import org.springframework.context.annotation.{Bean, Configuration, DependsOn, Import}
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.WebSecurity
