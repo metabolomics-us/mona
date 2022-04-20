@@ -36,9 +36,9 @@ export class Metadata {
             headers: {
                 'Content-Type': 'application/json'
             },
-            params: {name: data.name, search: data.search}
+            params: {query: '@query'}
         };
-        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/values`, config);
+        return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/meta/data/search?max=10`, data);
     }
 
     metaDataNames(): Observable<any> {
@@ -50,24 +50,4 @@ export class Metadata {
         };
         return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/names`, config);
     }
-
-  queryCompoundValues(data: any): Observable<any> {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      params: {name: data.name, search: data.search}
-    };
-    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/compound/values`, config);
-  }
-
-  compoundMetaDataNames(): Observable<any> {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      cache: true
-    };
-    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/compound/names`, config);
-  }
 }

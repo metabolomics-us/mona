@@ -13,7 +13,7 @@ import {FeedbackCacheService} from '../../services/feedback/feedback-cache.servi
 import {AuthenticationService} from '../../services/authentication.service';
 import {NGXLogger} from 'ngx-logger';
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {first, map} from 'rxjs/operators';
+import {first} from 'rxjs/operators';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {OrderbyPipe} from '../../filters/orderby.pipe';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -225,16 +225,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
           return;
         }
 
-        this.spectrumService.searchSimilarSpectra({spectrum: this.spectrum.spectrum, minSimilarity: 0.5})
-          .pipe(first(), map((res: any) => {
-            let result;
-            result = res.body.map((spectrum) => {
-              spectrum.hit.similarity = spectrum.score;
-              return spectrum.hit;
-            });
-            return result;
-          }))
-          .subscribe(
+        this.spectrumService.searchSimilarSpectra({spectrum: this.spectrum.spectrum, minSimilarity: 0.5}).pipe(first()).subscribe(
             (res: any) => {
                 const data = res;
                 this.similarSpectra = data.filter((x) => x.id !== this.spectrum.id);
@@ -246,6 +237,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     }
 
     /**
+     * @Deprecated
      * displays the spectrum for the given index
      * @param id string containing spectrum id
      */
