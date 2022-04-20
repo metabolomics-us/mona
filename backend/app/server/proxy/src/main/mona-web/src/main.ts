@@ -20,7 +20,6 @@ import {FormsModule} from '@angular/forms';
 import {NvD3Module} from 'ng2-nvd3';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {NgcCookieConsentModule, NgcCookieConsentConfig} from 'ngx-cookieconsent';
-import {ClipboardModule} from 'ngx-clipboard';
 
 import {CtsService, ChemifyService} from 'angular-cts-service/dist/cts-lib';
 import {NgMassSpecPlotterModule} from '@wcmc/ng-mass-spec-plotter';
@@ -103,7 +102,6 @@ import {DocumentationUploadLibraryComponent} from './app/components/documentatio
 import {DocumentationEntropyComponent} from './app/components/documentation/documentation-entropy.component';
 import {ManageSpectraComponent} from './app/components/admin/manage-spectra.component';
 import {MassDeleteModalComponent} from './app/components/browser/mass-delete-modal.component';
-import {SearchAdvancedComponent} from './app/components/search/search-advanced.component';
 
 import {PrefixValidator} from './app/directives/PrefixValidatorDirective';
 
@@ -160,8 +158,8 @@ const cookieConfig: NgcCookieConsentConfig = {
         TagInputModule,
         NvD3Module,
         FontAwesomeModule,
-        NgcCookieConsentModule.forRoot(cookieConfig),
-        ClipboardModule
+        NgcCookieConsentModule.forRoot(cookieConfig)
+
     ],
     providers: [
         CookieService,
@@ -259,8 +257,7 @@ const cookieConfig: NgcCookieConsentConfig = {
         DocumentationEntropyComponent,
         PrefixValidator,
         ManageSpectraComponent,
-        MassDeleteModalComponent,
-        SearchAdvancedComponent
+        MassDeleteModalComponent
     ],
     bootstrap: [
         AppRootComponent
@@ -268,8 +265,7 @@ const cookieConfig: NgcCookieConsentConfig = {
 })
 
 export class AppModule {
-  constructor() {
-  }
+  constructor() {}
 }
 
 if (environment.production) {

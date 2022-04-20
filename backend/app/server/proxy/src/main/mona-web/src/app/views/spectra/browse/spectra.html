@@ -30,10 +30,10 @@
 
 <div class="row">
     <div class="col-md-12">
-        <ngb-accordion [destroyOnHide]="false" #acc="ngbAccordion">
+        <ngb-accordion closeOthers="true" #acc="ngbAccordion">
             <ngb-panel id="display-panel" title="Display Generated Query">
                 <ng-template ngbPanelContent>
-                  Generated RSQL Query: <button (click)="editQuery = !editQuery" ngbTooltip="Click to edit"><fa-icon [icon]="faEdit"></fa-icon></button>
+                  Generated RSQL Query: <button (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
                   <pre *ngIf="!editQuery" class="input-group-text">{{query !== '' && query !== undefined ? query : "[Empty Query]"}}</pre>
                   <div *ngIf="editQuery">
                     <form (submit)="updateQuery(query)">
@@ -47,25 +47,15 @@
                   </div>
 
                   Full text search query:
-                  <pre class="input-group-text">{{textQuery !== '' && textQuery !== undefined ? textQuery : "[Empty Query]"}}</pre>
+                  <pre class="input-group-text">{{textQuery}}</pre>
 
                   <div>
-                    cURL command to download query as .json:
-                    <pre class="input-group-text" *ngIf="curlLink !== ''"><button ngxClipboard [cbContent]="curlLink" ngbTooltip="Copy to clipboard" placement="top-left" style="border: none; background: none">
-                      <fa-icon [icon]="faCopy"></fa-icon></button> {{curlLink}}
-                    </pre>
+                    Example cURL command to download all spectral JSON records matching the generated RSQL query:
+                    <pre class="input-group-text">{{{query: query, text: textQuery} | curlPipe}}</pre>
                   </div>
 
-                  <div class="mb-2">
-                    cURL command to download query as .msp
-                    <pre class="input-group-text" *ngIf="curlDLink !== ''"><button ngxClipboard [cbContent]="curlDLink" ngbTooltip="Copy to clipboard" placement="top-left" style="border: none; background: none">
-                      <fa-icon [icon]="faCopy"></fa-icon></button> {{curlDLink}}
-                    </pre>
-                  </div>
+                  <div>To download as an MSP file, add the header: <code>Accept: text/msp</code>.</div>
 
-                  <div>
-                    cURL commands can be executed on a Linux or macOS terminal, see the <a href="https://www.digitalocean.com/community/tutorials/workflow-downloading-files-curl">following</a> tutorial for details on how to use cURL.
-                  </div>
                   <div>
                     <strong>Note:</strong> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query
                     downloads to avoid putting unnecessary strain on the servers.
