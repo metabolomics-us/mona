@@ -265,9 +265,7 @@ const cookieConfig: NgcCookieConsentConfig = {
 })
 
 export class AppModule {
-  constructor() {
-    console.log(environment.ctsUrl);
-  }
+  constructor() {}
 }
 
 if (environment.production) {

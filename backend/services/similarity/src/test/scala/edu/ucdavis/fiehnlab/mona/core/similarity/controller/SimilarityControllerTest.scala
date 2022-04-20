@@ -86,7 +86,7 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
     } */
 
     "perform simple similarity query with precursor removal" in {
-      val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.042, 0.01, 0.0, true)
+      val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.042, 0.01, 0.0, true, "composite")
       val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
       assert(result.length == 1)
@@ -94,7 +94,7 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
     }
 
     "perform simple similarity query with precursor removal that shouldn't match" in {
-      val request: SimilaritySearchRequest = SimilaritySearchRequest("50.8086:28.55 63.0030:17.17 69.8962:8.22 71.9719:2.63 72.4053:4.71 80.3195:1.68 83.9324:176.37 84.3530:7.28 84.7319:3.61 84.9282:21.00 85.9344:60.57 99.5672:5.00 99.9257:65.58 100.0233:15.45 100.6556:2.83 100.9298:31.36 100.9697:99.02 101.0229:3.64", 0.7, 100.933979904266, 0.01, 0.0, true)
+      val request: SimilaritySearchRequest = SimilaritySearchRequest("50.8086:28.55 63.0030:17.17 69.8962:8.22 71.9719:2.63 72.4053:4.71 80.3195:1.68 83.9324:176.37 84.3530:7.28 84.7319:3.61 84.9282:21.00 85.9344:60.57 99.5672:5.00 99.9257:65.58 100.0233:15.45 100.6556:2.83 100.9298:31.36 100.9697:99.02 101.0229:3.64", 0.7, 100.933979904266, 0.01, 0.0, true, "composite")
       val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
       assert(result.length == 0)
@@ -135,7 +135,7 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
 
     "perform similarity queries with precursor filtering" should {
       "use absolute tolerance" in {
-        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, false)
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, false, "composite")
         val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
         assert(result.length == 1)
@@ -143,7 +143,7 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
       }
 
       "use tolerance in ppm" in {
-        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.0, 1, false)
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.0, 1, false, "composite")
         val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
         assert(result.length == 1)
@@ -153,7 +153,7 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
 
     "perform similarity queries with precursor filtering and tag filtering" should {
       "use absolute tolerance with present" in {
-        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, Array("LCMS"), Array(), false)
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, Array("LCMS"), Array(), false, "composite")
         val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
         assert(result.length == 1)
@@ -161,7 +161,7 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
       }
 
       "use absolute tolerance with non-present tag" in {
-        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, Array("GCMS"), Array(), false)
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, Array("GCMS"), Array(), false, "composite")
         val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
         assert(result.isEmpty)
@@ -178,7 +178,7 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
       } */
 
       "should match no spectra when tags are not present" in {
-        val request: SimilaritySearchRequest = SimilaritySearchRequest("112.05:100", 0.25, -1, 0, 0, Array("LCMS", "HMDB"), Array(), false)
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("112.05:100", 0.25, -1, 0, 0, Array("LCMS", "HMDB"), Array(), false, "composite")
         val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
         assert(result.length == 0)

@@ -48,7 +48,7 @@
                     </div>
                     <hr/>
                     <div class="form-group row" [ngClass]="{ 'has-error': !libraryPre.valid && !libraryPre.pristine }">
-                      <label for="libraryPre" class="col-sm-2 col-form-label" ngbTooltip="The unique prefix used to create a unique ID for every spectrum. Accepts numbers and letters.">Library ID Prefix: </label>
+                      <label for="libraryPre" class="col-sm-2 col-form-label" ngbTooltip="The unique prefix used to create a unique ID for every spectrum. Accepts numbers, letters, -, and _.">Library ID Prefix: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="libraryPre" name="libraryPre"
                                placeholder="Required" [(ngModel)]="libraryPrefix"  [ngModelOptions]="{updateOn: 'blur'}" #libraryPre = "ngModel" required prefixValidator/>

@@ -147,8 +147,8 @@ class StatisticsService extends LazyLogging {
         newAggregation(
           classOf[Spectrum],
           project("submitter"),
-          group("submitter.id").count().as("count"),
-          group().count().as("count")
+          group("submitter").count().as("count"),
+          group("submitter.id").count().as("count")
         ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
         classOf[Spectrum], classOf[AggregationResult]
       ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count

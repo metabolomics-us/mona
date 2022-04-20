@@ -97,6 +97,28 @@ class MSPWriter extends DomainWriter {
   }
 
   /**
+   * Writes InChI metadata string if one is present exists
+   *
+   * @param spectrum
+   * @param writer
+   */
+  def buildCompoundInChi(spectrum: Spectrum, writer: PrintWriter): Unit = {
+    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
+
+    if (compound != null) {
+      if(compound.inchi != null && compound.inchi.nonEmpty) {
+        writer.println(s"InChI: ${compound.inchi}")
+      }
+      else {
+        val metaData: Option[MetaData] = compound.metaData.find(_.name == "InChI")
+
+        if (metaData.isDefined) {
+          writer.println(s"InChI: ${metaData.get.value}")
+        }
+      }
+    }
+  }
+  /**
     * Writes the comment string containing all available metadata in the format "name=value"
     *
     * @param spectrum
@@ -163,6 +185,7 @@ class MSPWriter extends DomainWriter {
     // MetaData
     p.println(s"DB#: ${spectrum.id}")
     buildCompoundInchiKey(spectrum, p)
+    buildCompoundInChi(spectrum, p)
     buildMetaData(spectrum.metaData, "Precursor_type", "precursor type", p)
     buildMetaData(spectrum.metaData, "Spectrum_type", "ms level", p)
     buildMetaData(spectrum.metaData, "PrecursorMZ", "precursor m/z", p)

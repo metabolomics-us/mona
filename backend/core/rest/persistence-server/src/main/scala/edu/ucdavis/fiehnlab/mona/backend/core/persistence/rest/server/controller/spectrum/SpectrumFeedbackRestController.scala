@@ -51,7 +51,6 @@ class SpectrumFeedbackRestController extends LazyLogging{
   @Async
   @ResponseBody
   def searchByMonaID(@PathVariable("monaID") id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[java.lang.Iterable[SpectrumFeedback]]] = {
-    logger.info(s"ID is ${id}")
     if (id != null) {
       new AsyncResult[ResponseEntity[java.lang.Iterable[SpectrumFeedback]]](
         new ResponseEntity(commentRepository.findByMonaID(id), HttpStatus.OK)

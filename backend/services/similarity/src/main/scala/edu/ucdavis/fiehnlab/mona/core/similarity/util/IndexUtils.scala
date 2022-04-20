@@ -116,11 +116,14 @@ class IndexUtils extends LazyLogging {
       case AlgorithmTypes.COMPOSITE_SIMILARITY =>
         new CompositeSimilarity
 
+      case AlgorithmTypes.ENTROPY_SIMILARITY =>
+        new EntropySimilarity
+
       case AlgorithmTypes.DEFAULT =>
-        new CompositeSimilarity
+        new EntropySimilarity
 
       case _ =>
-        new CompositeSimilarity
+        new EntropySimilarity
     }
 
     logger.info(s"Index $indexType $indexName, algorithm $algorithm")
