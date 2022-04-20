@@ -17,7 +17,16 @@ class AbsoluteValueSimilarity extends Similarity {
     * @return
     */
   def compute(unknown: SimpleSpectrum, reference: SimpleSpectrum, removePrecursorIon: Boolean): Double = {
+    if(removePrecursorIon) {
+      val newUnknown: SimpleSpectrum = removePrecursor(unknown, unknown.precursorMZ)
+      val newReference: SimpleSpectrum = removePrecursor(reference, unknown.precursorMZ)
+      doCompute(newUnknown, newReference)
+    } else {
+      doCompute(unknown, reference)
+    }
+  }
 
+  override final def doCompute(unknown: SimpleSpectrum, reference: SimpleSpectrum): Double = {
     val zeroIon: Ion = Ion(0.0, 0.0)
     val norm = unknown.ions.map(_.intensity).sum
 

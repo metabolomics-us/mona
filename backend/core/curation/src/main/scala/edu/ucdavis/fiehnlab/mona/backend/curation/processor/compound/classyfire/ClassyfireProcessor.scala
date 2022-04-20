@@ -75,11 +75,13 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
     // Find provided or calculated InChIKey
     val inchiKey: String =
-      if (compound.inchiKey != null)
+      if (compound.metaData.exists(x => x.name == CommonMetaData.INCHI_KEY && x.computed)) {
+        logger.info(s"Getting computed inchikey")
+        compound.metaData.filter(x => x.name == CommonMetaData.INCHI_KEY && x.computed).map(_.value.toString).headOption.orNull
+      } else {
+        logger.info(s"Getting submitted inchikey")
         compound.inchiKey
-      else
-        compound.metaData.filter(_.name == CommonMetaData.INCHI_KEY).map(_.value.toString).headOption.orNull
-
+      }
     // Retrieve classyfire query
     if (compound.classification.length > classyfireQueryId.length) {
       logger.info(s"$id: Already have ClassyFire data, skipping...")
@@ -221,8 +223,8 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     logger.info(s"$id: Scheduling compound classification from structure")
 
     // Submit InChI or SMILES if available, sorted
-    val inchikey: Array[MetaData] = compound.metaData.filter(_.name == CommonMetaData.INCHI_CODE)
-    val smiles: Array[MetaData] = compound.metaData.filter(_.name == CommonMetaData.SMILES)
+    val inchikey: Array[MetaData] = compound.metaData.filter(x => x.name == CommonMetaData.INCHI_CODE && x.computed)
+    val smiles: Array[MetaData] = compound.metaData.filter(x => x.name == CommonMetaData.SMILES && x.computed)
 
     val structure: String =
       if (inchikey.nonEmpty) inchikey.head.value.toString
