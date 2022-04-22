@@ -97,7 +97,6 @@ export class UploadLibraryService{
         };
 
         const myPromise = new Promise((resolve, reject) => {
-            console.log(spectra);
             if (spectra.inchi) {
                 // no work needed
                 resolve(spectra);
