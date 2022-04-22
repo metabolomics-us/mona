@@ -5,7 +5,6 @@
  */
 
 import {NGXLogger} from 'ngx-logger';
-import {Spectrum} from '../persistence/spectrum.resource';
 import {MspParserLibService} from 'angular-msp-parser/dist/msp-parser-lib';
 import {MgfParserLibService} from 'angular-mgf-parser/dist/mgf-parser-lib';
 import {ChemifyService} from 'angular-cts-service/dist/cts-lib';
@@ -98,6 +97,7 @@ export class UploadLibraryService{
         };
 
         const myPromise = new Promise((resolve, reject) => {
+            console.log(spectra);
             if (spectra.inchi) {
                 // no work needed
                 resolve(spectra);
@@ -189,17 +189,17 @@ export class UploadLibraryService{
         const myPromise = new Promise((resolve) => {
             this.metadataOptimization.optimizeMetaData(spectra.meta).then((metaData: object) => {
                 const s = this.buildSpectrum();
-                if (spectra.id) {
+                if (typeof spectra.id !== 'undefined' && spectra.id !== null) {
                   s.id = spectra.id;
                 }
                 // assign structure information
-                if (spectra.inchiKey !== null) {
+                if (typeof spectra.inchiKey !== 'undefined' && spectra.inchiKey !== null) {
                   s.biologicalCompound.inchiKey = spectra.inchiKey;
                 }
-                if (spectra.inchi !== null) {
+                if (typeof spectra.inchi !== 'undefined' && spectra.inchi !== null) {
                   s.biologicalCompound.inchi = spectra.inchi;
                 }
-                if (spectra.smiles !== null) {
+                if (typeof spectra.smiles !== 'undefined' && spectra.smiles !== null) {
                   s.biologicalCompound.metaData.push({category: 'none', computed: false, hidden: false,
                     name: 'SMILES', value: spectra.smiles});
                 }
