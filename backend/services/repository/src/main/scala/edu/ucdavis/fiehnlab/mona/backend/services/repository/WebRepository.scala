@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.embedded._
-import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory
+import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory
 import org.springframework.boot.web.servlet.ServletRegistrationBean
 import org.springframework.context.annotation.{Bean, Configuration, DependsOn, Import}
 import org.springframework.http.HttpMethod
@@ -107,8 +107,8 @@ class ConfigureJetty extends LazyLogging {
   def localDirectory = new File(new File(this.locator.dir), "repository")
 
   @Bean
-  def jetty: EmbeddedServletContainerFactory = {
-    val factory = new JettyEmbeddedServletContainerFactory()
+  def jetty: JettyServletWebServerFactory = {
+    val factory = new JettyServletWebServerFactory()
     factory.setRegisterDefaultServlet(false)
     factory
   }
@@ -119,7 +119,7 @@ class ConfigureJetty extends LazyLogging {
     * @return
     */
   @Bean
-  def servlet: ServletRegistrationBean = {
+  def servlet: ServletRegistrationBean[DefaultServlet] = {
     logger.info(s"registering our servlet and using dir: $localDirectory")
     val servlet = new DefaultServlet
     val bean = new ServletRegistrationBean(servlet, "/repository/*")
@@ -143,7 +143,7 @@ class ConfigureJetty extends LazyLogging {
     * @return
     */
   @Bean
-  def servletGit(bareGitRepository: Git, locator: FindDirectory): ServletRegistrationBean = {
+  def servletGit(bareGitRepository: Git, locator: FindDirectory): ServletRegistrationBean[GitServlet] = {
     logger.info(s"registering our servlet and using dir: $localDirectory")
     val servlet = new GitServlet
 

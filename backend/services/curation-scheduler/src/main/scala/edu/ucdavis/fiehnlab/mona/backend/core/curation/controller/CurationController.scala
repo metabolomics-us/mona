@@ -40,7 +40,7 @@ class CurationController extends LazyLogging {
   @RequestMapping(path = Array("/{id}"))
   @Async
   def curateById(@PathVariable("id") id: String, request: HttpServletRequest): Future[ResponseEntity[CurationJobScheduled]] = {
-    val spectrum = mongoRepository.findOne(id)
+    val spectrum = mongoRepository.findById(id).get()
 
     if (spectrum == null) {
       new AsyncResult[ResponseEntity[CurationJobScheduled]](new ResponseEntity(HttpStatus.NOT_FOUND))

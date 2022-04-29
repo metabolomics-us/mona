@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.io.InputStreamReader
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
@@ -12,6 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatisti
 import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
@@ -19,6 +19,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   * Created by sajjan on 8/4/16.
   */
 @RunWith(classOf[SpringRunner])
+@DataMongoTest
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class MetaDataStatisticsServiceTest extends AnyWordSpec {
@@ -43,21 +44,21 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec {
     "load data" in {
       spectrumMongoRepository.deleteAll()
       exampleRecords.foreach(spectrumMongoRepository.save(_))
-      assert(spectrumMongoRepository.count() == 58)
+      assert(spectrumMongoRepository.count() == 59)
     }
 
     "perform metadata name aggregation" in {
       val result: Array[MetaDataStatisticsSummary] = metaDataStatisticsService.metaDataNameAggregation()
-      assert(result.length == 44)
+      assert(result.length == 56)
       assert(result.forall(_.count > 0))
     }
 
     "perform metadata aggregation for ms level" in {
       val result: MetaDataStatistics = metaDataStatisticsService.metaDataAggregation("ms level")
 
-      assert(result.count == 58)
+      assert(result.count == 59)
       assert(result.values.length == 1)
-      assert(result.values sameElements Array(MetaDataValueCount("MS2", 58)))
+      assert(result.values sameElements Array(MetaDataValueCount("MS2", 59)))
     }
 
     "perform metadata aggregation for ion mode" in {
@@ -74,21 +75,21 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec {
         metaDataStatisticsRepository.deleteAll()
         metaDataStatisticsService.updateMetaDataStatistics()
 
-        assert(metaDataStatisticsRepository.count() == 44)
+        assert(metaDataStatisticsRepository.count() == 56)
       }
 
       "get metadata names from repository" in {
         val result: Array[MetaDataStatisticsSummary] = metaDataStatisticsService.getMetaDataNames
-        assert(result.length == 44)
+        assert(result.length == 56)
         assert(result.forall(_.count > 0))
       }
 
       "get metadata aggregation for ms level from repository" in {
         val result = metaDataStatisticsService.getMetaDataStatistics("ms level")
 
-        assert(result.count == 58)
+        assert(result.count == 59)
         assert(result.values.length == 1)
-        assert(result.values sameElements Array(MetaDataValueCount("MS2", 58)))
+        assert(result.values sameElements Array(MetaDataValueCount("MS2", 59)))
       }
 
       "get metadata aggregation for ion mode from repository" in {
@@ -105,7 +106,7 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec {
         metaDataStatisticsRepository.deleteAll()
         metaDataStatisticsService.updateMetaDataStatistics(5)
 
-        assert(metaDataStatisticsRepository.count() == 44)
+        assert(metaDataStatisticsRepository.count() == 56)
       }
 
       "ensure that each metadata group has at most 5 values" in {

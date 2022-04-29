@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository
 
 import java.util
-
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -10,7 +9,7 @@ import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.index.query._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageRequest, Pageable}
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
+import org.springframework.data.elasticsearch.core.{ElasticsearchTemplate, ScrolledPage}
 import org.springframework.data.elasticsearch.core.query._
 
 import scala.jdk.CollectionConverters._
@@ -31,20 +30,16 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     */
   override def nativeQuery(query: QueryBuilder): util.List[Spectrum] = {
     val search = getSearch(query)
-    search.setPageable(new PageRequest(0, 50))
+    search.setPageable(PageRequest.of(0, 50))
 
-    val scrollId: String = elasticsearchTemplate.scan(search, 100000, false)
+    var scroll: Page[Spectrum] = elasticsearchTemplate.startScroll(10000, search, classOf[Spectrum])
+    var scrollId: String = scroll.asInstanceOf[ScrolledPage[_]].getScrollId()
     val result: ArrayBuffer[Spectrum] = ArrayBuffer[Spectrum]()
-    var hasRecords = true
 
-    while(hasRecords) {
-      val page: Page[Spectrum] = elasticsearchTemplate.scroll(scrollId, 100000, classOf[Spectrum])
-
-      if (page.hasContent) {
-        result ++= page.asScala
-      } else {
-        hasRecords = false
-      }
+    while(scroll.hasContent) {
+      result.addAll(scroll.getContent().asScala)
+      scrollId = scroll.asInstanceOf[ScrolledPage[_]].getScrollId();
+      scroll = elasticsearchTemplate.continueScroll(scrollId, 10000, classOf[Spectrum])
     }
 
     result.asJava

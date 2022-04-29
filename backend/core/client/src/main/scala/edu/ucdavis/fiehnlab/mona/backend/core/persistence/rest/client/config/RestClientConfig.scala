@@ -10,6 +10,7 @@ import org.apache.http.conn.HttpClientConnectionManager
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation._
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -19,6 +20,8 @@ import org.springframework.web.client.{RestOperations, RestTemplate}
   * Created by wohlg_000 on 3/2/2016.
   */
 @Configuration
+@EnableAutoConfiguration
+@ComponentScan
 @Import(Array(classOf[DomainConfig]))
 class RestClientConfig extends LazyLogging {
 

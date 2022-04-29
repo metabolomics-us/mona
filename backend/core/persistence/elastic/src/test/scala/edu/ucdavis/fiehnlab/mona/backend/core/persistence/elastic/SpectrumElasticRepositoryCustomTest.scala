@@ -12,11 +12,14 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
 import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
+import org.springframework.boot.test.autoconfigure
+import org.springframework.boot.test.context.SpringBootTest
 
 /**
   * Created by wohlg_000 on 3/9/2016.
   */
 @RunWith(classOf[SpringRunner])
+@SpringBootTest
 @ContextConfiguration(classes = Array(classOf[TestConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum, QueryBuilder] with BeforeAndAfterEach {
@@ -50,7 +53,7 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
       val query: String = """tags.text=="test - unknown - unknown - positive""""
 
       getRepository.save(spectrum.copy(id = "test", tags = spectrum.tags ++ Array(Tags(ruleBased = false, "test - unknown - unknown - positive"))))
-      assert(getRepository.exists("test"))
+      assert(getRepository.existsById("test"))
 
       val result = getRepository.query(query, "")
       assert(result.size() == 1)

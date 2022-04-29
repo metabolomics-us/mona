@@ -51,7 +51,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
   private def validateSpectrum(spectrum: String): Boolean = {
     val splash: String = SplashUtil.splash(spectrum, SpectraType.MS)
 
-    !blacklistedSplashRepository.exists(splash)
+    !blacklistedSplashRepository.existsById(splash)
   }
 
 
@@ -153,7 +153,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    val existingSubmitter: Submitter = submitterMongoRepository.findById(loginInfo.username)
+    val existingSubmitter: Submitter = submitterMongoRepository.findById(loginInfo.username).get()
 
     // Return a 422 Unprocessable Entity error if the spectrum is not valid
     if (!validateSpectrum(spectrum.spectrum)) {
@@ -162,10 +162,10 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
 
     // Admins can save anything
     else if (loginInfo.roles.contains("ADMIN")) {
-      if (spectrum.id == null || !getRepository.exists(spectrum.id)) {
+      if (spectrum.id == null || !getRepository.existsById(spectrum.id)) {
         super.doSave(spectrum)
       } else {
-        val existingSpectrum: Spectrum = getRepository.findOne(spectrum.id)
+        val existingSpectrum: Spectrum = getRepository.findById(spectrum.id).get()
         super.doSave(spectrum.copy(dateCreated = existingSpectrum.dateCreated))
       }
     }
@@ -183,7 +183,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
     // Check whether a spectrum with the given id exists.  If it does, the submitter
     // must own it to update it.  Otherwise, the request is not allowed
     else {
-      val existingSpectrum: Spectrum = getRepository.findOne(spectrum.id)
+      val existingSpectrum: Spectrum = getRepository.findById(spectrum.id).get()
 
       if (existingSpectrum == null) {
         super.doSave(spectrum)
@@ -208,7 +208,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    val existingSubmitter: Submitter = submitterMongoRepository.findById(loginInfo.username)
+    val existingSubmitter: Submitter = submitterMongoRepository.findById(loginInfo.username).get()
 
     // Return a 422 Unprocessable Entity error if the spectrum is not valid
     if (!validateSpectrum(spectrum.spectrum)) {
@@ -218,17 +218,17 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
     // Admins can save anything
     else if (loginInfo.roles.contains("ADMIN")) {
       if (spectrum.id == null || spectrum.id == "" || spectrum.id == id) {
-        if (spectrum.id != null && !getRepository.exists(spectrum.id)) {
+        if (spectrum.id != null && !getRepository.existsById(spectrum.id)) {
           super.doSave(spectrum.copy(id = id))
         } else {
-          val existingOldSpectrum: Spectrum = getRepository.findOne(spectrum.id)
+          val existingOldSpectrum: Spectrum = getRepository.findById(spectrum.id).get()
           super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated))
         }
       } else {
-        val existingOldSpectrum: Spectrum = getRepository.findOne(spectrum.id)
-        val existingNewSpectrum: Spectrum = getRepository.findOne(id)
+        val existingOldSpectrum: Spectrum = getRepository.findById(spectrum.id).get()
+        val existingNewSpectrum: Spectrum = getRepository.findById(id).get()
 
-        getRepository.delete(spectrum.id)
+        getRepository.deleteById(spectrum.id)
 
         if (existingOldSpectrum != null) {
           super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated))
@@ -249,10 +249,10 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
     else {
       // Handle the case of saving a new spectrum/updating record $id
       if (spectrum.id == null || spectrum.id.isEmpty || spectrum.id == id) {
-        if (spectrum.id != null && !getRepository.exists(spectrum.id)) {
+        if (spectrum.id != null && !getRepository.existsById(spectrum.id)) {
           super.doSave(spectrum.copy(id = id, submitter = existingSubmitter))
         } else {
-          val existingOldSpectrum: Spectrum = getRepository.findOne(spectrum.id)
+          val existingOldSpectrum: Spectrum = getRepository.findById(spectrum.id).get()
 
           if (existingOldSpectrum.submitter == null || existingOldSpectrum.submitter.id == loginInfo.username) {
             super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated, submitter = existingSubmitter))
@@ -264,8 +264,8 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
 
       // Handle the case of differing ids
       else {
-        val existingOldSpectrum: Spectrum = getRepository.findOne(spectrum.id)
-        val existingNewSpectrum: Spectrum = getRepository.findOne(id)
+        val existingOldSpectrum: Spectrum = getRepository.findById(spectrum.id).get()
+        val existingNewSpectrum: Spectrum = getRepository.findById(id).get()
 
         if (existingOldSpectrum != null && existingOldSpectrum.submitter.id != loginInfo.username) {
           // Not allowed to delete old spectrum if it belongs to someone else
@@ -274,7 +274,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
           // Not allowed to update the new spectrum if it belongs to someone else
           new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.CONFLICT))
         } else {
-          getRepository.delete(spectrum.id)
+          getRepository.deleteById(spectrum.id)
 
           // Use the old dateCreated field
           if (existingOldSpectrum != null) {

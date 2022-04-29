@@ -20,7 +20,7 @@ services:
 
   # Elasticsearch master and entrypoint
   elasticsearch_master:
-    image: elasticsearch:2.4
+    image: elasticsearch:5.5
     command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Des.node.master=true, -Des.index.query.bool.max_clause_count=10240 ]
     ports:
       - "9200:9200"
@@ -28,7 +28,7 @@ services:
 
   # Elasticsearch node, which may be scaled
   elasticsearch_node:
-    image: elasticsearch:2.4
+    image: elasticsearch:5.5
     command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Des.index.query.bool.max_clause_count=10240 ]
 
   rabbitmq:

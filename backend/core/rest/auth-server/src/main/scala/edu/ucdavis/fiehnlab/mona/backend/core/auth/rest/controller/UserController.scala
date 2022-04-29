@@ -40,7 +40,7 @@ class UserController extends GenericRESTController[User] {
     */
   override def doSave(user: User): Future[ResponseEntity[User]] = {
     // Users cannot update existing accounts
-    val existingUser: User = userRepository.findOne(user.username)
+    val existingUser: User = userRepository.findByUsername(user.username)
 
     if (existingUser == null) {
       super.doSave(user.copy(roles = Collections.emptyList()))
@@ -66,7 +66,7 @@ class UserController extends GenericRESTController[User] {
       super.doPut(id, user)
     } else {
       // Users can only update their own accounts
-      val existingUser: User = userRepository.findOne(id)
+      val existingUser: User = userRepository.findById(id).get()
 
       if (loginInfo.username == existingUser.username) {
         super.doPut(id, user.copy(roles = Collections.emptyList()))

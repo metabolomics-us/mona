@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.io.InputStreamReader
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
@@ -13,6 +12,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.TagStatistics
 import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
@@ -21,6 +21,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   */
 @RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
+@DataMongoTest
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class TagStatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
@@ -44,22 +45,22 @@ class TagStatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
       spectrumMongoRepository.deleteAll()
       exampleRecords.foreach(spectrumMongoRepository.save(_))
-      assert(spectrumMongoRepository.count() == 58)
+      assert(spectrumMongoRepository.count() == 59)
     }
 
     "perform tag aggregation on old MoNA records" in {
       val result: Array[TagStatistics] = tagStatisticsService.tagAggregation().sortBy(_.text)
-      assert(result.length == 3)
+      assert(result.length == 2)
 
-      assert(result.map(_.text) sameElements Array("LCMS", "massbank", "noisy spectra"))
-      assert(result.map(_.count) sameElements Array(58, 58, 3))
+      assert(result.map(_.text) sameElements Array("LC-MS", "LCMS", "massbank", "noisy spectra"))
+      assert(result.map(_.count) sameElements Array(1, 1, 58, 58, 3))
       assert(result.map(_.ruleBased) sameElements Array(false, false, false))
     }
 
     "persist tag statistics" in {
       tagStatisticsRepository.deleteAll()
       tagStatisticsService.updateTagStatistics()
-      assert(tagStatisticsRepository.count() == 3)
+      assert(tagStatisticsRepository.count() == 5)
     }
 
     "load data curatedRecords.json" in {

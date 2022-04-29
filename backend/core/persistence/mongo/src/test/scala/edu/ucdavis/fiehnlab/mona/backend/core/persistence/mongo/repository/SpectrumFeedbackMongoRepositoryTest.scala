@@ -6,6 +6,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchAutoConfiguration, ElasticsearchDataAutoConfiguration}
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
@@ -13,6 +14,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
 import scala.jdk.CollectionConverters._
 
 @RunWith(classOf[SpringRunner])
+@DataMongoTest
 @ContextConfiguration(classes = Array(classOf[SecondConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class SpectrumFeedbackMongoRepositoryTest extends AnyWordSpec {

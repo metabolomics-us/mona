@@ -58,7 +58,7 @@ class SimilaritySearchService extends LazyLogging {
       // Sort by score and return SearchResult objects
       .sortBy(-_.score)
       .take(size)
-      .map(x => SearchResult(spectrumMongoRepository.findOne(x.hit.id), x.score))
+      .map(x => SearchResult(spectrumMongoRepository.findById(x.hit.id).get(), x.score))
   }
 
   /**
@@ -73,7 +73,7 @@ class SimilaritySearchService extends LazyLogging {
       .view
       .filter(spectrum => request.peaks.forall(mz => spectrum.ions.exists(ion => Math.abs(ion.mz - mz) <= searchTolerance)))
       .take(size)
-      .map(x => SearchResult(spectrumMongoRepository.findOne(x.id), 1))
+      .map(x => SearchResult(spectrumMongoRepository.findById(x.id).get(), 1))
       .toArray
   }
 

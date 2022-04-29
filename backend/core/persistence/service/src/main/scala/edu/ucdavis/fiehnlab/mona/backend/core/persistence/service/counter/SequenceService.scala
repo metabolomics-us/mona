@@ -30,7 +30,7 @@ class SequenceService {
     */
   def getNextSequenceValue(sequenceName: String): Sequence = {
     // Create new counter if one does not already exist
-    if (sequenceRepository.findOne(sequenceName) == null) {
+    if (sequenceRepository.findById(sequenceName).orElse(null) == null) {
       sequenceRepository.save(Sequence(sequenceName, 0))
     }
 

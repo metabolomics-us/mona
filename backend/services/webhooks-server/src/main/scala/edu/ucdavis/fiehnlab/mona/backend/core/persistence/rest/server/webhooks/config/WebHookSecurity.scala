@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.l
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.{WebHookRepository, WebHookResultRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.service.WebHookService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
@@ -17,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 
 @Configuration
+@EnableAutoConfiguration
 @EnableMongoRepositories(basePackageClasses = Array(classOf[WebHookRepository], classOf[WebHookResultRepository]))
 @ComponentScan(basePackageClasses = Array(classOf[WebhookController], classOf[WebHookRepository], classOf[WebHookService], classOf[WebHookEventBusListener]))
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[SwaggerConfig]))

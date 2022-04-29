@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.TokenService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import io.jsonwebtoken.{Claims, Jwts, SignatureAlgorithm}
-import org.apache.commons.lang.time.DateUtils
+import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.jdk.CollectionConverters._

@@ -2,25 +2,28 @@ version: '3'
 
 services:
   mongodb:
-    image: mongo:3.2.4
+    image: mongo:3.6.4
     ports:
-      - 27017:27017
+      - "27017:27017"
 
   elasticsearch:
-    image: elasticsearch:2.4
-    command: [ elasticsearch, -Dhttp.cors.enabled=true, -Dhttp.cors.allow-origin=* ]
+    image: elasticsearch:5.6.16
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
-       - 9200:9200
-       - 9300:9300
+       - "9200:9200"
+       - "9300:9300"
+    volumes:
+      - "./elasticsearch-test.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
 
   elasticsearch_head:
-    image: mobz/elasticsearch-head:2
+    image: mobz/elasticsearch-head:5
     ports:
-     - 9100:9100
+     - "9100:9100"
 
   rabbitmq:
     image: rabbitmq:3.6-management
     hostname: rabbitmq
     ports:
-      - 5672:5672
-      - 15672:15672
+      - "5672:5672"
+      - "15672:15672"

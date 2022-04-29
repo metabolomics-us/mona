@@ -32,5 +32,5 @@ trait ISubmitterMongoRepository extends PagingAndSortingRepository[Submitter, St
     * @param id
     * @return
     */
-  def findById(id: String): Submitter
+  // def findById(id: String): Submitter
 }

@@ -73,7 +73,7 @@ class DownloadSchedulerService extends LazyLogging {
     */
   def scheduleExport(id: String): QueryExport = {
     logger.info(s"Looking up query: $id")
-    val download: QueryExport = queryExportRepository.findOne(id)
+    val download: QueryExport = queryExportRepository.findById(id).get()
 
     if (download != null) {
       logger.info(s"Rescheduling query: $id")

@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.config
 
 import java.io.{BufferedInputStream, File, FileInputStream, FileNotFoundException}
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -20,6 +19,7 @@ import org.springframework.amqp.core._
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.{ItemProcessor, ItemReader, ItemWriter}
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 
 /**
@@ -27,6 +27,7 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
   * and assorted issues
   */
 @Configuration
+@EnableAutoConfiguration
 @ComponentScan(value = Array("edu.ucdavis.fiehnlab.mona.backend.curation.processor"))
 @Import(Array(classOf[BusConfig]))
 class CurationConfig extends LazyLogging {

@@ -126,7 +126,7 @@ class SpectrumFeedbackRestController extends LazyLogging{
   @ResponseBody
   final def delete(@PathVariable("id") id: String): Unit = doDelete(id)
 
-  def doDelete(id: String): Unit = getRepository.delete(id)
+  def doDelete(id: String): Unit = getRepository.deleteById(id)
 
 
   /**

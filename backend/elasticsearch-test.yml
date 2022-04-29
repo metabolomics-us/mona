@@ -1,0 +1,8 @@
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+http.cors.allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
+http.cors.allow-headers: Authorization
+discovery.type: single-node
+http.host: 0.0.0.0
+network.bind_host: 0.0.0.0
+bootstrap.memory_lock: true

@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.rqe.regex.RegexStringFieldImpl;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.RegexpQueryBuilder;
-
+import org.apache.lucene.search.join.ScoreMode;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -100,7 +100,7 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
         } else if (ComparisonOperator.SUB_CONDITION_ANY.equals(operator)) {
             // create a new context to pass to the children so we don't modify the one
             // that may get reused from "above"
-            return nestedQuery(field, condition(node, context.createChieldContent(node.getField().asKey())));
+            return nestedQuery(field, condition(node, context.createChieldContent(node.getField().asKey())), ScoreMode.Avg);
         } else if (RegexStringFieldImpl.REGEX.equals(node.getOperator())) {
             return new RegexpQueryBuilder(field, single(values).toString());
         } else if (LikeStringFieldImpl.LIKE.equals(node.getOperator())) {

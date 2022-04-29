@@ -1,13 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.util.Date
-
 import com.mongodb.{BasicDBObject, DBObject}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.GlobalStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.GlobalStatistics
+import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations
@@ -70,10 +70,10 @@ class StatisticsService extends LazyLogging {
 
           // Get first InChIKey block and group
           new AggregationOperation() {
-            override def toDBObject(context: AggregationOperationContext): DBObject =
-              context.getMappedObject(new BasicDBObject(
-                "$project", new BasicDBObject(
-                  "value", new BasicDBObject(
+            override def toDocument(context: AggregationOperationContext): Document =
+              context.getMappedObject(new Document(
+                "$project", new Document(
+                  "value", new Document(
                     "$substr", Array("$value", 0, 14)
                   )
                 )

@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona</groupId>
     <artifactId>backend</artifactId>
-    <version>1.6-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <name>backend</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona</groupId>
         <artifactId>mona</artifactId>
-        <version>1.6-SNAPSHOT</version>
+        <version>2.0-SNAPSHOT</version>
     </parent>
 
     <packaging>pom</packaging>
@@ -76,12 +76,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Older version of Spring Data packages to ensure compatibility during Spring Boot upgrade -->
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-mongodb</artifactId>
-                <version>1.10.23.RELEASE</version>
-            </dependency>
 
             <!-- MoNA modules -->
             <dependency>

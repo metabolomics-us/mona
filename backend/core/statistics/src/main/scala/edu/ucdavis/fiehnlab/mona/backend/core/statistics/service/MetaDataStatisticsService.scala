@@ -67,17 +67,7 @@ class MetaDataStatisticsService {
       project("name").and("grouped").nested(bind("value", "value").and("count", "count")),
       sort(Direction.DESC, "grouped.count").and(Direction.ASC, "grouped.value"),
       group("name").push("grouped").as("values").sum("grouped.count").as("count"),
-
-      // Needed to use the slice operation - can be removed when upgrading to in spring-data-mongodb 1.10.0.RELEASE
-      new AggregationOperation() {
-        override def toDBObject(context: AggregationOperationContext): DBObject =
-          context.getMappedObject(new BasicDBObject(
-            "$project", new BasicDBObject(
-              "values", new BasicDBObject("$slice", Array("$values", sliceCount))
-            ).append("count", 1)
-          ))
-      }
-    ).withOptions(newAggregationOptions().allowDiskUse(true).build())
+    ).withOptions(newAggregationOptions().cursorBatchSize(100).allowDiskUse(true).build())
 
     val results = mongoOperations.aggregate(aggregationQuery, classOf[Spectrum], classOf[MetaDataStatistics]).asScala
 
@@ -100,7 +90,7 @@ class MetaDataStatisticsService {
     *
     * @return
     */
-  def getMetaDataStatistics(metaDataName: String): MetaDataStatistics = metaDataStatisticsRepository.findOne(metaDataName)
+  def getMetaDataStatistics(metaDataName: String): MetaDataStatistics = metaDataStatisticsRepository.findById(metaDataName).orElse(null)
 
   /**
     * Get a list of unique metadata names from the metadata statistics repository
@@ -137,17 +127,7 @@ class MetaDataStatisticsService {
       project("name").and("grouped").nested(bind("value", "value").and("count", "count")),
       sort(Direction.DESC, "grouped.count").and(Direction.ASC, "grouped.value"),
       group("name").push("grouped").as("values").sum("grouped.count").as("count"),
-
-      // Needed to use the slice operation - can be removed when upgrading to in spring-data-mongodb 1.10.0.RELEASE
-      new AggregationOperation() {
-        override def toDBObject(context: AggregationOperationContext): DBObject =
-          context.getMappedObject(new BasicDBObject(
-            "$project", new BasicDBObject(
-              "values", new BasicDBObject("$slice", Array("$values", sliceCount))
-            ).append("count", 1)
-          ))
-      }
-    ).withOptions(newAggregationOptions().allowDiskUse(true).build())
+    ).withOptions(newAggregationOptions().cursorBatchSize(100).allowDiskUse(true).build())
 
     val results: Iterable[MetaDataStatistics] = mongoOperations
       .aggregate(aggregationQuery, classOf[Spectrum], classOf[MetaDataStatistics])

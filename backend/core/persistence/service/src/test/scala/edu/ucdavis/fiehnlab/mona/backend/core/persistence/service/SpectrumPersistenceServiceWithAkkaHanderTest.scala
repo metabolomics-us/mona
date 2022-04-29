@@ -76,7 +76,7 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends AnyWordSpec with Lazy
         }
 
         s"store ${exampleRecords.length} records" in {
-          spectrumPersistenceService.save(exampleRecords.toList.asJava)
+          spectrumPersistenceService.saveAll(exampleRecords.toList.asJava)
 
           //this can happen async in the background so we need to wrap it with an eventually
           eventually(timeout(10 seconds)) {
@@ -97,20 +97,20 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends AnyWordSpec with Lazy
         }
 
         "query all data with pagination " in {
-          val result: Page[Spectrum] = spectrumPersistenceService.findAll(new PageRequest(0, 10))
+          val result: Page[Spectrum] = spectrumPersistenceService.findAll(PageRequest.of(0, 10))
           assert(result.getTotalPages == 6)
         }
 
         "query data with the query tags=q='text==LCMS'" in {
           val result: Array[Spectrum] = spectrumPersistenceService.findAll("""tags=q='text==LCMS'""", "").asScala.toArray
-          assert(result.map(_.id).toSet.size == exampleRecords.length)
-          assert(result.length == exampleRecords.length)
+          assert(result.map(_.id).toSet.size == 58)
+          assert(result.length == 58)
         }
 
         "query data with the query tags.text==LCMS" in {
           val result: Array[Spectrum] = spectrumPersistenceService.findAll("""tags.text==LCMS""", "").asScala.toArray
-          assert(result.map(_.id).toSet.size == exampleRecords.length)
-          assert(result.length == exampleRecords.length)
+          assert(result.map(_.id).toSet.size == 58)
+          assert(result.length == 58)
         }
 
         "query data with the query metaData=q='name==\"ion mode\" and value==positive'" in {
@@ -139,7 +139,7 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends AnyWordSpec with Lazy
           assert(spectrum.id == toUpdate.id)
 
           spectrumPersistenceService.update(toUpdate)
-          val updated = spectrumPersistenceService.findOne(spectrum.id)
+          val updated = spectrumPersistenceService.findById(spectrum.id).get()
 
           assert(updated.spectrum == "1:1")
           assert(countBefore == spectrumPersistenceService.count())
@@ -177,9 +177,9 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends AnyWordSpec with Lazy
         }
 
         "delete 10 spectra in the repository by utilizing the iterable method" in {
-          val spectra = spectrumPersistenceService.findAll(new PageRequest(0, 10)).getContent
+          val spectra = spectrumPersistenceService.findAll(PageRequest.of(0, 10)).getContent
           val count = spectrumPersistenceService.count()
-          spectrumPersistenceService.delete(spectra)
+          spectrumPersistenceService.deleteAll(spectra)
 
           //assert(spectrumMongoRepository.count() == spectrumElasticRepository.count())
 

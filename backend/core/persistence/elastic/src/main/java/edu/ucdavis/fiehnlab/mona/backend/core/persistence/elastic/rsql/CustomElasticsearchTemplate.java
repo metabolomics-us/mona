@@ -4,7 +4,7 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.data.domain.Sort;
@@ -42,16 +42,18 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
         }
 
         if (!isEmpty(searchQuery.getScriptFields())) {
-            searchRequest.addField("_source");
+            searchRequest.addStoredField("_source");
             for (ScriptField scriptedField : searchQuery.getScriptFields()) {
                 searchRequest.addScriptField(scriptedField.fieldName(), scriptedField.script());
             }
         }
 
         if (searchQuery.getHighlightFields() != null) {
+            HighlightBuilder test = new HighlightBuilder();
             for (HighlightBuilder.Field highlightField : searchQuery.getHighlightFields()) {
-                searchRequest.addHighlightedField(highlightField);
+                test.field(highlightField);
             }
+            searchRequest.highlighter(test);
         }
 
         if (!isEmpty(searchQuery.getIndicesBoost())) {

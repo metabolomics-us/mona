@@ -41,9 +41,9 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
 
     if (loginInfo.roles.contains("ADMIN")) {
       super.doList(page, size)
-    } else if (submitterMongoRepository.exists(loginInfo.username)) {
+    } else if (submitterMongoRepository.existsById(loginInfo.username)) {
       new AsyncResult[ResponseEntity[Iterable[Submitter]]](
-        new ResponseEntity[Iterable[Submitter]](Array(submitterMongoRepository.findOne(loginInfo.username)), HttpStatus.OK)
+        new ResponseEntity[Iterable[Submitter]](Array(submitterMongoRepository.findById(loginInfo.username).get()), HttpStatus.OK)
       )
     } else {
       new AsyncResult[ResponseEntity[Iterable[Submitter]]](new ResponseEntity[Iterable[Submitter]](Array.empty[Submitter], HttpStatus.OK))
@@ -82,7 +82,7 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
     if (loginInfo.roles.contains("ADMIN")) {
       super.doSave(submitter)
     } else {
-      val existingUser: Submitter = submitterMongoRepository.findOne(loginInfo.username)
+      val existingUser: Submitter = submitterMongoRepository.findById(loginInfo.username).get()
 
       if (existingUser == null || existingUser.id == loginInfo.username) {
         super.doSave(submitter.copy(id = loginInfo.username))

@@ -42,7 +42,7 @@ class QueryExportListener extends GenericMessageListener[QueryExport] with LazyL
 
         // Update predefined download if necessary
         if (result.emailAddress == null || result.emailAddress.isEmpty) {
-          val predefinedQuery = predefinedQueryRepository.findOne(result.label)
+          val predefinedQuery = predefinedQueryRepository.findById(result.label).get()
 
           if (predefinedQuery != null) {
             // Update the format-specific export in the predefined query

@@ -4,6 +4,7 @@ import com.mongodb.{BasicDBObject, BasicDBObjectBuilder, DBObject}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.SubmitterStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.SubmitterStatistics
+import org.bson.Document
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations
@@ -39,15 +40,15 @@ class SubmitterStatisticsService {
 
       // Needed to handle null average results to map to a number
       new AggregationOperation() {
-        override def toDBObject(context: AggregationOperationContext): DBObject =
-          context.getMappedObject(new BasicDBObject(
+        override def toDocument(context: AggregationOperationContext): Document =
+          context.getMappedObject(new Document(
             "$project",
             BasicDBObjectBuilder.start()
               .add("firstName", 1)
               .add("lastName", 1)
               .add("institution", 1)
               .add("count", 1)
-              .add("score", new BasicDBObject("$ifNull", Array("$score", 0)))
+              .add("score", new Document("$ifNull", Array("$score", 0)))
               .get()
           ))
       },

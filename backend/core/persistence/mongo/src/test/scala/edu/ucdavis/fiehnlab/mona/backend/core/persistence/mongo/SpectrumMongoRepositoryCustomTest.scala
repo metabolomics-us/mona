@@ -10,6 +10,7 @@ import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.mongodb.core.query.{BasicQuery, Query}
 import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 import scala.jdk.CollectionConverters._
@@ -18,8 +19,9 @@ import scala.jdk.CollectionConverters._
   * Created by wohlg_000 on 3/9/2016.
   */
 @RunWith(classOf[SpringRunner])
-@ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[Config]))
+@DataMongoTest
 @TestPropertySource(locations = Array("classpath:application.properties"))
+@ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[Config]))
 class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum, Query] {
 
   @Autowired
@@ -59,22 +61,22 @@ class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectru
     }
 
     "provide us with the possibility to query all data and paginate it" in {
-      val page: Page[Spectrum] = spectrumMongoRepository.findAll(new PageRequest(0, 30))
+      val page: Page[Spectrum] = spectrumMongoRepository.findAll(PageRequest.of(0, 30))
       assert(page.isFirst)
-      assert(page.getTotalElements == 58)
+      assert(page.getTotalElements == 59)
       assert(page.getTotalPages == 2)
 
-      val page2: Page[Spectrum] = spectrumMongoRepository.findAll(new PageRequest(30, 60))
+      val page2: Page[Spectrum] = spectrumMongoRepository.findAll(PageRequest.of(30, 60))
       assert(page2.isLast)
     }
 
     "provide us with the possibility to query custom queries all data and paginate it" in {
-      val page: Page[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""), new PageRequest(0, 30))
+      val page: Page[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""), PageRequest.of(0, 30))
       assert(page.isFirst)
       assert(page.getTotalElements == 58)
       assert(page.getTotalPages == 2)
 
-      val page2: Page[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""), new PageRequest(30, 60))
+      val page2: Page[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""), PageRequest.of(30, 60))
       assert(page2.isLast)
     }
 
@@ -87,7 +89,7 @@ class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectru
 
       spectrumMongoRepository.save(spectrum2)
 
-      val spectrum3 = spectrumMongoRepository.findOne(spectrum2.id)
+      val spectrum3 = spectrumMongoRepository.findById(spectrum2.id).get()
       assert(spectrum3.splash.splash == spectrum2.splash.splash)
       assert(countBefore == spectrumMongoRepository.count())
     }

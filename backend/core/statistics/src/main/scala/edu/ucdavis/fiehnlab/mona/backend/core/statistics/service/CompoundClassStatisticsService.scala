@@ -35,7 +35,7 @@ class CompoundClassStatisticsService {
     *
     * @return
     */
-  def getCompoundClassStatistics(compoundClass: String): CompoundClassStatistics = compoundClassStatisticsRepository.findOne(compoundClass)
+  def getCompoundClassStatistics(compoundClass: String): CompoundClassStatistics = compoundClassStatisticsRepository.findById(compoundClass).orElse(null)
 
   /**
     * Count the data in the compound class statistics repository

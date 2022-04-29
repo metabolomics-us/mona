@@ -13,6 +13,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 
 /**
   * This test extends `edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.SpectrumMongoRepositoryCustomTest`
@@ -24,6 +25,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   *
   */
 @RunWith(classOf[SpringRunner])
+@DataMongoTest
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class StatisticsMongoRepositoryTest extends AnyWordSpec {
@@ -50,7 +52,7 @@ class StatisticsMongoRepositoryTest extends AnyWordSpec {
 
       "return the top records in the base metadata group" in {
         assert(msLevel.nonEmpty)
-        assert(msLevel == ("MS2", 58) :: Nil)
+        assert(msLevel == ("MS2", 59) :: Nil)
 
         assert(ionMode.nonEmpty)
         assert(ionMode == ("positive", 33) :: ("negative", 25) :: Nil)

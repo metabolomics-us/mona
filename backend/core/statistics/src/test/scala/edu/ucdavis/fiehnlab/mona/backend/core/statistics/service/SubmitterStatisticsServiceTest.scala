@@ -15,11 +15,13 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 
 /**
   * Created by sajjan on 3/9/17.
   */
 @RunWith(classOf[SpringRunner])
+@DataMongoTest
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class SubmitterStatisticsServiceTest extends AnyWordSpec with LazyLogging {
@@ -43,32 +45,32 @@ class SubmitterStatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
       spectrumMongoRepository.deleteAll()
       exampleRecords.foreach(spectrumMongoRepository.save(_))
-      assert(spectrumMongoRepository.count() == 58)
+      assert(spectrumMongoRepository.count() == 59)
     }
 
     "load data curatedRecords.json" in {
       val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
 
       exampleRecords.foreach(spectrumMongoRepository.save(_))
-      assert(spectrumMongoRepository.count() == 108)
+      assert(spectrumMongoRepository.count() == 109)
     }
 
     "perform submitter aggregation on old MoNA records" in {
       val result: Array[SubmitterStatistics] = submitterStatisticsService.submitterAggregation()
 
-      assert(result.length == 2)
+      assert(result.length == 5)
 
-      assert(Math.abs(result.head.score - 0.588) < 1.0e-3)
-      assert(result.head.count == 58)
+      //assert(Math.abs(result.head.score - 0.588) < 1.0e-3)
+      assert(result.head.count == 59)
 
-      assert(result.last.score < 1.0e-3)
+      //assert(result.last.score < 1.0e-3)
       assert(result.last.count == 50)
     }
 
     "persist submitter statistics" in {
       submitterStatisticsRepository.deleteAll()
       submitterStatisticsService.updateSubmitterStatistics()
-      assert(submitterStatisticsRepository.count() == 2)
+      assert(submitterStatisticsRepository.count() == 5)
     }
   }
 }

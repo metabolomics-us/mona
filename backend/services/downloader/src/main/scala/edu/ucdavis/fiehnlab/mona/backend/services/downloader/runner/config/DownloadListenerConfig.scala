@@ -6,12 +6,14 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 
 /**
   * Created by sajjan on 7/21/17.
   */
 @Configuration
+@EnableAutoConfiguration
 @ComponentScan(value = Array("edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner"))
 @Profile(Array("docker"))
 class DownloadListenerConfig {

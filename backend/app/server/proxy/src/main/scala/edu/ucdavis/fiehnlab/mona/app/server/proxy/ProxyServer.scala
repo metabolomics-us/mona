@@ -11,7 +11,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConf
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.web.{DispatcherServletAutoConfiguration, ResourceProperties}
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration
+import org.springframework.boot.autoconfigure.web.ResourceProperties
 import org.springframework.boot.web.servlet.{MultipartConfigFactory, ServletRegistrationBean}
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy
@@ -78,12 +79,12 @@ class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
       "/rest/**", "/**/v2/api-docs"
     )
       .addResourceLocations(resourceProperties.getStaticLocations: _*)
-      .setCachePeriod(resourceProperties.getCachePeriod)
+      .setCachePeriod(resourceProperties.getCache.getPeriod.getSeconds.toInt)
 
     // Handle all other paths with angular
     registry.addResourceHandler("/**/*")
       .addResourceLocations(resourceProperties.getStaticLocations.map(x => x + "index.html"): _*)
-      .setCachePeriod(resourceProperties.getCachePeriod)
+      .setCachePeriod(resourceProperties.getCache.getPeriod.getSeconds.toInt)
       .resourceChain(true)
       .addResolver(new PathResourceResolver() {
         @throws(classOf[IOException])

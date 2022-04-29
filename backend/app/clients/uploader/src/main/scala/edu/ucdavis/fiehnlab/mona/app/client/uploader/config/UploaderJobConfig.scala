@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.Res
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.config.WorkflowConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation._
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.context.annotation._
   */
 @Configuration
 @EnableBatchProcessing
+@EnableAutoConfiguration
 @Import(Array(classOf[RestClientConfig], classOf[WorkflowConfiguration], classOf[CurationConfig]))
 @ImportResource(Array("classpath:uploadJob.xml"))
 @ComponentScan(Array("edu.ucdavis.fiehnlab.mona.backend.curation"))
