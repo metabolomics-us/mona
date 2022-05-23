@@ -29,7 +29,7 @@ class QueryExportMongoRepositoryTest extends AnyWordSpec {
       queryExportMongoRepository.save(QueryExport("test", "test", "", "json", null, null, 0, 0, null, null))
 
       assert(queryExportMongoRepository.count() == 1)
-      assert(queryExportMongoRepository.findOne("test") != null)
+      assert(queryExportMongoRepository.findById("test") != null)
     }
   }
 }

@@ -57,7 +57,8 @@ class CompoundConversion extends LazyLogging {
     try {
       val smilesParser: SmilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance())
       smilesParser.kekulise(false)
-      AtomContainerManipulator.suppressHydrogens(smilesParser.parseSmiles(smiles))
+      val parsedSmile: IAtomContainer = smilesParser.parseSmiles(smiles)
+      AtomContainerManipulator.suppressHydrogens(parsedSmile)
     } catch {
       case e: InvalidSmilesException =>
         logger.error("Invalid SMILES Code")

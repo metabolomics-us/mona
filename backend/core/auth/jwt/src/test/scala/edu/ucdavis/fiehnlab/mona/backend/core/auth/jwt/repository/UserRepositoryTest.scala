@@ -6,6 +6,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
@@ -15,6 +18,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   * Created by wohlgemuth on 3/24/16.
   */
 @RunWith(classOf[SpringRunner])
+@DataMongoTest
 @ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class UserRepositoryTest extends AnyWordSpec {

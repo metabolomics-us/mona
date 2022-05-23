@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
 import java.util
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -9,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config.PersistenceServiceConfig
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.http._
@@ -24,6 +24,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 @Configuration
 @Import(Array(classOf[PersistenceServiceConfig], classOf[SwaggerConfig], classOf[SerializationConfig]))
 @ComponentScan(basePackageClasses = Array(classOf[GenericRESTController[Spectrum]]))
+@EnableAutoConfiguration
 @Order(1)
 class RestServerConfig extends WebSecurityConfigurerAdapter {
 

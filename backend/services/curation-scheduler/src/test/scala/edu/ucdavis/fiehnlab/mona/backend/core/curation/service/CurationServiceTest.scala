@@ -85,8 +85,8 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
 
         eventually(timeout(10 seconds)) {
           assert(testCurationRunner.messageReceived)
-          assert(testCurationRunner.messageCount == 58)
-          assert(notificationCounter.getEventCount - count == 58)
+          assert(testCurationRunner.messageCount == 59)
+          assert(notificationCounter.getEventCount - count == 59)
         }
       }
     }

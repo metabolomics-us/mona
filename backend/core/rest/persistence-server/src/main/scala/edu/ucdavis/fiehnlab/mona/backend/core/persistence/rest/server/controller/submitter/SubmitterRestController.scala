@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
 
+import com.typesafe.scalalogging.LazyLogging
+
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.{ServletRequest, ServletResponse}
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation._
 @CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/submitters"))
-class SubmitterRestController extends GenericRESTController[Submitter] {
+class SubmitterRestController extends GenericRESTController[Submitter] with LazyLogging{
 
   @Autowired
   val httpServletRequest: HttpServletRequest = null
@@ -79,10 +80,11 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
+    logger.info(s"${loginInfo}")
     if (loginInfo.roles.contains("ADMIN")) {
       super.doSave(submitter)
     } else {
-      val existingUser: Submitter = submitterMongoRepository.findById(loginInfo.username).get()
+      val existingUser: Submitter = submitterMongoRepository.findById(loginInfo.username).orElse(null)
 
       if (existingUser == null || existingUser.id == loginInfo.username) {
         super.doSave(submitter.copy(id = loginInfo.username))

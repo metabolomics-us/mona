@@ -12,6 +12,7 @@ import org.junit.runner.RunWith
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.test.context.TestContextManager
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by sajjan on 5/26/16.
   */
 @RunWith(classOf[SpringRunner])
+@DataMongoTest
 @SpringBootTest(classes = Array(classOf[TestConfig], classOf[SimilarityConfig]))
 class SimilaritySearchServiceTest extends AnyWordSpec with Matchers with LazyLogging {
 
@@ -71,7 +73,7 @@ class SimilaritySearchServiceTest extends AnyWordSpec with Matchers with LazyLog
       }
 
       "should properly find matching spectra and not return results with adjacent ions" in {
-        val hits: Array[SearchResult] = similaritySearchService.search(SimilaritySearchRequest(testSpectrum, 0.9), totalSpectra)
+        val hits: Array[SearchResult] = similaritySearchService.search(SimilaritySearchRequest(testSpectrum, 0.9, -1, 0, 0, false, "composite"), totalSpectra)
 
         assert(hits.length == 3)
         assert(hits.map(_.hit.id).sorted.sameElements(correctMatches.map(_.id).sorted))

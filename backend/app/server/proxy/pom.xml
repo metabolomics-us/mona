@@ -59,13 +59,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
-            <version>1.4.5.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-            <version>1.4.5.RELEASE</version>
+            <artifactId>spring-cloud-netflix-eureka-client</artifactId>
         </dependency>
 
         <!-- config server -->

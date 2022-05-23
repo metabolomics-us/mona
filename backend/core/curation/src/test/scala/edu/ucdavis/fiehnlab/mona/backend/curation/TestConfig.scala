@@ -5,10 +5,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginResponse
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.RestRepositoryReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
+import org.springframework.boot.SpringBootConfiguration
+import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 
 import scala.jdk.CollectionConverters._
 

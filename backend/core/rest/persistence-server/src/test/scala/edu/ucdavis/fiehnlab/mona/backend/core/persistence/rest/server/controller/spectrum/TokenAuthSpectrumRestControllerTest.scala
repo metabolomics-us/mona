@@ -14,7 +14,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.Sp
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.data.repository.PagingAndSortingRepository
@@ -48,6 +48,8 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
+
+  override val deleteRequiresAuthentication: Boolean = false
 
   "we will be connecting to the REST controller" when {
     RestAssured.baseURI = s"http://localhost:$port/rest"
@@ -173,10 +175,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
       "we need to be authenticated to delete spectra " in {
         given().when().delete(s"/spectra/111").`then`().statusCode(401)
-      }
-
-      "we need to be an admin to delete spectra " in {
-        authenticate("test", "test-secret").when().delete(s"/spectra/111").`then`().statusCode(403)
+        authenticate("test", "test-secret").when().delete(s"/spectra/111").`then`().statusCode(200)
       }
 
       "we should be able to delete a spectra using DELETE at /rest/spectra" in {
@@ -244,12 +243,12 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
       "we should be able to get a query count without providing a query" in {
         val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
-        assert(count == 48)
+        assert(count == 49)
       }
 
       "we should be able to get a query count with an empty query" in {
         val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
-        assert(count == 48)
+        assert(count == 49)
       }
 
       "we should be able to update a spectra with new properties" in {

@@ -837,11 +837,11 @@
       "splash": "splash10-0a4i-1900000000-d2bc1c887f6f99ed0f74"
     },
     "submitter": {
-      "id": "ntho@chem.uoa.gr",
-      "emailAddress": "ntho@chem.uoa.gr",
-      "firstName": "Nikolaos",
-      "institution": "University of Athens",
-      "lastName": "Thomaidis"
+      "id": "test",
+      "emailAddress": "test",
+      "firstName": "test",
+      "institution": "test",
+      "lastName": "test"
     },
     "tags": [
       {

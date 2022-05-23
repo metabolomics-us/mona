@@ -17,7 +17,7 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.data.repository.PagingAndSortingRepository
@@ -96,7 +96,8 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
       "create a test submitter" in {
         submitterRepository.save(Submitter("test", "test", "", "", ""))
         submitterRepository.save(Submitter("test2", "test2", "", "", ""))
-        assert(submitterRepository.count() == 2)
+        submitterRepository.save(Submitter("ntho@chem.uoa.gr", "1", "", "", ""))
+        assert(submitterRepository.count() == 3)
       }
 
       "upload a spectrum as a regular user" in {

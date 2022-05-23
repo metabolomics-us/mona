@@ -42,12 +42,6 @@
 
         <!-- test dependencies -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
             <artifactId>api-server</artifactId>
             <scope>test</scope>

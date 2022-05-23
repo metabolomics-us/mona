@@ -7,9 +7,11 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.stereotype.Service
 
 /**
   * Simple login implementation utilizing mongo as a service
@@ -33,6 +35,8 @@ class MongoLoginService extends LoginService with LazyLogging {
     logger.debug(s"login in ${request.username}")
 
     val user: User = userRepository.findByUsername(request.username)
+
+    logger.debug(s"${user}")
 
     if (user == null) {
       throw new UsernameNotFoundException(s"sorry user ${request.username} was not found")

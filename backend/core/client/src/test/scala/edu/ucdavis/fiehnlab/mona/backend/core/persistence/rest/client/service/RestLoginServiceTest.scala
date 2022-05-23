@@ -10,6 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.Res
 import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager

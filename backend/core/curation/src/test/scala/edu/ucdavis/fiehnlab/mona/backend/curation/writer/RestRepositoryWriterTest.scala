@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.writer
 
 import java.io.InputStreamReader
-
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
@@ -13,6 +12,7 @@ import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager

@@ -58,9 +58,9 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
         exampleRecords.foreach(spectrumRestClient.add)
       }
 
-      "we should have 58 spectra" in {
+      "we should have 59 spectra" in {
         eventually(timeout(10 seconds)) {
-          assert(spectrumRestClient.count() == 58)
+          assert(spectrumRestClient.count() == 59)
         }
       }
 
@@ -86,18 +86,18 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
 
       "it should be possible to list all values" in {
         val count = spectrumRestClient.list().foldLeft(0)((sum, _) => sum + 1)
-        assert(count == 58)
+        assert(count == 59)
       }
 
 
       "it should be possible to stream all values" in {
         val count = spectrumRestClient.stream(None).foldLeft(0)((sum, _) => sum + 1)
-        assert(count == 58)
+        assert(count == 59)
       }
 
       "it should be possible to stream all values with no duplicate ids" in {
         val count = spectrumRestClient.stream(None).map(_.id).toSet.size
-        assert(count == 58)
+        assert(count == 59)
       }
 
       "it should be possible to paginate" in {
@@ -111,8 +111,8 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
             var last: Iterable[Spectrum] = null
 
             for (_ <- 1 to 25) {
-              val current: Iterable[Spectrum] = spectrumRestClient.list(query = Option("tags=q='text=match=\"[(LCMS)(lcms)]+\"'"), pageSize = Option(x), page = Option(0))
-
+              val current: Iterable[Spectrum] = spectrumRestClient.list(query = Option("tags=q='text=match=\"(LCMS)\"'"), pageSize = Option(x), page = Option(0))
+              logger.info(s"${current}")
               if (last == null) {
                 last = current
               }
@@ -145,12 +145,12 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
 
       "it should be possible to execute queries" in {
         val data = spectrumRestClient.list(Some(""" tags=q='text==LCMS' """))
-        assert(data.toList.length == exampleRecords.length)
+        assert(data.toList.length == 58)
       }
 
       "it should be possible to execute queries with regular expressions" in {
-        val data = spectrumRestClient.list(Some(""" tags=q='text=match="[(lcms)(LCMS)]+"' """))
-        assert(data.toList.length == exampleRecords.length)
+        val data = spectrumRestClient.list(Some(""" tags=q='text=match="(L.MS)"' """))
+        assert(data.toList.length == 58)
       }
 
       "it should be possible to delete values" in {
@@ -171,7 +171,7 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
           spectrumRestClient.get("I don't Exist And I Like Beer, but whiskey is not bad either")
         }
 
-        assert(thrown.getMessage == "404 Not Found")
+        assert(thrown.getMessage == "404 ")
       }
     }
   }

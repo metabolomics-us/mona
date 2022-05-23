@@ -20,8 +20,6 @@ import org.springframework.web.client.{RestOperations, RestTemplate}
   * Created by wohlg_000 on 3/2/2016.
   */
 @Configuration
-@EnableAutoConfiguration
-@ComponentScan
 @Import(Array(classOf[DomainConfig]))
 class RestClientConfig extends LazyLogging {
 

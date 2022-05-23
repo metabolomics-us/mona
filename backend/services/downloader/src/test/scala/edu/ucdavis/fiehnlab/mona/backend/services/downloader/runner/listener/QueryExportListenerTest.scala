@@ -55,17 +55,17 @@ class QueryExportListenerTest extends AnyWordSpec with LazyLogging {
 
       downloadListener.handleMessage(jsonExport)
 
-      val result: QueryExport = queryExportRepository.findOne(jsonExport.id)
+      val result: QueryExport = queryExportRepository.findById(jsonExport.id).orElse(null)
       assert(result != null)
-      assert(result.count == 58)
+      assert(result.count == 59)
       assert(result.size > 0)
 
-      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findOne(result.label)
+      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findById(result.label).orElse(null)
       assert(predefinedQuery != null)
       assert(predefinedQuery.jsonExport != null)
       assert(predefinedQuery.jsonExport.id == jsonExport.id)
       assert(predefinedQuery.mspExport == null)
-      assert(predefinedQuery.queryCount == 58)
+      assert(predefinedQuery.queryCount == 59)
     }
 
 
@@ -74,16 +74,16 @@ class QueryExportListenerTest extends AnyWordSpec with LazyLogging {
 
       downloadListener.handleMessage(mspExport)
 
-      val result: QueryExport = queryExportRepository.findOne(mspExport.id)
+      val result: QueryExport = queryExportRepository.findById(mspExport.id).orElse(null)
       assert(result != null)
-      assert(result.count == 58)
+      assert(result.count == 59)
       assert(result.size > 0)
 
-      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findOne(result.label)
+      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findById(result.label).orElse(null)
       assert(predefinedQuery != null)
       assert(predefinedQuery.mspExport != null)
       assert(predefinedQuery.mspExport.id == mspExport.id)
-      assert(predefinedQuery.queryCount == 58)
+      assert(predefinedQuery.queryCount == 59)
     }
 
 
@@ -92,16 +92,16 @@ class QueryExportListenerTest extends AnyWordSpec with LazyLogging {
 
       downloadListener.handleMessage(sdfExport)
 
-      val result: QueryExport = queryExportRepository.findOne(sdfExport.id)
+      val result: QueryExport = queryExportRepository.findById(sdfExport.id).orElse(null)
       assert(result != null)
-      assert(result.count == 58)
+      assert(result.count == 59)
       assert(result.size > 0)
 
-      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findOne(result.label)
+      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findById(result.label).orElse(null)
       assert(predefinedQuery != null)
       assert(predefinedQuery.mspExport != null)
       assert(predefinedQuery.mspExport.id == sdfExport.id)
-      assert(predefinedQuery.queryCount == 58)
+      assert(predefinedQuery.queryCount == 59)
     }
   }
 }

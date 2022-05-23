@@ -1,12 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service
 
 import java.util
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
+import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 
 import scala.reflect._

@@ -64,7 +64,7 @@ class StatisticsServiceTest extends AnyWordSpec with LazyLogging {
       assert(result.metaDataValueCount == 1050)
       assert(result.tagCount == 2)
       assert(result.tagValueCount == 100)
-      assert(result.submitterCount == 3)
+      assert(result.submitterCount == 4)
     }
   }
 }

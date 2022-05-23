@@ -58,19 +58,19 @@ class SubmitterStatisticsServiceTest extends AnyWordSpec with LazyLogging {
     "perform submitter aggregation on old MoNA records" in {
       val result: Array[SubmitterStatistics] = submitterStatisticsService.submitterAggregation()
 
-      assert(result.length == 5)
+      assert(result.length == 6)
 
       //assert(Math.abs(result.head.score - 0.588) < 1.0e-3)
-      assert(result.head.count == 59)
+      assert(result.head.count == 1)
 
       //assert(result.last.score < 1.0e-3)
-      assert(result.last.count == 50)
+      assert(result.last.count == 1)
     }
 
     "persist submitter statistics" in {
       submitterStatisticsRepository.deleteAll()
       submitterStatisticsService.updateSubmitterStatistics()
-      assert(submitterStatisticsRepository.count() == 5)
+      assert(submitterStatisticsRepository.count() == 6)
     }
   }
 }

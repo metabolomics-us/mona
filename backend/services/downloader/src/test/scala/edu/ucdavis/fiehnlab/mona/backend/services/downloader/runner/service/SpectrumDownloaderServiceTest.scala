@@ -55,13 +55,13 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging {
       val export: QueryExport = QueryExport("", "All Spectra", "", "json", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.generateQueryExport(export, compress = false)
 
-      assert(result.count == 58)
+      assert(result.count == 59)
       assert(result.size > 0)
       assert(result.exportFile.endsWith(".json"))
       assert(new String(Files.readAllBytes(Paths.get(dir, result.queryFile))).equals(export.query))
 
       val data: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(Files.newBufferedReader(Paths.get(dir, result.exportFile)))
-      assert(data.length == 58)
+      assert(data.length == 59)
 
       Files.delete(Paths.get(dir, result.queryFile))
       Files.delete(Paths.get(dir, result.exportFile))
@@ -71,7 +71,7 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging {
       val export: QueryExport = QueryExport("", "All Spectra", "", "json", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.generateQueryExport(export)
 
-      assert(result.count == 58)
+      assert(result.count == 59)
       assert(result.size > 0)
       assert(result.exportFile.endsWith(".zip"))
       assert(new String(Files.readAllBytes(Paths.get(dir, result.queryFile))).equals(export.query))
@@ -84,13 +84,13 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging {
       val export: QueryExport = QueryExport("", "All Spectra", "", "msp", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.generateQueryExport(export, compress = false)
 
-      assert(result.count == 58)
+      assert(result.count == 59)
       assert(result.size > 0)
       assert(result.exportFile.endsWith(".msp"))
       assert(new String(Files.readAllBytes(Paths.get(dir, result.queryFile))).equals(export.query))
 
       val data: Array[String] = new String(Files.readAllBytes(Paths.get(dir, result.exportFile))).split("\n\n")
-      assert(data.length == 58)
+      assert(data.length == 59)
 
       Files.delete(Paths.get(dir, result.queryFile))
       Files.delete(Paths.get(dir, result.exportFile))
@@ -100,7 +100,7 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging {
       val export: QueryExport = QueryExport("", "All Spectra", "", "msp", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.generateQueryExport(export)
 
-      assert(result.count == 58)
+      assert(result.count == 59)
       assert(result.size > 0)
       assert(result.exportFile.endsWith(".zip"))
       assert(new String(Files.readAllBytes(Paths.get(dir, result.queryFile))).equals(export.query))
@@ -145,10 +145,10 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging {
       val query: PredefinedQuery = PredefinedQuery("All Spectra", "", "", 0, null, null, null)
       val result: PredefinedQuery = downloaderService.generatePredefinedExport(query, compress = false, enableAllSpectraStaticFiles = true)
 
-      assert(result.queryCount == 58)
+      assert(result.queryCount == 59)
 
       Array(result.jsonExport, result.mspExport, result.sdfExport).foreach(export => {
-        assert(export.count == 58)
+        assert(export.count == 59)
         assert(export.size > 0)
         assert(Files.exists(Paths.get(dir, export.exportFile)))
         assert(Files.exists(Paths.get(dir, export.queryFile)))
@@ -165,7 +165,7 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging {
 
       assert(Files.exists(pngFile))
       assert(Files.exists(pngDescriptionFile))
-      assert(new String(Files.readAllBytes(pngFile)).trim.split("\n").length == 58)
+      assert(new String(Files.readAllBytes(pngFile)).trim.split("\n").length == 59)
 
       Files.delete(pngFile)
       Files.delete(pngDescriptionFile)
@@ -176,7 +176,7 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging {
 
       assert(Files.exists(idsFile))
       assert(Files.exists(idsDescriptionFile))
-      assert(new String(Files.readAllBytes(idsFile)).trim.split("\n").length == 58)
+      assert(new String(Files.readAllBytes(idsFile)).trim.split("\n").length == 59)
 
       Files.delete(idsFile)
       Files.delete(idsDescriptionFile)

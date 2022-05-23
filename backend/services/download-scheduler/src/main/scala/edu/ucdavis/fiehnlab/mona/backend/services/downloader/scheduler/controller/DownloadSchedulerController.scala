@@ -48,7 +48,7 @@ class DownloadSchedulerController extends LazyLogging {
 
     logger.info(s"Starting download of $id...")
 
-    val queryExport: QueryExport = queryExportRepository.findById(id).get()
+    val queryExport: QueryExport = queryExportRepository.findById(id).orElse(null)
 
     if (queryExport == null) {
       logger.info(s"\t-> Download object $id does not exist!")

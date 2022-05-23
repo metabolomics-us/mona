@@ -10,7 +10,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
@@ -51,4 +52,6 @@ class SpectrumFeedbackRestControllerTest extends AbstractGenericRESTControllerTe
   override def getId: String = getValue.id
 
   override val saveRequiresAuthentication: Boolean = false
+
+  override val deleteRequiresAuthentication: Boolean = false
 }

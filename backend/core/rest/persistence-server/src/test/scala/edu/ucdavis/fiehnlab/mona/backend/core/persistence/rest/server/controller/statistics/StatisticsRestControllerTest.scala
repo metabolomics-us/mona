@@ -13,7 +13,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types._
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.data.mongodb.core.MongoOperations
@@ -88,7 +88,7 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
         assert(result.metaDataValueCount == 1050)
         assert(result.tagCount == 2)
         assert(result.tagValueCount == 100)
-        assert(result.submitterCount == 1)
+        assert(result.submitterCount == 4)
       }
 
       "get compound class statistics" in {
@@ -102,7 +102,7 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
 
       "get submitter statistics" in {
         val result: Array[SubmitterStatistics] = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/statistics/submitters").`then`().log().all(true).statusCode(200).extract().as(classOf[Array[SubmitterStatistics]])
-        assert(result.length == 1)
+        assert(result.length == 4)
       }
     }
   }

@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
@@ -15,6 +16,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   * Created by sajjan on 1/23/17.
   */
 @RunWith(classOf[SpringRunner])
+@DataMongoTest
 @ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class MongoLoginServiceTest extends AnyWordSpec {

@@ -4,6 +4,7 @@ import com.mongodb.{BasicDBObject, DBObject}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary}
+import org.bson.Document
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.data.mongodb.core.MongoOperations
@@ -67,6 +68,16 @@ class MetaDataStatisticsService {
       project("name").and("grouped").nested(bind("value", "value").and("count", "count")),
       sort(Direction.DESC, "grouped.count").and(Direction.ASC, "grouped.value"),
       group("name").push("grouped").as("values").sum("grouped.count").as("count"),
+
+      // Needed to use the slice operation - can be removed when upgrading to in spring-data-mongodb 1.10.0.RELEASE
+      new AggregationOperation() {
+        override def toDocument(context: AggregationOperationContext): Document =
+          context.getMappedObject(new Document(
+            "$project", new Document(
+              "values", new Document("$slice", Array("$values", sliceCount))
+            ).append("count", 1)
+          ))
+      }
     ).withOptions(newAggregationOptions().cursorBatchSize(100).allowDiskUse(true).build())
 
     val results = mongoOperations.aggregate(aggregationQuery, classOf[Spectrum], classOf[MetaDataStatistics]).asScala
@@ -90,7 +101,7 @@ class MetaDataStatisticsService {
     *
     * @return
     */
-  def getMetaDataStatistics(metaDataName: String): MetaDataStatistics = metaDataStatisticsRepository.findById(metaDataName).orElse(null)
+  def getMetaDataStatistics(metaDataName: String): MetaDataStatistics = metaDataStatisticsRepository.findById(metaDataName).orElse(MetaDataStatistics("", 0, Array()))
 
   /**
     * Get a list of unique metadata names from the metadata statistics repository
@@ -127,6 +138,17 @@ class MetaDataStatisticsService {
       project("name").and("grouped").nested(bind("value", "value").and("count", "count")),
       sort(Direction.DESC, "grouped.count").and(Direction.ASC, "grouped.value"),
       group("name").push("grouped").as("values").sum("grouped.count").as("count"),
+
+      // Needed to use the slice operation - can be removed when upgrading to in spring-data-mongodb 1.10.0.RELEASE
+      new AggregationOperation() {
+        override def toDocument(context: AggregationOperationContext): Document =
+          context.getMappedObject(new Document(
+            "$project", new Document(
+              "values", new Document("$slice", Array("$values", sliceCount))
+            ).append("count", 1)
+          ))
+      }
+
     ).withOptions(newAggregationOptions().cursorBatchSize(100).allowDiskUse(true).build())
 
     val results: Iterable[MetaDataStatistics] = mongoOperations

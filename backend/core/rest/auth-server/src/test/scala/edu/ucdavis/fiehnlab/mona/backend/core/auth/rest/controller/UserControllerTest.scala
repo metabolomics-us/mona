@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfi
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import org.junit.runner.RunWith
-import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
@@ -50,7 +50,7 @@ class UserControllerTest extends AbstractGenericRESTControllerTest[User]("/users
 
     "save does not require authentication" in {
       given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/users").`then`().statusCode(200)
-      userRepository.delete(getValue.username)
+      userRepository.deleteById(getValue.username)
     }
 
     "save should not allow a user to create an admin user" in {

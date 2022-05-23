@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata._
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateMassAccuracy, CalculateSplash, NormalizeSpectrum, SpectrumIonCountScoringRule}
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.validation.{ColumnValidation, MassAccuracyValidation}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.validation.MassAccuracyValidation
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.{FinalizeCuration, RemoveComputedData}
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.{JSONFileSpectraReader, JSONLegacyFileSpectraReader}
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
@@ -19,7 +19,6 @@ import org.springframework.amqp.core._
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.{ItemProcessor, ItemReader, ItemWriter}
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 
 /**
@@ -27,7 +26,6 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
   * and assorted issues
   */
 @Configuration
-@EnableAutoConfiguration
 @ComponentScan(value = Array("edu.ucdavis.fiehnlab.mona.backend.curation.processor"))
 @Import(Array(classOf[BusConfig]))
 class CurationConfig extends LazyLogging {

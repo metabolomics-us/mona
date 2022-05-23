@@ -30,6 +30,8 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 
   val requiredAdminForWriting: Boolean = false
 
+  val deleteRequiresAuthentication: Boolean = true
+
   /**
     * object to use for gets
     *
@@ -87,12 +89,17 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
         }
       }
 
-      "delete requires admin authorization" in {
-        given().contentType("application/json; charset=UTF-8").delete(s"$endpoint/$getId").`then`().statusCode(401)
+      "delete may require authorization" in {
+        if (deleteRequiresAuthentication) {
+          given().contentType("application/json; charset=UTF-8").delete(s"$endpoint/$getId").`then`().statusCode(401)
 
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").`then`().statusCode(403)
+          authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").`then`().statusCode(403)
 
-        authenticate().contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").`then`().statusCode(200)
+          authenticate().contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").`then`().statusCode(200)
+        } else {
+          given().contentType("application/json; charset=UTF-8").delete(s"$endpoint/$getId").`then`().statusCode(401)
+          authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").`then`().statusCode(200)
+        }
       }
     }
   }

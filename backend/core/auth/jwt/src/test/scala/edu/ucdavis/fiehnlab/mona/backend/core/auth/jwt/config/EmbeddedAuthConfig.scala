@@ -3,7 +3,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
-import org.springframework.context.annotation.{Bean, Configuration, Import}
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 import org.springframework.test.context.TestPropertySource
 
 /**

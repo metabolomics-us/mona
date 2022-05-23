@@ -7,14 +7,12 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
   * provides us with the specifics for a JWT based authentication
   * in the Mona system
   */
 @EnableMongoRepositories(basePackageClasses = Array(classOf[UserRepository]))
-@EnableJpaRepositories
 @ComponentScan(basePackageClasses = Array(classOf[UserRepository]))
 @Configuration
 @EnableAutoConfiguration

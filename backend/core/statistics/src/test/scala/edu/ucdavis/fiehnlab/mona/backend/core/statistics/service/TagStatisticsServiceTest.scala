@@ -50,11 +50,11 @@ class TagStatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
     "perform tag aggregation on old MoNA records" in {
       val result: Array[TagStatistics] = tagStatisticsService.tagAggregation().sortBy(_.text)
-      assert(result.length == 2)
+      assert(result.length == 5)
 
-      assert(result.map(_.text) sameElements Array("LC-MS", "LCMS", "massbank", "noisy spectra"))
+      assert(result.map(_.text) sameElements Array("EMBL-MCF", "LC-MS", "LCMS", "massbank", "noisy spectra"))
       assert(result.map(_.count) sameElements Array(1, 1, 58, 58, 3))
-      assert(result.map(_.ruleBased) sameElements Array(false, false, false))
+      assert(result.map(_.ruleBased) sameElements Array(false, true, false, false, false))
     }
 
     "persist tag statistics" in {

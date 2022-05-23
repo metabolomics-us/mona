@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import java.io.InputStreamReader
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.{RestClientConfig}
 import org.junit.runner.RunWith
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator

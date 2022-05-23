@@ -25,7 +25,6 @@ import java.net.InetAddress
   * Created by wohlg_000 on 3/9/2016.
   */
 @Configuration
-@EnableAutoConfiguration
 @EnableElasticsearchRepositories(basePackageClasses = Array(
   classOf[ISpectrumElasticRepositoryCustom]
 ))

@@ -16,7 +16,7 @@ import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadS
 import org.junit.runner.RunWith
 import org.scalatest.matchers.should.Matchers
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager

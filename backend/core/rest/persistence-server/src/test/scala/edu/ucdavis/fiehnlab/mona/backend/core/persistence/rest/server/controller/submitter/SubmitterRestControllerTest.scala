@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
 
 import java.io.InputStreamReader
-
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
@@ -13,7 +12,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{Em
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
@@ -49,6 +49,8 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
   override def getId: String = getValue.id
 
   override val requiresAuthForAllRequests: Boolean = true
+
+  override val deleteRequiresAuthentication: Boolean = false
 
   "we will be connecting to the REST controller" when {
     RestAssured.baseURI = s"http://localhost:$port/rest"
@@ -129,8 +131,8 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
           userRepository.save(User("test@test.com", "test-secret"))
           submitterRepository.save(Submitter("test@test.com", "test@test.com", "Test", "User", "UC Davis"))
 
-          assert(userRepository.exists("test@test.com"))
-          assert(submitterRepository.exists("test@test.com"))
+          assert(userRepository.existsById("test@test.com"))
+          assert(submitterRepository.existsById("test@test.com"))
         }
 
         "can access submitter information with full email address if logged in as that user" in {
