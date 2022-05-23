@@ -1,0 +1,6 @@
+cluster.name: mona-cluster
+node.name: elasticsearch_node
+http.cors.allow-origin: "*"
+network.host: 0.0.0.0
+bootstrap.memory_lock: true
+indices.query.bool.max_clause_count: 12000

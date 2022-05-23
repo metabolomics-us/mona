@@ -11,7 +11,7 @@ services:
   #
 
   mongodb:
-    image: mongo:3.2.4
+    image: mongo:3.6.4
     ports:
       - "27017:27017"
     volumes:
@@ -20,16 +20,30 @@ services:
 
   # Elasticsearch master and entrypoint
   elasticsearch_master:
-    image: elasticsearch:5.5
-    command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Des.node.master=true, -Des.index.query.bool.max_clause_count=10240 ]
+    image: elasticsearch:5.6.16
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     ports:
       - "9200:9200"
       - "9300:9300"
+    volumes:
+      - "./elasticsearch-dev_master.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
 
   # Elasticsearch node, which may be scaled
   elasticsearch_node:
-    image: elasticsearch:5.5
-    command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Des.index.query.bool.max_clause_count=10240 ]
+    image: elasticsearch:5.6.16
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - "./elasticsearch-dev_node.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
 
   rabbitmq:
     image: rabbitmq:3.6-management
