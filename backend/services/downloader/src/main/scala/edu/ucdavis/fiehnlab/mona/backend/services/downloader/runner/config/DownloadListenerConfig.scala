@@ -15,7 +15,7 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(value = Array("edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner"))
-@Profile("docker")
+@Profile(Array("docker"))
 class DownloadListenerConfig {
 
   @Autowired
