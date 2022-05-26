@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest
 
 import java.net.{NetworkInterface, UnknownHostException}
 import com.typesafe.scalalogging.LazyLogging
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.commons.util.InetUtils
@@ -19,7 +19,7 @@ import scala.jdk.CollectionConverters._
   */
 @Configuration
 @EnableDiscoveryClient
-@Profile(Array("docker"))
+@Profile("docker")
 class EurekaClientConfig extends LazyLogging {
 
   @Value("${server.port}")

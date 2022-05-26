@@ -56,7 +56,7 @@ class GatewaySwaggerResourcesProvider extends SwaggerResourcesProvider with Lazy
   }
 
   private def swaggerResource(name: String, location: String, version: String = "2.0") = {
-    val swaggerResource: SwaggerResource = new SwaggerResource
+    val swaggerResource = new SwaggerResource
     swaggerResource.setName(name)
     swaggerResource.setLocation(location)
     swaggerResource.setSwaggerVersion(version)

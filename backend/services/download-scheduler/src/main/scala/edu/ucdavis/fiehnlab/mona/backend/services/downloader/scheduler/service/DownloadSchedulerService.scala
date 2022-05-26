@@ -133,7 +133,7 @@ class DownloadSchedulerService extends LazyLogging {
   /**
     * Schedules the generation of predefined exports once a day
     */
-  @Scheduled(cron = "0 0 0 * * ?")
+  @Scheduled(cron = "0 0 0 ? * SAT")
   private def schedulePredefinedExports(): Unit = {
     logger.info("Scheduling predefined export generation")
     generatePredefinedExports()
