@@ -143,7 +143,7 @@ class DownloadSchedulerService extends LazyLogging {
   /**
     * Schedules the generation of static exports for all spectra (e.g. base64 png and ID exports) once a week
     */
-  @Scheduled(cron = "0 0 12 ? * SUN")
+  @Scheduled(cron = "0 0 0 ? * WED")
   private def scheduleStaticExports(): Unit = {
     logger.info("Starting static export generation")
     generateStaticExports()

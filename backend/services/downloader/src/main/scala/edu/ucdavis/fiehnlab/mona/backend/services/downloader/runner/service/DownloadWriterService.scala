@@ -27,7 +27,7 @@ class DownloadWriterService extends LazyLogging {
     * @param query
     */
   private def executeQuery(query: String): Iterable[Spectrum] = {
-    new DynamicIterable[Spectrum, String](query, 200) {
+    new DynamicIterable[Spectrum, String](query, 250) {
 
       /**
         * Loads more data from the server for the given query
