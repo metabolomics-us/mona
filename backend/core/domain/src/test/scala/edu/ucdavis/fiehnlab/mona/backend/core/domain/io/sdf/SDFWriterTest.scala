@@ -52,10 +52,6 @@ class SDFWriterTest extends AnyWordSpec {
         assert(out.toString.contains(">  <INCHIKEY>\r\nQASFUMOKHFSJGL-LAFRSMQTSA-N"))
       }
 
-      "InChI" in {
-        assert(out.toString.contains(">  <INCHI>\r\nInChI=1S/C27H41NO2/c1-15-11-24-25(28-14-15)17(3)27(30-24)10-8-20-21-6-5-18-12-19(29)7-9-26(18,4)23(21)13-22(20)16(27)2/h5,15,17,19-21,23-25,28-29H,6-14H2,1-4H3/t15-,17+,19-,20-,21-,23-,24+,25-,26-,27-/m0/s1"))
-      }
-
       "molecular weight" in {
         assert(out.toString.contains(">  <MW>\r\n411"))
       }
@@ -122,10 +118,6 @@ class SDFWriterTest extends AnyWordSpec {
 
       "InChIKey" in {
         assert(out.toString.contains(">  <INCHIKEY>\r\nQKLPUVXBJHRFQZ-UHFFFAOYSA-N"))
-      }
-
-      "InChI" in {
-        assert(out.toString.contains(">  <INCHI>\r\nInChI=1S/C10H9ClN4O2S/c11-9-5-13-6-10(14-9)15-18(16,17)8-3-1-7(12)2-4-8/h1-6H,12H2,(H,14,15)"))
       }
 
       "molecular formula" in {
