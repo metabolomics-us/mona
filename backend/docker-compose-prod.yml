@@ -17,6 +17,9 @@ services:
     volumes:
       - mongo-data:/data/db
     command: --wiredTigerCacheSizeGB 48
+    logging:
+      options:
+        max-size: "100M"
 
   # Elasticsearch master and entrypoint
   elasticsearch_master:
@@ -25,17 +28,26 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
+    logging:
+      options:
+        max-size: "100M"
 
   # Elasticsearch node, which may be scaled
   elasticsearch_node:
     image: elasticsearch:2.4
     command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Des.index.query.bool.max_clause_count=10240 ]
+    logging:
+      options:
+        max-size: "100M"
 
   rabbitmq:
     image: rabbitmq:3.6-management
     ports:
       - "15672:15672"
       - "5672:5672"
+    logging:
+      options:
+        max-size: "100M"
 
 
   #
@@ -54,6 +66,9 @@ services:
       - ./nginx_v2/certs:/etc/letsencrypt
       - ./nginx_v2/config/mona.fiehnlab.ucdavis.edu.conf:/etc/nginx/conf.d/mona.fiehnlab.ucdavis.edu.conf
       - ./nginx_v2/config/massbank.us.conf:/etc/nginx/conf.d/massbank.us.conf
+    logging:
+      options:
+        max-size: "100M"
 
 
   #
@@ -74,6 +89,9 @@ services:
       - JAVA_OPTS='-Xmx4g -XX:+UseParallelGC'
       - GIT_USER=${GIT_USER}
       - GIT_PASS=${GIT_PASS}
+    logging:
+      options:
+        max-size: "100M"
 
 
   #
@@ -86,6 +104,9 @@ services:
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
   # Webhook support to notify external apis
   webhooks:
@@ -95,6 +116,9 @@ services:
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
   # Scheduler for curation jobs
   curationScheduler:
@@ -104,6 +128,9 @@ services:
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
   # Serves the content of MoNA as a repository
   repository:
@@ -115,6 +142,9 @@ services:
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
     volumes:
       - repository-data:/data
+    logging:
+      options:
+        max-size: "100M"
 
 
   #
@@ -127,6 +157,9 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
   # Main authentication service
   auth:
@@ -134,6 +167,9 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
   # MoNA similarity service
   similarity:
@@ -143,6 +179,9 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
 
   #
@@ -159,6 +198,9 @@ services:
     environment:
       - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xss4m -Xmx4g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
   # Download service for scheduling and running download jobs
   downloader:
@@ -170,6 +212,9 @@ services:
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
     volumes:
       - downloader-data:/data
+    logging:
+      options:
+        max-size: "100M"
 
   # Run scheduled curation tasks
   curationRunner:
@@ -177,3 +222,6 @@ services:
     depends_on:
       - persistence
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
