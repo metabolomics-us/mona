@@ -22,70 +22,27 @@ import scala.collection.mutable.ArrayBuffer
   */
 
 case class MetaData(
-                     @(Indexed@field)
                      category: String,
-
-                     @(Indexed@field)
                      computed: Boolean,
-
-                     @(Indexed@field)
                      hidden: Boolean,
-
-                     @(Indexed@field)
-                     @(TextIndexed@field)
-                     @(AnalyzedStringSerialize@field)
-                     @(Field@field)(`type` = FieldType.Keyword)
                      name: String,
-
                      score: Score,
-
-                     @(Field@field)(`type` = FieldType.Text)
-                     @(Indexed@field)
                      unit: String,
-
-                     @(Field@field)(`type` = FieldType.Text)
                      url: String,
-
-                     /**
-                       * should be limited to the following classes
-                       *
-                       * String
-                       * Integer
-                       * Double
-                       * Boolean
-                       */
-                     @(TupleSerialize@field)
-                     @(TextIndexed@field)
                      @(JsonDeserialize@field)(using = classOf[NumberDeserializer])
                      value: Any
                    )
 
 case class Names(
-                  @(Indexed@field)
-                  @(Field@field)(`type` = FieldType.Boolean)
                   computed: Boolean,
-
-                  @(Indexed@field)
-                  @(TextIndexed@field)
-                  @(AnalyzedStringSerialize@field)
-                  @(Field@field)(`type` = FieldType.Keyword)
                   name: String,
-
                   score: Double,
-
-                  @(Field@field)(`type` = FieldType.Text)
                   source: String
                 )
 
 
 case class Tags(
-                 @(Indexed@field)
                  ruleBased: Boolean,
-
-                 @(Indexed@field)
-                 @(TextIndexed@field)
-                 @(AnalyzedStringSerialize@field)
-                 @(Field@field)(`type` = FieldType.Keyword)
                  text: String
                )
 
@@ -106,36 +63,17 @@ case class Tags(
   */
 case class Compound(
                      @Deprecated
-                     @(Field@field)(`type` = FieldType.Keyword)
                      inchi: String,
 
                      @Deprecated
-                     @(Indexed@field)
-                     @(TextIndexed@field)
-                     @(Field@field)(`type` = FieldType.Keyword)
                      inchiKey: String,
-
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
-
                      molFile: String,
-
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      names: Array[Names],
-
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      tags: Array[Tags],
-
-                     @(Indexed@field)
                      computed: Boolean = false,
-
-                     @(Field@field)(`type` = FieldType.Object)
                      score: Score,
-
-                     @(Field@field)(`type` = FieldType.Text)
                      kind: String = "biological",
-
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      classification: Array[MetaData] = Array()
                    )
 
@@ -143,26 +81,14 @@ case class Impact(value: Double, reason: String)
 
 case class Score(
                   impacts: Array[Impact],
-
-                  @(Indexed@field)
                   score: Double
                 )
 
 case class Splash(
-                   @(Field@field)(`type` = FieldType.Text)
                    block1: String, //ns
-
-                   @(Field@field)(`type` = FieldType.Text)
                    block2: String, //ns
-
-                   @(Field@field)(`type` = FieldType.Text)
                    block3: String, //ns
-
-                   @(Field@field)(`type` = FieldType.Text)
                    block4: String, //ns
-
-                   @(Field@field)(`type` = FieldType.Keyword)
-                   @(Indexed@field)
                    splash: String
                  )
 
@@ -182,30 +108,10 @@ case class Submitter(
                       /**
                         * primary id for the user, can be any string
                         */
-                      @(Id@field)
-                      @(Indexed@field)
-                      @(TextIndexed@field)
-                      @(Field@field)(`type` = FieldType.Keyword)
                       id: String,
-
-                      @(Indexed@field)
-                      @(TextIndexed@field)
-                      @(Field@field)(`type` = FieldType.Keyword)
                       emailAddress: String,
-
-                      @(Indexed@field)
-                      @(TextIndexed@field)
-                      @(Field@field)(`type` = FieldType.Text)
                       firstName: String,
-
-                      @(Indexed@field)
-                      @(TextIndexed@field)
-                      @(Field@field)(`type` = FieldType.Text)
                       lastName: String,
-
-                      @(Indexed@field)
-                      @(TextIndexed@field)
-                      @(Field@field)(`type` = FieldType.Keyword)
                       institution: String
                     ) {
 
@@ -238,20 +144,9 @@ case class Submitter(
   * @param lastName
   */
 case class Author(
-                   @(Indexed@field)
-                   @(TextIndexed@field)
                    emailAddress: String,
-
-                   @(Indexed@field)
-                   @(TextIndexed@field)
                    firstName: String,
-
-                   @(Indexed@field)
-                   @(TextIndexed@field)
                    institution: String,
-
-                   @(Indexed@field)
-                   @(TextIndexed@field)
                    lastName: String
                  )
 
@@ -269,52 +164,21 @@ case class Author(
   * @param authors
   */
 @Document(collection = "SPECTRUM")
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 15)
 case class Spectrum(
-                     @(NotNull@field)
-                     @(Size@field)(min = 1)
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      compound: Array[Compound],
-
-                     @(Id@field)
-                     @(TextIndexed@field)
-                     @(Size@field)(min = 1)
-                     @BeanProperty
-                     @(Field@field)(`type` = FieldType.Keyword)
                      id: String,
 
                      dateCreated: Date,
                      lastUpdated: Date,
                      lastCurated: Date = null,
-
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
-
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      annotations: Array[MetaData],
-
-                     @(Field@field)(`type` = FieldType.Object)
                      score: Score,
-
-                     @(NotNull@field)
-                     @(NotEmpty@field)
-                     @(Field@field)(`type` = FieldType.Keyword)
                      spectrum: String,
-
-                     @(Field@field)(`type` = FieldType.Object)
                      splash: Splash,
-
-                     @(NotNull@field)
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      submitter: Submitter,
-
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      tags: Array[Tags],
-
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      authors: Array[Author],
-
-                     @(Field@field)(`type` = FieldType.Object)
                      library: Library
                    )
 
@@ -405,21 +269,10 @@ case class LegacySpectrum(
   * @param tag
   */
 case class Library(
-                    @(Indexed@field)
-                    @(TextIndexed@field)
-                    @(Field@field)(`type` = FieldType.Keyword)
                     id: String,
-
-                    @(Indexed@field)
-                    @(TextIndexed@field)
-                    @(Field@field)(`type` = FieldType.Keyword)
                     library: String,
-
                     description: String,
-
                     link: String,
-
-                    @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                     tag: Tags
                   )
 
@@ -464,14 +317,12 @@ object HelperTypes {
 
 @Document(collection = "SEQUENCE")
 case class Sequence(
-                     @(Id@field)
                      id: String,
                      value: Long
                    )
 
 @Document(collection = "NEWS")
 case class NewsEntry(
-                      @(Id@field)
                       id: String,
                       date: Date,
                       title: String,
@@ -483,11 +334,7 @@ case class BlacklistedSplash(@(Id@field) splash: String)
 
 @Document(collection = "SPECTRUM_FEEDBACK")
 case class SpectrumFeedback(
-                            @(Id@field)
                             id: String,
-                            @(Indexed@field)
-                            @(TextIndexed@field)
-                            @(Field@field)(`type` = FieldType.Keyword)
                             monaID: String,
                             userID: String,
                             name: String,

@@ -1,25 +1,46 @@
 version: '3'
 
 services:
-  mongodb:
-    image: mongo:3.6.4
+#  mongodb:
+#    image: mongo:3.6.4
+#    ports:
+#      - "27017:27017"
+#
+#  elasticsearch:
+#    image: elasticsearch:5.6.16
+#    environment:
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    ports:
+#       - "9200:9200"
+#       - "9300:9300"
+#    volumes:
+#      - "./elasticsearch-test.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
+#
+#  elasticsearch_head:
+#    image: mobz/elasticsearch-head:5
+#    ports:
+#     - "9100:9100"
+  postgresql13:
+    image: postgres:13.4
+    hostname: postgresql
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c max_connections=2000
+    expose:
+      - 5432
     ports:
-      - "27017:27017"
-
-  elasticsearch:
-    image: elasticsearch:5.6.16
+      - "5432:5432"
     environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-       - "9200:9200"
-       - "9300:9300"
-    volumes:
-      - "./elasticsearch-test.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
+      - POSTGRES_USER=mona
+      - POSTGRES_PASSWORD=asdf
+      - POSTGRES_DB=mona-test
 
-  elasticsearch_head:
-    image: mobz/elasticsearch-head:5
-    ports:
-     - "9100:9100"
+  postgresql-hero:
+      image: ankane/pghero
+      ports:
+        - "8081:8080"
+      environment:
+        - DATABASE_URL=postgres://mona:asdf@postgresql:5432/mona-test
+      deploy:
+        mode: replicated
 
   rabbitmq:
     image: rabbitmq:3.6-management
