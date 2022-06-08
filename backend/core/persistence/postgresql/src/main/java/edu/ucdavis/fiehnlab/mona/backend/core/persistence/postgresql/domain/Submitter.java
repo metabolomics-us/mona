@@ -1,27 +1,28 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "submitter")
-public class Submitter {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "submitter_id")
-    @SequenceGenerator(name = "submitter_id", initialValue = 1, allocationSize = 50)
-    private Long id;
+public class Submitter implements Serializable {
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "submitter_id")
+//    @SequenceGenerator(name = "submitter_id", initialValue = 1, allocationSize = 50)
+//    private Long id;
     @Id
     private String emailAddress;
     private String firstName;
     private String lastName;
     private String institution;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public String getEmailAddress() {
         return emailAddress;
@@ -57,8 +58,7 @@ public class Submitter {
 
     public Submitter() {}
 
-    public Submitter(Long id, String emailAddress, String firstName, String lastName, String institution) {
-        this.id = id;
+    public Submitter(String emailAddress, String firstName, String lastName, String institution) {
         this.emailAddress = emailAddress;
         this.firstName = firstName;
         this.lastName = firstName;

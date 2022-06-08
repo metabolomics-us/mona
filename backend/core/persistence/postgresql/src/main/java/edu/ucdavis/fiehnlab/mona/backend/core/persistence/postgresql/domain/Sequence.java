@@ -6,10 +6,12 @@ import org.hibernate.annotations.TypeDef;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.sql.rowset.serial.SerialArray;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "sequence")
-public class Sequence {
+public class Sequence implements Serializable {
     @Id
     private String id;
 

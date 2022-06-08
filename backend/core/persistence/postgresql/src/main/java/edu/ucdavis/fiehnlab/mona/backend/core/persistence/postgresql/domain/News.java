@@ -5,9 +5,10 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
-public class News {
+public class News implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "news_id")
     @SequenceGenerator(name = "news_id", initialValue = 1, allocationSize = 50)
     @Id

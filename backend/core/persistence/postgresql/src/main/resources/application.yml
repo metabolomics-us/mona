@@ -1,0 +1,16 @@
+spring:
+
+
+  main:
+    web-application-type: none
+    allow-circular-references: true
+  jpa:
+
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    properties:
+      hibernate:
+        format_sql: true

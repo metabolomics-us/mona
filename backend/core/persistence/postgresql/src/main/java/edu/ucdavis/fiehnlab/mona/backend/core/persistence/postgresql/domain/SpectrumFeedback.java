@@ -7,18 +7,21 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "spectrum_feedback")
-public class SpectrumFeedback {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_feedback_id")
-    @SequenceGenerator(name = "spectrum_feedback_id", initialValue = 1, allocationSize = 50)
-    private Long id;
+public class SpectrumFeedback implements Serializable {
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_feedback_id")
+//    @SequenceGenerator(name = "spectrum_feedback_id", initialValue = 1, allocationSize = 50)
+//    private Long id;
 
+    //should be a foreign key
     @Id
     private String monaId;
 
+    //can be our only primary key
     @Id
     private String userId;
 
@@ -27,13 +30,13 @@ public class SpectrumFeedback {
     private String value;
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public String getMonaId() {
         return monaId;

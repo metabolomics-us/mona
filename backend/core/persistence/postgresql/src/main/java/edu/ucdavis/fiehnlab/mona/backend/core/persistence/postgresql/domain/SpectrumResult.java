@@ -5,6 +5,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "spectrum_result")
@@ -12,12 +13,13 @@ import javax.persistence.*;
         name = "json",
         typeClass = JsonType.class
 )
-public class SpectrumResult {
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_result_id")
-    @SequenceGenerator(name = "spectrum_result_id", initialValue = 1, allocationSize = 50)
-    @Id
-    private Long id;
+public class SpectrumResult implements Serializable {
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_result_id")
+//    @SequenceGenerator(name = "spectrum_result_id", initialValue = 1, allocationSize = 50)
+//    @Id
+//    private Long id;
 
+    //can be standalone primary key
     @Id
     private String monaId;
 
@@ -25,13 +27,13 @@ public class SpectrumResult {
     @Column(columnDefinition = "jsonb")
     private String content;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public String getContent() {
         return content;
@@ -51,8 +53,7 @@ public class SpectrumResult {
 
     public SpectrumResult(){}
 
-    public SpectrumResult(Long id, String monaId, String content) {
-        this.id = id;
+    public SpectrumResult(String monaId, String content) {
         this.monaId = monaId;
         this.content = content;
     }

@@ -18,9 +18,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>rsql</module>
-        <module>mongo</module>
-        <module>elastic</module>
-        <module>service</module>
+<!--        <module>rsql</module>-->
+<!--        <module>mongo</module>-->
+<!--        <module>elastic</module>-->
+<!--        <module>service</module>-->
+        <module>postgresql</module>
     </modules>
 </project>
