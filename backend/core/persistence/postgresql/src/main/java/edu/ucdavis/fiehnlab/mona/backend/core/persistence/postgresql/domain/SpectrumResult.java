@@ -8,16 +8,17 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@IdClass(SpectrumResultId.class)
 @Table(name = "spectrum_result")
 @TypeDef(
         name = "json",
         typeClass = JsonType.class
 )
-public class SpectrumResult implements Serializable {
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_result_id")
-//    @SequenceGenerator(name = "spectrum_result_id", initialValue = 1, allocationSize = 50)
-//    @Id
-//    private Long id;
+public class SpectrumResult {
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_result_id")
+    @SequenceGenerator(name = "spectrum_result_id", initialValue = 1, allocationSize = 50)
+    @Id
+    private Long id;
 
     //can be standalone primary key
     @Id
@@ -27,13 +28,13 @@ public class SpectrumResult implements Serializable {
     @Column(columnDefinition = "jsonb")
     private String content;
 
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getContent() {
         return content;

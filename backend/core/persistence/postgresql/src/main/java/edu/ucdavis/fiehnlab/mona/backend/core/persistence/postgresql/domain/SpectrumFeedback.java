@@ -10,12 +10,13 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@IdClass(SpectrumFeedbackId.class)
 @Table(name = "spectrum_feedback")
-public class SpectrumFeedback implements Serializable {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_feedback_id")
-//    @SequenceGenerator(name = "spectrum_feedback_id", initialValue = 1, allocationSize = 50)
-//    private Long id;
+public class SpectrumFeedback {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_feedback_id")
+    @SequenceGenerator(name = "spectrum_feedback_id", initialValue = 1, allocationSize = 50)
+    private Long id;
 
     //should be a foreign key
     @Id
@@ -30,13 +31,13 @@ public class SpectrumFeedback implements Serializable {
     private String value;
 
 
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getMonaId() {
         return monaId;

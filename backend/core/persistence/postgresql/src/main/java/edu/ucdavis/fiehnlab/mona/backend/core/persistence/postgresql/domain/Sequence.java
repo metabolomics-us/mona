@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "sequence")
-public class Sequence implements Serializable {
+public class Sequence {
     @Id
     private String id;
 

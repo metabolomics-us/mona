@@ -8,7 +8,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-public class News implements Serializable {
+@Entity
+@Table(name = "news")
+public class News {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "news_id")
     @SequenceGenerator(name = "news_id", initialValue = 1, allocationSize = 50)
     @Id

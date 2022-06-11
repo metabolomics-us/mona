@@ -4,25 +4,26 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@IdClass(SubmitterId.class)
 @Table(name = "submitter")
-public class Submitter implements Serializable {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "submitter_id")
-//    @SequenceGenerator(name = "submitter_id", initialValue = 1, allocationSize = 50)
-//    private Long id;
+public class Submitter {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "submitter_id")
+    @SequenceGenerator(name = "submitter_id", initialValue = 1, allocationSize = 50)
+    private Long id;
     @Id
     private String emailAddress;
     private String firstName;
     private String lastName;
     private String institution;
 
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getEmailAddress() {
         return emailAddress;
