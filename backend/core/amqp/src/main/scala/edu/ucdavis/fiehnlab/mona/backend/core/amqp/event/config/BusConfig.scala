@@ -4,7 +4,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, ReceivedEventCounter}
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.converter.MonaMessageConverter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository.SparseSearchTable
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.{RabbitAdmin, RabbitTemplate}
@@ -17,6 +18,9 @@ import org.springframework.context.annotation.{Bean, Configuration, Import, Prim
 @Configuration
 @Import(Array(classOf[DomainConfig]))
 class BusConfig extends LazyLogging {
+
+  @Bean
+  val connectionFactory: ConnectionFactory = null
 
   @Bean
   def rabbitAdmin(connectionFactory: ConnectionFactory): RabbitAdmin = {
@@ -54,7 +58,10 @@ class MonaEventBusConfiguration {
     * @return
     */
   @Bean
-  def eventBus: EventBus[Spectrum] = new EventBus[Spectrum]("mona-persistence-events")
+  def eventBus: EventBus[SpectrumResult] = new EventBus[SpectrumResult]("mona-persistence-events")
+
+  @Bean
+  def eventBusSparse: EventBus[SparseSearchTable] = new EventBus[SparseSearchTable]("mona-persistence-events-sparse")
 }
 
 @Import(Array(classOf[BusConfig], classOf[MonaEventBusConfiguration]))
@@ -68,7 +75,10 @@ class MonaEventBusCounterConfiguration {
     * @return
     */
   @Bean
-  def eventCounter(eventBus: EventBus[Spectrum]): ReceivedEventCounter[Spectrum] = new ReceivedEventCounter[Spectrum](eventBus)
+  def eventCounter(eventBus: EventBus[SpectrumResult]): ReceivedEventCounter[SpectrumResult] = new ReceivedEventCounter[SpectrumResult](eventBus)
+
+  @Bean
+  def eventCounterSparse(eventBus: EventBus[SparseSearchTable]): ReceivedEventCounter[SparseSearchTable] = new ReceivedEventCounter[SparseSearchTable](eventBus)
 }
 
 /**

@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.service
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service
 
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Sequence
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SequenceRepository

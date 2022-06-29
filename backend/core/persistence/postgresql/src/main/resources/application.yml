@@ -1,9 +1,8 @@
 spring:
-
-
   main:
     web-application-type: none
     allow-circular-references: true
+    allow-bean-definition-overriding: true
   jpa:
 
     defer-datasource-initialization: true
@@ -14,3 +13,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        
+  sql:
+    init:
+      mode: always
+      schema-locations:
+        - classpath:/queries/spectrum_fields.sql
+        #- classpath:/queries/index.sql
+      continue-on-error: false

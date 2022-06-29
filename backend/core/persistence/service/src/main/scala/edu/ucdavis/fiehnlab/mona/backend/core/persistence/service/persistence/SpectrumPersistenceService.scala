@@ -50,7 +50,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param spectrum
     */
   final def fireAddEvent(spectrum: Spectrum): Unit = {
-    logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been added")
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been added")
     if (eventScheduler != null) {
       eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.ADD))
     }
@@ -62,7 +62,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param spectrum
     */
   final def fireDeleteEvent(spectrum: Spectrum): Unit = {
-    logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been deleted")
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been deleted")
     if (eventScheduler != null) {
       eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.DELETE))
     }
@@ -74,7 +74,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param spectrum
     */
   final def fireUpdateEvent(spectrum: Spectrum): Unit = {
-    logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been updated")
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been updated")
 
     if (eventScheduler != null) {
       eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.UPDATE))
@@ -82,7 +82,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   }
 
   final def fireSyncEvent(spectrum: Spectrum): Unit = {
-    logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been scheduled for synchronization")
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been scheduled for synchronization")
 
     if (eventScheduler != null) {
       eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.SYNC))

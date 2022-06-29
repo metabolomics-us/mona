@@ -29,7 +29,6 @@ case class MetaData(
                      score: Score,
                      unit: String,
                      url: String,
-                     @(JsonDeserialize@field)(using = classOf[NumberDeserializer])
                      value: Any
                    )
 
@@ -103,7 +102,6 @@ case class Splash(
   * @param lastName
   * @param institution
   */
-@Document(collection = "SUBMITTER")
 case class Submitter(
                       /**
                         * primary id for the user, can be any string
@@ -163,7 +161,6 @@ case class Author(
   * @param tags
   * @param authors
   */
-@Document(collection = "SPECTRUM")
 case class Spectrum(
                      compound: Array[Compound],
                      id: String,

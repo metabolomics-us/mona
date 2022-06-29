@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.service.SequenceService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SequenceRepository
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired

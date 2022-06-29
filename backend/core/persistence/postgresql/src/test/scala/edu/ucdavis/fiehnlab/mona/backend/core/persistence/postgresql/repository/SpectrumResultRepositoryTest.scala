@@ -33,17 +33,22 @@ class SpectrumResultRepositoryTest extends AnyWordSpec with Matchers with LazyLo
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
+
   "Postgres Queries" should {
-    spectrumResultsRepo.deleteAll()
+    s"empty database" must {
+      "with deleteAll" in {
+        spectrumResultsRepo.deleteAll()
+        assert(spectrumResultsRepo.count() == 0)
+      }
+    }
 
     s"be able to load data" in {
+      assert(spectrumResultsRepo.count() == 0)
       exampleRecords.foreach { spectrum =>
         val serialized = mapper.writeValueAsString(spectrum)
-        val size = spectrumResultsRepo.count()
         spectrumResultsRepo.save(new SpectrumResult(spectrum.id, serialized))
-        val newSize = spectrumResultsRepo.count()
-        assert(newSize == size + 1)
       }
+      assert(spectrumResultsRepo.count() == 59)
     }
 
     s"queries" must {

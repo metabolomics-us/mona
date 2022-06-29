@@ -32,6 +32,7 @@ services:
       - POSTGRES_USER=mona
       - POSTGRES_PASSWORD=asdf
       - POSTGRES_DB=mona-test
+      - "ES_JAVA_OPTS=-Xmx10g"
 
   postgresql-hero:
       image: ankane/pghero
