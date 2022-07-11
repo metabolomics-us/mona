@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.app
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.RestServerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class RestPersistenceServer {
 
   @Bean
-  def loginService: LoginService = new MongoLoginService
+  def loginService: LoginService = new PostgresLoginService
 }
 
 object RestPersistenceServer extends App {

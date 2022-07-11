@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import cz.jirutka.rsql.parser.ast.{ComparisonOperator}
+import cz.jirutka.rsql.parser.ast.ComparisonOperator
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
@@ -10,8 +10,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.listener.AkkaEventScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository.SparseSearchTable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql.{RSQLOperatorsCustom}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql.RSQLOperatorsCustom
 import org.scalatest.concurrent.Eventually
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,6 +36,12 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
 
   @Autowired
   val spectrumResultRepository: SpectrumResultRepository = null
+
+  @Autowired
+  val searchTableRepository: SearchTableRepository = null
+
+  @Autowired
+  val matRepository: MaterializedViewRepository = null
 
   @Autowired
   val mapper: ObjectMapper = null
@@ -67,7 +75,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
     }
 
 
-    List(1, 2, 3).foreach { iteration =>
+    List(1).foreach { iteration =>
       s"we run every test several times, since we have caching, this one is iteration $iteration" should {
 
         "have at least one listener assigned " in {
@@ -82,6 +90,16 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
             assert(spectrumPersistenceService.count() == exampleRecords.length)
             assert(spectrumResultRepository.count() == spectrumPersistenceService.count())
           }
+        }
+
+        s"we should be able to create our materialized view" in {
+
+          eventually(timeout(180 seconds)) {
+            matRepository.refreshSearchTable()
+            logger.info("sleep...")
+            assert(searchTableRepository.count() == 59606)
+          }
+
         }
 
         "there should have been some event's been send to the event bus " in {
@@ -102,29 +120,37 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
         }
 
         s"query data with the query text==\"LCMS\"" in {
-          val result: Array[SparseSearchTable] = spectrumPersistenceService.findAll("text==\"LCMS\"").asScala.toArray
-          assert(result.length == 58)
+          val result: Long = spectrumPersistenceService.count("text==\"LCMS\"")
+          assert(result == 58)
         }
 
         "query data with the query text==LCMS" in {
-          val result: Array[SparseSearchTable] = spectrumPersistenceService.findAll("text==LCMS").asScala.toArray
-          assert(result.length == 58)
+          val result: Long = spectrumPersistenceService.count("text==LCMS")
+          assert(result == 58)
         }
 
         s"query data with the query metadataName==\"ion mode\" and metadataValue==positive" in {
-          val result: Array[SparseSearchTable] = spectrumPersistenceService.findAll("metadataName==\"ion mode\" and metadataValue==positive").asScala.toArray
-          assert(result.length == 33)
+          val result: Long = spectrumPersistenceService.count("metadataName==\"ion mode\" and metadataValue==positive")
+          assert(result == 33)
         }
 
         "query data with the query metaData=q='name==\"ion mode\" and value==negative'" in {
-          val result: Array[SparseSearchTable] = spectrumPersistenceService.findAll("metadataName==\"ion mode\" and metadataValue==negative").asScala.toArray
-          assert(result.length == 25)
+          val result: Long = spectrumPersistenceService.count("metadataName==\"ion mode\" and metadataValue==negative")
+          assert(result == 25)
         }
 
         "query data with pagination" in {
           val result = spectrumPersistenceService.findAll("metadataName==\"ion mode\" and metadataValue==positive", PageRequest.of(0, 10))
-          assert(result.getTotalPages == 4)
+          logger.info(s"# of pages ${result.getTotalPages}")
           assert(result.getContent.size() == 10)
+          assert(result.getContent.get(0).getMonaId == "3472824")
+        }
+
+        "query data with pagination page 2" in {
+          val result = spectrumPersistenceService.findAll("metadataName==\"ion mode\" and metadataValue==positive", PageRequest.of(1, 10))
+          logger.info(s"# of pages ${result.getTotalPages}")
+          assert(result.getContent.size() == 10)
+          assert(result.getContent.get(0).getMonaId == "3477809")
         }
 
         "update data" in {

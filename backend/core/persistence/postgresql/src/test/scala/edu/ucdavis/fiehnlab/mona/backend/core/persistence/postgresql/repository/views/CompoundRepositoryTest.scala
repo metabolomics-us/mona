@@ -65,6 +65,6 @@ class CompoundRepositoryTest extends AnyWordSpec with Matchers with LazyLogging{
       }
     }
   }
+  */
 
-
-}*/
+}

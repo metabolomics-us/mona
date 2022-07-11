@@ -3,20 +3,18 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.TokenService
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Users
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Bean
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.stereotype.Service
 
 /**
   * Simple login implementation utilizing mongo as a service
   */
-class MongoLoginService extends LoginService with LazyLogging {
+class PostgresLoginService extends LoginService with LazyLogging {
 
   @Autowired
   val userRepository: UserRepository = null
@@ -34,13 +32,13 @@ class MongoLoginService extends LoginService with LazyLogging {
 
     logger.debug(s"login in ${request.username}")
 
-    val user: User = userRepository.findByUsername(request.username)
+    val user: Users = userRepository.findByUsername(request.username)
 
     logger.debug(s"${user}")
 
     if (user == null) {
       throw new UsernameNotFoundException(s"sorry user ${request.username} was not found")
-    } else if (!new BCryptPasswordEncoder().matches(request.password, user.password)) {
+    } else if (!new BCryptPasswordEncoder().matches(request.password, user.getPassword)) {
       throw new BadCredentialsException("sorry the provided credentials were invalid!")
     } else {
       logger.debug("login was successful")

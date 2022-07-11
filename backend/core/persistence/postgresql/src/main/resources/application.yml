@@ -4,7 +4,6 @@ spring:
     allow-circular-references: true
     allow-bean-definition-overriding: true
   jpa:
-
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
@@ -13,11 +12,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_schema: public
         
   sql:
     init:
       mode: always
       schema-locations:
         - classpath:/queries/spectrum_fields.sql
-        #- classpath:/queries/index.sql
+        - classpath:/queries/index.sql
       continue-on-error: false

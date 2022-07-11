@@ -1,25 +1,24 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.{EmbeddedAuthConfig, JWTAuthenticationConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{Roles, Users}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 1/23/17.
   */
-@RunWith(classOf[SpringRunner])
-@DataMongoTest
-@ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
-@TestPropertySource(locations = Array("classpath:application.properties"))
-class MongoLoginServiceTest extends AnyWordSpec {
+@ActiveProfiles(Array("test"))
+@SpringBootTest(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
+class PostgresLoginServiceTest extends AnyWordSpec with LazyLogging{
 
   @Autowired
   val loginService: LoginService = null
@@ -29,9 +28,9 @@ class MongoLoginServiceTest extends AnyWordSpec {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "MongoLoginServiceTest" should {
+  "PostgresLoginServiceTest" should {
     userRepository.deleteAll()
-    userRepository.save(User("test", "test"))
+    userRepository.save(new Users("test", "test"))
 
     assert(userRepository.count() == 1)
     assert(userRepository.findByUsername("test") != null)

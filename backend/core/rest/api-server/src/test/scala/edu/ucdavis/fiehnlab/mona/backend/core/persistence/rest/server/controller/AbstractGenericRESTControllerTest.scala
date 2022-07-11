@@ -8,7 +8,7 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import com.jayway.restassured.specification.RequestSpecification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{Roles,Users}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
@@ -142,9 +142,12 @@ abstract class AbstractSpringControllerTest extends AnyWordSpec with LazyLogging
 
     "reset the user base" in {
       userRepository.deleteAll()
-      userRepository.save(User("admin", "secret", Array(Role("ADMIN")).toList.asJava))
-      userRepository.save(User("test", "test-secret"))
-      userRepository.save(User("test2", "test-secret"))
+
+      val rolledUser = new Users("admin", "secret")
+      rolledUser.setRoles(List(new Roles("ADMIN")).asJava)
+      userRepository.save(rolledUser)
+      userRepository.save(new Users("test", "test-secret"))
+      userRepository.save(new Users("test2", "test-secret"))
     }
   }
 }

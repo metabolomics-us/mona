@@ -2,27 +2,20 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository
 
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.{EmbeddedAuthConfig, JWTAuthenticationConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
-import org.junit.runner.RunWith
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Users
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   *
   * Created by wohlgemuth on 3/24/16.
   */
-@RunWith(classOf[SpringRunner])
-@DataMongoTest
-@ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
-@TestPropertySource(locations = Array("classpath:application.properties"))
+@ActiveProfiles(Array("test"))
+@SpringBootTest(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
 class UserRepositoryTest extends AnyWordSpec {
-
   @Autowired
   val userRepository: UserRepository = null
 
@@ -32,19 +25,22 @@ class UserRepositoryTest extends AnyWordSpec {
 
     "findByUserName" in {
       userRepository.deleteAll()
-      userRepository.save(User("test", "test"))
+      userRepository.save(new Users("test", "test"))
 
       assert(userRepository.count() == 1)
       assert(userRepository.findByUsername("test") != null)
     }
 
     "hashed password should match" in {
-      assert(new BCryptPasswordEncoder().matches("test", userRepository.findByUsername("test").password))
+      assert(new BCryptPasswordEncoder().matches("test", userRepository.findByUsername("test").getPassword))
     }
 
     "don't rehash password upon resaving" in {
-      userRepository.save(userRepository.findByUsername("test").copy(username = "test2"))
-      assert(userRepository.findByUsername("test").password == userRepository.findByUsername("test2").password)
+      val aUser = userRepository.findByUsername("test")
+      aUser.setEmailAddress("test2")
+      userRepository.save(aUser)
+      //userRepository.save(userRepository.findByUsername("test").copy(username = "test2"))
+      assert(userRepository.findByUsername("test").getPassword == userRepository.findByUsername("test2").getPassword)
     }
   }
 }

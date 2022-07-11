@@ -1,21 +1,24 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.{IUserRepository, UserRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.{JWTAuthenticationService, JWTRestSecurityService, JWTTokenService}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 /**
   * provides us with the specifics for a JWT based authentication
   * in the Mona system
   */
-@EnableMongoRepositories(basePackageClasses = Array(classOf[UserRepository]))
-@ComponentScan(basePackageClasses = Array(classOf[UserRepository]))
-@Configuration
+@EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain"))
+@EnableJpaRepositories(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository"))
+@ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain", "edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt"))
 @EnableAutoConfiguration
+@Configuration
 class JWTAuthenticationConfig {
 
   @Value("${mona.security.secret:234234324234ewrdsfdsgfsdfw4er32}")

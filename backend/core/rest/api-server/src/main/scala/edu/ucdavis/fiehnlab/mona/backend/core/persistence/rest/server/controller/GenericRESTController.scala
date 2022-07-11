@@ -52,9 +52,9 @@ abstract class GenericRESTController[T] {
     val data: Iterable[T] = {
       if (size != null) {
         if (page != null) {
-          getRepository.findAll(new PageRequest(page, size, Sort.Direction.ASC, "id")).getContent.asScala
+          getRepository.findAll(PageRequest.of(page, size, Sort.Direction.ASC, "id")).getContent.asScala
         } else {
-          getRepository.findAll(new PageRequest(0, size, Sort.Direction.ASC, "id")).getContent.asScala
+          getRepository.findAll(PageRequest.of(0, size, Sort.Direction.ASC, "id")).getContent.asScala
         }
       } else {
         new DynamicIterable[T, String]("", fetchSize) {

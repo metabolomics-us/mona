@@ -10,9 +10,6 @@ spring:
     show-sql: false
     hibernate:
       ddl-auto: create
-  properties:
-    hibernate:
-      format_sql: true
 
   datasource:
     driver-class-name: org.postgresql.Driver

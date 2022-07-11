@@ -1,11 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller
 
-import java.util.Collections
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
-
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{Roles, Users}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
@@ -14,6 +12,7 @@ import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.AsyncResult
 import org.springframework.web.bind.annotation._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 4/4/16.
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation._
 @CrossOrigin
 @RestController
 @RequestMapping(value = Array("/rest/users"))
-class UserController extends GenericRESTController[User] {
+class UserController extends GenericRESTController[Users] {
 
   @Autowired
   val httpServletRequest: HttpServletRequest = null
@@ -38,14 +37,15 @@ class UserController extends GenericRESTController[User] {
     * @param user
     * @return
     */
-  override def doSave(user: User): Future[ResponseEntity[User]] = {
+  override def doSave(user: Users): Future[ResponseEntity[Users]] = {
     // Users cannot update existing accounts
-    val existingUser: User = userRepository.findByUsername(user.username)
+    val existingUser: Users = userRepository.findByUsername(user.getEmailAddress)
 
     if (existingUser == null) {
-      super.doSave(user.copy(roles = Collections.emptyList()))
+      user.setRoles(List(new Roles()).asJava)
+      super.doSave(user)
     } else {
-      new AsyncResult[ResponseEntity[User]](new ResponseEntity[User](HttpStatus.CONFLICT))
+      new AsyncResult[ResponseEntity[Users]](new ResponseEntity[Users](HttpStatus.CONFLICT))
     }
   }
 
@@ -56,7 +56,7 @@ class UserController extends GenericRESTController[User] {
     * @param user
     * @return
     */
-  override def doPut(id: String, user: User): Future[ResponseEntity[User]] = {
+  override def doPut(id: String, user: Users): Future[ResponseEntity[Users]] = {
 
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
@@ -66,12 +66,13 @@ class UserController extends GenericRESTController[User] {
       super.doPut(id, user)
     } else {
       // Users can only update their own accounts
-      val existingUser: User = userRepository.findById(id).get()
+      val existingUser: Users = userRepository.findById(id).get()
 
-      if (loginInfo.username == existingUser.username) {
-        super.doPut(id, user.copy(roles = Collections.emptyList()))
+      if (loginInfo.username == existingUser.getEmailAddress) {
+        user.setRoles(List(new Roles).asJava)
+        super.doSave(user)
       } else {
-        new AsyncResult[ResponseEntity[User]](new ResponseEntity[User](HttpStatus.FORBIDDEN))
+        new AsyncResult[ResponseEntity[Users]](new ResponseEntity[Users](HttpStatus.FORBIDDEN))
       }
     }
   }
@@ -81,5 +82,5 @@ class UserController extends GenericRESTController[User] {
     *
     * @return
     */
-  override def getRepository: PagingAndSortingRepository[User, String] = userRepository
+  override def getRepository: PagingAndSortingRepository[Users, String] = userRepository
 }

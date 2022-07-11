@@ -10,14 +10,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import org.springframework.data.jpa.repository.support.CrudMethodMetadata;
-
 @Entity
 @TypeDef(
         name = "json",
         typeClass = JsonType.class
 )
-@Subselect("select * from search_table")
+@Subselect("select * from search_table_mat")
 @Immutable
 public class SearchTable {
     @Id

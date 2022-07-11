@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation._
 class LoginController extends LazyLogging {
 
   @Autowired
-  @Qualifier("loginServiceDelegate")
+    @Qualifier("loginServiceDelegate")
   val loginService: LoginService = null
 
   /**

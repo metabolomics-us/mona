@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service.RestLoginService
@@ -23,5 +23,5 @@ class RestClientTestConfig {
     new RestLoginService("localhost", port)
 
   @Bean
-  def loginServiceDelegate: LoginService = new MongoLoginService
+  def loginServiceDelegate: LoginService = new PostgresLoginService
 }

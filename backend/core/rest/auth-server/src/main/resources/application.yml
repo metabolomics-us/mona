@@ -1,0 +1,18 @@
+#basic configuration how to connect to the configuration server
+spring:
+  config:
+    import: optional:configserver:${SPRING_CONFIG_URL}:http://localhost:1111
+  application:
+    name: auth-service
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+
+#our local server port
+server:
+  port: 3333
+
+
+#basic information who we are
+info:
+  component: MoNA Authorization Services

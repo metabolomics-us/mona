@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +33,6 @@ public class CustomErrorController implements ErrorController {
         return new ErrorJson(response.getStatus(), getErrorAttributes(request, true));
     }
 
-    @Override
     public String getErrorPath() {
         return PATH;
     }
@@ -40,7 +40,13 @@ public class CustomErrorController implements ErrorController {
     private Map<String, Object> getErrorAttributes(HttpServletRequest request, boolean includeStackTrace) {
 
         WebRequest webRequest = new ServletWebRequest(request);
-        Map<String, Object> map = errorAttributes.getErrorAttributes(webRequest, includeStackTrace);
+        ErrorAttributeOptions errorAttributeOptions;
+        if(includeStackTrace) {
+            errorAttributeOptions = ErrorAttributeOptions.defaults().including(ErrorAttributeOptions.Include.STACK_TRACE);
+        } else {
+            errorAttributeOptions = ErrorAttributeOptions.defaults();
+        }
+        Map<String, Object> map = errorAttributes.getErrorAttributes(webRequest, errorAttributeOptions);
         map.put("uri", request.getRequestURI());
         map.put("url", request.getRequestURL().toString());
         return map;

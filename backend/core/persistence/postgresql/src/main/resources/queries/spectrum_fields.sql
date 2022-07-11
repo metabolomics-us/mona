@@ -192,5 +192,11 @@ from spectrum_result sr
          INNER JOIN splash s on sr.mona_id = s.mona_id
          INNER JOIN tags t on sr.mona_id = t.mona_id;
 
+create materialized view if not exists search_table_mat as
+select
+    *
+from
+    search_table;
+
 
 

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginResponse
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
@@ -32,7 +32,7 @@ class TestConfig {
   def restRepositoryWriter(token: LoginResponse) = new RestRepositoryWriter(token.token)
 
   @Bean
-  def loginService: LoginService = new MongoLoginService
+  def loginService: LoginService = new PostgresLoginService
 
   @Bean
   def loginResponse: LoginResponse = {

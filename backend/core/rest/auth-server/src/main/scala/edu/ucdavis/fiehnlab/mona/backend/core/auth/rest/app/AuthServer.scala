@@ -2,10 +2,10 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.app
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.{IUserRepository, UserRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{Roles, Users}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -29,7 +29,7 @@ class AuthServer {
     * @return
     */
   @Bean
-  def loginServiceDelegate: LoginService = new MongoLoginService
+  def loginServiceDelegate: LoginService = new PostgresLoginService
 }
 
 @Component
@@ -46,8 +46,11 @@ class AuthCommandRunner extends CommandLineRunner with LazyLogging {
 
   override def run(strings: String*): Unit = {
     if (userRepository.findByUsername(adminUser) == null) {
-      val user = userRepository.save(User(adminUser, adminPassword, List(Role("ADMIN")).asJava))
-      logger.info(s"created default user: $user as admin, based on central credentials")
+      val newUser = new Users(adminUser, adminPassword)
+      newUser.setRoles(List(new Roles("ADMIN")).asJava)
+      userRepository.save(newUser)
+      //val user = userRepository.save(new User(adminUser, adminPassword, List(new Roles("ADMIN")).asJava))
+      logger.info(s"created default user: $newUser as admin, based on central credentials")
     } else {
       logger.info("utilizing existing user account")
     }

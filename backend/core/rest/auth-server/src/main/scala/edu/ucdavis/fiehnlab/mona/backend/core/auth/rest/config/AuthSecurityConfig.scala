@@ -4,11 +4,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller.LoginControll
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
   */
 @Order(2)
 @Configuration
+@EnableAutoConfiguration
 @ComponentScan(basePackageClasses = Array(classOf[LoginController], classOf[DomainConfig]))
 class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 

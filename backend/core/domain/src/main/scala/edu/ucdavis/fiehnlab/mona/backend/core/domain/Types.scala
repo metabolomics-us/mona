@@ -1,19 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
 import java.util.Date
-import javax.validation.constraints._
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.{AnalyzedStringSerialize, TupleSerialize}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
-import org.hibernate.validator.constraints.NotEmpty
-import org.springframework.data.annotation.Id
-import org.springframework.data.elasticsearch.annotations.{Field, FieldType}
-import org.springframework.data.mongodb.core.index.{Indexed, TextIndexed}
-import org.springframework.data.mongodb.core.mapping.Document
-
-import scala.annotation.meta.field
-import scala.beans.BeanProperty
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -61,10 +48,7 @@ case class Tags(
   * @param classification
   */
 case class Compound(
-                     @Deprecated
                      inchi: String,
-
-                     @Deprecated
                      inchiKey: String,
                      metaData: Array[MetaData],
                      molFile: String,
@@ -312,13 +296,11 @@ object HelperTypes {
 }
 
 
-@Document(collection = "SEQUENCE")
 case class Sequence(
                      id: String,
                      value: Long
                    )
 
-@Document(collection = "NEWS")
 case class NewsEntry(
                       id: String,
                       date: Date,
@@ -326,10 +308,8 @@ case class NewsEntry(
                       content: String
                     )
 
-@Document(collection = "SPLASH_BLACKLIST")
-case class BlacklistedSplash(@(Id@field) splash: String)
+case class BlacklistedSplash(splash: String)
 
-@Document(collection = "SPECTRUM_FEEDBACK")
 case class SpectrumFeedback(
                             id: String,
                             monaID: String,

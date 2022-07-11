@@ -14,18 +14,25 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.jpa.domain.Specification
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views.SearchTable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository.SparseSearchTable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql.{CustomRsqlVisitor, RSQLOperatorsCustom}
+import org.scalatest.concurrent.Eventually
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import java.io.InputStreamReader
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 @SpringBootTest
 @ActiveProfiles(Array("test"))
-class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLogging {
+class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLogging with Eventually{
   @Autowired
   val searchTableRepository: SearchTableRepository = null
+
+  @Autowired
+  val matRepository: MaterializedViewRepository = null
 
   @Autowired
   val spectrumResultsRepository: SpectrumResultRepository = null
@@ -53,6 +60,16 @@ class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLoggi
           spectrumResultsRepository.save(new SpectrumResult(spectrum.id, serialized))
         }
         assert(spectrumResultsRepository.count() == 59)
+      }
+
+      s"we should be able to create our materialized view" in {
+
+        eventually(timeout(180 seconds)) {
+          matRepository.refreshSearchTable()
+          logger.info("sleep...")
+          assert(searchTableRepository.count() == 59606)
+        }
+
       }
 
       "we should be able to execute RSQL queries like 'inchikey==GHSJKUNUIHUPDF-BYPYZUCNSA-N'" in {
@@ -163,6 +180,16 @@ class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLoggi
           val newSize = spectrumResultsRepository.count()
           assert(newSize == size + 1)
         }
+      }
+
+      s"we should be able to refresh our materialized view" in {
+
+        eventually(timeout(200 seconds)) {
+          matRepository.refreshSearchTable()
+          logger.info("sleep...")
+          assert(searchTableRepository.count() == 70114)
+        }
+
       }
 
 

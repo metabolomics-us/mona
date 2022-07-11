@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import cz.jirutka.rsql.parser.RSQLParser
 import cz.jirutka.rsql.parser.ast.{ComparisonOperator, Node}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventScheduler}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views.SearchTable
@@ -15,7 +14,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql.{CustomRsqlVisitor, RSQLOperatorsCustom}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
-import org.springframework.data.domain.{Page, Pageable, Sort}
+import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 
@@ -84,14 +83,6 @@ class SpectrumPersistenceService extends LazyLogging {
 
     if (eventScheduler != null) {
       eventScheduler.scheduleEventProcessing(Event[SpectrumResult](spectrumResult, new Date, Event.UPDATE))
-    }
-  }
-
-  final def fireSyncEvent(spectrumResult: SparseSearchTable): Unit = {
-    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrumResult.getMonaId} has been scheduled for synchronization")
-
-    if (eventScheduler != null) {
-      eventSchedulerSparse.scheduleEventProcessing(Event[SparseSearchTable](spectrumResult, new Date, Event.SYNC))
     }
   }
 
@@ -180,12 +171,12 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param request
    * @return
    */
-  private def findDataForQuery(rsqlQuery: String, request: Pageable): Page[SparseSearchTable] = {
+  private def findDataForQuery(rsqlQuery: String, request: Pageable): Page[SpectrumResult] = {
     logger.debug(s"executing query: \n$rsqlQuery\n")
     val rootNode: Node = new RSQLParser(operators).parse(rsqlQuery)
     val spec: Specification[SearchTable] = rootNode.accept(new CustomRsqlVisitor[SearchTable]())
-    val results: Page[SparseSearchTable] = searchTableRepository.findAll(spec, classOf[SparseSearchTable], request)
-    results
+    val rez: java.util.List[String] = searchTableRepository.getMonaIdsFromResult(spec, classOf[SparseSearchTable], request)
+    spectrumResultRepository.findAllByMonaIdIn(rez, PageRequest.of(0, request.getPageSize))
   }
 
   private def findDataForEmptyQuery(request: Pageable): Page[SpectrumResult] = {
@@ -224,17 +215,17 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
-  def findAll(rsqlQuery: String): lang.Iterable[SparseSearchTable] = {
+  def findAll(rsqlQuery: String): lang.Iterable[SpectrumResult] = {
 
     /**
      * generates a new dynamic fetchable
      */
-    new DynamicIterable[SparseSearchTable, String](rsqlQuery, fetchSize) {
+    new DynamicIterable[SpectrumResult, String](rsqlQuery, fetchSize) {
 
       /**
        * loads more data from the server for the given query
        */
-      override def fetchMoreData(query: String, pageable: Pageable): Page[SparseSearchTable] = findDataForQuery(query, pageable)
+      override def fetchMoreData(query: String, pageable: Pageable): Page[SpectrumResult] = findDataForQuery(query, pageable)
     }
   }
 
@@ -245,7 +236,7 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param pageable
    * @return
    */
-  def findAll(query: String, pageable: Pageable): Page[SparseSearchTable] = findDataForQuery(query, pageable)
+  def findAll(query: String, pageable: Pageable): Page[SpectrumResult] = findDataForQuery(query, pageable)
 
   /**
    * returns the count of all spectra
