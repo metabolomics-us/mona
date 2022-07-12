@@ -7,6 +7,8 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical.AdductBuilder
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
 
+import scala.collection.mutable.ArrayBuffer
+
 @Step(description = "this step will calculate all possible adducts")
 class CalculateAllAdducts extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
@@ -35,7 +37,7 @@ class CalculateAllAdducts extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     } else {
       // Get total exact mass from biological compound
       val theoreticalMass: Double = {
-        val x: String = CurationUtilities.findMetaDataValue(spectrum.metaData, CommonMetaData.TOTAL_EXACT_MASS)
+        val x: String = CurationUtilities.findMetaDataValue(spectrum.compound(biologicalIndex).metaData, CommonMetaData.TOTAL_EXACT_MASS)
 
         if (x == null) {
           -1
@@ -44,25 +46,33 @@ class CalculateAllAdducts extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         }
       }
 
-      val fullCompound = spectrum.compound
       val biologicalCompound = spectrum.compound(biologicalIndex)
       val adductMap = AdductBuilder.LCMS_POSITIVE_ADDUCTS ++ AdductBuilder.LCMS_NEGATIVE_ADDUCTS
+
+      val updatedMetadata: ArrayBuffer[MetaData] = new ArrayBuffer[MetaData]()
+      biologicalCompound.metaData.foreach(x => updatedMetadata.append(x))
+
+      val updatedCompoundSet: ArrayBuffer[Compound] = new ArrayBuffer[Compound]()
+      spectrum.compound.foreach(x => updatedCompoundSet.append(x))
+
       if (theoreticalMass < 0) {
         logger.info(s"${spectrum.id}: Computed exact mass was not found, unable to generate adduct information")
         spectrum
       } else {
         adductMap.foreach {
-          case(x, f) => biologicalCompound.metaData :+ MetaData("theoretical adduct", computed = true, hidden = false, name = x, score = null, unit = null, url = null, value = f(theoreticalMass))
+          case(x, f) => updatedMetadata.append(MetaData("theoretical adduct", true, false, x, null, null, null, f(theoreticalMass)))
         }
-        val updatedFullCompound = fullCompound.updated(biologicalIndex, biologicalCompound)
-        spectrum.copy(
-          compound = updatedFullCompound
+
+        val updatedCompound = biologicalCompound.copy(
+          metaData = updatedMetadata.toArray
         )
 
+        updatedCompoundSet.update(biologicalIndex, updatedCompound)
+
+        spectrum.copy(
+          compound = updatedCompoundSet.toArray
+        )
       }
-
-
-
     }
   }
 }
