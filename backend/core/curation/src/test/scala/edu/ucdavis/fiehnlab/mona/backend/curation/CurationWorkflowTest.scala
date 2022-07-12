@@ -1,13 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation
 
 import java.io.InputStreamReader
-
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
 import org.junit.runner.RunWith
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[CurationConfig], classOf[JWTAuthenticationConfig]))
-class CurationWorkflowTest extends AnyWordSpec {
+class CurationWorkflowTest extends AnyWordSpec with Matchers{
 
   @Autowired
   val curationWorkflow: ItemProcessor[Spectrum, Spectrum] = null
