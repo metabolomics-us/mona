@@ -34,7 +34,7 @@ export class AuthenticationService{
 
     pullSubmitterData(credentials: any) {
         if (credentials.username === 'admin') {
-          this.currentUserSubject.next({emailAddress: credentials.username, accessToken: credentials.accessToken,
+          this.currentUserSubject.next({emailAddress: credentials.username, id: credentials.id, accessToken: credentials.accessToken,
             firstName: credentials.username, lastName: '', institution: '', roles: [{authority: 'ADMIN'}]});
           this.isAuthenticatedSubject.next(true);
         } else {
@@ -46,7 +46,7 @@ export class AuthenticationService{
           };
           this.http.get(`${environment.REST_BACKEND_SERVER}/rest/submitters/${credentials.username}`, config).subscribe((res: User) => {
             this.currentUserSubject.next({
-              emailAddress: res.emailAddress, accessToken: credentials.accessToken,
+              emailAddress: res.emailAddress, id: res.id, accessToken: credentials.accessToken,
               firstName: res.firstName, lastName: res.lastName, institution: res.institution, roles: res.roles || []
             });
             this.isAuthenticatedSubject.next(true);

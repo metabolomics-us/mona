@@ -44,9 +44,9 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
     if (precursorMZ.isDefined) {
       try {
         val precursorString: String = precursorMZ.get.value.toString
-        indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, precursorString.toDouble, tags), indexName, indexType)
+        indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, precursorString.toDouble, tags, spectrum.compound), indexName, indexType)
       } catch {
-        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, tags), indexName, indexType)
+        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, tags, spectrum.compound), indexName, indexType)
       }
     } else {
       indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, tags), indexName, indexType)

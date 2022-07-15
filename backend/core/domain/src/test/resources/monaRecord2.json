@@ -1,0 +1,447 @@
+{
+  "compound": [
+    {
+      "inchi": "InChI=1S/C6H4N4O2/c11-5-3-4(8-2-1-7-3)9-6(12)10-5/h1-2H,(H2,8,9,10,11,12)",
+      "inchiKey": "UYEUUXMDVNYCAM-UHFFFAOYSA-N",
+      "metaData": [
+        {
+          "category": "none",
+          "computed": false,
+          "hidden": false,
+          "name": "monoisotopic mass",
+          "value": 164.03342537
+        },
+        {
+          "category": "none",
+          "computed": false,
+          "hidden": false,
+          "name": "molecular formula",
+          "value": "C6H4N4O2"
+        },
+        {
+          "category": "none",
+          "computed": false,
+          "hidden": false,
+          "name": "pubchem",
+          "value": 10250
+        },
+        {
+          "category": "none",
+          "computed": false,
+          "hidden": false,
+          "name": "SMILES",
+          "value": "C1=CN=C2C(=N1)C(=O)NC(=O)N2"
+        },
+        {
+          "category": "none",
+          "computed": false,
+          "hidden": false,
+          "name": "InChI",
+          "value": "InChI=1S/C6H4N4O2/c11-5-3-4(8-2-1-7-3)9-6(12)10-5/h1-2H,(H2,8,9,10,11,12)"
+        },
+        {
+          "category": "none",
+          "computed": false,
+          "hidden": false,
+          "name": "InChIKey",
+          "value": "UYEUUXMDVNYCAM-UHFFFAOYSA-N"
+        },
+        {
+          "category": "computed",
+          "computed": true,
+          "hidden": false,
+          "name": "molecular formula",
+          "value": "C6H4N4O2"
+        },
+        {
+          "category": "computed",
+          "computed": true,
+          "hidden": false,
+          "name": "total exact mass",
+          "value": 164.033425368
+        },
+        {
+          "category": "computed",
+          "computed": true,
+          "hidden": false,
+          "name": "SMILES",
+          "value": "OC=1N=C(O)C2=NC=CN=C2N1"
+        }
+      ],
+      "molFile": "\n  CDK     02092210062D\n\n 12 13  0  0  0  0  0  0  0  0999 V2000\n   -2.6000    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6000   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.6000   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3000   -1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.6000    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3000    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8989   -1.5002    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  1  1  0  0  0  0 \n  4  3  2  0  0  0  0 \n  5  3  1  0  0  0  0 \n  7  1  2  0  0  0  0 \n  7  3  1  0  0  0  0 \n  8  2  2  0  0  0  0 \n  8  4  1  0  0  0  0 \n  9  4  1  0  0  0  0 \n  9  6  2  0  0  0  0 \n 10  5  2  0  0  0  0 \n 10  6  1  0  0  0  0 \n 11  5  1  0  0  0  0 \n 12  6  1  0  0  0  0 \nM  END\n",
+      "names": [
+        {
+          "computed": false,
+          "name": "2,4-DIHYDROXYPTERIDINE",
+          "score": 0
+        }
+      ],
+      "tags": [],
+      "computed": false,
+      "kind": "biological",
+      "classification": [
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "kingdom",
+          "value": "Organic compounds"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "superclass",
+          "value": "Organoheterocyclic compounds"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "class",
+          "value": "Pteridines and derivatives"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "direct parent",
+          "value": "Pteridines and derivatives"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Pyrimidones"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Pyrazines"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Vinylogous amides"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Heteroaromatic compounds"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Ureas"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Lactams"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Azacyclic compounds"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Organopnictogen compounds"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Organooxygen compounds"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Organonitrogen compounds"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Organic oxides"
+        },
+        {
+          "category": "classification",
+          "computed": true,
+          "hidden": false,
+          "name": "alternative parent",
+          "value": "Hydrocarbon derivatives"
+        }
+      ]
+    }
+  ],
+  "id": "EMBL-MCF_spec57890",
+  "dateCreated": 1600039104938,
+  "lastUpdated": 1644401194505,
+  "lastCurated": 1644401194484,
+  "metaData": [
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "dataset",
+      "value": "IROA_PLATE_neg_4_A.mzML"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "standard",
+      "value": "523: 2,4-DIHYDROXYPTERIDINE"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "retention time",
+      "value": 5.2050881
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "curatr spec id",
+      "value": "spec57890"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "scan number",
+      "value": 2290
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "collision energy",
+      "value": "35.0 eV"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "column",
+      "value": "Luna Amino (150x 2 mm; 3uM)"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "method id",
+      "value": "HILIC_BA2"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "mobile phase",
+      "value": "7.5 mM Ammonium acetate+0.1% NH4OH (A), ACN (B)"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "normalized collion energy",
+      "value": 35
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "instrument",
+      "value": "Thermo Q-Exactive Plus"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "instrument type",
+      "value": "LC-ESI-QFT"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "ms level",
+      "value": "MS2"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "author",
+      "value": "Prasad Phapale"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "ionization mode",
+      "value": "negative"
+    },
+    {
+      "category": "computed",
+      "computed": true,
+      "hidden": false,
+      "name": "spectral entropy",
+      "value": 1.538044612910532
+    },
+    {
+      "category": "computed",
+      "computed": true,
+      "hidden": false,
+      "name": "normalized entropy",
+      "value": 0.4720684592865158
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "precursor m/z",
+      "value": 163.025614665085
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "precursor type",
+      "value": "[M-H]-"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "precursor type",
+      "value": "[M-H]-"
+    },
+    {
+      "category": "mass spectrometry",
+      "computed": true,
+      "hidden": false,
+      "name": "mass accuracy",
+      "unit": "ppm",
+      "value": 3.279870565844195
+    },
+    {
+      "category": "mass spectrometry",
+      "computed": true,
+      "hidden": false,
+      "name": "mass error",
+      "unit": "Da",
+      "value": -0.00053470291501867
+    }
+  ],
+  "score": {
+    "impacts": [
+      {
+        "value": 2,
+        "reason": "Valid molecular structure(s) provided for biological compound"
+      },
+      {
+        "value": 1,
+        "reason": "Chromatography identified as LC-MS"
+      },
+      {
+        "value": 1,
+        "reason": "Ionization mode/type provided"
+      },
+      {
+        "value": 1,
+        "reason": "MS type/level identified"
+      },
+      {
+        "value": 1,
+        "reason": "Instrument information provided"
+      },
+      {
+        "value": 1,
+        "reason": "Collision energy provided"
+      },
+      {
+        "value": 1,
+        "reason": "Retention time/index provided"
+      },
+      {
+        "value": 1,
+        "reason": "Column information provided"
+      },
+      {
+        "value": 1,
+        "reason": "Precursor type provided"
+      },
+      {
+        "value": 1,
+        "reason": "Precursor m/z provided"
+      },
+      {
+        "value": 1,
+        "reason": "Precursor information and provided compound validated"
+      },
+      {
+        "value": 1,
+        "reason": "Mass accuracy of 3.280 ppm"
+      }
+    ],
+    "score": 5
+  },
+  "spectrum": "50.2217979431:0.122755 57.0331459045:3.821643 59.0122871399:0.892777 61.969039917:0.790287 63.9611129761:1.443705 63.9641571045:0.174697 73.2538070679:0.270219 74.02318573:0.191527 74.9894943237:1.600914 84.0440292358:100.000000 85.041229248:0.788512 85.0473327637:10.973042 94.3845977783:0.167283 107.04889679:0.281357 107.600822449:0.130739 118.991203308:0.199623 119.049446106:0.528517 120.011146545:1.318132 120.019271851:0.697153 120.043907166:0.130352 124.31628418:0.138525 135.044021606:2.939773 154.268966675:0.154170 162.022125244:15.080648 162.892440796:0.166675 162.952758789:2.611380 163.00328064:0.353531 163.025238037:9.206503 163.039260864:4.082647 163.075653076:0.603174 163.111633301:1.735715 164.017913818:0.895966 178.181854248:0.158892",
+  "splash": {
+    "block1": "splash10",
+    "block2": "001i",
+    "block3": "9300000000",
+    "block4": "7d9890ca27378ea1d5c6",
+    "splash": "splash10-001i-9300000000-7d9890ca27378ea1d5c6"
+  },
+  "submitter": {
+    "id": "prasad.phapale@embl.de",
+    "emailAddress": "prasad.phapale@embl.de",
+    "firstName": "Prasad",
+    "lastName": "Phapale",
+    "institution": "EMBL - Metabolomics Core Facility"
+  },
+  "tags": [
+    {
+      "ruleBased": false,
+      "text": "EMBL-MCF"
+    },
+    {
+      "ruleBased": true,
+      "text": "LC-MS"
+    }
+  ],
+  "library": {
+    "library": "EMBL-MCF",
+    "description": "EMBL - Metabolomics Core Facility Spectral Library",
+    "link": "https://curatr.mcf.embl.de/MS2/spec57890/",
+    "tag": {
+      "ruleBased": false,
+      "text": "EMBL-MCF"
+    }
+  }
+}

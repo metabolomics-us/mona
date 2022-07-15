@@ -57,8 +57,8 @@ class CompositeSimilarityTest extends AnyFlatSpec with Matchers {
   }
 
   it should "remove precursor ions" in {
-    val unknown = new SimpleSpectrum("", "10:100 15:20 16:5", 16.0, null)
-    val library = new SimpleSpectrum("", "10:100 15:25 20:5 25:2", 25.0, null)
+    val unknown = new SimpleSpectrum("", "10:100 15:20 16:5", 16.0, null, Array())
+    val library = new SimpleSpectrum("", "10:100 15:25 20:5 25:2", 25.0, null, Array())
     unknown.ions.length shouldEqual 3
     library.ions.length shouldEqual 4
 
