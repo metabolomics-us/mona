@@ -98,7 +98,10 @@ export class SimilaritySearchFormComponent implements OnInit{
             minSimilarity: 500,
             precursorMZ: null,
             precursorTolerancePPM: null,
-            precursorToleranceDa: null
+            precursorToleranceDa: null,
+            algorithm: 'default',
+            removePrecursorIon: false,
+            checkAllAdducts: false
         };
 
         if (minSimilarity != null && typeof +minSimilarity === 'number') {

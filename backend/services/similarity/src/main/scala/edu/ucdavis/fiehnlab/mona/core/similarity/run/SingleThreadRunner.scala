@@ -14,7 +14,7 @@ class SingleThreadRunner extends Calculate {
     * @param library
     * @return
     */
-  override def calculate(unknown: SimpleSpectrum, library: Iterable[SimpleSpectrum], threshold: Double, algorithm: Similarity, precursorToleranceDa: Double, removePrecursorIon: Boolean): Iterable[ComputationalResult] = {
+  override def calculate(unknown: SimpleSpectrum, library: Iterable[SimpleSpectrum], threshold: Double, algorithm: Similarity, precursorToleranceDa: Double, removePrecursorIon: Boolean, checkAllAdducts: Boolean): Iterable[ComputationalResult] = {
     library
       .map(spectrum => ComputationalResult(unknown, spectrum, algorithm.compute(unknown, spectrum, removePrecursorIon)))
       .filter(_.score >= threshold)

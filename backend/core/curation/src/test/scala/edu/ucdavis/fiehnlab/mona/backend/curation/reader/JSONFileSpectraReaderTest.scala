@@ -28,7 +28,7 @@ class JSONFileSpectraReaderTest extends AnyWordSpec with LazyLogging {
         spectra = reader.read()
 
       }
-      assert(counter == 58)
+      assert(counter == 59)
     }
 
   }
