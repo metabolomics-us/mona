@@ -48,7 +48,7 @@ trait Calculate extends LazyLogging {
       }
 
     if (biologicalCompound == null) {
-      logger.info(s"Compound not on spectra")
+      logger.debug(s"Compound not on spectra")
       false
     } else {
       val theoreticalAdducts: Array[MetaData] = biologicalCompound.metaData.filter(x => x.category == "theoretical adduct")
