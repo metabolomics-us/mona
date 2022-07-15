@@ -25,18 +25,6 @@ class AdductBuilderTest extends AnyWordSpec with Matchers with LazyLogging {
       assert(result._2 == "negative")
     }
 
-    "find a 3-term adduct in a different order than the definition" in {
-      val result = AdductBuilder.findAdduct("[M+H+DMSO]+")
-      assert(result._1 == "[M+DMSO+H]+")
-      assert(result._2 == "positive")
-    }
-
-    "find 4-term adduct in a different order than the definition" in {
-      val result = AdductBuilder.findAdduct("[M+Na+H+IsoProp")
-      assert(result._1 == "[M+IsoProp+Na+H]+")
-      assert(result._2 == "positive")
-    }
-
     "find an adduct should handle an invalid adduct" in {
       val result = AdductBuilder.findAdduct("M+1")
       assert(result._1 == "M+1")

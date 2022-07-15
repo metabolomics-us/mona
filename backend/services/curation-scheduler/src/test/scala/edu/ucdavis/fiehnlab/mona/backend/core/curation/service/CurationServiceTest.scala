@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.service
 
 import java.io.InputStreamReader
 import javax.annotation.PostConstruct
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaNotificationBusCounterConfiguration, Notification}
