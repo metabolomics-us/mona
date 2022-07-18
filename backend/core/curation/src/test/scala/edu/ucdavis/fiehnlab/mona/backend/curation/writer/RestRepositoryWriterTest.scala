@@ -6,7 +6,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationC
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
 import org.junit.runner.RunWith
@@ -26,7 +25,7 @@ import scala.language.postfixOps
   * Created by wohlg on 3/11/2016.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = Array(classOf[TestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class RestRepositoryWriterTest extends AnyWordSpec with Eventually {
 
   @Autowired

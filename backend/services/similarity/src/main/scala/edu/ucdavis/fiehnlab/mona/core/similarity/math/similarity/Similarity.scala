@@ -32,7 +32,7 @@ trait Similarity extends SimilarityComputation with LazyLogging {
   def removePrecursor(spectrum: SimpleSpectrum, unknownPrecursorMz: Double): SimpleSpectrum = {
     val precursorRemovedIons: Array[Ion] = spectrum.ions.filter(_.mz < unknownPrecursorMz - (5 / 1000))
 
-    new SimpleSpectrum(spectrum.id, precursorRemovedIons, spectrum.precursorMZ, spectrum.tags, spectrum.public)
+    new SimpleSpectrum(spectrum.id, precursorRemovedIons, spectrum.precursorMZ, spectrum.tags, spectrum.public, Array())
   }
 }
 

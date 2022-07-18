@@ -8,7 +8,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.GenericRestClient
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
 import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
@@ -24,7 +23,7 @@ import scala.jdk.CollectionConverters._
   * Created by wohlgemuth on 3/18/16.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = Array(classOf[TestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class RestRepositoryReaderTest extends AnyWordSpec {
 
 

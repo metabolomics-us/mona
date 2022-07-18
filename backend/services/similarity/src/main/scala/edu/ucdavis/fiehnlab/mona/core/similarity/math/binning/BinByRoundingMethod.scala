@@ -26,7 +26,7 @@ class BinByRoundingMethod extends BinningMethod {
     // Collect bins as ions
     val ions: Array[Ion] = binnedIons.keys.map(x => Ion(x, binnedIons(x))).toArray.sortBy(_.mz)
 
-    new SimpleSpectrum(spectrum.id, ions, spectrum.precursorMZ, spectrum.tags, spectrum.public) with BinnedSimpleSpectrum
+    new SimpleSpectrum(spectrum.id, ions, spectrum.precursorMZ, spectrum.tags, spectrum.public, spectrum.compound) with BinnedSimpleSpectrum
   }
 
   override def binIon(ion: Ion): Ion = SpectrumUtils.roundMZ(ion)
