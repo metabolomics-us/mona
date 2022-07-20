@@ -177,7 +177,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
           assert(exampleRecords.asScala.toList.size == 1)
         }
 
-        "delete 1 spectra in the repository" in {
+        /*"delete 1 spectra in the repository" in {
           assert(spectrumPersistenceService.count() == exampleRecords.length)
           val spectra: SpectrumResult = spectrumPersistenceService.findAll(PageRequest.of(1, 10)).getContent.get(5)
           val count = spectrumPersistenceService.count()
@@ -213,7 +213,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
 
             assert(spectrumPersistenceService.count() == 0)
           }
-        }
+        }*/
       }
     }
   }

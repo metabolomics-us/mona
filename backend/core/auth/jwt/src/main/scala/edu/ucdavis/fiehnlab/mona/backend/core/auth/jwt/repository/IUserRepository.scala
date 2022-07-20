@@ -1,11 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository
 
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Users
-import org.springframework.data.repository.PagingAndSortingRepository
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
+import javax.transaction.Transactional
+
 @Repository
-trait IUserRepository extends PagingAndSortingRepository[Users, String] {
+trait IUserRepository extends JpaRepository[Users, String] {
 
   /**
    * finds a given user by its username
@@ -14,4 +16,9 @@ trait IUserRepository extends PagingAndSortingRepository[Users, String] {
    * @return
    */
   def findByEmailAddress(emailAddress: String): Users
+
+  @Transactional
+  def deleteByEmailAddress(emailAddress: String): Unit
+
+  def existsByEmailAddress(emailAddress: String): Boolean
 }

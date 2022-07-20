@@ -29,10 +29,10 @@ class JWTTokenServiceTest extends AnyWordSpec {
   "JWTTokenServiceTest" should {
 
     userRepository.deleteAll()
-    userRepository.save(new Users("test", "test"))
+    userRepository.save(new Users("test@gmail.com", "test"))
 
     assert(userRepository.count() == 1)
-    assert(userRepository.findByUsername("test") != null)
+    assert(userRepository.findByEmailAddress("test@gmail.com") != null)
 
     "generateToken" in {
       val token = tokenService.generateToken(userRepository.findAll().iterator.next())
@@ -46,7 +46,7 @@ class JWTTokenServiceTest extends AnyWordSpec {
 
       val info = tokenService.info(token)
 
-      assert(info.username == "test")
+      assert(info.emailAddress == "test@gmail.com")
       assert(info.roles.size() == 0)
 
       assert(info.validFrom != null)

@@ -33,7 +33,12 @@ class UserRepository extends LazyLogging with PagingAndSortingRepository[Users, 
    * @param username
    * @return
    */
-  def findByUsername(username: String): Users = userRepository.findByEmailAddress(username)
+
+  def deleteByEmailAddress(emailAddress: String): Unit = userRepository.deleteByEmailAddress(emailAddress)
+
+  def findByEmailAddress(emailAddress: String): Users = userRepository.findByEmailAddress(emailAddress)
+
+  def existsByEmailAddress(emailAddress: String): Boolean = userRepository.existsByEmailAddress(emailAddress)
 
   override def findAll(sort: Sort): lang.Iterable[Users] = userRepository.findAll(sort)
 

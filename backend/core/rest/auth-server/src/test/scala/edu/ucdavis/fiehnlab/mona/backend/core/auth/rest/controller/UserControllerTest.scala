@@ -46,7 +46,7 @@ class UserControllerTest extends AbstractGenericRESTControllerTest[Users]("/user
 
     "save does not require authentication" in {
       given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/users").`then`().statusCode(200)
-      userRepository.deleteById(getValue.getEmailAddress)
+      userRepository.deleteByEmailAddress(getValue.getEmailAddress)
     }
 
     "save should not allow a user to create an admin user" in {
@@ -57,9 +57,9 @@ class UserControllerTest extends AbstractGenericRESTControllerTest[Users]("/user
 
     "put should not allow a non-admin to add an admin role" in {
       val user: Users = authenticate("testadmin", "admin").contentType("application/json; charset=UTF-8").body(getValue).when().put(s"/users/$getId").`then`().statusCode(200).extract().body().as(classOf[Users])
-
       assert(user.getRoles.asScala.forall(_.getName != "ADMIN"))
     }
+
 
     "put should be able to add admin role to a user if initiated by admin" in {
       val user: Users = authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"/users/$getId").`then`().statusCode(200).extract().body().as(classOf[Users])
@@ -73,7 +73,7 @@ class UserControllerTest extends AbstractGenericRESTControllerTest[Users]("/user
 
       given().contentType("application/json; charset=UTF-8").log().all(true).body(user).when().post(s"/users").`then`().log().all(true).statusCode(409)
 
-      assert(authenticate().contentType("application/json; charset=UTF-8").when().get(s"/users/test").`then`().statusCode(200).extract().body().as(classOf[Users]) == oldUser)
+      assert(authenticate().contentType("application/json; charset=UTF-8").when().get(s"/users/test").`then`().statusCode(200).extract().body().as(classOf[Users]).getEmailAddress == oldUser.getEmailAddress)
     }
   }
 }

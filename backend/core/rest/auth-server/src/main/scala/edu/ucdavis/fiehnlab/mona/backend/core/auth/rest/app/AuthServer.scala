@@ -45,7 +45,7 @@ class AuthCommandRunner extends CommandLineRunner with LazyLogging {
   val userRepository: UserRepository = null
 
   override def run(strings: String*): Unit = {
-    if (userRepository.findByUsername(adminUser) == null) {
+    if (userRepository.findByEmailAddress(adminUser) == null) {
       val newUser = new Users(adminUser, adminPassword)
       newUser.setRoles(List(new Roles("ADMIN")).asJava)
       userRepository.save(newUser)

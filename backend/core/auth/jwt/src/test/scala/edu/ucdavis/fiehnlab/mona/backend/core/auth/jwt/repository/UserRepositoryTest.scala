@@ -25,22 +25,22 @@ class UserRepositoryTest extends AnyWordSpec {
 
     "findByUserName" in {
       userRepository.deleteAll()
-      userRepository.save(new Users("test", "test"))
+      userRepository.save(new Users("test@gmail.com", "test"))
 
       assert(userRepository.count() == 1)
-      assert(userRepository.findByUsername("test") != null)
+      assert(userRepository.findByEmailAddress("test@gmail.com") != null)
     }
 
     "hashed password should match" in {
-      assert(new BCryptPasswordEncoder().matches("test", userRepository.findByUsername("test").getPassword))
+      assert(new BCryptPasswordEncoder().matches("test", userRepository.findByEmailAddress("test@gmail.com").getPassword))
     }
 
     "don't rehash password upon resaving" in {
-      val aUser = userRepository.findByUsername("test")
-      aUser.setEmailAddress("test2")
+      val aUser = userRepository.findByEmailAddress("test@gmail.com")
+      aUser.setEmailAddress("test2@gmail.com")
       userRepository.save(aUser)
       //userRepository.save(userRepository.findByUsername("test").copy(username = "test2"))
-      assert(userRepository.findByUsername("test").getPassword == userRepository.findByUsername("test2").getPassword)
+      assert(userRepository.findByEmailAddress("test@gmail.com").getPassword == userRepository.findByEmailAddress("test2@gmail.com").getPassword)
     }
   }
 }

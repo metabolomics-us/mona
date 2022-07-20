@@ -30,14 +30,12 @@ class PostgresLoginService extends LoginService with LazyLogging {
     */
   override def login(request: LoginRequest): LoginResponse = {
 
-    logger.debug(s"login in ${request.username}")
+    logger.debug(s"login in ${request.emailAddress}")
 
-    val user: Users = userRepository.findByUsername(request.username)
-
-    logger.debug(s"${user}")
+    val user: Users = userRepository.findByEmailAddress(request.emailAddress)
 
     if (user == null) {
-      throw new UsernameNotFoundException(s"sorry user ${request.username} was not found")
+      throw new UsernameNotFoundException(s"sorry user ${request.emailAddress} was not found")
     } else if (!new BCryptPasswordEncoder().matches(request.password, user.getPassword)) {
       throw new BadCredentialsException("sorry the provided credentials were invalid!")
     } else {
@@ -63,6 +61,6 @@ class PostgresLoginService extends LoginService with LazyLogging {
   override def extend(token: String): LoginResponse = {
     val info = tokenService.info(token)
 
-    LoginResponse(tokenService.generateToken(userRepository.findByUsername(info.username), 24 * 365 * 10))
+    LoginResponse(tokenService.generateToken(userRepository.findByEmailAddress(info.emailAddress), 24 * 365 * 10))
   }
 }

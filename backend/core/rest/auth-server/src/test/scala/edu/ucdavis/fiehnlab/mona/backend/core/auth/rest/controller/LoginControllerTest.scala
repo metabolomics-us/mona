@@ -59,17 +59,13 @@ class LoginControllerTest extends AbstractSpringControllerTest with LazyLogging 
           val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").`then`().statusCode(200).extract().body().as(classOf[LoginResponse])
           val info = authenticate().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/info").`then`().statusCode(200).extract().body().as(classOf[LoginInfo])
 
-          logger.info(s"${info.username}")
-          logger.info(s"${info.roles}")
-          assert(info.username == "admin")
+          assert(info.emailAddress == "admin")
           assert(info.roles.size() == 1)
           assert(info.roles.contains("ADMIN") == true)
         }
 
         "you need to be authenticated for extending tokens" in {
-          logger.info(s"starting test")
           val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").`then`().statusCode(200).extract().body().as(classOf[LoginResponse])
-          logger.info(s"${response}");
           given().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/extend").`then`().statusCode(401).extract().body()//.as(classOf[LoginResponse])
         }
 
@@ -80,7 +76,7 @@ class LoginControllerTest extends AbstractSpringControllerTest with LazyLogging 
           val tenYearToken = authenticate().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/extend").`then`().statusCode(200).extract().body().as(classOf[LoginResponse])
           val info = authenticate().contentType("application/json; charset=UTF-8").body(tenYearToken).when().post("/auth/info").`then`().statusCode(200).extract().body().as(classOf[LoginInfo])
 
-          assert(info.username == "admin")
+          assert(info.emailAddress == "admin")
           assert(info.roles.size() == 1)
           assert(info.roles.contains("ADMIN") == true)
 

@@ -30,22 +30,22 @@ class PostgresLoginServiceTest extends AnyWordSpec with LazyLogging{
 
   "PostgresLoginServiceTest" should {
     userRepository.deleteAll()
-    userRepository.save(new Users("test", "test"))
+    userRepository.save(new Users("test@gmail.com", "test"))
 
     assert(userRepository.count() == 1)
-    assert(userRepository.findByUsername("test") != null)
+    assert(userRepository.findByEmailAddress("test@gmail.com") != null)
 
     "login" in {
-      val response: LoginResponse = loginService.login("test", "test")
+      val response: LoginResponse = loginService.login("test@gmail.com", "test")
       assert(response != null)
       assert(response.token != null)
     }
 
     "get token info" in {
-      val response: LoginResponse = loginService.login("test", "test")
+      val response: LoginResponse = loginService.login("test@gmail.com", "test")
       val info: LoginInfo = loginService.info(response.token)
       assert(info != null)
-      assert(info.username == "test")
+      assert(info.emailAddress == "test@gmail.com")
     }
   }
 }

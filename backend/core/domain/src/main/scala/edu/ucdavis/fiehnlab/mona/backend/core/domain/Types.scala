@@ -278,20 +278,20 @@ object HelperTypes {
   /**
     * a login request
     *
-    * @param username
+    * @param emailAddress
     * @param password
     */
-  case class LoginRequest(username: String, password: String)
+  case class LoginRequest(emailAddress: String, password: String)
 
   /**
     * general information about a token to be retrieved from the server and can be useful for client side applications
     *
-    * @param username
+    * @param emailAddress
     * @param validFrom
     * @param validTo
     * @param roles
     */
-  case class LoginInfo(username: String, validFrom: Date, validTo: Date, roles: java.util.List[String])
+  case class LoginInfo(emailAddress: String, validFrom: Date, validTo: Date, roles: java.util.List[String])
 
 }
 

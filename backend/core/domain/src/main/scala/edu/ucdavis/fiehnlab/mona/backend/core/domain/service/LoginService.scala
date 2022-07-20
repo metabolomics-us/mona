@@ -19,7 +19,7 @@ trait LoginService {
     *
     * @return
     */
-  def login(username: String, password: String): LoginResponse = login(LoginRequest(username, password))
+  def login(emailAddress: String, password: String): LoginResponse = login(LoginRequest(emailAddress, password))
 
   /**
     * generates publicly interesting info about the given token
