@@ -27,7 +27,7 @@ class MultiThreadRunner extends Calculate {
       else if(!removePrecursorIon && checkAllAdducts)  {
         library.par
           .filter(!_.precursorMZ.isNaN)
-          .filter(x => {findAdductMatch(unknown.precursorMZ, precursorToleranceDa, x.compound)})
+          .filter(x => {findAdductMatch(unknown.precursorMZ, precursorToleranceDa, x.adducts)})
           .map(spectrum => ComputationalResult(unknown, spectrum, algorithm.compute(unknown, spectrum, removePrecursorIon)))
           .filter(_.score >= threshold)
           .seq
