@@ -1,39 +1,43 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.typesafe.scalalogging.LazyLogging
+
 import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary, MetaDataValueCount}
-import org.junit.runner.RunWith
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsMetaData
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.MetaDataRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumResultRepository, StatisticsMetaDataRepository}
 import org.scalatest.wordspec.AnyWordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
+import org.springframework.beans.factory.annotation.{Autowired}
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 8/4/16.
-  */
-@RunWith(classOf[SpringRunner])
-@DataMongoTest
-@ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
-@TestPropertySource(locations = Array("classpath:application.properties"))
-class MetaDataStatisticsServiceTest extends AnyWordSpec {
+ *
+ * */
+@SpringBootTest
+@ActiveProfiles(Array("test"))
+class MetaDataStatisticsServiceTest extends AnyWordSpec with LazyLogging{
 
   @Autowired
-  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
-
-  @Autowired
-  @Qualifier("metadataStatisticsMongoRepository")
-  val metaDataStatisticsRepository: MetaDataStatisticsMongoRepository = null
+  private val statisticsMetaDataRepository: StatisticsMetaDataRepository = null
 
   @Autowired
   val metaDataStatisticsService: MetaDataStatisticsService = null
 
+  @Autowired
+  val spectrumResultsRepo: SpectrumResultRepository = null
+
+  @Autowired
+  val metaDataRepository: MetaDataRepository = null
+
+  @Autowired
+  val mapper: ObjectMapper = null
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
@@ -42,84 +46,54 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec {
   "MetaData Statistics Service" should {
 
     "load data" in {
-      spectrumMongoRepository.deleteAll()
-      exampleRecords.foreach(spectrumMongoRepository.save(_))
-      assert(spectrumMongoRepository.count() == 59)
-    }
-
-    "perform metadata name aggregation" in {
-      val result: Array[MetaDataStatisticsSummary] = metaDataStatisticsService.metaDataNameAggregation()
-      assert(result.length == 56)
-      assert(result.forall(_.count > 0))
-    }
-
-    "perform metadata aggregation for ms level" in {
-      val result: MetaDataStatistics = metaDataStatisticsService.metaDataAggregation("ms level")
-
-      assert(result.count == 59)
-      assert(result.values.length == 1)
-      assert(result.values sameElements Array(MetaDataValueCount("MS2", 59)))
-    }
-
-    "perform metadata aggregation for ion mode" in {
-      val result: MetaDataStatistics = metaDataStatisticsService.metaDataAggregation("ion mode")
-
-      assert(result.count == 58)
-      assert(result.values.length == 2)
-      assert(result.values sameElements Array(MetaDataValueCount("positive", 33), MetaDataValueCount("negative", 25)))
+      spectrumResultsRepo.deleteAll()
+     exampleRecords.foreach { spectrum =>
+        val serialized = mapper.writeValueAsString(spectrum)
+        spectrumResultsRepo.save(new SpectrumResult(spectrum.id, serialized))
+      }
+      assert(spectrumResultsRepo.count() == 59)
     }
 
     "generate metadata statistics" should {
 
       "persist metadata statistics" in {
-        metaDataStatisticsRepository.deleteAll()
+        statisticsMetaDataRepository.deleteAll()
         metaDataStatisticsService.updateMetaDataStatistics()
-
-        assert(metaDataStatisticsRepository.count() == 56)
+        assert(statisticsMetaDataRepository.count() == 240)
       }
 
       "get metadata names from repository" in {
-        val result: Array[MetaDataStatisticsSummary] = metaDataStatisticsService.getMetaDataNames
-        assert(result.length == 56)
-        assert(result.forall(_.count > 0))
+        val result: Array[StatisticsMetaData.StatisticsMetaDataSummary] = metaDataStatisticsService.getMetaDataNames
+        assert(result.length == 240)
+        assert(result.forall(_.getCount > 0))
       }
 
       "get metadata aggregation for ms level from repository" in {
         val result = metaDataStatisticsService.getMetaDataStatistics("ms level")
 
-        assert(result.count == 59)
-        assert(result.values.length == 1)
-        assert(result.values sameElements Array(MetaDataValueCount("MS2", 59)))
+        assert(result.getCount == 59)
+        assert(result.getMetaDataValueCount.size() == 1)
+        //assert(result.get sameElements Array(MetaDataValueCount("MS2", 59)))
       }
 
       "get metadata aggregation for ion mode from repository" in {
         val result = metaDataStatisticsService.getMetaDataStatistics("ion mode")
-        val values = result.values.sortBy(_.count)
+        val values = result.getMetaDataValueCount.asScala.sortBy(_.getCount)
 
 
         assert(values.length == 2)
-        assert(values.head == MetaDataValueCount("negative", 25))
-        assert(values.last == MetaDataValueCount("positive", 33))
-      }
-
-      "re-persist metadata statistics with a slice limit of 5" in {
-        metaDataStatisticsRepository.deleteAll()
-        metaDataStatisticsService.updateMetaDataStatistics(5)
-
-        assert(metaDataStatisticsRepository.count() == 56)
-      }
-
-      "ensure that each metadata group has at most 5 values" in {
-        metaDataStatisticsService.getMetaDataStatistics.foreach { x =>
-          assert(x.values.head.count == x.values.map(_.count).max)
-        }
+        assert(values.head.getValue == "negative")
+        assert(values.head.getCount == 25)
+        assert(values.last.getValue == "positive")
+        assert(values.last.getCount == 33)
       }
 
       "ensure that the maximum count of each metadata group is the first value" in {
         metaDataStatisticsService.getMetaDataStatistics.foreach { x =>
-          assert(x.values.length <= 5)
+          assert(x.getMetaDataValueCount.asScala.head.getCount == x.getMetaDataValueCount.asScala.map(_.getCount).max)
         }
       }
     }
   }
 }
+

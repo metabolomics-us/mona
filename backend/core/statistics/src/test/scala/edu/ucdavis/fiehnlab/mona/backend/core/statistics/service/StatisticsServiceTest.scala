@@ -1,36 +1,34 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
+
 import java.io.InputStreamReader
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.GlobalStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.GlobalStatistics
-import org.junit.runner.RunWith
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumResultRepository, StatisticsGlobalRepository}
 import org.scalatest.wordspec.AnyWordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.{StatisticsGlobal}
+import org.springframework.beans.factory.annotation.{Autowired}
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by sajjan on 8/4/16.
-  */
-@RunWith(classOf[SpringRunner])
-@DataMongoTest
-@ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
-@TestPropertySource(locations = Array("classpath:application.properties"))
+ * */
+@SpringBootTest
+@ActiveProfiles(Array("test"))
 class StatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
   @Autowired
-  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
+  val spectrumResultsRepo: SpectrumResultRepository = null
 
   @Autowired
-  @Qualifier("globalStatisticsMongoRepository")
-  val globalStatisticsRepository: GlobalStatisticsMongoRepository = null
+  val mapper: ObjectMapper = null
+
+  @Autowired
+  private val globalStatisticsRepository: StatisticsGlobalRepository = null
 
   @Autowired
   val statisticsService: StatisticsService = null
@@ -43,28 +41,31 @@ class StatisticsServiceTest extends AnyWordSpec with LazyLogging {
   "Statistics Service" should {
 
     "load data" in {
-      spectrumMongoRepository.deleteAll()
       globalStatisticsRepository.deleteAll()
+      spectrumResultsRepo.deleteAll()
 
-      exampleRecords.foreach(spectrumMongoRepository.save(_))
-      assert(spectrumMongoRepository.count() == 50)
+      exampleRecords.foreach { spectrum =>
+        val serialized = mapper.writeValueAsString(spectrum)
+        spectrumResultsRepo.save(new SpectrumResult(spectrum.id, serialized))
+      }
+      assert(spectrumResultsRepo.count() == 50)
     }
 
     "perform aggregation counts" in {
       val count: Long = globalStatisticsRepository.count()
 
       statisticsService.updateStatistics()
-      val result: GlobalStatistics = statisticsService.getGlobalStatistics
+      val result: StatisticsGlobal = statisticsService.getGlobalStatistics
 
       assert(globalStatisticsRepository.count() == count + 1)
 
-      assert(result.spectrumCount == 50)
-      assert(result.compoundCount == 21)
-      assert(result.metaDataCount == 21)
-      assert(result.metaDataValueCount == 1050)
-      assert(result.tagCount == 2)
-      assert(result.tagValueCount == 100)
-      assert(result.submitterCount == 4)
+      assert(result.getSpectrumCount == 50)
+      assert(result.getCompoundCount == 21)
+      assert(result.getMetaDataCount == 574)
+      assert(result.getMetaDataValueCount == 5254)
+      assert(result.getTagCount == 2)
+      assert(result.getTagValueCount == 100)
+      assert(result.getSubmitterCount == 4)
     }
   }
 }

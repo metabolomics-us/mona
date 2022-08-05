@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views;
 
 import com.vladmihalcea.hibernate.type.json.JsonType;
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.MetaDataDAO;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 import org.hibernate.annotations.Type;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.TypeDef;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.List;
 
 @Entity
 @TypeDef(
@@ -46,11 +48,11 @@ public class Compound {
 
     @Type(type = "json")
     @Column(name = "metadata", columnDefinition = "jsonb")
-    private String metadata;
+    private List<MetaDataDAO> metadata;
+
     @Type(type = "json")
     @Column(name = "classification", columnDefinition = "jsonb")
-
-    private String classification;
+    private List<MetaDataDAO> classification;
 
     public String getMonaId() {
         return monaId;
@@ -84,11 +86,11 @@ public class Compound {
         return inchikey;
     }
 
-    public String getMetadata() {
+    public List<MetaDataDAO> getMetadata() {
         return metadata;
     }
 
-    public String getClassification() {
+    public List<MetaDataDAO> getClassification() {
         return classification;
     }
 }

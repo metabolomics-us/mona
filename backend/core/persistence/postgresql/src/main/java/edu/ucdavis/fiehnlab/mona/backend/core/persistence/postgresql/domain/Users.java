@@ -1,9 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @IdClass(UserId.class)
@@ -14,6 +12,7 @@ public class Users {
     @SequenceGenerator(name = "users_id", initialValue = 1, allocationSize = 50)
     private Long id;
 
+    @Id
     private String emailAddress;
 
     private String password;

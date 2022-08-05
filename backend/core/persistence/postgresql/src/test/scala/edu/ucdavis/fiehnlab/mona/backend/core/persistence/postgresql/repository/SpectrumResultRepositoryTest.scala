@@ -3,20 +3,13 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.junit.runner.RunWith
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager}
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.TestConfig
 import org.springframework.beans.factory.annotation.Autowired
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
-import org.mockito.internal.matchers.GreaterThan
-import org.springframework.context.annotation.Import
-
 import java.io.InputStreamReader
 
 @SpringBootTest

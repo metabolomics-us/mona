@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import cz.jirutka.rsql.parser.ast.ComparisonOperator
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
@@ -13,7 +12,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository.SparseSearchTable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql.RSQLOperatorsCustom
 import org.scalatest.concurrent.Eventually
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -97,7 +95,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
           eventually(timeout(180 seconds)) {
             matRepository.refreshSearchTable()
             logger.info("sleep...")
-            assert(searchTableRepository.count() == 59606)
+            assert(searchTableRepository.count() == 59610)
           }
 
         }
@@ -177,7 +175,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
           assert(exampleRecords.asScala.toList.size == 1)
         }
 
-        /*"delete 1 spectra in the repository" in {
+        "delete 1 spectra in the repository" in {
           assert(spectrumPersistenceService.count() == exampleRecords.length)
           val spectra: SpectrumResult = spectrumPersistenceService.findAll(PageRequest.of(1, 10)).getContent.get(5)
           val count = spectrumPersistenceService.count()
@@ -213,7 +211,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
 
             assert(spectrumPersistenceService.count() == 0)
           }
-        }*/
+        }
       }
     }
   }

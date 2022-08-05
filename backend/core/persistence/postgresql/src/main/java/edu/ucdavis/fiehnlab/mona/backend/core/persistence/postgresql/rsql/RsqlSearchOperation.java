@@ -1,9 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql;
 
 import cz.jirutka.rsql.parser.ast.ComparisonOperator;
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql.RSQLOperatorsCustom;
-
-import java.util.Set;
 
 public enum RsqlSearchOperation {
     EQUAL(RSQLOperatorsCustom.EQUAL),

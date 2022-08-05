@@ -65,17 +65,19 @@ from (select
       from "spectrum_result" sr
       ) a;
 
-create or replace view compound_submitter as
+create or replace view spectra_submitters as
 
 select monaId as mona_id,
        submitter ->> 'id' as submitter_id,
        submitter ->> 'lastName' as last_name,
        submitter ->> 'firstName' as first_name,
        submitter ->> 'institution' as institution,
-       submitter ->> 'emailAddress' as email_address
+       submitter ->> 'emailAddress' as email_address,
+       ((score ->> 'score'):: float) as score
 from
     (select content ->> 'id' as monaId,
-           content -> 'submitter' as submitter
+           content -> 'submitter' as submitter,
+            content -> 'score' as score
     from "spectrum_result" sr) a;
 
 
@@ -85,20 +87,21 @@ select monaId as mona_id,
        library ->> 'description' as description,
        library ->> 'link' as link,
        library ->> 'library' as library,
-       library -> 'tag' as tag
+       library -> 'tag' ->> 'text' as text,
+       ((library -> 'tag' -> 'ruleBased'):: bool) as rule_based
 from
 (select content ->> 'id' as monaId,
        content -> 'library' as library
-from "spectrum_result" sr) a;
+from "spectrum_result" sr) a where library is not null;
 
 
 create or replace view metadata as
 
 select
-    monaId as mona_id,
-    ((jsonb_array_elements(metadata) ->> 'name')) as name,
-    ((jsonb_array_elements(metadata) ->> 'unit')) as unit,
-    ((jsonb_array_elements(metadata) ->> 'value')) as value,
+    monaId as "mona_id",
+    ((jsonb_array_elements(metadata) ->> 'name')) as "name",
+    ((jsonb_array_elements(metadata) ->> 'unit')) as "unit",
+    ((jsonb_array_elements(metadata) ->> 'value')) as "value",
     ((jsonb_array_elements(metadata) ->> 'hidden'):: bool) as hidden,
     ((jsonb_array_elements(metadata) ->> 'category')) as category,
     ((jsonb_array_elements(metadata) ->> 'computed'):: bool) as computed
@@ -108,10 +111,10 @@ from
 from "spectrum_result" sr) a
 UNION
 select
-    monaId as mona_id,
-    ((jsonb_array_elements(compound_metadata) ->> 'name')) as name,
-    ((jsonb_array_elements(compound_metadata) ->> 'unit')) as unit,
-    ((jsonb_array_elements(compound_metadata) ->> 'value')) as value,
+    monaId as "mona_id",
+    ((jsonb_array_elements(compound_metadata) ->> 'name')) as "name",
+    ((jsonb_array_elements(compound_metadata) ->> 'unit')) as "unit",
+    ((jsonb_array_elements(compound_metadata) ->> 'value')) as "value",
     ((jsonb_array_elements(compound_metadata) ->> 'hidden'):: bool) as hidden,
     ((jsonb_array_elements(compound_metadata) ->> 'category')) as category,
     ((jsonb_array_elements(compound_metadata) ->> 'computed'):: bool) as computed
@@ -121,10 +124,10 @@ from
      from "spectrum_result" sr) b
 UNION
 select
-    monaId as mona_id,
-    ((jsonb_array_elements(compound_classification) ->> 'name')) as name,
-    null as unit,
-    ((jsonb_array_elements(compound_classification) ->> 'value')) as value,
+    monaId as "mona_id",
+    ((jsonb_array_elements(compound_classification) ->> 'name')) as "name",
+    null as "unit",
+    ((jsonb_array_elements(compound_classification) ->> 'value')) as "value",
     ((jsonb_array_elements(compound_classification) ->> 'hidden'):: bool) as hidden,
     ((jsonb_array_elements(compound_classification) ->> 'category')) as category,
     ((jsonb_array_elements(compound_classification) ->> 'computed'):: bool) as computed
@@ -134,10 +137,10 @@ from
      from "spectrum_result" sr) c
 UNION
 select
-    monaId as mona_id,
-    'compound_name' as name,
-    null as unit,
-    ((jsonb_array_elements(names) ->> 'name')) as value,
+    monaId as "mona_id",
+    'compound_name' as "name",
+    null as "unit",
+    ((jsonb_array_elements(names) ->> 'name')) as "value",
     false as hidden,
     null as category,
     ((jsonb_array_elements(names) ->> 'computed'):: bool) as name
@@ -147,10 +150,10 @@ from
      from "spectrum_result" sr) d
 UNION
 select
-    monaId as mona_id,
-    ((annotation ->> 'name')) as name,
-    null as unit,
-    ((annotation ->> 'value')) as value,
+    monaId as "mona_id",
+    ((annotation ->> 'name')) as "name",
+    null as "unit",
+    ((annotation ->> 'value')) as "value",
     ((annotation ->> 'hidden'):: bool) as hidden,
     ((annotation ->> 'category')) as category,
     ((annotation ->> 'computed'):: bool) as computed
@@ -188,7 +191,7 @@ select sr.mona_id,
 from spectrum_result sr
          INNER JOIN metadata m on sr.mona_id = m.mona_id
          INNER JOIN compound c on sr.mona_id = c.mona_id
-         INNER JOIN compound_submitter cs on sr.mona_id = cs.mona_id
+         INNER JOIN spectra_submitters cs on sr.mona_id = cs.mona_id
          INNER JOIN splash s on sr.mona_id = s.mona_id
          INNER JOIN tags t on sr.mona_id = t.mona_id;
 

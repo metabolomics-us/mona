@@ -1,13 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.sql.rowset.serial.SerialArray;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "sequence")

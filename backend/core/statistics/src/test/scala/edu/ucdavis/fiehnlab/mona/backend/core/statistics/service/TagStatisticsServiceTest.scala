@@ -1,39 +1,37 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
+
 import java.io.InputStreamReader
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.TagStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.TagStatistics
-import org.junit.runner.RunWith
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumResultRepository, StatisticsTagRepository}
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 8/4/16.
-  */
-@RunWith(classOf[SpringRunner])
-@ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
-@DataMongoTest
-@TestPropertySource(locations = Array("classpath:application.properties"))
+ * */
+@SpringBootTest
+@ActiveProfiles(Array("test"))
 class TagStatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
   @Autowired
-  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
+  val spectrumResultsRepo: SpectrumResultRepository = null
 
   @Autowired
-  @Qualifier("tagStatisticsMongoRepository")
-  val tagStatisticsRepository: TagStatisticsMongoRepository = null
+  val mapper: ObjectMapper = null
 
   @Autowired
   val tagStatisticsService: TagStatisticsService = null
+
+  @Autowired
+  val statisticsTagRepository: StatisticsTagRepository = null
 
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
@@ -43,51 +41,53 @@ class TagStatisticsServiceTest extends AnyWordSpec with LazyLogging {
     "load data monaRecords.json" in {
       val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
-      spectrumMongoRepository.deleteAll()
-      exampleRecords.foreach(spectrumMongoRepository.save(_))
-      assert(spectrumMongoRepository.count() == 59)
+      spectrumResultsRepo.deleteAll()
+      exampleRecords.foreach { spectrum =>
+        val serialized = mapper.writeValueAsString(spectrum)
+        spectrumResultsRepo.save(new SpectrumResult(spectrum.id, serialized))
+      }
+      assert(spectrumResultsRepo.count() == 59)
     }
 
     "perform tag aggregation on old MoNA records" in {
-      val result: Array[TagStatistics] = tagStatisticsService.tagAggregation().sortBy(_.text)
-      assert(result.length == 5)
-
-      assert(result.map(_.text) sameElements Array("EMBL-MCF", "LC-MS", "LCMS", "massbank", "noisy spectra"))
-      assert(result.map(_.count) sameElements Array(1, 1, 58, 58, 3))
-      assert(result.map(_.ruleBased) sameElements Array(false, true, false, false, false))
-    }
-
-    "persist tag statistics" in {
-      tagStatisticsRepository.deleteAll()
       tagStatisticsService.updateTagStatistics()
-      assert(tagStatisticsRepository.count() == 5)
+      assert(statisticsTagRepository.count() == 5)
+      val result = statisticsTagRepository.findAll().asScala.sortBy(_.getText)
+
+      assert(result.map(_.getText) sameElements Array("EMBL-MCF", "LC-MS", "LCMS", "massbank", "noisy spectra"))
+      assert(result.map(_.getCount) sameElements Array(1, 1, 58, 58, 3))
+      assert(result.map(_.getRuleBased) sameElements Array(false, true, false, false, false))
     }
 
     "load data curatedRecords.json" in {
       val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
 
-      spectrumMongoRepository.deleteAll()
-      exampleRecords.foreach(spectrumMongoRepository.save(_))
-      assert(spectrumMongoRepository.count() == 50)
+      spectrumResultsRepo.deleteAll()
+      exampleRecords.foreach { spectrum =>
+        val serialized = mapper.writeValueAsString(spectrum)
+        spectrumResultsRepo.save(new SpectrumResult(spectrum.id, serialized))
+      }
+      assert(spectrumResultsRepo.count() == 50)
     }
 
     "perform tag aggregation on curated records" in {
-      val result: Array[TagStatistics] = tagStatisticsService.tagAggregation().sortBy(_.text)
-      assert(result.length == 2)
+      tagStatisticsService.updateTagStatistics()
+      assert(statisticsTagRepository.count() == 2)
+      val result = statisticsTagRepository.findAll().asScala.sortBy(_.getText)
 
-      assert(result.map(_.text) sameElements Array("LC-MS", "massbank"))
-      assert(result.map(_.count) sameElements Array(50, 50))
-      assert(result.map(_.ruleBased) sameElements Array(true, false))
+      assert(result.map(_.getText) sameElements Array("LC-MS", "massbank"))
+      assert(result.map(_.getCount) sameElements Array(50, 50))
+      assert(result.map(_.getRuleBased) sameElements Array(true, false))
     }
 
     "perform library tag aggregation on curated records" in {
-      val result: Array[TagStatistics] = tagStatisticsService.libraryTagsAggregation()
+      val result = tagStatisticsService.getLibraryTagStatistics
 
-      assert(result.length == 1)
-      assert(result.head.text == "massbank")
-      assert(!result.head.ruleBased)
-      assert(result.head.count == 58)
-      assert(result.head.category == "library")
+      assert(result.size == 1)
+      assert(result.head.getText == "massbank")
+      assert(!result.head.getRuleBased)
+      assert(result.head.getCount == 50)
+      assert(result.head.getCategory == "library")
     }
   }
 }

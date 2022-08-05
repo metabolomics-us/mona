@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.listener.AkkaEventScheduler

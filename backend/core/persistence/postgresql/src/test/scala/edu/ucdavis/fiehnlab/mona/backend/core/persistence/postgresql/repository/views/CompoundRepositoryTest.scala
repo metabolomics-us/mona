@@ -2,8 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import cz.jirutka.rsql.parser.RSQLParser
-import cz.jirutka.rsql.parser.ast.Node
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
@@ -11,11 +9,11 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.jpa.domain.Specification
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views.Compound
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql.CustomRsqlVisitor
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views.Compound
+import scala.jdk.StreamConverters.StreamHasToScala
+import org.springframework.transaction.support.TransactionTemplate
 
 import java.io.InputStreamReader
 
@@ -31,11 +29,13 @@ class CompoundRepositoryTest extends AnyWordSpec with Matchers with LazyLogging{
   @Autowired
   val mapper: ObjectMapper = null
 
+  @Autowired
+  val t: TransactionTemplate = null
+
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  /*
   "Compound Repository" should {
     s"empty database" must {
       "with deleteAll" in {
@@ -52,19 +52,23 @@ class CompoundRepositoryTest extends AnyWordSpec with Matchers with LazyLogging{
       }
       assert(spectrumResultsRepository.count() == 59)
     }
-    s"be able to get" must {
-      "kind" in {
-        val rootNode: Node = new RSQLParser().parse("kind==observed")
-        val spec: Specification[Compound] = rootNode.accept(new CustomRsqlVisitor[Compound]())
-        val results: java.util.List[Compound] = compoundRepository.findAll(spec)
-        results.forEach { result =>
-          logger.info(s"${result.getMonaId}")
-          logger.info(s"${result.getNames}")
-        }
-        assert(results.size() == 58)
+
+    s"check the metadata" in {
+      val findIt = compoundRepository.findByMonaId("3477764")
+      logger.info(s"${findIt.get(0).getMetadata.get(3).getName}")
+      logger.info(s"${findIt.get(0).getMetadata.get(4).getValue}")
+      logger.info(s"${findIt.get(0).getMetadata.get(2).getCategory}")
+    }
+
+
+    s"attempt to stream data" in {
+      val c = t.execute {
+         x => compoundRepository.streamAllBy().toScala(Iterator).next()
       }
+      logger.info(s"${c.getMonaId}")
+      c shouldBe an[Compound]
     }
   }
-  */
+
 
 }

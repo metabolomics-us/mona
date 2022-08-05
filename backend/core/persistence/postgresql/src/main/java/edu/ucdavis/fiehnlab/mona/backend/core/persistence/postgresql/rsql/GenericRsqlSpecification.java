@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql;
 
 import cz.jirutka.rsql.parser.ast.ComparisonOperator;
-import cz.jirutka.rsql.parser.ast.RSQLOperators;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -9,7 +8,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GenericRsqlSpecification<T> implements Specification<T> {

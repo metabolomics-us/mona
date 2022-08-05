@@ -1,14 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.context.annotation.{ComponentScan, Configuration}
+import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
+import org.springframework.context.annotation.Import
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
 
 /**
   * Created by wohlg on 3/20/2016.
   */
-@EnableAutoConfiguration
-@Configuration
-@ComponentScan
+@SpringBootApplication(scanBasePackageClasses = Array())
+@Import(Array(classOf[PostgresqlConfiguration]))
 class TestConfig {
 
 }

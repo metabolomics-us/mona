@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 

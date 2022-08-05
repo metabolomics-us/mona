@@ -5,8 +5,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-import javax.persistence.EntityManager
-
 @Service
 class SequenceService {
   @Autowired
