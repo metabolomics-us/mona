@@ -1,26 +1,22 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
+/*package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
 import com.jayway.restassured.RestAssured
-import com.jayway.restassured.RestAssured.given
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumFeedback
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.SpectrumFeedbackMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumFeedback
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumFeedbackRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
-import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by sajjan on 4/6/17.
   */
-@RunWith(classOf[SpringRunner])
+@ActiveProfiles(Array("test"))
 @SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class SpectrumFeedbackRestControllerTest extends AbstractGenericRESTControllerTest[SpectrumFeedback]("/feedback") with Eventually {
 
@@ -28,7 +24,7 @@ class SpectrumFeedbackRestControllerTest extends AbstractGenericRESTControllerTe
   private val port = 0
 
   @Autowired
-  val spectrumFeedbackMongoRepository: SpectrumFeedbackMongoRepository = null
+  val spectrumFeedbackMongoRepository: SpectrumFeedbackRepository = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -42,16 +38,16 @@ class SpectrumFeedbackRestControllerTest extends AbstractGenericRESTControllerTe
     *
     * @return
     */
-  override def getValue: SpectrumFeedback = SpectrumFeedback("test", "MoNA000001", "test user", "comment", "commment value")
+  override def getValue: SpectrumFeedback = new SpectrumFeedback("MoNA000001",  "test user", "comment", "commment value")
 
   /**
     * returns an id for us for testing
     *
     * @return
     */
-  override def getId: String = getValue.id
+  override def getId: String = getValue.getMonaId
 
   override val saveRequiresAuthentication: Boolean = false
 
   override val deleteRequiresAuthentication: Boolean = false
-}
+}*/

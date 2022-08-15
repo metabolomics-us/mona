@@ -6,25 +6,15 @@ import java.util.Objects;
 public class SpectrumFeedbackId implements Serializable {
     private Long id;
     private String monaId;
-    private String userId;
+    private String emailAddress;
 
-    public SpectrumFeedbackId(Long id, String monaId, String userId) {
+    public SpectrumFeedbackId(Long id, String monaId, String emailAddress) {
         this.id = id;
         this.monaId = monaId;
-        this.userId = userId;
+        this.emailAddress = emailAddress;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SpectrumFeedbackId that = (SpectrumFeedbackId) o;
-        return id.equals(that.id) && monaId.equals(that.monaId) && userId.equals(that.userId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, monaId, userId);
+    public SpectrumFeedbackId() {
     }
 
     public Long getId() {
@@ -43,11 +33,24 @@ public class SpectrumFeedbackId implements Serializable {
         this.monaId = monaId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpectrumFeedbackId that = (SpectrumFeedbackId) o;
+        return Objects.equals(id, that.id) && Objects.equals(monaId, that.monaId) && Objects.equals(emailAddress, that.emailAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, monaId, emailAddress);
     }
 }

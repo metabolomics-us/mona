@@ -3,27 +3,26 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 import java.util
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config.PersistenceServiceConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
+import org.springframework.context.annotation.{ComponentScan, Configuration, Import, Profile}
 import org.springframework.core.annotation.Order
 import org.springframework.http._
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, PathMatchConfigurer, WebMvcConfigurerAdapter}
-
+import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, PathMatchConfigurer, WebMvcConfigurer}
+import org.springframework.boot.autoconfigure.domain.EntityScan
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import th.co.geniustree.springdata.jpa.repository.support.JpaSpecificationExecutorWithProjectionImpl
 /**
   * this class configures all our controller and also prepares security measures for these mentioned controllers
   */
 @Configuration
-@Import(Array(classOf[PersistenceServiceConfig], classOf[SwaggerConfig], classOf[SerializationConfig]))
-@ComponentScan(basePackageClasses = Array(classOf[GenericRESTController[Spectrum]]))
+@Import(Array(classOf[PostgresqlConfiguration], classOf[SwaggerConfig], classOf[SerializationConfig]))
 @EnableAutoConfiguration
 @Order(1)
 class RestServerConfig extends WebSecurityConfigurerAdapter {
@@ -90,7 +89,7 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
 }
 
 @Configuration
-class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
+class SerializationConfig extends WebMvcConfigurer with LazyLogging {
 
   override def extendMessageConverters(converters: util.List[HttpMessageConverter[_]]): Unit = {
     converters.add(new MSPConverter())
@@ -107,7 +106,7 @@ class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
       favorParameter(true).
       parameterName("mediaType").
       ignoreAcceptHeader(false).
-      useJaf(false)
+      useRegisteredExtensionsOnly(true)
       .defaultContentType(MediaType.APPLICATION_JSON)
       .mediaType("msp", MediaType.valueOf("txt/msp"))
       .mediaType("sdf", MediaType.valueOf("txt/sdf"))

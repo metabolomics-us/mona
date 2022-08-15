@@ -10,8 +10,8 @@ from (
         jsonb_array_elements(tags) as tag
       from (
         select
-            content ->> 'id' as monaId,
-            content -> 'tags' as tags
+            spectrum ->> 'id' as monaId,
+            spectrum -> 'tags' as tags
             from "spectrum_result" sr
             ) a
       ) b;
@@ -25,8 +25,8 @@ select
         score -> 'impacts' as impacts
 from (
     select
-        content ->> 'id'    as monaId,
-        content -> 'score' as score
+        spectrum ->> 'id'    as monaId,
+        spectrum -> 'score' as score
     from "spectrum_result" sr) a;
 
 
@@ -40,8 +40,8 @@ select
     splash ->> 'splash' as splash
 from (
     select
-        content ->> 'id' as monaId,
-        content -> 'splash' as splash
+        spectrum ->> 'id' as monaId,
+        spectrum -> 'splash' as splash
     from "spectrum_result" sr
     ) a;
 
@@ -60,24 +60,23 @@ select
     compound -> 'metaData' as metadata,
     compound -> 'classification' as classification
 from (select
-            content ->> 'id'                             as monaId,
-            jsonb_array_elements(content -> 'compound') as compound
+            spectrum ->> 'id'                             as monaId,
+            jsonb_array_elements(spectrum -> 'compound') as compound
       from "spectrum_result" sr
       ) a;
 
 create or replace view spectra_submitters as
 
 select monaId as mona_id,
-       submitter ->> 'id' as submitter_id,
        submitter ->> 'lastName' as last_name,
        submitter ->> 'firstName' as first_name,
        submitter ->> 'institution' as institution,
        submitter ->> 'emailAddress' as email_address,
        ((score ->> 'score'):: float) as score
 from
-    (select content ->> 'id' as monaId,
-           content -> 'submitter' as submitter,
-            content -> 'score' as score
+    (select spectrum ->> 'id' as monaId,
+           spectrum -> 'submitter' as submitter,
+            spectrum -> 'score' as score
     from "spectrum_result" sr) a;
 
 
@@ -90,9 +89,9 @@ select monaId as mona_id,
        library -> 'tag' ->> 'text' as text,
        ((library -> 'tag' -> 'ruleBased'):: bool) as rule_based
 from
-(select content ->> 'id' as monaId,
-       content -> 'library' as library
-from "spectrum_result" sr) a where library is not null;
+(select spectrum ->> 'id' as monaId,
+       spectrum -> 'library' as library
+from "spectrum_result" sr) a;
 
 
 create or replace view metadata as
@@ -106,9 +105,9 @@ select
     ((jsonb_array_elements(metadata) ->> 'category')) as category,
     ((jsonb_array_elements(metadata) ->> 'computed'):: bool) as computed
 from
-(select content ->> 'id' as monaId,
-       content -> 'metaData' as metadata
-from "spectrum_result" sr) a
+    (select spectrum ->> 'id' as monaId,
+            spectrum -> 'metaData' as metadata
+     from "spectrum_result" sr) a
 UNION
 select
     monaId as "mona_id",
@@ -119,22 +118,23 @@ select
     ((jsonb_array_elements(compound_metadata) ->> 'category')) as category,
     ((jsonb_array_elements(compound_metadata) ->> 'computed'):: bool) as computed
 from
-    (select content ->> 'id' as monaId,
-            jsonb_array_elements(content -> 'compound') -> 'metaData' as compound_metadata
+    (select spectrum ->> 'id' as monaId,
+            jsonb_array_elements(spectrum -> 'compound') -> 'metaData' as compound_metadata
      from "spectrum_result" sr) b
 UNION
 select
     monaId as "mona_id",
     ((jsonb_array_elements(compound_classification) ->> 'name')) as "name",
-    null as "unit",
+    ((jsonb_array_elements(compound_classification) ->> 'unit')) as "unit",
     ((jsonb_array_elements(compound_classification) ->> 'value')) as "value",
-    ((jsonb_array_elements(compound_classification) ->> 'hidden'):: bool) as hidden,
-    ((jsonb_array_elements(compound_classification) ->> 'category')) as category,
-    ((jsonb_array_elements(compound_classification) ->> 'computed'):: bool) as computed
+    ((jsonb_array_elements(compound_classification) ->> 'hidden'):: bool) as "hidden",
+    ((jsonb_array_elements(compound_classification) ->> 'category')) as "category",
+    ((jsonb_array_elements(compound_classification) ->> 'computed'):: bool) as "computed"
 from
-    (select content ->> 'id' as monaId,
-            jsonb_array_elements(content -> 'compound') -> 'classification' as compound_classification
+    (select spectrum ->> 'id' as monaId,
+            jsonb_array_elements(spectrum -> 'compound') -> 'classification' as compound_classification
      from "spectrum_result" sr) c
+
 UNION
 select
     monaId as "mona_id",
@@ -143,10 +143,10 @@ select
     ((jsonb_array_elements(names) ->> 'name')) as "value",
     false as hidden,
     null as category,
-    ((jsonb_array_elements(names) ->> 'computed'):: bool) as name
+    ((jsonb_array_elements(names) ->> 'computed'):: bool) as "computed"
 from
-    (select content ->> 'id' as monaId,
-            jsonb_array_elements(content -> 'compound') -> 'names' as names
+    (select spectrum ->> 'id' as monaId,
+            jsonb_array_elements(spectrum -> 'compound') -> 'names' as names
      from "spectrum_result" sr) d
 UNION
 select
@@ -158,14 +158,13 @@ select
     ((annotation ->> 'category')) as category,
     ((annotation ->> 'computed'):: bool) as computed
 from
-    (select content ->> 'id' as monaId,
-            jsonb_array_elements(content -> 'annotations') as annotation
+    (select spectrum ->> 'id' as monaId,
+            jsonb_array_elements(spectrum -> 'annotations') as annotation
      from "spectrum_result" sr) e;
 
 create or replace view search_table as
 
 select sr.mona_id,
-       sr.content,
        m.name as metadata_name,
        m.unit as metadata_unit,
        m.value as metadata_value,
@@ -177,7 +176,6 @@ select sr.mona_id,
        c.computed as compound_computed,
        c.inchi as inchi,
        c.inchikey as inchikey,
-       cs.submitter_id,
        cs.last_name,
        cs.first_name,
        cs.institution,

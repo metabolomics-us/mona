@@ -1,3 +1,4 @@
+/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.massbank
 
 import com.jayway.restassured.RestAssured
@@ -64,3 +65,4 @@ class MassbankControllerTest extends AbstractSpringControllerTest with Eventuall
     }
   }
 }
+*/

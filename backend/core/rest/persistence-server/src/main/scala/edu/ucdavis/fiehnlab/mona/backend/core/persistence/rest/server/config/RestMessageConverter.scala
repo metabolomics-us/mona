@@ -10,7 +10,6 @@ import org.springframework.http.{HttpInputMessage, HttpOutputMessage, MediaType}
 import org.springframework.http.converter.AbstractHttpMessageConverter
 
 import scala.jdk.CollectionConverters._
-import scala.collection.mutable
 import scala.collection.AbstractIterable
 import scala.collection.mutable.AbstractBuffer
 

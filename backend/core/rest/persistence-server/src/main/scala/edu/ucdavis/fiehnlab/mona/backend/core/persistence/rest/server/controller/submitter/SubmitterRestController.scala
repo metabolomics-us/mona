@@ -1,3 +1,4 @@
+/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
 
 import com.typesafe.scalalogging.LazyLogging
@@ -126,3 +127,4 @@ class SubmitterRestController extends GenericRESTController[Submitter] with Lazy
     */
   override def getRepository: PagingAndSortingRepository[Submitter, String] = submitterMongoRepository
 }
+*/

@@ -1,15 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository
 
+import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+
 import java.io.InputStreamReader
 
 @SpringBootTest
@@ -20,9 +22,11 @@ class SpectrumResultRepositoryTest extends AnyWordSpec with Matchers with LazyLo
   val spectrumResultsRepo: SpectrumResultRepository = null
 
   @Autowired
-  val mapper: ObjectMapper = null
+  val monaMapper: ObjectMapper = {
+    MonaMapper.create
+  }
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+  val exampleRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")), new TypeReference[Array[Spectrum]] {})
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -38,16 +42,16 @@ class SpectrumResultRepositoryTest extends AnyWordSpec with Matchers with LazyLo
     s"be able to load data" in {
       assert(spectrumResultsRepo.count() == 0)
       exampleRecords.foreach { spectrum =>
-        val serialized = mapper.writeValueAsString(spectrum)
-        spectrumResultsRepo.save(new SpectrumResult(spectrum.id, serialized))
+        //val serialized = mapper.writeValueAsString(spectrum)
+        spectrumResultsRepo.save(new SpectrumResult(spectrum.getId, spectrum))
       }
       assert(spectrumResultsRepo.count() == 59)
     }
 
     s"queries" must {
       "by monaId" in {
-        logger.info(s"${spectrumResultsRepo.findByMonaId("EMBL-MCF_spec57890").getContent.length}")
-        assert(spectrumResultsRepo.findByMonaId("EMBL-MCF_spec57890").getContent.length > 2)
+        logger.info(s"${spectrumResultsRepo.findByMonaId("EMBL-MCF_spec57890").getMonaId.length > 2}")
+        assert(spectrumResultsRepo.findByMonaId("EMBL-MCF_spec57890").getMonaId.length > 2)
       }
 
       "remove by monaId" in {

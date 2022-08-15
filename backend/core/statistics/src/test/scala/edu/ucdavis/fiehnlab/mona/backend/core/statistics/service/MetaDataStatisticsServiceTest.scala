@@ -1,19 +1,21 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
+import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 
 import java.io.InputStreamReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsMetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.MetaDataRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumResultRepository, StatisticsMetaDataRepository}
 import org.scalatest.wordspec.AnyWordSpec
-import org.springframework.beans.factory.annotation.{Autowired}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+
 import scala.jdk.CollectionConverters._
 
 /**
@@ -37,9 +39,11 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec with LazyLogging{
   val metaDataRepository: MetaDataRepository = null
 
   @Autowired
-  val mapper: ObjectMapper = null
+  val monaMapper: ObjectMapper = {
+    MonaMapper.create
+  }
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+  val exampleRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")), new TypeReference[Array[Spectrum]] {})
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -48,8 +52,7 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec with LazyLogging{
     "load data" in {
       spectrumResultsRepo.deleteAll()
      exampleRecords.foreach { spectrum =>
-        val serialized = mapper.writeValueAsString(spectrum)
-        spectrumResultsRepo.save(new SpectrumResult(spectrum.id, serialized))
+        spectrumResultsRepo.save(new SpectrumResult(spectrum.getId, spectrum))
       }
       assert(spectrumResultsRepo.count() == 59)
     }

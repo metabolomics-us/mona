@@ -1,3 +1,4 @@
+/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.news
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.NewsEntry
@@ -24,4 +25,4 @@ class NewsRestController extends GenericRESTController[NewsEntry] {
     * @return
     */
   override def getRepository: PagingAndSortingRepository[NewsEntry, String] = newsRepository
-}
+}*/

@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.vie
 
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.MetaDataDAO;
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Names;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 import org.hibernate.annotations.Type;
@@ -11,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @TypeDef(
@@ -28,14 +30,14 @@ public class Compound {
 
     @Type(type="json")
     @Column(columnDefinition = "jsonb", name="tags")
-    private String tags;
+    private List<Tags> tags;
 
     @Column(name = "inchi")
     private String inchi;
 
     @Type(type="json")
     @Column(name = "names", columnDefinition = "jsonb")
-    private String names;
+    private List<Names> names;
 
     @Column(name = "mol_file")
     private String molFile;
@@ -54,6 +56,9 @@ public class Compound {
     @Column(name = "classification", columnDefinition = "jsonb")
     private List<MetaDataDAO> classification;
 
+    public Compound() {
+    }
+
     public String getMonaId() {
         return monaId;
     }
@@ -62,7 +67,7 @@ public class Compound {
         return kind;
     }
 
-    public String getTags() {
+    public List<Tags> getTags() {
         return tags;
     }
 
@@ -70,7 +75,7 @@ public class Compound {
         return inchi;
     }
 
-    public String getNames() {
+    public List<Names> getNames() {
         return names;
     }
 
@@ -92,5 +97,18 @@ public class Compound {
 
     public List<MetaDataDAO> getClassification() {
         return classification;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Compound compound = (Compound) o;
+        return Objects.equals(monaId, compound.monaId) && Objects.equals(kind, compound.kind) && Objects.equals(tags, compound.tags) && Objects.equals(inchi, compound.inchi) && Objects.equals(names, compound.names) && Objects.equals(molFile, compound.molFile) && Objects.equals(computed, compound.computed) && Objects.equals(inchikey, compound.inchikey) && Objects.equals(metadata, compound.metadata) && Objects.equals(classification, compound.classification);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(monaId, kind, tags, inchi, names, molFile, computed, inchikey, metadata, classification);
     }
 }

@@ -1,10 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service
 
+import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.listener.AkkaEventScheduler
@@ -42,21 +43,24 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
   val matRepository: MaterializedViewRepository = null
 
   @Autowired
-  val mapper: ObjectMapper = null
-
-  @Autowired
   val eventCounter: ReceivedEventCounter[SpectrumResult] = null
 
   @Autowired
   val eventCounterSparse: ReceivedEventCounter[SparseSearchTable] = null
 
+  @Autowired
+  val monaMapper: ObjectMapper = {
+    MonaMapper.create
+  }
+
+  val testRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")), new TypeReference[Array[Spectrum]] {})
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a spectrum persistence service " must {
     val tempRecords = ListBuffer[SpectrumResult]()
-    JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json"))).foreach{spectrum =>
-      val serialized = mapper.writeValueAsString(spectrum)
-      tempRecords.append(new SpectrumResult(spectrum.id, serialized))
+    testRecords.foreach{ spectrum =>
+      tempRecords.append(new SpectrumResult(spectrum.getId, spectrum))
     }
     val exampleRecords = tempRecords.toList
 

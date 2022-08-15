@@ -4,26 +4,26 @@ import java.util.concurrent.Future
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, WrappedString}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.{BlacklistedSplashMongoRepository, ISubmitterMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
-import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
-import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.repository.PagingAndSortingRepository
-import org.springframework.http.{HttpStatus, ResponseEntity}
+import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
+import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{RequestMapping, _}
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.SubmitterDAO
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{SpectrumResult, Submitter}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository
 
+import javax.servlet.{ServletRequest, ServletResponse}
+import javax.validation.Valid
 import scala.jdk.CollectionConverters._
 
 @CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/spectra"))
-class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLogging {
+class SpectrumRestController extends LazyLogging {
 
   @Autowired
   val httpServletRequest: HttpServletRequest = null
@@ -32,27 +32,11 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
   val spectrumPersistenceService: SpectrumPersistenceService = null
 
   @Autowired
-  val submitterMongoRepository: ISubmitterMongoRepository = null
-
-  @Autowired
-  val blacklistedSplashRepository: BlacklistedSplashMongoRepository = null
+  val submitterMongoRepository: SubmitterRepository = null
 
   @Autowired
   val loginService: LoginService = null
 
-
-
-  /**
-    * Validate the given spectrum by verifying that its SPLASH is not blacklisted
-    *
-    * @param spectrum
-    * @return
-    */
-  private def validateSpectrum(spectrum: String): Boolean = {
-    val splash: String = SplashUtil.splash(spectrum, SpectraType.MS)
-
-    !blacklistedSplashRepository.existsById(splash)
-  }
 
 
   /**
@@ -68,37 +52,35 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
   def searchRSQL(@RequestParam(value = "page", required = false) page: Integer,
                  @RequestParam(value = "size", required = false) size: Integer,
                  @RequestParam(value = "query", required = false) rsqlQuery: WrappedString,
-                 @RequestParam(value = "text", required = false) textQuery: WrappedString,
-                 request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[Spectrum]]] = {
-
-    def sendQuery(rsqlQuery: String, textQuery: String, page: Integer, size: Integer): Iterable[Spectrum] = {
+                 request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[SpectrumResult]]] = {
+    logger.info(s"BIGGER PENIS BUTT")
+    def sendQuery(rsqlQuery: String, page: Integer, size: Integer): Iterable[SpectrumResult] = {
 
       if (size != null) {
         if (page != null) {
-          val test = spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(page, size)).getContent.asScala
+          val test = spectrumPersistenceService.findAll(rsqlQuery, PageRequest.of(page, size)).getContent.asScala
           logger.info(s"test var is class of${test.getClass}")
           test
         } else {
-          val test = spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(0, size)).getContent.asScala
+          val test = spectrumPersistenceService.findAll(rsqlQuery, PageRequest.of(0, size)).getContent.asScala
           logger.info(s"test var is class of ${test.getClass}")
           test
         }
       } else {
-        val test = spectrumPersistenceService.findAll(rsqlQuery, textQuery).asScala
+        val test = spectrumPersistenceService.findAll(rsqlQuery).asScala
         logger.info(s"test var is class of ${test.getClass}")
         test
       }
     }
 
-    if (rsqlQuery != null || textQuery != null) {
+    if (rsqlQuery != null) {
       val rsqlQueryString = if (rsqlQuery != null) rsqlQuery.string else ""
-      val textQueryString = if (textQuery != null) textQuery.string else ""
 
-      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
-        new ResponseEntity(sendQuery(rsqlQueryString, textQueryString, page, size), HttpStatus.OK)
+      new AsyncResult[ResponseEntity[Iterable[SpectrumResult]]](
+        new ResponseEntity(sendQuery(rsqlQueryString, page, size), HttpStatus.OK)
       )
     } else {
-      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](new ResponseEntity(HttpStatus.BAD_REQUEST))
+      new AsyncResult[ResponseEntity[Iterable[SpectrumResult]]](new ResponseEntity(HttpStatus.BAD_REQUEST))
     }
   }
 
@@ -110,14 +92,12 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
   @RequestMapping(path = Array("/search/count"), method = Array(RequestMethod.GET))
   @Async
   @ResponseBody
-  def searchCount(@RequestParam(value = "query", required = false) rsqlQuery: WrappedString,
-                  @RequestParam(value = "text", required = false) textQuery: WrappedString): Future[Long] = {
-
-    if ((rsqlQuery != null && rsqlQuery.string.nonEmpty) || (textQuery != null && textQuery.string.nonEmpty)) {
+  def searchCount(@RequestParam(value = "query", required = false) rsqlQuery: WrappedString): Future[Long] = {
+    logger.info(s"BIGGER PENIS BUTT")
+    if ((rsqlQuery != null && rsqlQuery.string.nonEmpty)) {
       val rsqlQueryString = if (rsqlQuery != null) rsqlQuery.string else ""
-      val textQueryString = if (textQuery != null) textQuery.string else ""
 
-      new AsyncResult[Long](spectrumPersistenceService.count(rsqlQueryString, textQueryString))
+      new AsyncResult[Long](spectrumPersistenceService.count(rsqlQueryString))
     } else {
       new AsyncResult[Long](spectrumPersistenceService.count())
     }
@@ -126,20 +106,91 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
   @RequestMapping(path = Array(""), method = Array(RequestMethod.DELETE))
   @Async
   @ResponseBody
-  def massDeleteByID(@RequestBody ids: java.lang.Iterable[String]): Future[String] = {
-    spectrumPersistenceService.deleteSpectrumsByIdIn(ids)
+  def massDeleteByID(@RequestBody ids: java.util.List[String]): Future[String] = {
+    logger.info(s"BIGGER PENIS BUTT")
+    spectrumPersistenceService.deleteSpectraByIdIn(ids)
     new AsyncResult[String]("Delete request received.")
   }
 
   @RequestMapping(path = Array("/search"), method = Array(RequestMethod.DELETE))
   @Async
   @ResponseBody
-  def massDeleteBySearch(@RequestParam(value = "query", required = false) rsqlQuery: WrappedString,
-                     @RequestParam(value = "text", required = false) textQuery: WrappedString): Future[String] = {
+  def massDeleteBySearch(@RequestParam(value = "query", required = false) rsqlQuery: WrappedString): Future[String] = {
+    logger.info(s"BIGGER PENIS BUTT")
     val rsqlQueryString = if (rsqlQuery != null) rsqlQuery.string else ""
-    val textQueryString = if (textQuery != null) textQuery.string else ""
-    spectrumPersistenceService.deleteSpectrumsByQuery(rsqlQueryString, textQueryString)
+    spectrumPersistenceService.deleteSpectraByQuery(rsqlQueryString)
     new AsyncResult[String]("Delete request received.")
+  }
+
+  /**
+   * Returns all the specified data in the system.  Should be utilized with pagination to avoid
+   * out of memory issues
+   *
+   * @return
+   */
+  @RequestMapping(path = Array(""), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp", "text/sdf", "image/png"))
+  @Async
+  @ResponseBody
+  final def list(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer): Future[ResponseEntity[Iterable[SpectrumResult]]] = {
+    logger.info(s"BIGGER PENIS BUTT")
+    doList(page, size)
+  }
+
+  def doList(page: Integer, size: Integer): Future[ResponseEntity[Iterable[SpectrumResult]]] = {
+    val data: Iterable[SpectrumResult] = {
+      if (size != null) {
+        if (page != null) {
+          spectrumPersistenceService.findAll(PageRequest.of(page, size, Sort.Direction.ASC, "id")).getContent.asScala
+        } else {
+          spectrumPersistenceService.findAll(PageRequest.of(0, size, Sort.Direction.ASC, "id")).getContent.asScala
+        }
+      } else {
+        new DynamicIterable[SpectrumResult, String]("", 50) {
+          // loads more data from the server for the given query
+          override def fetchMoreData(query: String, pageable: Pageable): Page[SpectrumResult] = spectrumPersistenceService.findAll(pageable)
+        }.asScala
+      }
+    }
+
+    val headers = new HttpHeaders()
+    // headers.add("Content-Type", servletRequest.getContentType)
+
+    new AsyncResult[ResponseEntity[Iterable[SpectrumResult]]](
+      new ResponseEntity(data, headers, HttpStatus.OK)
+    )
+  }
+
+  /**
+   * Returns the complete count of resources in the system
+   *
+   * @return
+   */
+  @RequestMapping(path = Array("/count"), method = Array(RequestMethod.GET))
+  @Async
+  @ResponseBody
+  final def searchCount: Future[Long] = {
+    logger.info(s"BIGGER PENIS BUTT")
+    new AsyncResult[Long](spectrumPersistenceService.count())
+  }
+
+  /**
+   * Saves a resource or updates it
+   *
+   * @param resource
+   * @return
+   */
+  @Async
+  @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
+  @ResponseBody
+  final def save(@Valid @RequestBody resource: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
+    logger.info(s"BIGGER PENIS BUTT")
+    doSave(resource)
+  }
+
+  def finalSave(resource: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
+    new AsyncResult[ResponseEntity[SpectrumResult]](
+      new ResponseEntity[SpectrumResult](spectrumPersistenceService.save(resource), HttpStatus.OK)
+    )
   }
 
   /**
@@ -148,53 +199,112 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
     * @param spectrum
     * @return
     */
-  override def doSave(spectrum: Spectrum): Future[ResponseEntity[Spectrum]] = {
+  def doSave(spectrum: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
 
+    logger.info(s"BIG PENIS BUTT")
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    val existingSubmitter: Submitter = submitterMongoRepository.findById(loginInfo.username).orElse(null)
-
-    // Return a 422 Unprocessable Entity error if the spectrum is not valid
-    if (!validateSpectrum(spectrum.spectrum)) {
-      new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.UNPROCESSABLE_ENTITY))
-    }
+    val existingSubmitter: Submitter = submitterMongoRepository.findByEmailAddress(loginInfo.emailAddress)
 
     // Admins can save anything
-    else if (loginInfo.roles.contains("ADMIN")) {
-      if (spectrum.id == null || !getRepository.existsById(spectrum.id)) {
-        super.doSave(spectrum)
+    if (loginInfo.roles.contains("ADMIN")) {
+      if (spectrum.getMonaId == null || !spectrumPersistenceService.existsById(spectrum.getMonaId)) {
+        finalSave(spectrum)
       } else {
-        val existingSpectrum: Spectrum = getRepository.findById(spectrum.id).orElse(null)
-        super.doSave(spectrum.copy(dateCreated = existingSpectrum.dateCreated))
+        val existingSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
+        finalSave(spectrum)
       }
     }
 
     // If a user has no submitter information, we cannot accept the spectrum
     else if (existingSubmitter == null) {
-      new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.FORBIDDEN))
+      new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.FORBIDDEN))
     }
 
     // If no id is provided, a new record can be added with no issues
-    else if (spectrum.id == null || spectrum.id.isEmpty) {
-      super.doSave(spectrum.copy(id = null, submitter = existingSubmitter))
+    else if (spectrum.getMonaId == null || spectrum.getMonaId.isEmpty) {
+      val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
+      spectrum.getSpectrum.setId(null)
+      spectrum.getSpectrum.setSubmitter(submitterDAO)
+      doSave(spectrum)
     }
 
     // Check whether a spectrum with the given id exists.  If it does, the submitter
     // must own it to update it.  Otherwise, the request is not allowed
     else {
-      val existingSpectrum: Spectrum = getRepository.findById(spectrum.id).orElse(null)
+      val existingSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
 
       if (existingSpectrum == null) {
-        super.doSave(spectrum)
-      } else if (existingSpectrum.submitter.id == loginInfo.username) {
-        super.doSave(spectrum.copy(dateCreated = existingSpectrum.dateCreated, submitter = existingSubmitter))
+        finalSave(spectrum)
+      } else if (existingSpectrum.getSpectrum.getSubmitter.getEmailAddress == loginInfo.emailAddress) {
+        val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
+        spectrum.getSpectrum.setDateCreated(existingSpectrum.getSpectrum.getDateCreated)
+        spectrum.getSpectrum.setSubmitter(submitterDAO)
+        finalSave(spectrum)
       } else {
-        new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.CONFLICT))
+        new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.CONFLICT))
       }
     }
   }
 
+  /**
+   * Returns the specified resource
+   *
+   * @param id
+   * @return
+   */
+  @Async
+  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp", "text/sdf", "image/png"))
+  @ResponseBody
+  final def get(@PathVariable("id") id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[SpectrumResult]] = {
+    logger.info(s"BIGGER PENIS BUTT")
+    doGet(id, servletRequest, servletResponse)
+  }
+
+  def doGet(id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[SpectrumResult]] = {
+    val headers = new HttpHeaders()
+    // headers.add("Content-Type", servletRequest.getContentType)
+
+    if (spectrumPersistenceService.existsById(id)) {
+      new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](spectrumPersistenceService.findByMonaId(id), headers, HttpStatus.OK))
+    } else {
+      new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.NOT_FOUND))
+    }
+  }
+
+
+  /**
+   * Removes the specified resource from the system
+   *
+   * @param id
+   * @return
+   */
+  @Async
+  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.DELETE))
+  @ResponseBody
+  final def delete(@PathVariable("id") id: String): Unit = {
+    logger.info(s"BIGGER PENIS BUTT")
+    doDelete(id)
+  }
+
+  def doDelete(id: String): Unit = spectrumPersistenceService.deleteById(id)
+
+
+  /**
+   * Saves the provided resource at the given path
+   *
+   * @param id
+   * @param resource
+   * @return
+   */
+  @Async
+  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
+  @ResponseBody
+  final def put(@PathVariable("id") id: String, @Valid @RequestBody resource: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
+    logger.info(s"BIGGER PENIS BUTT")
+    doPut(id, resource)
+  }
 
   /**
     * Saves the provided spectrum at the given path
@@ -203,97 +313,120 @@ class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLo
     * @param spectrum
     * @return
     */
-  override def doPut(id: String, spectrum: Spectrum): Future[ResponseEntity[Spectrum]] = {
+  def doPut(id: String, spectrum: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
 
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    val existingSubmitter: Submitter = submitterMongoRepository.findById(loginInfo.username).orElse(null)
-
-    // Return a 422 Unprocessable Entity error if the spectrum is not valid
-    if (!validateSpectrum(spectrum.spectrum)) {
-      new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.UNPROCESSABLE_ENTITY))
-    }
+    val existingSubmitter: Submitter = submitterMongoRepository.findByEmailAddress(loginInfo.emailAddress)
 
     // Admins can save anything
-    else if (loginInfo.roles.contains("ADMIN")) {
-      if (spectrum.id == null || spectrum.id == "" || spectrum.id == id) {
-        if (spectrum.id != null && !getRepository.existsById(spectrum.id)) {
-          super.doSave(spectrum.copy(id = id))
+    if (loginInfo.roles.contains("ADMIN")) {
+      if (spectrum.getMonaId == null || spectrum.getMonaId == "" || spectrum.getMonaId == id) {
+        if (spectrum.getMonaId != null && !spectrumPersistenceService.existsById(spectrum.getMonaId)) {
+          spectrum.setMonaId(id)
+          spectrum.getSpectrum.setId(id)
+          finalSave(spectrum)
         } else {
-          val existingOldSpectrum: Spectrum = getRepository.findById(spectrum.id).orElse(null)
-          super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated))
+          val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
+          spectrum.setMonaId(id)
+          spectrum.getSpectrum.setId(id)
+          spectrum.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
+          finalSave(spectrum)
         }
       } else {
-        val existingOldSpectrum: Spectrum = getRepository.findById(spectrum.id).orElse(null)
-        val existingNewSpectrum: Spectrum = getRepository.findById(id).orElse(null)
+        val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
+        val existingNewSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(id)
 
-        getRepository.deleteById(spectrum.id)
+        spectrumPersistenceService.deleteById(spectrum.getMonaId)
 
         if (existingOldSpectrum != null) {
-          super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated))
+          spectrum.setMonaId(id)
+          spectrum.getSpectrum.setId(id)
+          spectrum.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
+          finalSave(spectrum)
         } else if (existingNewSpectrum != null) {
-          super.doSave(spectrum.copy(id = id, dateCreated = existingNewSpectrum.dateCreated))
+          spectrum.setMonaId(id)
+          spectrum.getSpectrum.setId(id)
+          spectrum.getSpectrum.setDateCreated(existingNewSpectrum.getSpectrum.getDateCreated)
+          finalSave(spectrum)
         } else {
-          super.doSave(spectrum.copy(id = id))
+          spectrum.setMonaId(id)
+          spectrum.getSpectrum.setId(id)
+          finalSave(spectrum)
         }
       }
     }
 
     // If a user has no submitter information, we cannot accept the spectrum
     else if (existingSubmitter == null) {
-      new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.FORBIDDEN))
+      new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.FORBIDDEN))
     }
 
     // User should be able to update or change the id their own spectra
     else {
       // Handle the case of saving a new spectrum/updating record $id
-      if (spectrum.id == null || spectrum.id.isEmpty || spectrum.id == id) {
-        if (spectrum.id != null && !getRepository.existsById(spectrum.id)) {
-          super.doSave(spectrum.copy(id = id, submitter = existingSubmitter))
+      if (spectrum.getMonaId == null || spectrum.getMonaId.isEmpty || spectrum.getMonaId == id) {
+        if (spectrum.getMonaId != null && !spectrumPersistenceService.existsById(spectrum.getMonaId)) {
+          val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
+          spectrum.setMonaId(id)
+          spectrum.getSpectrum.setId(id)
+          spectrum.getSpectrum.setSubmitter(submitterDAO)
+          finalSave(spectrum)
         } else {
-          val existingOldSpectrum: Spectrum = getRepository.findById(spectrum.id).orElse(null)
+          val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
 
-          if (existingOldSpectrum.submitter == null || existingOldSpectrum.submitter.id == loginInfo.username) {
-            super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated, submitter = existingSubmitter))
+          if (existingOldSpectrum.getSpectrum.getSubmitter == null || existingOldSpectrum.getSpectrum.getSubmitter.getEmailAddress == loginInfo.emailAddress) {
+            val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
+            spectrum.setMonaId(id)
+            spectrum.getSpectrum.setId(id)
+            spectrum.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
+            spectrum.getSpectrum.setSubmitter(submitterDAO)
+            finalSave(spectrum)
           } else {
-            new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.FORBIDDEN))
+            new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.FORBIDDEN))
           }
         }
       }
 
       // Handle the case of differing ids
       else {
-        val existingOldSpectrum: Spectrum = getRepository.findById(spectrum.id).orElse(null)
-        val existingNewSpectrum: Spectrum = getRepository.findById(id).orElse(null)
+        val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
+        val existingNewSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(id)
 
-        if (existingOldSpectrum != null && existingOldSpectrum.submitter.id != loginInfo.username) {
+        if (existingOldSpectrum != null && existingOldSpectrum.getSpectrum.getSubmitter.getEmailAddress != loginInfo.emailAddress) {
           // Not allowed to delete old spectrum if it belongs to someone else
-          new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.CONFLICT))
-        } else if (existingNewSpectrum != null && existingNewSpectrum.submitter.id != loginInfo.username) {
+          new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.CONFLICT))
+        } else if (existingNewSpectrum != null && existingNewSpectrum.getSpectrum.getSubmitter.getEmailAddress != loginInfo.emailAddress) {
           // Not allowed to update the new spectrum if it belongs to someone else
-          new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.CONFLICT))
+          new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.CONFLICT))
         } else {
-          getRepository.deleteById(spectrum.id)
+          spectrumPersistenceService.deleteById(spectrum.getMonaId)
 
           // Use the old dateCreated field
           if (existingOldSpectrum != null) {
-            super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated, submitter = existingSubmitter))
+            val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
+            spectrum.setMonaId(id)
+            spectrum.getSpectrum.setId(id)
+            spectrum.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
+            spectrum.getSpectrum.setSubmitter(submitterDAO)
+            finalSave(spectrum)
           } else if (existingNewSpectrum != null) {
-            super.doSave(spectrum.copy(id = id, dateCreated = existingNewSpectrum.dateCreated, submitter = existingSubmitter))
+            val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
+            spectrum.setMonaId(id)
+            spectrum.getSpectrum.setId(id)
+            spectrum.getSpectrum.setDateCreated(existingNewSpectrum.getSpectrum.getDateCreated)
+            spectrum.getSpectrum.setSubmitter(submitterDAO)
+            finalSave(spectrum)
           } else {
-            super.doSave(spectrum.copy(id = id, submitter = existingSubmitter))
+            val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
+            spectrum.setMonaId(id)
+            spectrum.getSpectrum.setId(id)
+            spectrum.getSpectrum.setSubmitter(submitterDAO)
+            finalSave(spectrum)
           }
         }
       }
     }
   }
-
-
-  /**
-    * Utilized repository
-    *
-    * @return
-    */
-  override def getRepository: PagingAndSortingRepository[Spectrum, String] = spectrumPersistenceService
 }

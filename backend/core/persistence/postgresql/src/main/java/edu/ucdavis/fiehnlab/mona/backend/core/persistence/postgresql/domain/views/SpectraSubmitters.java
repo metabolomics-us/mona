@@ -16,8 +16,6 @@ public class SpectraSubmitters {
     @Id
     private String monaId;
 
-    private String submitterId;
-
     private String lastName;
 
     private String firstName;
@@ -32,9 +30,8 @@ public class SpectraSubmitters {
     public SpectraSubmitters() {
     }
 
-    public SpectraSubmitters(String monaId, String submitterId, String lastName, String firstName, String institution, String emailAddress, Double score) {
+    public SpectraSubmitters(String monaId, String lastName, String firstName, String institution, String emailAddress, Double score) {
         this.monaId = monaId;
-        this.submitterId = submitterId;
         this.lastName = lastName;
         this.firstName = firstName;
         this.institution = institution;
@@ -44,10 +41,6 @@ public class SpectraSubmitters {
 
     public String getMonaId() {
         return monaId;
-    }
-
-    public String getSubmitterId() {
-        return submitterId;
     }
 
     public String getLastName() {
@@ -73,11 +66,11 @@ public class SpectraSubmitters {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SpectraSubmitters that = (SpectraSubmitters) o;
-        return Objects.equals(monaId, that.monaId) && Objects.equals(submitterId, that.submitterId) && Objects.equals(lastName, that.lastName) && Objects.equals(firstName, that.firstName) && Objects.equals(institution, that.institution) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(score, that.score);
+        return Objects.equals(monaId, that.monaId) && Objects.equals(lastName, that.lastName) && Objects.equals(firstName, that.firstName) && Objects.equals(institution, that.institution) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(score, that.score);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(monaId, submitterId, lastName, firstName, institution, emailAddress, score);
+        return Objects.hash(monaId, lastName, firstName, institution, emailAddress, score);
     }
 }

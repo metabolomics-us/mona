@@ -14,6 +14,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql.{CustomRsqlVisitor, RSQLOperatorsCustom}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
+import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
@@ -315,7 +316,7 @@ class SpectrumPersistenceService extends LazyLogging {
   def existsById(id: SpectrumResultId): Boolean = spectrumResultRepository.existsById(id)
 
   @CacheEvict(value = Array("spectra"))
-  def deleteById(id: SpectrumResultId): Unit = spectrumResultRepository.deleteById(id)
+  def deleteById(id: String): Unit = spectrumResultRepository.deleteByMonaId(id)
 
   @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteAll(entities: lang.Iterable[_ <: SpectrumResult]): Unit = spectrumResultRepository.deleteAll(entities)

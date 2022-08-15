@@ -1,3 +1,4 @@
+/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
 import java.io.{InputStreamReader, StringWriter}
@@ -413,3 +414,4 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
   override val requiresAuthForAllRequests: Boolean = false
 }
+*/

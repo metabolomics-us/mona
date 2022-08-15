@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views
 
+import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{ MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views.Compound
+
 import scala.jdk.StreamConverters.StreamHasToScala
 import org.springframework.transaction.support.TransactionTemplate
 
@@ -27,12 +29,14 @@ class CompoundRepositoryTest extends AnyWordSpec with Matchers with LazyLogging{
   val spectrumResultsRepository: SpectrumResultRepository = null
 
   @Autowired
-  val mapper: ObjectMapper = null
-
-  @Autowired
   val t: TransactionTemplate = null
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+  @Autowired
+  val monaMapper: ObjectMapper = {
+    MonaMapper.create
+  }
+
+  val exampleRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")), new TypeReference[Array[Spectrum]] {})
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -47,8 +51,8 @@ class CompoundRepositoryTest extends AnyWordSpec with Matchers with LazyLogging{
     s"load data" in {
       assert(spectrumResultsRepository.count() == 0)
       exampleRecords.foreach { spectrum =>
-        val serialized = mapper.writeValueAsString(spectrum)
-        spectrumResultsRepository.save(new SpectrumResult(spectrum.id, serialized))
+        //val serialized = mapper.writeValueAsString(spectrum)
+        spectrumResultsRepository.save(new SpectrumResult(spectrum.getId, spectrum))
       }
       assert(spectrumResultsRepository.count() == 59)
     }

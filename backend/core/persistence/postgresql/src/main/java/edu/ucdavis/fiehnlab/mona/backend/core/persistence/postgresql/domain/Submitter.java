@@ -1,15 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @IdClass(SubmitterId.class)
 @Table(name = "submitter")
 public class Submitter {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "submitter_id")
-    @SequenceGenerator(name = "submitter_id", initialValue = 1, allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "submitter_gen_id")
+    @SequenceGenerator(name = "submitter_gen_id", initialValue = 1, allocationSize = 50)
     private Long id;
     @Id
     private String emailAddress;

@@ -1,18 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
-import com.vladmihalcea.hibernate.type.json.JsonType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.Parameter;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @IdClass(SpectrumFeedbackId.class)
 @Table(name = "spectrum_feedback")
-public class SpectrumFeedback {
+public class SpectrumFeedback implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_feedback_id")
     @SequenceGenerator(name = "spectrum_feedback_id", initialValue = 1, allocationSize = 50)
@@ -24,12 +18,11 @@ public class SpectrumFeedback {
 
     //can be our only primary key
     @Id
-    private String userId;
+    private String emailAddress;
 
     private String name;
 
     private String value;
-
 
     public Long getId() {
         return id;
@@ -47,12 +40,12 @@ public class SpectrumFeedback {
         this.monaId = monaId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public String getName() {
@@ -73,9 +66,9 @@ public class SpectrumFeedback {
 
     public SpectrumFeedback() {}
 
-    public SpectrumFeedback(String monaId, String userId, String name, String value) {
+    public SpectrumFeedback(String monaId, String emailAddress, String name, String value) {
         this.monaId = monaId;
-        this.userId = userId;
+        this.emailAddress = emailAddress;
         this.name = name;
         this.value = value;
     }

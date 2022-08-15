@@ -11,19 +11,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-@TypeDef(
-        name = "json",
-        typeClass = JsonType.class
-)
 @Subselect("select * from search_table_mat")
 @Immutable
 public class SearchTable {
     @Id
     private String monaId;
-
-    @Type(type = "json")
-    @Column(name = "content", columnDefinition = "jsonb")
-    private String content;
 
     @Column(name = "metadata_name")
     private String metadataName;
@@ -58,9 +50,6 @@ public class SearchTable {
     @Column(name = "inchikey")
     private String inchikey;
 
-    @Column(name = "submitter_id")
-    private String submitterId;
-
     @Column(name = "last_name")
     private String lastName;
 
@@ -93,10 +82,6 @@ public class SearchTable {
 
     public String getMonaId() {
         return monaId;
-    }
-
-    public String getContent() {
-        return content;
     }
 
     public String getMetadataName() {
@@ -141,10 +126,6 @@ public class SearchTable {
 
     public String getInchikey() {
         return inchikey;
-    }
-
-    public String getSubmitterId() {
-        return submitterId;
     }
 
     public String getLastName() {

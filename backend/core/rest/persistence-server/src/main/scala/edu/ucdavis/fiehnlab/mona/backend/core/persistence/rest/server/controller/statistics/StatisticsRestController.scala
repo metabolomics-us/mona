@@ -1,3 +1,4 @@
+/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.statistics
 
 import java.util.concurrent.Future
@@ -102,4 +103,4 @@ class StatisticsRestController {
 
     "Statistics update queued"
   }
-}
+}*/

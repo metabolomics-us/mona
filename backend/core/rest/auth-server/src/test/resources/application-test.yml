@@ -19,9 +19,18 @@ spring:
     username: mona
     password: asdf
 
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
 server:
   port: 9999
 
 eureka:
   client:
     enabled: false
+
+security:
+  user:
+    name: admin
+    password: secret

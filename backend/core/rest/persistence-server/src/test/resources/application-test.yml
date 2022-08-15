@@ -3,9 +3,9 @@ spring:
   rabbitmq:
     host: 127.0.0.1
   main:
-    web-application-type: none
     allow-circular-references: true
     allow-bean-definition-overriding: true
+    web-application-type: none
   jpa:
     show-sql: false
     hibernate:
@@ -13,9 +13,24 @@ spring:
   properties:
     hibernate:
       format_sql: true
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
 
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/mona-test
     username: mona
     password: asdf
+
+server:
+  port: 9999
+
+eureka:
+  client:
+    enabled: false
+
+security:
+  user:
+    name: admin
+    password: secret

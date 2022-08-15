@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface SpectrumFeedbackRepository extends JpaRepository<SpectrumFeedback, SpectrumFeedbackId>{
     List<SpectrumFeedback> findByMonaId(String monaId);
+
+    Void deleteByMonaId(String monaId);
 }

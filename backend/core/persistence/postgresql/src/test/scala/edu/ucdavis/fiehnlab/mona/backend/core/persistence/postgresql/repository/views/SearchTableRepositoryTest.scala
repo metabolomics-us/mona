@@ -1,11 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views
 
+import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import cz.jirutka.rsql.parser.RSQLParser
 import cz.jirutka.rsql.parser.ast.{ComparisonOperator, Node}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -38,10 +39,13 @@ class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLoggi
   val spectrumResultsRepository: SpectrumResultRepository = null
 
   @Autowired
-  val mapper: ObjectMapper = null
+  val monaMapper: ObjectMapper = {
+    MonaMapper.create
+  }
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-  val curatedRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
+  val exampleRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")), new TypeReference[Array[Spectrum]] {})
+  val curatedRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")), new TypeReference[Array[Spectrum]] {})
+
   val operators: java.util.Set[ComparisonOperator] = RSQLOperatorsCustom.newDefaultOperators()
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
@@ -56,8 +60,7 @@ class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLoggi
       s"we should be able to load data" in {
         assert(spectrumResultsRepository.count() == 0)
         exampleRecords.foreach { spectrum =>
-          val serialized = mapper.writeValueAsString(spectrum)
-          spectrumResultsRepository.save(new SpectrumResult(spectrum.id, serialized))
+          spectrumResultsRepository.save(new SpectrumResult(spectrum.getId, spectrum))
         }
         assert(spectrumResultsRepository.count() == 59)
       }
@@ -175,8 +178,7 @@ class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLoggi
       "we should be able to store additional, curated records" in {
         curatedRecords.foreach { spectrum =>
           val size = spectrumResultsRepository.count()
-          val serialized = mapper.writeValueAsString(spectrum)
-          spectrumResultsRepository.save(new SpectrumResult(spectrum.id, serialized))
+          spectrumResultsRepository.save(new SpectrumResult(spectrum.getId, spectrum))
           val newSize = spectrumResultsRepository.count()
           assert(newSize == size + 1)
         }
@@ -227,7 +229,7 @@ class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLoggi
       }
 
       "we should be able to execute RSQL queries like emailAddress==\"ML@MassBank.jp\" in" in {
-        exampleRecords.map(_.submitter.emailAddress).toSet.foreach { emailAddress: String =>
+        exampleRecords.map(_.getSubmitter.getEmailAddress).toSet.foreach { emailAddress: String =>
           val rootNode: Node = new RSQLParser(operators).parse(s"emailAddress==$emailAddress")
           val spec: Specification[SearchTable] = rootNode.accept(new CustomRsqlVisitor[SearchTable]())
           val results: Page[SparseSearchTable] = searchTableRepository.findAll(spec, classOf[SparseSearchTable], PageRequest.of(0,1))

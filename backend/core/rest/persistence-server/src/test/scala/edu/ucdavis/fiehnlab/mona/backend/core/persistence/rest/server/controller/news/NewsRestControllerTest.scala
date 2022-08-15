@@ -1,3 +1,4 @@
+/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.news
 
 import java.util.Date
@@ -48,3 +49,4 @@ class NewsRestControllerTest {//extends AbstractGenericRESTControllerTest[NewsEn
   def getId: String = getValue.id
   */
 }
+*/
