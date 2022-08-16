@@ -19,7 +19,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
  * */
 
 @SpringBootTest
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SubmitterStatisticsServiceTest extends AnyWordSpec with LazyLogging {
   @Autowired
   val spectrumResultsRepo: SpectrumResultRepository = null

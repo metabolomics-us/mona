@@ -15,7 +15,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Spec
 import java.io.InputStreamReader
 
 @SpringBootTest
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SpectrumResultRepositoryTest extends AnyWordSpec with Matchers with LazyLogging {
 
   @Autowired

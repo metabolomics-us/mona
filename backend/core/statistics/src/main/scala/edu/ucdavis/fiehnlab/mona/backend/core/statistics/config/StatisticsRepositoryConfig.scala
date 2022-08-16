@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.context.annotation.Profile
 
 /**
   * Created by wohlgemuth on 3/21/16.
@@ -15,4 +16,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @EnableAutoConfiguration
 @Configuration
 @Import(Array(classOf[PostgresqlConfiguration]))
+@Profile(Array("mona.persistence"))
 class StatisticsRepositoryConfig

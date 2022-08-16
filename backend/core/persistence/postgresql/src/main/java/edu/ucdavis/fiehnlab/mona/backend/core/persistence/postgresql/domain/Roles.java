@@ -1,12 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "roles")
+@Profile({"mona.persistence"})
 public class Roles {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roles_id")

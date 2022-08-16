@@ -18,7 +18,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 * */
 
 @SpringBootTest
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class CompoundClassStatisticsServiceTest extends AnyWordSpec {
 
   @Autowired

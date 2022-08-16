@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SequenceServiceTest extends AnyWordSpec with LazyLogging {
 
   @Autowired

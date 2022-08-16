@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConf
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.context.annotation.{Bean, Import}
+import org.springframework.context.annotation.{Bean, Import, Profile}
 import org.springframework.scheduling.annotation.EnableScheduling
 
 /**
@@ -27,5 +27,7 @@ class RestPersistenceServer {
 object RestPersistenceServer extends App {
   System.setProperty("spring.config.name", "persistence-service")
   val app = new SpringApplication(classOf[RestPersistenceServer])
+  app.setAdditionalProfiles("mona.persistence.init")
+  app.setAdditionalProfiles("mona.persistence")
   app.run()
 }

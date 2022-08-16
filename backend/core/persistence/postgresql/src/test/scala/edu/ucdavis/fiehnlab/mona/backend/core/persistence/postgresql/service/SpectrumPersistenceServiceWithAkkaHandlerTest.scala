@@ -27,7 +27,7 @@ import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ListBuffer
 
 @SpringBootTest(classes = Array(classOf[TestConfig]))
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with LazyLogging with Eventually{
 
   @Autowired

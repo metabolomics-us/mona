@@ -12,30 +12,42 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsMetaData.StatisticsMetaDataSummary
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsMetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
+import org.scalatest.concurrent.Eventually
+import org.scalatest.matchers.should.Matchers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 3/8/16.
   */
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]))
-@ActiveProfiles(Array("test"))
-class MetaDataRestControllerTest extends AbstractSpringControllerTest {
+@SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
+class MetaDataRestControllerTest extends AbstractSpringControllerTest with Eventually{
 
   @LocalServerPort
   private val port = 0
 
   @Autowired
   val spectrumRepository: SpectrumResultRepository = null
+
+  @Autowired
+  val searchTableRepository: SearchTableRepository = null
+
+  @Autowired
+  val matRepository: MaterializedViewRepository = null
 
   @Autowired
   val monaMapper: ObjectMapper = {
@@ -57,6 +69,16 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
         assert(exampleRecords.length == 59)
 
         exampleRecords.foreach { x => spectrumRepository.save(new SpectrumResult(x.getId, x)) }
+      }
+
+      s"we should be able to create our materialized view" in {
+
+        eventually(timeout(180 seconds)) {
+          matRepository.refreshSearchTable()
+          logger.info("sleep...")
+          assert(searchTableRepository.count() == 59610)
+        }
+
       }
 
       "we should be able to generate statistics" in {

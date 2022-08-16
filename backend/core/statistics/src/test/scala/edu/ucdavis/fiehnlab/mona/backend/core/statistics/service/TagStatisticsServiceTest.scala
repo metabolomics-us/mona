@@ -20,7 +20,7 @@ import scala.jdk.CollectionConverters._
   * Created by sajjan on 8/4/16.
  * */
 @SpringBootTest
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class TagStatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
   @Autowired

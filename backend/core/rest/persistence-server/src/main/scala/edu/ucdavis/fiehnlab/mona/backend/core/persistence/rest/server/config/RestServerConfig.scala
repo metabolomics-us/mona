@@ -11,12 +11,14 @@ import org.springframework.context.annotation.{ComponentScan, Configuration, Imp
 import org.springframework.core.annotation.Order
 import org.springframework.http._
 import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.context.annotation.Bean
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
-import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
+import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter, WebSecurityCustomizer}
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, PathMatchConfigurer, WebMvcConfigurer}
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.security.web.SecurityFilterChain
 import th.co.geniustree.springdata.jpa.repository.support.JpaSpecificationExecutorWithProjectionImpl
 /**
   * this class configures all our controller and also prepares security measures for these mentioned controllers
@@ -24,19 +26,17 @@ import th.co.geniustree.springdata.jpa.repository.support.JpaSpecificationExecut
 @Configuration
 @Import(Array(classOf[PostgresqlConfiguration], classOf[SwaggerConfig], classOf[SerializationConfig]))
 @EnableAutoConfiguration
+@ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller"))
+@EnableWebSecurity
 @Order(1)
-class RestServerConfig extends WebSecurityConfigurerAdapter {
+@Profile(Array("mona.persistence"))
+class RestServerConfig {
 
   @Autowired
   val restSecurityService: RestSecurityService = null
 
-  /**
-    * this method configures authorized access to the system
-    * and protects the urls with the specified methods and credentials
-    *
-    * @param http
-    */
-  override final def configure(http: HttpSecurity): Unit = {
+  @Bean
+  def filterChain(http: HttpSecurity): SecurityFilterChain = {
     restSecurityService.prepare(http)
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
@@ -62,29 +62,26 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
 
       //update statistics need authentication
       .antMatchers(HttpMethod.POST, "/rest/statistics/update").hasAuthority("ADMIN")
+    http.build()
   }
 
-  /**
-    * this method configures, which parts of the system and which methods do not need
-    * any form of security in place and can be openly accessed
-    *
-    * @param web
-    */
-  override def configure(web: WebSecurity): Unit = {
-    web.ignoring()
-      //get is available for most endpoints
-      .antMatchers(HttpMethod.GET, "/rest/spectra/**")
-      .antMatchers(HttpMethod.GET, "/rest/metaData/**")
-      .antMatchers(HttpMethod.GET, "/rest/tags/**")
-      .antMatchers(HttpMethod.GET, "/rest/statistics/**")
-      .antMatchers(HttpMethod.GET, "/rest/news/**")
-      .antMatchers(HttpMethod.GET, "/rest/feedback/**")
+  @Bean
+  def webSecurityCustomizer(): WebSecurityCustomizer = {
+      (web) => web.ignoring()
+        //get is available for most endpoints
+        .antMatchers(HttpMethod.GET, "/rest/spectra/**")
+        .antMatchers(HttpMethod.GET, "/rest/metaData/**")
+        .antMatchers(HttpMethod.GET, "/rest/tags/**")
+        .antMatchers(HttpMethod.GET, "/rest/statistics/**")
+        .antMatchers(HttpMethod.GET, "/rest/news/**")
+        .antMatchers(HttpMethod.GET, "/rest/feedback/**")
 
-      .antMatchers(HttpMethod.POST, "/rest/feedback")
-      .antMatchers(HttpMethod.POST, "/rest/spectra/count")
+        .antMatchers(HttpMethod.POST, "/rest/feedback")
+        .antMatchers(HttpMethod.POST, "/rest/spectra/count")
 
-      //no authentication for metadata
-      .antMatchers(HttpMethod.POST, "/rest/metaData/**")
+        //no authentication for metadata
+        .antMatchers(HttpMethod.POST, "/rest/metaData/**")
+
   }
 }
 

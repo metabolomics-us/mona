@@ -20,7 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate
 import java.io.InputStreamReader
 
 @SpringBootTest
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class CompoundRepositoryTest extends AnyWordSpec with Matchers with LazyLogging{
   @Autowired
   val compoundRepository: CompoundRepository = null

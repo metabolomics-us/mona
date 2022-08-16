@@ -1,11 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
+import org.springframework.context.annotation.Profile;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @IdClass(SpectrumFeedbackId.class)
 @Table(name = "spectrum_feedback")
+@Profile({"mona.persistence"})
 public class SpectrumFeedback implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_feedback_id")

@@ -19,7 +19,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   * Created by sajjan on 8/4/16.
  * */
 @SpringBootTest
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class StatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
   @Autowired

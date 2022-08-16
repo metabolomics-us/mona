@@ -1,11 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics;
 
+import org.springframework.context.annotation.Profile;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
 @Table(name = "statistics_global")
+@Profile({"mona.persistence"})
 public class StatisticsGlobal {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "statistics_id")
     @SequenceGenerator(name = "statistics_id", initialValue = 1, allocationSize = 50)

@@ -1,12 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
 
 @Entity
 @IdClass(SubmitterId.class)
 @Table(name = "submitter")
+@Profile({"mona.persistence"})
 public class Submitter {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "submitter_gen_id")

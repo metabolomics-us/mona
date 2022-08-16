@@ -7,6 +7,11 @@ spring:
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
+  profiles:
+    active: default
+    include:
+      - mona.persistence
+      - mona.persistence.init
 
 #our local server port
 server:

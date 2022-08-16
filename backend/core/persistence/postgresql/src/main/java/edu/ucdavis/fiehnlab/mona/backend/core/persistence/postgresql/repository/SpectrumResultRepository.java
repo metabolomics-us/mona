@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository
 
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult;
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResultId;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
+@Profile({"mona.persistence"})
 public interface SpectrumResultRepository extends  JpaRepository<SpectrumResult, SpectrumResultId> {
     SpectrumResult findByMonaId(String monaId);
 

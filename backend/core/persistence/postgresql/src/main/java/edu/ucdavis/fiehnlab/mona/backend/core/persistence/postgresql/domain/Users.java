@@ -1,11 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
+import org.springframework.context.annotation.Profile;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @IdClass(UserId.class)
 @Table(name = "users")
+@Profile({"mona.persistence"})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id")

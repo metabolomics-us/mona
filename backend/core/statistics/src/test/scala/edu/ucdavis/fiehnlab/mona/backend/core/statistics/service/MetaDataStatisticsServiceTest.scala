@@ -23,7 +23,7 @@ import scala.jdk.CollectionConverters._
  *
  * */
 @SpringBootTest
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class MetaDataStatisticsServiceTest extends AnyWordSpec with LazyLogging{
 
   @Autowired

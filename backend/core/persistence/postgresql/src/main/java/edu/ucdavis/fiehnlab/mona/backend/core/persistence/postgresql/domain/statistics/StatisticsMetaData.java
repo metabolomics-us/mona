@@ -1,14 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 
 @Entity
 @IdClass(StatisticsMetaDataId.class)
 @Table(name = "statistics_metadata")
-public class StatisticsMetaData {
+@Profile({"mona.persistence"})
+public class StatisticsMetaData implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "statistics_metadata_id")
@@ -72,8 +75,8 @@ public class StatisticsMetaData {
     public int hashCode() {
         return Objects.hash(name, count, metaDataValueCount);
     }
-
-    public interface StatisticsMetaDataSummary {
+    
+    public interface StatisticsMetaDataSummary extends Serializable {
         //@Value annotations needed because of a bug with projections and JPA in 2.6.3, is fixed in 2.7(potentially 2.6.4)
         //can remove the annotations when updated https://github.com/spring-projects/spring-data-jpa/issues/2408
         @Value("#{target.Name}")

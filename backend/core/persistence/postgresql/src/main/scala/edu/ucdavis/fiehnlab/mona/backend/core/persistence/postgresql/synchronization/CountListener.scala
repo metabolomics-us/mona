@@ -6,11 +6,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Spec
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Component}
+import org.springframework.context.annotation.Profile
 
 /**
  * Created by wohlgemuth on 3/17/16.
  */
 @Component
+@Profile(Array("mona.persistence"))
 class CountListener extends PersistenceEventListener[SpectrumResult] with LazyLogging {
   @Autowired
   val spectrumResultRepository: SpectrumResultRepository = null

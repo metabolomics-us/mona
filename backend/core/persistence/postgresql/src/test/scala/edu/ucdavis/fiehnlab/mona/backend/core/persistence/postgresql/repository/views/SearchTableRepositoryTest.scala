@@ -27,7 +27,7 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 
 @SpringBootTest
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLogging with Eventually{
   @Autowired
   val searchTableRepository: SearchTableRepository = null

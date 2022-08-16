@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "news")
+@Profile({"mona.persistence"})
 public class News {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "news_id")
     @SequenceGenerator(name = "news_id", initialValue = 1, allocationSize = 50)

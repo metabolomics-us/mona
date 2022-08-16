@@ -4,8 +4,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Sequ
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SequenceRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.context.annotation.Profile
 
 @Service
+@Profile(Array("mona.persistence"))
 class SequenceService {
   @Autowired
   private val sequenceRepository: SequenceRepository = null

@@ -5,6 +5,7 @@ import com.vladmihalcea.hibernate.type.json.JsonType;
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -16,6 +17,7 @@ import java.util.Objects;
         name = "json",
         typeClass = JsonType.class
 )
+@Profile({"mona.persistence"})
 public class SpectrumResult {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_result_id")
     @JsonIgnore

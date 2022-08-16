@@ -1,8 +1,4 @@
 spring:
-  main:
-    web-application-type: none
-    allow-circular-references: true
-    allow-bean-definition-overriding: true
   jpa:
     defer-datasource-initialization: true
     hibernate:
@@ -13,7 +9,7 @@ spring:
       hibernate:
         format_sql: true
         default_schema: public
-        
+
   sql:
     init:
       mode: always

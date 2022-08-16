@@ -1,11 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics;
 
+import org.springframework.context.annotation.Profile;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @IdClass(StatisticsCompoundClassesId.class)
 @Table(name = "statistics_compoundclass")
+@Profile({"mona.persistence"})
 public class StatisticsCompoundClasses {
     @Id
     private String name;

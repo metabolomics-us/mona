@@ -1,11 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics;
 
+import org.springframework.context.annotation.Profile;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "metadata_value_count")
+@Profile({"mona.persistence"})
 public class MetaDataValueCount implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "metadata_value_count_id")

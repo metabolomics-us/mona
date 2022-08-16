@@ -5,11 +5,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, PersistenceEv
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.context.annotation.Profile
 
 /**
  * forwards events to the event bus listener
  */
 @Service
+@Profile(Array("mona.persistence"))
 class BusNotifier extends PersistenceEventListener[SpectrumResult] {
 
   @Autowired

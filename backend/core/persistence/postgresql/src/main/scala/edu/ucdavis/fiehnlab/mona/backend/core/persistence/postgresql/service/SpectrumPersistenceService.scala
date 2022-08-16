@@ -24,6 +24,7 @@ import java.util.{Date, List}
 import scala.jdk.CollectionConverters._
 
 @Service
+@Profile(Array("mona.persistence"))
 class SpectrumPersistenceService extends LazyLogging {
 
   val fetchSize = 10
