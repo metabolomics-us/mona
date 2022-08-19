@@ -7,6 +7,7 @@ import org.hibernate.annotations.TypeDef;
 import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,11 +37,11 @@ public class Spectrum implements Serializable {
 
     private String spectrum;
 
-    private String lastUpdated;
+    private String lastUpdated = new Date().toString();
 
-    private String dateCreated;
+    private String dateCreated = new Date().toString();
 
-    private String lastCurated;
+    private String lastCurated = new Date().toString();
 
     @Type(type = "json")
     @Column(name = "splash", columnDefinition = "jsonb")
@@ -59,6 +60,22 @@ public class Spectrum implements Serializable {
     private LibraryDAO library;
 
     public Spectrum() {
+    }
+
+    public Spectrum(Spectrum spectrum) {
+        this.compound = spectrum.compound;
+        this.id = spectrum.id;
+        this.metaData = spectrum.metaData;
+        this.annotations = spectrum.annotations;
+        this.score = spectrum.score;
+        this.spectrum = spectrum.spectrum;
+        this.lastUpdated = spectrum.lastUpdated;
+        this.dateCreated = spectrum.dateCreated;
+        this.lastCurated = spectrum.lastCurated;
+        this.splash = spectrum.splash;
+        this.submitter = spectrum.submitter;
+        this.tags = spectrum.tags;
+        this.library = spectrum.library;
     }
 
     public List<CompoundDAO> getCompound() {

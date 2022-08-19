@@ -53,7 +53,6 @@ class SpectrumRestController extends LazyLogging {
                  @RequestParam(value = "size", required = false) size: Integer,
                  @RequestParam(value = "query", required = false) rsqlQuery: WrappedString,
                  request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[SpectrumResult]]] = {
-    logger.info(s"BIGGER PENIS BUTT")
     def sendQuery(rsqlQuery: String, page: Integer, size: Integer): Iterable[SpectrumResult] = {
 
       if (size != null) {
@@ -93,7 +92,6 @@ class SpectrumRestController extends LazyLogging {
   @Async
   @ResponseBody
   def searchCount(@RequestParam(value = "query", required = false) rsqlQuery: WrappedString): Future[Long] = {
-    logger.info(s"BIGGER PENIS BUTT")
     if ((rsqlQuery != null && rsqlQuery.string.nonEmpty)) {
       val rsqlQueryString = if (rsqlQuery != null) rsqlQuery.string else ""
 
@@ -107,7 +105,6 @@ class SpectrumRestController extends LazyLogging {
   @Async
   @ResponseBody
   def massDeleteByID(@RequestBody ids: java.util.List[String]): Future[String] = {
-    logger.info(s"BIGGER PENIS BUTT")
     spectrumPersistenceService.deleteSpectraByIdIn(ids)
     new AsyncResult[String]("Delete request received.")
   }
@@ -116,7 +113,6 @@ class SpectrumRestController extends LazyLogging {
   @Async
   @ResponseBody
   def massDeleteBySearch(@RequestParam(value = "query", required = false) rsqlQuery: WrappedString): Future[String] = {
-    logger.info(s"BIGGER PENIS BUTT")
     val rsqlQueryString = if (rsqlQuery != null) rsqlQuery.string else ""
     spectrumPersistenceService.deleteSpectraByQuery(rsqlQueryString)
     new AsyncResult[String]("Delete request received.")
@@ -132,7 +128,6 @@ class SpectrumRestController extends LazyLogging {
   @Async
   @ResponseBody
   final def list(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer): Future[ResponseEntity[Iterable[SpectrumResult]]] = {
-    logger.info(s"BIGGER PENIS BUTT")
     doList(page, size)
   }
 
@@ -169,7 +164,6 @@ class SpectrumRestController extends LazyLogging {
   @Async
   @ResponseBody
   final def searchCount: Future[Long] = {
-    logger.info(s"BIGGER PENIS BUTT")
     new AsyncResult[Long](spectrumPersistenceService.count())
   }
 
@@ -183,7 +177,6 @@ class SpectrumRestController extends LazyLogging {
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
   @ResponseBody
   final def save(@Valid @RequestBody resource: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
-    logger.info(s"BIGGER PENIS BUTT")
     doSave(resource)
   }
 
@@ -200,8 +193,6 @@ class SpectrumRestController extends LazyLogging {
     * @return
     */
   def doSave(spectrum: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
-
-    logger.info(s"BIG PENIS BUTT")
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
@@ -213,6 +204,7 @@ class SpectrumRestController extends LazyLogging {
         finalSave(spectrum)
       } else {
         val existingSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
+        spectrum.getSpectrum.setDateCreated(existingSpectrum.getSpectrum.getDateCreated)
         finalSave(spectrum)
       }
     }
@@ -227,7 +219,7 @@ class SpectrumRestController extends LazyLogging {
       val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
       spectrum.getSpectrum.setId(null)
       spectrum.getSpectrum.setSubmitter(submitterDAO)
-      doSave(spectrum)
+      finalSave(spectrum)
     }
 
     // Check whether a spectrum with the given id exists.  If it does, the submitter
@@ -241,6 +233,7 @@ class SpectrumRestController extends LazyLogging {
         val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
         spectrum.getSpectrum.setDateCreated(existingSpectrum.getSpectrum.getDateCreated)
         spectrum.getSpectrum.setSubmitter(submitterDAO)
+        spectrum.getSpectrum.setDateCreated(existingSpectrum.getSpectrum.getDateCreated)
         finalSave(spectrum)
       } else {
         new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.CONFLICT))
@@ -258,7 +251,6 @@ class SpectrumRestController extends LazyLogging {
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp", "text/sdf", "image/png"))
   @ResponseBody
   final def get(@PathVariable("id") id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[SpectrumResult]] = {
-    logger.info(s"BIGGER PENIS BUTT")
     doGet(id, servletRequest, servletResponse)
   }
 
@@ -284,7 +276,6 @@ class SpectrumRestController extends LazyLogging {
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.DELETE))
   @ResponseBody
   final def delete(@PathVariable("id") id: String): Unit = {
-    logger.info(s"BIGGER PENIS BUTT")
     doDelete(id)
   }
 
@@ -302,7 +293,6 @@ class SpectrumRestController extends LazyLogging {
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
   @ResponseBody
   final def put(@PathVariable("id") id: String, @Valid @RequestBody resource: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
-    logger.info(s"BIGGER PENIS BUTT")
     doPut(id, resource)
   }
 
@@ -314,10 +304,8 @@ class SpectrumRestController extends LazyLogging {
     * @return
     */
   def doPut(id: String, spectrum: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
-
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
-
     val existingSubmitter: Submitter = submitterMongoRepository.findByEmailAddress(loginInfo.emailAddress)
 
     // Admins can save anything

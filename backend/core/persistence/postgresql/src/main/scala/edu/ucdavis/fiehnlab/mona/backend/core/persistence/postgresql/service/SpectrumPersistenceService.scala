@@ -120,7 +120,9 @@ class SpectrumPersistenceService extends LazyLogging {
   @CacheEvict(value = Array("spectra"))
   final def save[S <: SpectrumResult](entity: S): S = {
     if(entity.getMonaId == null || entity.getMonaId == "") {
-      entity.setMonaId(sequenceService.getNextMoNAID)
+      val nextMonaId = sequenceService.getNextMoNAID
+      entity.setMonaId(nextMonaId)
+      entity.getSpectrum.setId(nextMonaId)
     }
     //val transformedEntity = entity.copy(
     //  monaId = Option(entity.getMonaId).getOrElse(sequenceService.getNextMoNAID),

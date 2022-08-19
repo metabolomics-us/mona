@@ -4,11 +4,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class SpectrumResultId implements Serializable {
-    private Long id;
     private String monaId;
 
-    public SpectrumResultId(Long id, String monaId) {
-        this.id = id;
+    public SpectrumResultId(String monaId) {
         this.monaId = monaId;
     }
 
@@ -19,20 +17,12 @@ public class SpectrumResultId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SpectrumResultId that = (SpectrumResultId) o;
-        return id.equals(that.id) && monaId.equals(that.monaId);
+        return Objects.equals(monaId, that.monaId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, monaId);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        return Objects.hash(monaId);
     }
 
     public String getMonaId() {

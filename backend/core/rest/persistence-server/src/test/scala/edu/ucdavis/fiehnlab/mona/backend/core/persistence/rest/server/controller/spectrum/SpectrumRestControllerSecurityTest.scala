@@ -1,4 +1,3 @@
-/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
 import com.fasterxml.jackson.core.`type`.TypeReference
@@ -28,8 +27,8 @@ import scala.language.postfixOps
 
 /**
   * Created by sajjan on 3/13/17.
-  */
-@SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
+ * */
+@SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Array("test"))
 class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest with Eventually {
 
@@ -56,7 +55,8 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
     RestAssured.baseURI = s"http://localhost:$port/rest"
 
     val curatedRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")), new TypeReference[Array[Spectrum]] {})
-
+    val headRecord: SpectrumResult = new SpectrumResult(curatedRecords.head.getId, curatedRecords.head)
+    val lastRecord: SpectrumResult = new SpectrumResult(curatedRecords.last.getId, curatedRecords.last)
     "we should be able to reset the repository" in {
       spectrumRepository.deleteAll()
       submitterRepository.deleteAll()
@@ -72,7 +72,7 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
     "we expect POST requests" should {
 
       "fail if no submitter is available" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).when().post("/spectra").`then`().statusCode(403)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().post("/spectra").`then`().statusCode(403)
         assert(spectrumRepository.count() == 0)
       }
 
@@ -86,7 +86,7 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
       "upload a spectrum as a regular user" in {
         assert(spectrumRepository.count() == 0)
 
-        val result: SpectrumResult = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
+        val result: SpectrumResult = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
         assert(spectrumRepository.count() == 1)
         assert(result.getMonaId == curatedRecords.head.getId)
         assert(result.getSpectrum.getSubmitter.getEmailAddress == "test")
@@ -94,61 +94,51 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
 
       "overwrite the spectrum as the same user and ensure that the date is propagated" in {
         val spectrum: SpectrumResult = given().contentType("application/json; charset=UTF-8").when().get("/spectra/AU100601").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
-        logger.info(s"SUPER PENIS")
-        logger.info(s"${spectrum.getMonaId}")
-        val result: SpectrumResult = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
+        val result: SpectrumResult = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
         assert(spectrumRepository.count() == 1)
         assert(spectrum.getSpectrum.getDateCreated.compareTo(result.getSpectrum.getDateCreated) == 0)
       }
 
       "not overwrite the spectrum as a different regular user" in {
-        authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).when().post("/spectra").`then`().statusCode(409)
+        authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().post("/spectra").`then`().statusCode(409)
         assert(spectrumRepository.count() == 1)
       }
 
       "assign a MoNA id if one is not provided" in {
-        val copySpectrum = curatedRecords.head
+        val copySpectrum = new Spectrum(curatedRecords.head)
         copySpectrum.setId(null)
-        val result: SpectrumResult = authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(copySpectrum).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
-        assert(result.getMonaId.startsWith("MoNA000001"))
+        val copySpectrumResult = new SpectrumResult(copySpectrum.getId, copySpectrum)
+        val result: SpectrumResult = authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(copySpectrumResult).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
+        assert(result.getMonaId.startsWith("MoNA_000001"))
         assert(spectrumRepository.count() == 2)
-      }
-
-      "fail if a blacklisted spectrum is submitted" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.last).when().post(s"/spectra").`then`().statusCode(422)
       }
     }
 
     "we expect PUT requests" should {
       "overwrite the spectrum as the same user" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).when().put(s"/spectra/${curatedRecords.head.getId}").`then`().statusCode(200)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().put(s"/spectra/${curatedRecords.head.getId}").`then`().statusCode(200)
         assert(spectrumRepository.count() == 2)
       }
 
       "not overwrite the spectrum as a different regular user" in {
-        authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).when().put(s"/spectra/${curatedRecords.head.getId}").`then`().statusCode(403)
+        authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().put(s"/spectra/${curatedRecords.head.getId}").`then`().statusCode(403)
         assert(spectrumRepository.count() == 2)
       }
 
       "not be able to update user's own spectrum id to overwrite another user's spectrum" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).when().put(s"/spectra/MoNA000001").`then`().statusCode(409)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().put(s"/spectra/MoNA_000001").`then`().statusCode(409)
         assert(spectrumRepository.count() == 2)
       }
 
       "update a spectrum id" in {
         given().contentType("application/json; charset=UTF-8").when().get("/spectra/test").`then`().statusCode(404)
 
-        val result: SpectrumResult = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).when().put(s"/spectra/test").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
+        val result: SpectrumResult = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().put(s"/spectra/test").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
         assert(spectrumRepository.count() == 2)
         assert(result.getMonaId == "test")
 
         given().contentType("application/json; charset=UTF-8").when().get("/spectra/test").`then`().statusCode(200)
       }
-
-      "fail if a blacklisted spectrum is submitted" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.last).when().put(s"/spectra/${curatedRecords.last.getId}").`then`().statusCode(422)
-      }
     }
   }
 }
-*/

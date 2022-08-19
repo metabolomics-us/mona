@@ -8,6 +8,7 @@ import org.hibernate.annotations.TypeDef;
 import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -18,13 +19,7 @@ import java.util.Objects;
         typeClass = JsonType.class
 )
 @Profile({"mona.persistence"})
-public class SpectrumResult {
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_result_id")
-    @JsonIgnore
-    @SequenceGenerator(name = "spectrum_result_id", initialValue = 1, allocationSize = 50)
-    @Id
-    private Long id;
-
+public class SpectrumResult implements Serializable {
     //can be standalone primary key
     @Id
     private String monaId;
@@ -32,14 +27,6 @@ public class SpectrumResult {
     @Type(type = "json")
     @Column(columnDefinition = "jsonb")
     private Spectrum spectrum;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Spectrum getSpectrum() {
         return spectrum;
@@ -69,11 +56,11 @@ public class SpectrumResult {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SpectrumResult that = (SpectrumResult) o;
-        return Objects.equals(id, that.id) && Objects.equals(monaId, that.monaId) && Objects.equals(spectrum, that.spectrum);
+        return Objects.equals(monaId, that.monaId) && Objects.equals(spectrum, that.spectrum);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, monaId, spectrum);
+        return Objects.hash(monaId, spectrum);
     }
 }

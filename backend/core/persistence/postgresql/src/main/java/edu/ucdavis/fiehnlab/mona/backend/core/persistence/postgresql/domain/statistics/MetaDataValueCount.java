@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Objects;
 @Profile({"mona.persistence"})
 public class MetaDataValueCount implements Serializable {
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "metadata_value_count_id")
     @SequenceGenerator(name = "metadata_value_count", initialValue = 1, allocationSize = 50)
     private Long id;
@@ -20,6 +22,7 @@ public class MetaDataValueCount implements Serializable {
     private Integer count;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumns({
             @JoinColumn(name="statistics_metadata_id"),
             @JoinColumn(name="statistics_metadata_name")

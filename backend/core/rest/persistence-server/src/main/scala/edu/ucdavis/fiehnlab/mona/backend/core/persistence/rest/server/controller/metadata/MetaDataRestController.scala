@@ -47,19 +47,21 @@ class MetaDataRestController {
   @RequestMapping(path = Array("/values"), method = Array(RequestMethod.GET))
   @Async
   def listMetaDataValues(@RequestParam(value = "name", required = true) metaDataName: String,
-                         @RequestParam(value = "search", required = false) partialMetaDataValue: String): AsyncResult[Iterable[MetaDataValueCount]] = {
+                         @RequestParam(value = "search", required = false) partialMetaDataValue: String): AsyncResult[StatisticsMetaData] = {
 
     val metaDataStatistics: StatisticsMetaData = metaDataStatisticsService.getMetaDataStatistics(metaDataName)
 
     if (partialMetaDataValue == null || partialMetaDataValue.isEmpty) {
-      new AsyncResult[Iterable[MetaDataValueCount]](metaDataStatistics.getMetaDataValueCount.asScala)
+      new AsyncResult[StatisticsMetaData](metaDataStatistics)
     } else {
       // Filter the metadata values and take the top 25
-      new AsyncResult[Iterable[MetaDataValueCount]](
-          metaDataStatistics.getMetaDataValueCount.asScala
-            .filter(_.getValue.toLowerCase.contains(partialMetaDataValue.toLowerCase))
-            .sortBy(-_.getCount)
-            .take(25)
+      val newValues: Array[MetaDataValueCount] = metaDataStatistics.getMetaDataValueCount.asScala.toArray
+        .filter(_.getValue.toLowerCase.contains(partialMetaDataValue.toLowerCase))
+        .sortBy(-_.getCount)
+        .take(25)
+      metaDataStatistics.setMetaDataValueCount(newValues.toList.asJava)
+      new AsyncResult[StatisticsMetaData](
+          metaDataStatistics
       )
     }
   }
