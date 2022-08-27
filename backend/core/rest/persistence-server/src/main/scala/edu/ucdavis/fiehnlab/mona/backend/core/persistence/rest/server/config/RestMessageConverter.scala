@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
 import java.util
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.png.PNGWriter
@@ -18,7 +18,7 @@ import scala.collection.mutable.AbstractBuffer
   */
 class RestMessageConverter(writer: DomainWriter, mimeType: String) extends AbstractHttpMessageConverter[Any](MediaType.valueOf(mimeType)) {
 
-  override def readInternal(clazz: Class[_ <: Any], inputMessage: HttpInputMessage): Spectrum = throw new RuntimeException("read is not supported!")
+  override def readInternal(clazz: Class[_ <: Any], inputMessage: HttpInputMessage): SpectrumResult = throw new RuntimeException("read is not supported!")
 
   override def canWrite(mediaType: MediaType): Boolean = {
     mediaType != null && mediaType.equals(MediaType.valueOf(mimeType))
@@ -27,9 +27,9 @@ class RestMessageConverter(writer: DomainWriter, mimeType: String) extends Abstr
   override def canRead(mediaType: MediaType): Boolean = false
 
   override def writeInternal(t: Any, outputMessage: HttpOutputMessage): Unit = {
-    def write(x: Any): Unit = writer.write(x.asInstanceOf[Spectrum], outputMessage.getBody)
+    def write(x: Any): Unit = writer.write(x.asInstanceOf[SpectrumResult], outputMessage.getBody)
     t match {
-      case y: Spectrum => write(y)
+      case y: SpectrumResult => write(y)
       case x: Iterable[_] => x.foreach(write)
       case x: util.Collection[_] => x.asScala.foreach(write)
       case _ => logger.error(s"Undetermined type $t")
@@ -38,7 +38,7 @@ class RestMessageConverter(writer: DomainWriter, mimeType: String) extends Abstr
 
   override def supports(clazz: Class[_]): Boolean = {
     clazz match {
-      case q if q.isInstanceOf[Class[Spectrum]] => true
+      case q if q.isInstanceOf[Class[SpectrumResult]] => true
       case q if q.isInstanceOf[Class[Iterable[_]]] => true
       case q if q.isInstanceOf[Class[AbstractIterable[_]]] => true
       case q if q.isInstanceOf[Class[AbstractBuffer[_]]] => true

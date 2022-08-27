@@ -123,9 +123,13 @@ class SpectrumFeedbackRestController extends LazyLogging{
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.DELETE))
   @ResponseBody
-  final def delete(@PathVariable("id") id: Long, @PathVariable("monaId") monaId: String, @PathVariable("userId") userId: String): Unit = doDelete(id, monaId, userId)
+  final def delete(@PathVariable("id") id: Long): Unit = {
+    logger.info(s"${id.isInstanceOf[Long]}")
+    logger.info(s"${id}")
+    doDelete(id)
+  }
 
-  def doDelete(id: Long, monaId: String, userId: String): Unit = commentRepository.deleteById(new SpectrumFeedbackId(id, monaId, userId))
+  def doDelete(id: Long): Unit = commentRepository.deleteById(id)
 
 
   /**

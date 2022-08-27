@@ -4,7 +4,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.listener.AkkaEventScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository.SparseSearchTable
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.LoginService
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import, Profile}
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
@@ -19,7 +19,8 @@ import th.co.geniustree.springdata.jpa.repository.support.JpaSpecificationExecut
 @EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain"))
 @Configuration
 @Import(Array(classOf[DomainConfig], classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration]))
-@ComponentScan(basePackageClasses = Array(classOf[SpectrumPersistenceService],  classOf[CountListener], classOf[EventScheduler[SpectrumResult]], classOf[EventScheduler[SparseSearchTable]], classOf[SequenceService]))
+@ComponentScan(basePackageClasses = Array(classOf[SpectrumPersistenceService],  classOf[CountListener],
+  classOf[EventScheduler[SpectrumResult]], classOf[EventScheduler[SparseSearchTable]], classOf[SequenceService], classOf[LoginService]))
 @EnableJpaRepositories(repositoryBaseClass = classOf[JpaSpecificationExecutorWithProjectionImpl[_,_]], basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository"))
 @Profile(Array("mona.persistence"))
 class PostgresqlConfiguration {

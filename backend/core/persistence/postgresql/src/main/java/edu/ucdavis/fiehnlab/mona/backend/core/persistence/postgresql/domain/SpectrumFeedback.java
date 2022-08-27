@@ -39,7 +39,7 @@ public class SpectrumFeedback implements Serializable{
         return monaId;
     }
 
-    public void setMonaId(String mona_id) {
+    public void setMonaId(String monaId) {
         this.monaId = monaId;
     }
 

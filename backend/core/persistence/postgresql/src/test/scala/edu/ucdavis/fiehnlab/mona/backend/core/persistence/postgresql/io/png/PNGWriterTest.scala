@@ -1,14 +1,17 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.png
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.png
 
-import java.io.{InputStreamReader, StringWriter}
-
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.wordspec.AnyWordSpec
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import java.io.{InputStreamReader, StringWriter}
 
 /**
   * Created by sajjan on 4/30/2018.
   */
+@SpringBootTest
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class PNGWriterTest extends AnyWordSpec {
 
   "we should be able to create an instance of the writer" when {
@@ -16,9 +19,9 @@ class PNGWriterTest extends AnyWordSpec {
 
     "a writer" should {
       "export monaRecord.json" must {
-        val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
+        val reader: JSONDomainReader[SpectrumResult] = JSONDomainReader.create[SpectrumResult]
         val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-        val spectrum: Spectrum = reader.read(input)
+        val spectrum: SpectrumResult = reader.read(input)
 
         val out: StringWriter = new StringWriter()
         writer.write(spectrum, out)
@@ -29,9 +32,9 @@ class PNGWriterTest extends AnyWordSpec {
       }
 
       "export first curatedRecords.json" must {
-        val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
+        val reader: JSONDomainReader[Array[SpectrumResult]] = JSONDomainReader.create[Array[SpectrumResult]]
         val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json"))
-        val spectrum: Spectrum = reader.read(input).head
+        val spectrum: SpectrumResult = reader.read(input).head
 
         val out: StringWriter = new StringWriter()
         writer.write(spectrum, out)

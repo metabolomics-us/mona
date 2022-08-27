@@ -33,6 +33,26 @@ public class Splash implements Serializable {
         return splash;
     }
 
+    public void setBlock1(String block1) {
+        this.block1 = block1;
+    }
+
+    public void setBlock2(String block2) {
+        this.block2 = block2;
+    }
+
+    public void setBlock3(String block3) {
+        this.block3 = block3;
+    }
+
+    public void setBlock4(String block4) {
+        this.block4 = block4;
+    }
+
+    public void setSplash(String splash) {
+        this.splash = splash;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

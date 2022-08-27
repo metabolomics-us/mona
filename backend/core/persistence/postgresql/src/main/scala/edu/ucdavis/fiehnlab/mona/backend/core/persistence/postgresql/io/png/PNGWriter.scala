@@ -1,18 +1,17 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.png
-
-import java.awt.{BasicStroke, Color, Font}
-import java.io.{ByteArrayOutputStream, File, FileOutputStream, Writer}
-import java.util.Base64
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.png
 
 import de.erichseifert.gral.data.DataTable
 import de.erichseifert.gral.graphics.{Insets2D, Label}
 import de.erichseifert.gral.io.plots.DrawableWriterFactory
 import de.erichseifert.gral.plots.BarPlot.BarRenderer
 import de.erichseifert.gral.plots.XYPlot.XYPlotArea2D
-import de.erichseifert.gral.plots.lines.{DefaultLineRenderer2D, LineRenderer}
 import de.erichseifert.gral.plots.{BarPlot, Plot, XYPlot}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.DomainWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+
+import java.awt.{BasicStroke, Color, Font}
+import java.io.{ByteArrayOutputStream, Writer}
+import java.util.Base64
 
 /**
   * Created by sajjan on 4/30/2018.
@@ -22,9 +21,9 @@ class PNGWriter extends DomainWriter {
   override val CRLF: Boolean = false
 
 
-  private def createPlot(spectrum: Spectrum): Plot = {
+  private def createPlot(spectrum: SpectrumResult): Plot = {
     // Normalize spectrum
-    val ions = spectrum.spectrum.split(' ')
+    val ions = spectrum.getSpectrum.getSpectrum.split(' ')
       .map(x => (x.split(':')(0).toDouble, x.split(':')(1).toDouble))
       .sortBy(-_._2)
       .take(250)
@@ -45,7 +44,7 @@ class PNGWriter extends DomainWriter {
     plot.setPointRenderers(data, lines)
 
     // Add title
-    plot.getTitle.setText("MoNA "+ spectrum.id)
+    plot.getTitle.setText("MoNA "+ spectrum.getMonaId)
     plot.getTitle.setFont(new Font(plot.getTitle.getFont.getFamily, Font.PLAIN, 14))
     plot.setBackground(Color.white)
 
@@ -90,9 +89,9 @@ class PNGWriter extends DomainWriter {
     * @param spectrum
     * @return
     */
-  def write(spectrum: Spectrum, writer: Writer): Unit = write(spectrum, writer, 400, 300)
+  def write(spectrum: SpectrumResult, writer: Writer): Unit = write(spectrum, writer, 400, 300)
 
-  def write(spectrum: Spectrum, writer: Writer, x: Int, y: Int): Unit = {
+  def write(spectrum: SpectrumResult, writer: Writer, x: Int, y: Int): Unit = {
     val p = getPrintWriter(writer)
     val plot: Plot = createPlot(spectrum)
 
@@ -103,7 +102,7 @@ class PNGWriter extends DomainWriter {
     val encodedPlot: String = Base64.getEncoder.encodeToString(baos.toByteArray)
     baos.close()
 
-    p.print(spectrum.id)
+    p.print(spectrum.getMonaId)
     p.print(',')
     p.println(encodedPlot)
     p.flush()

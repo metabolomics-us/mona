@@ -1,6 +1,6 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.service
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginInfo, LoginResponse}
 
 /**
   * defines some way for us to login to a system

@@ -2,13 +2,14 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository
 
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views.SearchTable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchTableRepositoryImpl implements SearchTableRepositoryCustom{
+public class SearchTableRepositoryImpl implements SearchTableRepositoryCustom {
     @Autowired
     SearchTableRepository searchTableRepository;
 

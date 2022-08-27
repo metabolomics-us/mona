@@ -1,10 +1,18 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
@@ -18,9 +26,13 @@ import java.util.Objects;
 public class Spectrum implements Serializable {
     @Type(type = "json")
     @Column(name = "compound", columnDefinition = "jsonb")
+    @NotEmpty
+    @NotNull
     private List<CompoundDAO> compound;
 
     @Column(name = "id")
+    @NotEmpty
+    @NotBlank
     private String id;
 
     @Type(type = "json")
@@ -35,6 +47,9 @@ public class Spectrum implements Serializable {
     @Column( name = "score", columnDefinition = "jsonb")
     private Score score;
 
+    @Column(name = "spectrum")
+    @NotEmpty
+    @NotBlank
     private String spectrum;
 
     private String lastUpdated = new Date().toString();
@@ -49,6 +64,7 @@ public class Spectrum implements Serializable {
 
     @Type(type = "json")
     @Column(name = "submitter", columnDefinition = "jsonb")
+    @NotNull
     private SubmitterDAO submitter;
 
     @Type(type = "json")

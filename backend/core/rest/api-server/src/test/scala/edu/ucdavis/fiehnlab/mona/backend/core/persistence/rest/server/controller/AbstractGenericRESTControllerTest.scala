@@ -22,7 +22,7 @@ import scala.jdk.CollectionConverters._
   * An abstract test to provides us with a simple way to test complex controllers
   * and all their operation including authorization
   */
-abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends AbstractSpringControllerTest {
+abstract class AbstractGenericRESTControllerTest[TYPE, ID_TYPE](endpoint: String) extends AbstractSpringControllerTest {
 
   val requiresAuthForAllRequests: Boolean = false
 
@@ -44,7 +44,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
     *
     * @return
     */
-  def getId: String
+  def getId: ID_TYPE
 
 
   "after initializing the environment" when {

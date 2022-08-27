@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
+import scala.collection.mutable.ListBuffer
 
 import java.lang
 import java.util.{Date, List}
@@ -224,13 +225,19 @@ class SpectrumPersistenceService extends LazyLogging {
     /**
      * generates a new dynamic fetchable
      */
-    new DynamicIterable[SpectrumResult, String](rsqlQuery, fetchSize) {
+    val test = new DynamicIterable[SpectrumResult, String](rsqlQuery, fetchSize) {
 
       /**
        * loads more data from the server for the given query
        */
       override def fetchMoreData(query: String, pageable: Pageable): Page[SpectrumResult] = findDataForQuery(query, pageable)
     }
+    logger.info(s"${test.asScala.size}")
+    test.asScala.foreach{
+      x =>
+        logger.info(s"${x.getMonaId}")
+    }
+    test
   }
 
   /**

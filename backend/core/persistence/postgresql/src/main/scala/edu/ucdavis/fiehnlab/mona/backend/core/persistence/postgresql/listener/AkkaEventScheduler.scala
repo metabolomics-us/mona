@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.listener
 
 import akka.actor.{Actor, ActorSystem, Props}
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventScheduler, PersistenceEventListener}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, PersistenceEventListener, EventScheduler}
 
 import scala.jdk.CollectionConverters._
 

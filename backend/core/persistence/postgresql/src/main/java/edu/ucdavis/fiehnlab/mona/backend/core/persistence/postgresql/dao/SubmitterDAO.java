@@ -63,4 +63,12 @@ public class SubmitterDAO implements Serializable {
     public int hashCode() {
         return Objects.hash(emailAddress, firstName, lastName, institution);
     }
+
+    @Override
+    public String toString() {
+        return "submitter = " +
+                 firstName + " " +
+                 lastName + " " +
+                 "(" + institution + ")";
+    }
 }

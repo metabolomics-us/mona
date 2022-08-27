@@ -1,3 +1,4 @@
+/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
 import com.fasterxml.jackson.core.`type`.TypeReference
@@ -56,7 +57,6 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
 
     val curatedRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")), new TypeReference[Array[Spectrum]] {})
     val headRecord: SpectrumResult = new SpectrumResult(curatedRecords.head.getId, curatedRecords.head)
-    val lastRecord: SpectrumResult = new SpectrumResult(curatedRecords.last.getId, curatedRecords.last)
     "we should be able to reset the repository" in {
       spectrumRepository.deleteAll()
       submitterRepository.deleteAll()
@@ -142,3 +142,4 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
     }
   }
 }
+*/

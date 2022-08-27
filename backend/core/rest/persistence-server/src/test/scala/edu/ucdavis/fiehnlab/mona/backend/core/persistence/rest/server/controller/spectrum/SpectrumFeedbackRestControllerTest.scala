@@ -1,4 +1,5 @@
-/*package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
+/*
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
 import com.jayway.restassured.RestAssured
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
@@ -15,10 +16,10 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by sajjan on 4/6/17.
-  */
+  **/
 @ActiveProfiles(Array("test"))
-@SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
-class SpectrumFeedbackRestControllerTest extends AbstractGenericRESTControllerTest[SpectrumFeedback]("/feedback") with Eventually {
+@SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.RANDOM_PORT)
+class SpectrumFeedbackRestControllerTest extends AbstractGenericRESTControllerTest[SpectrumFeedback, Long]("/feedback") with Eventually {
 
   @LocalServerPort
   private val port = 0
@@ -45,9 +46,10 @@ class SpectrumFeedbackRestControllerTest extends AbstractGenericRESTControllerTe
     *
     * @return
     */
-  override def getId: String = getValue.getMonaId
+  override def getId: Long = getValue.getId
 
   override val saveRequiresAuthentication: Boolean = false
 
   override val deleteRequiresAuthentication: Boolean = false
-}*/
+}
+*/

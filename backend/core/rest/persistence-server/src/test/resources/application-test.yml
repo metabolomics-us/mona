@@ -11,7 +11,7 @@ spring:
       ddl-auto: create
   properties:
     hibernate:
-      format_sql: true
+      format_sql: false
   jackson:
     serialization:
       fail-on-empty-beans: false
@@ -33,3 +33,4 @@ security:
   user:
     name: admin
     password: secret
+

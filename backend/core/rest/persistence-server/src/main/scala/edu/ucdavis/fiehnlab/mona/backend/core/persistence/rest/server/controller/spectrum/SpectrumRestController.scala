@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.{RequestMapping, _}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.SubmitterDAO
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{SpectrumResult, Submitter}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository
 
@@ -58,16 +59,14 @@ class SpectrumRestController extends LazyLogging {
       if (size != null) {
         if (page != null) {
           val test = spectrumPersistenceService.findAll(rsqlQuery, PageRequest.of(page, size)).getContent.asScala
-          logger.info(s"test var is class of${test.getClass}")
           test
         } else {
           val test = spectrumPersistenceService.findAll(rsqlQuery, PageRequest.of(0, size)).getContent.asScala
-          logger.info(s"test var is class of ${test.getClass}")
           test
         }
       } else {
         val test = spectrumPersistenceService.findAll(rsqlQuery).asScala
-        logger.info(s"test var is class of ${test.getClass}")
+        logger.info(s"Controller return size: ${test.size}")
         test
       }
     }
@@ -135,9 +134,9 @@ class SpectrumRestController extends LazyLogging {
     val data: Iterable[SpectrumResult] = {
       if (size != null) {
         if (page != null) {
-          spectrumPersistenceService.findAll(PageRequest.of(page, size, Sort.Direction.ASC, "id")).getContent.asScala
+          spectrumPersistenceService.findAll(PageRequest.of(page, size, Sort.Direction.ASC, "monaId")).getContent.asScala
         } else {
-          spectrumPersistenceService.findAll(PageRequest.of(0, size, Sort.Direction.ASC, "id")).getContent.asScala
+          spectrumPersistenceService.findAll(PageRequest.of(0, size, Sort.Direction.ASC, "monaId")).getContent.asScala
         }
       } else {
         new DynamicIterable[SpectrumResult, String]("", 50) {
@@ -146,7 +145,6 @@ class SpectrumRestController extends LazyLogging {
         }.asScala
       }
     }
-
     val headers = new HttpHeaders()
     // headers.add("Content-Type", servletRequest.getContentType)
 
@@ -176,7 +174,7 @@ class SpectrumRestController extends LazyLogging {
   @Async
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
   @ResponseBody
-  final def save(@Valid @RequestBody resource: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
+  final def save(@Valid @RequestBody resource: Spectrum): Future[ResponseEntity[SpectrumResult]] = {
     doSave(resource)
   }
 
@@ -192,7 +190,8 @@ class SpectrumRestController extends LazyLogging {
     * @param spectrum
     * @return
     */
-  def doSave(spectrum: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
+  def doSave(spectrum: Spectrum): Future[ResponseEntity[SpectrumResult]] = {
+    val result = new SpectrumResult(spectrum.getId, spectrum)
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
@@ -200,12 +199,12 @@ class SpectrumRestController extends LazyLogging {
 
     // Admins can save anything
     if (loginInfo.roles.contains("ADMIN")) {
-      if (spectrum.getMonaId == null || !spectrumPersistenceService.existsById(spectrum.getMonaId)) {
-        finalSave(spectrum)
+      if (result.getMonaId == null || !spectrumPersistenceService.existsById(result.getMonaId)) {
+        finalSave(result)
       } else {
-        val existingSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
-        spectrum.getSpectrum.setDateCreated(existingSpectrum.getSpectrum.getDateCreated)
-        finalSave(spectrum)
+        val existingSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(result.getMonaId)
+        result.getSpectrum.setDateCreated(existingSpectrum.getSpectrum.getDateCreated)
+        finalSave(result)
       }
     }
 
@@ -215,26 +214,26 @@ class SpectrumRestController extends LazyLogging {
     }
 
     // If no id is provided, a new record can be added with no issues
-    else if (spectrum.getMonaId == null || spectrum.getMonaId.isEmpty) {
+    else if (result.getMonaId == null || result.getMonaId.isEmpty) {
       val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
-      spectrum.getSpectrum.setId(null)
-      spectrum.getSpectrum.setSubmitter(submitterDAO)
-      finalSave(spectrum)
+      result.getSpectrum.setId(null)
+      result.getSpectrum.setSubmitter(submitterDAO)
+      finalSave(result)
     }
 
     // Check whether a spectrum with the given id exists.  If it does, the submitter
     // must own it to update it.  Otherwise, the request is not allowed
     else {
-      val existingSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
+      val existingSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(result.getMonaId)
 
       if (existingSpectrum == null) {
-        finalSave(spectrum)
+        finalSave(result)
       } else if (existingSpectrum.getSpectrum.getSubmitter.getEmailAddress == loginInfo.emailAddress) {
         val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
-        spectrum.getSpectrum.setDateCreated(existingSpectrum.getSpectrum.getDateCreated)
-        spectrum.getSpectrum.setSubmitter(submitterDAO)
-        spectrum.getSpectrum.setDateCreated(existingSpectrum.getSpectrum.getDateCreated)
-        finalSave(spectrum)
+        result.getSpectrum.setDateCreated(existingSpectrum.getSpectrum.getDateCreated)
+        result.getSpectrum.setSubmitter(submitterDAO)
+        result.getSpectrum.setDateCreated(existingSpectrum.getSpectrum.getDateCreated)
+        finalSave(result)
       } else {
         new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.CONFLICT))
       }
@@ -292,7 +291,7 @@ class SpectrumRestController extends LazyLogging {
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
   @ResponseBody
-  final def put(@PathVariable("id") id: String, @Valid @RequestBody resource: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
+  final def put(@PathVariable("id") id: String, @Valid @RequestBody resource: Spectrum): Future[ResponseEntity[SpectrumResult]] = {
     doPut(id, resource)
   }
 
@@ -303,45 +302,46 @@ class SpectrumRestController extends LazyLogging {
     * @param spectrum
     * @return
     */
-  def doPut(id: String, spectrum: SpectrumResult): Future[ResponseEntity[SpectrumResult]] = {
+  def doPut(id: String, spectrum: Spectrum): Future[ResponseEntity[SpectrumResult]] = {
+    val result = new SpectrumResult(spectrum.getId, spectrum)
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
     val existingSubmitter: Submitter = submitterMongoRepository.findByEmailAddress(loginInfo.emailAddress)
 
     // Admins can save anything
     if (loginInfo.roles.contains("ADMIN")) {
-      if (spectrum.getMonaId == null || spectrum.getMonaId == "" || spectrum.getMonaId == id) {
-        if (spectrum.getMonaId != null && !spectrumPersistenceService.existsById(spectrum.getMonaId)) {
-          spectrum.setMonaId(id)
-          spectrum.getSpectrum.setId(id)
-          finalSave(spectrum)
+      if (result.getMonaId == null || result.getMonaId == "" || result.getMonaId == id) {
+        if (result.getMonaId != null && !spectrumPersistenceService.existsById(result.getMonaId)) {
+          result.setMonaId(id)
+          result.getSpectrum.setId(id)
+          finalSave(result)
         } else {
-          val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
-          spectrum.setMonaId(id)
-          spectrum.getSpectrum.setId(id)
-          spectrum.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
-          finalSave(spectrum)
+          val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(result.getMonaId)
+          result.setMonaId(id)
+          result.getSpectrum.setId(id)
+          result.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
+          finalSave(result)
         }
       } else {
-        val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
+        val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(result.getMonaId)
         val existingNewSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(id)
 
-        spectrumPersistenceService.deleteById(spectrum.getMonaId)
+        spectrumPersistenceService.deleteById(result.getMonaId)
 
         if (existingOldSpectrum != null) {
-          spectrum.setMonaId(id)
-          spectrum.getSpectrum.setId(id)
-          spectrum.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
-          finalSave(spectrum)
+          result.setMonaId(id)
+          result.getSpectrum.setId(id)
+          result.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
+          finalSave(result)
         } else if (existingNewSpectrum != null) {
-          spectrum.setMonaId(id)
-          spectrum.getSpectrum.setId(id)
-          spectrum.getSpectrum.setDateCreated(existingNewSpectrum.getSpectrum.getDateCreated)
-          finalSave(spectrum)
+          result.setMonaId(id)
+          result.getSpectrum.setId(id)
+          result.getSpectrum.setDateCreated(existingNewSpectrum.getSpectrum.getDateCreated)
+          finalSave(result)
         } else {
-          spectrum.setMonaId(id)
-          spectrum.getSpectrum.setId(id)
-          finalSave(spectrum)
+          result.setMonaId(id)
+          result.getSpectrum.setId(id)
+          finalSave(result)
         }
       }
     }
@@ -354,23 +354,23 @@ class SpectrumRestController extends LazyLogging {
     // User should be able to update or change the id their own spectra
     else {
       // Handle the case of saving a new spectrum/updating record $id
-      if (spectrum.getMonaId == null || spectrum.getMonaId.isEmpty || spectrum.getMonaId == id) {
-        if (spectrum.getMonaId != null && !spectrumPersistenceService.existsById(spectrum.getMonaId)) {
+      if (result.getMonaId == null || result.getMonaId.isEmpty || result.getMonaId == id) {
+        if (result.getMonaId != null && !spectrumPersistenceService.existsById(result.getMonaId)) {
           val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
-          spectrum.setMonaId(id)
-          spectrum.getSpectrum.setId(id)
-          spectrum.getSpectrum.setSubmitter(submitterDAO)
-          finalSave(spectrum)
+          result.setMonaId(id)
+          result.getSpectrum.setId(id)
+          result.getSpectrum.setSubmitter(submitterDAO)
+          finalSave(result)
         } else {
-          val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
+          val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(result.getMonaId)
 
           if (existingOldSpectrum.getSpectrum.getSubmitter == null || existingOldSpectrum.getSpectrum.getSubmitter.getEmailAddress == loginInfo.emailAddress) {
             val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
-            spectrum.setMonaId(id)
-            spectrum.getSpectrum.setId(id)
-            spectrum.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
-            spectrum.getSpectrum.setSubmitter(submitterDAO)
-            finalSave(spectrum)
+            result.setMonaId(id)
+            result.getSpectrum.setId(id)
+            result.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
+            result.getSpectrum.setSubmitter(submitterDAO)
+            finalSave(result)
           } else {
             new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.FORBIDDEN))
           }
@@ -379,7 +379,7 @@ class SpectrumRestController extends LazyLogging {
 
       // Handle the case of differing ids
       else {
-        val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(spectrum.getMonaId)
+        val existingOldSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(result.getMonaId)
         val existingNewSpectrum: SpectrumResult = spectrumPersistenceService.findByMonaId(id)
 
         if (existingOldSpectrum != null && existingOldSpectrum.getSpectrum.getSubmitter.getEmailAddress != loginInfo.emailAddress) {
@@ -389,29 +389,29 @@ class SpectrumRestController extends LazyLogging {
           // Not allowed to update the new spectrum if it belongs to someone else
           new AsyncResult[ResponseEntity[SpectrumResult]](new ResponseEntity[SpectrumResult](HttpStatus.CONFLICT))
         } else {
-          spectrumPersistenceService.deleteById(spectrum.getMonaId)
+          spectrumPersistenceService.deleteById(result.getMonaId)
 
           // Use the old dateCreated field
           if (existingOldSpectrum != null) {
             val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
-            spectrum.setMonaId(id)
-            spectrum.getSpectrum.setId(id)
-            spectrum.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
-            spectrum.getSpectrum.setSubmitter(submitterDAO)
-            finalSave(spectrum)
+            result.setMonaId(id)
+            result.getSpectrum.setId(id)
+            result.getSpectrum.setDateCreated(existingOldSpectrum.getSpectrum.getDateCreated)
+            result.getSpectrum.setSubmitter(submitterDAO)
+            finalSave(result)
           } else if (existingNewSpectrum != null) {
             val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
-            spectrum.setMonaId(id)
-            spectrum.getSpectrum.setId(id)
-            spectrum.getSpectrum.setDateCreated(existingNewSpectrum.getSpectrum.getDateCreated)
-            spectrum.getSpectrum.setSubmitter(submitterDAO)
-            finalSave(spectrum)
+            result.setMonaId(id)
+            result.getSpectrum.setId(id)
+            result.getSpectrum.setDateCreated(existingNewSpectrum.getSpectrum.getDateCreated)
+            result.getSpectrum.setSubmitter(submitterDAO)
+            finalSave(result)
           } else {
             val submitterDAO = new SubmitterDAO(existingSubmitter.getEmailAddress, existingSubmitter.getFirstName, existingSubmitter.getLastName, existingSubmitter.getInstitution)
-            spectrum.setMonaId(id)
-            spectrum.getSpectrum.setId(id)
-            spectrum.getSpectrum.setSubmitter(submitterDAO)
-            finalSave(spectrum)
+            result.setMonaId(id)
+            result.getSpectrum.setId(id)
+            result.getSpectrum.setSubmitter(submitterDAO)
+            finalSave(result)
           }
         }
       }

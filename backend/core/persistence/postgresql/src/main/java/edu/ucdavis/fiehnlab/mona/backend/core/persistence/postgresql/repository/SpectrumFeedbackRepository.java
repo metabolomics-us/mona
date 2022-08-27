@@ -13,5 +13,7 @@ import java.util.List;
 public interface SpectrumFeedbackRepository extends JpaRepository<SpectrumFeedback, SpectrumFeedbackId>{
     List<SpectrumFeedback> findByMonaId(String monaId);
 
-    Void deleteByMonaId(String monaId);
+    Long deleteByMonaId(String monaId);
+
+    Long deleteById(Long id);
 }

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.synchronization
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, PersistenceEventListener}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventScheduler, PersistenceEventListener}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

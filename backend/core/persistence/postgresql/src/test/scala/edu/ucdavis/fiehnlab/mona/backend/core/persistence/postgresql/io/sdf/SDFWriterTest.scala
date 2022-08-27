@@ -1,20 +1,22 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.sdf
 
-import java.io.{InputStreamReader, StringWriter}
-
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.wordspec.AnyWordSpec
-
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import java.io.{InputStreamReader, StringWriter}
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 /**
   * Created by sajjan on 2/21/18.
   */
+@SpringBootTest
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SDFWriterTest extends AnyWordSpec {
 
   "a writer" should {
     "export monaRecord.json" must {
       val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-      val spectrum: Spectrum = JSONDomainReader.create[Spectrum].read(input)
+      val spectrum: SpectrumResult = JSONDomainReader.create[SpectrumResult].read(input)
 
       val writer: SDFWriter = new SDFWriter
       val out: StringWriter = new StringWriter()
@@ -74,9 +76,9 @@ class SDFWriterTest extends AnyWordSpec {
     }
 
     "export first curatedRecords.json" must {
-      val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
+      val reader: JSONDomainReader[Array[SpectrumResult]] = JSONDomainReader.create[Array[SpectrumResult]]
       val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json"))
-      val spectrum: Spectrum = reader.read(input).head
+      val spectrum: SpectrumResult = reader.read(input).head
 
       val writer: SDFWriter = new SDFWriter
       val out: StringWriter = new StringWriter()
@@ -151,7 +153,7 @@ class SDFWriterTest extends AnyWordSpec {
 
     "export curatedRecords.json" must {
       val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json"))
-      val spectra: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(input)
+      val spectra: Array[SpectrumResult] = JSONDomainReader.create[Array[SpectrumResult]].read(input)
 
       val writer: SDFWriter = new SDFWriter
       val out: StringWriter = new StringWriter()

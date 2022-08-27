@@ -1,8 +1,9 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.util
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.util
 
 import com.typesafe.scalalogging.LazyLogging
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.data.domain.{Page, PageImpl, Pageable}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 
 import scala.jdk.CollectionConverters._
 
