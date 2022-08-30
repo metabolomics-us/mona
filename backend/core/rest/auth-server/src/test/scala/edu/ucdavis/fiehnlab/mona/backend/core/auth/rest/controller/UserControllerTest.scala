@@ -16,7 +16,7 @@ import scala.jdk.CollectionConverters._
   */
 @SpringBootTest(classes = Array(classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 @ActiveProfiles(Array("test"))
-class UserControllerTest extends AbstractGenericRESTControllerTest[Users]("/users") {
+class UserControllerTest extends AbstractGenericRESTControllerTest[Users, String]("/users") {
 
   @LocalServerPort
   private val port = 0

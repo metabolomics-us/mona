@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views;
 
 import com.vladmihalcea.hibernate.type.json.JsonType;
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.MetaDataDAO;
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Names;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Names;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.MetaDataDAO;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 import org.hibernate.annotations.Type;

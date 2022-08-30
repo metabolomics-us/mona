@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.synchronization
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventScheduler, PersistenceEventListener}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, PersistenceEventListener}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.context.annotation.Profile
@@ -12,17 +12,17 @@ import org.springframework.context.annotation.Profile
  */
 @Service
 @Profile(Array("mona.persistence"))
-class BusNotifier extends PersistenceEventListener[SpectrumResult] {
+class BusNotifier extends PersistenceEventListener[Spectrum] {
 
   @Autowired
-  private val eventBus: EventBus[SpectrumResult] = null
+  private val eventBus: EventBus[Spectrum] = null
 
   /**
    * an entry was added to the system
    *
    * @param event
    */
-  override def added(event: Event[SpectrumResult]): Unit = {
+  override def added(event: Event[Spectrum]): Unit = {
     logger.debug(s"forwarding ${event.eventType} event to bus")
     eventBus.sendEvent(event)
   }
@@ -32,7 +32,7 @@ class BusNotifier extends PersistenceEventListener[SpectrumResult] {
    *
    * @param event
    */
-  override def updated(event: Event[SpectrumResult]): Unit = {
+  override def updated(event: Event[Spectrum]): Unit = {
     logger.debug(s"forwarding ${event.eventType} event to bus")
     eventBus.sendEvent(event)
   }
@@ -42,7 +42,7 @@ class BusNotifier extends PersistenceEventListener[SpectrumResult] {
    *
    * @param event
    */
-  override def deleted(event: Event[SpectrumResult]): Unit = {
+  override def deleted(event: Event[Spectrum]): Unit = {
     logger.debug(s"forwarding ${event.eventType} event to bus")
     eventBus.sendEvent(event)
   }

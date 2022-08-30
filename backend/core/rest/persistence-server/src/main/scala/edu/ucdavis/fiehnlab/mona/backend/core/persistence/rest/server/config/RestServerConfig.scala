@@ -1,7 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{MonaMapper}
 import java.util
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
@@ -9,18 +7,15 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.Post
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import, Primary, Profile}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import, Profile}
 import org.springframework.core.annotation.Order
 import org.springframework.http._
 import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
-import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter, WebSecurityCustomizer}
+import org.springframework.security.config.annotation.web.builders.{HttpSecurity}
+import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityCustomizer}
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, PathMatchConfigurer, WebMvcConfigurer}
-import org.springframework.boot.autoconfigure.domain.EntityScan
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.security.web.SecurityFilterChain
-import th.co.geniustree.springdata.jpa.repository.support.JpaSpecificationExecutorWithProjectionImpl
 /**
   * this class configures all our controller and also prepares security measures for these mentioned controllers
   */

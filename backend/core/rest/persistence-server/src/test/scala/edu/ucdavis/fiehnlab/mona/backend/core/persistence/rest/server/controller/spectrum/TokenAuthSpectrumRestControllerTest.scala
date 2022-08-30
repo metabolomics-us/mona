@@ -6,7 +6,7 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{MonaMapper, JSONDomainReader}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
@@ -130,11 +130,13 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         "fails if id is empty" in {
           val copySpectrum = new Spectrum(curatedRecords.head)
           copySpectrum.setId("")
+          logger.info(s"${copySpectrum.getId}")
 
           val writer = new StringWriter()
           mapper.writeValue(writer, copySpectrum)
 
           val content = writer.toString
+          logger.info(s"${content}")
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").`then`().statusCode(400)
         }
       }

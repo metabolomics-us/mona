@@ -1,11 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io
 
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.CompoundDAO
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.CRLFPrintWriter
 
-import scala.jdk.CollectionConverters._
 import java.io.{OutputStream, OutputStreamWriter, PrintWriter, Writer}
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 5/27/16.

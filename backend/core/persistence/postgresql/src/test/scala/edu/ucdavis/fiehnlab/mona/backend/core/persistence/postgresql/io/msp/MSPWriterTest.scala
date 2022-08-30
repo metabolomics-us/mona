@@ -1,21 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.msp
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.wordspec.AnyWordSpec
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
-import java.io.{InputStreamReader, StringWriter}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.core.`type`.TypeReference
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+
+import java.io.{InputStreamReader, StringWriter}
 
 /**
   * Created by wohlg_000 on 5/27/2016.
   */
 @SpringBootTest
-@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class MSPWriterTest extends AnyWordSpec {
 
   "we should be able to create an instance of the writer" when {
@@ -23,14 +19,14 @@ class MSPWriterTest extends AnyWordSpec {
 
     "a writer" should {
       "export monaRecord.json" must {
-        val reader: ObjectMapper = MonaMapper.create
+        val reader = JSONDomainReader.create[Spectrum]
         val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-        val temp: Spectrum = reader.readValue(input, new TypeReference[Spectrum] {})
-        val spectrum: SpectrumResult = new SpectrumResult(temp.getId, temp)
+        val spectrum: Spectrum = reader.read(input)
+        val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
 
         val out: StringWriter = new StringWriter()
-        writer.write(spectrum, out)
+        writer.write(spectrumResult, out)
 
         "result must contain" must {
           "Name" in {
@@ -93,13 +89,14 @@ class MSPWriterTest extends AnyWordSpec {
         }
       }
 
-     /* "export first curatedRecords.json" must {
-        val reader: JSONDomainReader[Array[SpectrumResult]] = JSONDomainReader.create[Array[SpectrumResult]]
+     "export first curatedRecords.json" must {
+        val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
         val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json"))
-        val spectrum: SpectrumResult = reader.read(input).head
+        val spectrum: Spectrum = reader.read(input).head
+        val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
         val out: StringWriter = new StringWriter()
-        writer.write(spectrum, out)
+        writer.write(spectrumResult, out)
 
         "result must contain" must {
           "Name" in {
@@ -170,7 +167,7 @@ class MSPWriterTest extends AnyWordSpec {
             assert(out.toString.contains("Num Peaks: 27"))
           }
         }
-      }*/
+      }
     }
   }
 }

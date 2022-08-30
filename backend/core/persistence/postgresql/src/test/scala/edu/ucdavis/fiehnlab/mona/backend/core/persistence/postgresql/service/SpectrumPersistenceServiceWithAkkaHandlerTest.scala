@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
@@ -12,7 +12,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.listener.Ak
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository.SparseSearchTable
 import org.scalatest.concurrent.Eventually
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,10 +42,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
   val matRepository: MaterializedViewRepository = null
 
   @Autowired
-  val eventCounter: ReceivedEventCounter[SpectrumResult] = null
-
-  @Autowired
-  val eventCounterSparse: ReceivedEventCounter[SparseSearchTable] = null
+  val eventCounter: ReceivedEventCounter[Spectrum] = null
 
   @Autowired
   val monaMapper: ObjectMapper = {
@@ -69,7 +65,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
     }
 
     "scheduler must be of type AkkaEventScheduler" in {
-      assert(spectrumPersistenceService.eventScheduler.isInstanceOf[AkkaEventScheduler[SpectrumResult]])
+      assert(spectrumPersistenceService.eventScheduler.isInstanceOf[AkkaEventScheduler[Spectrum]])
     }
 
     "ensure we start with an empty repository" in {

@@ -1,14 +1,12 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao;
+package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vladmihalcea.hibernate.type.json.JsonType;
+
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.validators.NullOrNotBlank;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -31,8 +29,8 @@ public class Spectrum implements Serializable {
     private List<CompoundDAO> compound;
 
     @Column(name = "id")
-    @NotEmpty
-    @NotBlank
+    @Size(min = 1)
+    @NullOrNotBlank
     private String id;
 
     @Type(type = "json")

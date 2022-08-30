@@ -1,26 +1,31 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.sdf
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import com.fasterxml.jackson.core.`type`.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import org.scalatest.wordspec.AnyWordSpec
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
-import java.io.{InputStreamReader, StringWriter}
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+
+import java.io.{InputStreamReader, StringWriter}
 /**
   * Created by sajjan on 2/21/18.
   */
 @SpringBootTest
-@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SDFWriterTest extends AnyWordSpec {
 
   "a writer" should {
     "export monaRecord.json" must {
+      val reader: ObjectMapper = MonaMapper.create
       val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-      val spectrum: SpectrumResult = JSONDomainReader.create[SpectrumResult].read(input)
+      val spectrum: Spectrum = reader.readValue(input, new TypeReference[Spectrum] {})
+      val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
       val writer: SDFWriter = new SDFWriter
       val out: StringWriter = new StringWriter()
-      writer.write(spectrum, out)
+      writer.write(spectrumResult, out)
 
       "Name" in {
         assert(out.toString.contains(">  <NAME>\r\nCY8"))
@@ -76,13 +81,14 @@ class SDFWriterTest extends AnyWordSpec {
     }
 
     "export first curatedRecords.json" must {
-      val reader: JSONDomainReader[Array[SpectrumResult]] = JSONDomainReader.create[Array[SpectrumResult]]
+      val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
       val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json"))
-      val spectrum: SpectrumResult = reader.read(input).head
+      val spectrum: Spectrum = reader.read(input).head
+      val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
       val writer: SDFWriter = new SDFWriter
       val out: StringWriter = new StringWriter()
-      writer.write(spectrum, out)
+      writer.write(spectrumResult, out)
 
       println(out.toString)
 
@@ -153,11 +159,13 @@ class SDFWriterTest extends AnyWordSpec {
 
     "export curatedRecords.json" must {
       val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json"))
-      val spectra: Array[SpectrumResult] = JSONDomainReader.create[Array[SpectrumResult]].read(input)
+      val spectra: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(input)
 
       val writer: SDFWriter = new SDFWriter
       val out: StringWriter = new StringWriter()
-      spectra.foreach(x => writer.write(x, out))
+      spectra.foreach{x =>
+        writer.write(new SpectrumResult(x.getId, x), out)
+      }
 
       println(out.toString)
 

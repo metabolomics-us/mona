@@ -1,4 +1,3 @@
-/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.metadata
 
 import com.fasterxml.jackson.core.`type`.TypeReference
@@ -8,7 +7,7 @@ import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
@@ -125,4 +124,3 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest with Event
     }
   }
 }
-*/

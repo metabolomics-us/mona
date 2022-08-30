@@ -13,12 +13,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository.SparseSearchTable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql.{CustomRsqlVisitor, RSQLOperatorsCustom}
 import org.springframework.beans.factory.annotation.Autowired
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
-import scala.collection.mutable.ListBuffer
 
 import java.lang
 import java.util.{Date, List}
@@ -43,17 +43,14 @@ class SpectrumPersistenceService extends LazyLogging {
   val sequenceService: SequenceService = null
 
   @Autowired(required = false)
-  val eventScheduler: EventScheduler[SpectrumResult] = null
-
-  @Autowired(required = false)
-  val eventSchedulerSparse: EventScheduler[SparseSearchTable] = null
+  val eventScheduler: EventScheduler[Spectrum] = null
 
   val operators: java.util.Set[ComparisonOperator] = RSQLOperatorsCustom.newDefaultOperators()
 
-  final def fireAddEvent(spectrumResult: SpectrumResult): Unit = {
-    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrumResult.getMonaId} has been added")
+  final def fireAddEvent(spectrum: Spectrum): Unit = {
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.getId} has been added")
     if (eventScheduler != null) {
-      eventScheduler.scheduleEventProcessing(Event[SpectrumResult](spectrumResult, new Date, Event.ADD))
+      eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.ADD))
     }
   }
 
@@ -62,38 +59,38 @@ class SpectrumPersistenceService extends LazyLogging {
    *
    * @param spectrum
    */
-  final def fireDeleteEvent(spectrumResult: SpectrumResult): Unit = {
-    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrumResult.getMonaId} has been deleted")
+  final def fireDeleteEvent(spectrumResult: Spectrum): Unit = {
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrumResult.getId} has been deleted")
     if (eventScheduler != null) {
-      eventScheduler.scheduleEventProcessing(Event[SpectrumResult](spectrumResult, new Date, Event.DELETE))
+      eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrumResult, new Date, Event.DELETE))
     }
   }
 
-  final def fireDeleteEvent(spectrumSparse: SparseSearchTable): Unit = {
+  /*final def fireDeleteEvent(spectrumSparse: SparseSearchTable): Unit = {
     logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrumSparse.getMonaId} has been deleted")
     if (eventSchedulerSparse != null) {
       eventSchedulerSparse.scheduleEventProcessing(Event[SparseSearchTable](spectrumSparse, new Date, Event.DELETE))
     }
-  }
+  }*/
 
   /**
    * will be invoked everytime a spectrum will be updated in the system
    *
    * @param spectrum
    */
-  final def fireUpdateEvent(spectrumResult: SpectrumResult): Unit = {
-    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrumResult.getMonaId} has been updated")
+  final def fireUpdateEvent(spectrum: Spectrum): Unit = {
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.getId} has been updated")
 
     if (eventScheduler != null) {
-      eventScheduler.scheduleEventProcessing(Event[SpectrumResult](spectrumResult, new Date, Event.UPDATE))
+      eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.UPDATE))
     }
   }
 
-  final def fireSyncEvent(spectrumResult: SpectrumResult): Unit = {
-    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrumResult.getMonaId} has been scheduled for synchronization")
+  final def fireSyncEvent(spectrum: Spectrum): Unit = {
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.getId} has been scheduled for synchronization")
 
     if (eventScheduler != null) {
-      eventScheduler.scheduleEventProcessing(Event[SpectrumResult](spectrumResult, new Date, Event.SYNC))
+      eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.SYNC))
     }
   }
 
@@ -108,7 +105,7 @@ class SpectrumPersistenceService extends LazyLogging {
     //val serialized = objectMapper.writeValueAsString(spectrum);
     val result = spectrumResultRepository.save(spectrum)
     //val result = spectrumResultRepository.save(spectrum.copy(lastUpdated = new Date()).toString)
-    fireUpdateEvent(result)
+    fireUpdateEvent(result.getSpectrum)
     result
   }
 
@@ -132,7 +129,7 @@ class SpectrumPersistenceService extends LazyLogging {
     //)
 
     val result = spectrumResultRepository.save(entity)
-    fireAddEvent(result)
+    fireAddEvent(result.getSpectrum)
     result
   }
 
@@ -152,13 +149,14 @@ class SpectrumPersistenceService extends LazyLogging {
   @CacheEvict(value = Array("spectra"))
   final def delete(spectrum: SpectrumResult): Unit = {
     spectrumResultRepository.delete(spectrum)
-    fireDeleteEvent(spectrum)
+    fireDeleteEvent(spectrum.getSpectrum)
   }
 
   @CacheEvict(value = Array("spectra"))
   final def deleteSparse(spectrum: SparseSearchTable): Unit = {
-    spectrumResultRepository.deleteByMonaId(spectrum.getMonaId)
-    fireDeleteEvent(spectrum)
+    val spectrumResult = spectrumResultRepository.findByMonaId(spectrum.getMonaId)
+    spectrumResultRepository.delete(spectrumResult)
+    fireDeleteEvent(spectrumResult.getSpectrum)
   }
 
 
@@ -208,7 +206,9 @@ class SpectrumPersistenceService extends LazyLogging {
   /**
    * fires a synchronization event, so that system updates all it's clients. Be aware that this is very expensive!
    */
-  def forceSynchronization(): Unit = findAll().asScala.foreach(fireSyncEvent)
+  def forceSynchronization(): Unit = findAll().asScala.foreach{ x =>
+    fireSyncEvent(x.getSpectrum)
+  }
   //def forceSynchronization(): Unit = findAll().iterator().asScala.foreach(fireSyncEvent)
 
 

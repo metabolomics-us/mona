@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.json
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.DomainWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 
 import java.io.Writer
 

@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service
+package edu.ucdavis.fiehnlab.mona.backend.core.domain.service
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginInfo, LoginResponse}
 

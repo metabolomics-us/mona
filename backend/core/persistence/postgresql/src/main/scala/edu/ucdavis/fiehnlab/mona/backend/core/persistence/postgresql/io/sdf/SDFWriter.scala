@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.sdf
 
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.DomainWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.MetaDataDAO
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.CompoundDAO
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.DomainWriter
 
 import java.io.{PrintWriter, Writer}
 import scala.jdk.CollectionConverters._

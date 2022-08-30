@@ -1,7 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json
 
-import java.io.Reader
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind._
@@ -10,7 +8,8 @@ import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.{DomainReadEventHandler, DomainReader}
 
-import scala.reflect.{ClassTag, _}
+import java.io.Reader
+import scala.reflect._
 
 /**
   * Created by wohlgemuth on 2/25/16.
@@ -43,7 +42,6 @@ object MonaMapper {
     mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     mapper.setSerializationInclusion(Include.NON_NULL)
-    mapper.setSerializationInclusion(Include.NON_EMPTY)
     mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
 
     mapper

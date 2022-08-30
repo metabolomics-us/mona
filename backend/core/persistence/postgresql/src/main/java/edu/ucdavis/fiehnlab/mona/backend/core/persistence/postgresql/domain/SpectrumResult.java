@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.json.JsonType;
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.context.annotation.Profile;

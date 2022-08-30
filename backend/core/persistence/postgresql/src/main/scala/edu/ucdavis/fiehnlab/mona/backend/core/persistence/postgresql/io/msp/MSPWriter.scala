@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.msp
 
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.DomainWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.CompoundDAO
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.MetaDataDAO
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.DomainWriter
 
 import java.io.{PrintWriter, Writer}
 import scala.jdk.CollectionConverters._
@@ -186,7 +185,7 @@ class MSPWriter extends DomainWriter {
     // https://github.com/cbroeckl/RAMClustR/blob/master/R/ramclustR2.R
 
     // MetaData
-    p.println(s"DB#: ${spectrum.getMonaId}")
+    p.println(s"DB#: ${spectrum.getSpectrum.getId}")
     buildCompoundInchiKey(spectrum, p)
     buildCompoundInChi(spectrum, p)
     buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "Precursor_type", "precursor type", p)

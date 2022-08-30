@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao;
+package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
 
 import java.io.Serializable;
 import java.util.List;

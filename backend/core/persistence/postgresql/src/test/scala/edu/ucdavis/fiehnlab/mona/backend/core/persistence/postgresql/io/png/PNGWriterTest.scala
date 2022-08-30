@@ -1,17 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.png
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import org.scalatest.wordspec.AnyWordSpec
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+
 import java.io.{InputStreamReader, StringWriter}
 
 /**
   * Created by sajjan on 4/30/2018.
   */
 @SpringBootTest
-@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class PNGWriterTest extends AnyWordSpec {
 
   "we should be able to create an instance of the writer" when {
@@ -19,12 +19,13 @@ class PNGWriterTest extends AnyWordSpec {
 
     "a writer" should {
       "export monaRecord.json" must {
-        val reader: JSONDomainReader[SpectrumResult] = JSONDomainReader.create[SpectrumResult]
+        val reader = JSONDomainReader.create[Spectrum]
         val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-        val spectrum: SpectrumResult = reader.read(input)
+        val spectrum: Spectrum = reader.read(input)
+        val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
         val out: StringWriter = new StringWriter()
-        writer.write(spectrum, out)
+        writer.write(spectrumResult, out)
 
         "contain the spectrum id" in {
           assert(out.toString.startsWith("252"))
@@ -32,12 +33,13 @@ class PNGWriterTest extends AnyWordSpec {
       }
 
       "export first curatedRecords.json" must {
-        val reader: JSONDomainReader[Array[SpectrumResult]] = JSONDomainReader.create[Array[SpectrumResult]]
+        val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
         val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json"))
-        val spectrum: SpectrumResult = reader.read(input).head
+        val spectrum: Spectrum = reader.read(input).head
+        val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
         val out: StringWriter = new StringWriter()
-        writer.write(spectrum, out)
+        writer.write(spectrumResult, out)
 
         "contain the spectrum id" in {
           assert(out.toString.startsWith("AU100601"))

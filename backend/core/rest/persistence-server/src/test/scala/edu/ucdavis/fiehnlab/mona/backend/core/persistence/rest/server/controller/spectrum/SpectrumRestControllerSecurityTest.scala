@@ -1,22 +1,18 @@
-/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
-
-import com.fasterxml.jackson.core.`type`.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 
 import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Submitter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SequenceRepository, SubmitterRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.scalatest.concurrent.Eventually
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
@@ -30,7 +26,7 @@ import scala.language.postfixOps
   * Created by sajjan on 3/13/17.
  * */
 @SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles(Array("test"))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest with Eventually {
 
   @LocalServerPort
@@ -45,18 +41,13 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
   @Autowired
   private val sequenceRepository: SequenceRepository = null
 
-  @Autowired
-  val monaMapper: ObjectMapper = {
-    MonaMapper.create
-  }
-
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "spectrum persistence security should be reliable" when {
     RestAssured.baseURI = s"http://localhost:$port/rest"
 
-    val curatedRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")), new TypeReference[Array[Spectrum]] {})
-    val headRecord: SpectrumResult = new SpectrumResult(curatedRecords.head.getId, curatedRecords.head)
+    val curatedRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
+    val headRecord: Spectrum = curatedRecords.head
     "we should be able to reset the repository" in {
       spectrumRepository.deleteAll()
       submitterRepository.deleteAll()
@@ -107,8 +98,7 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
       "assign a MoNA id if one is not provided" in {
         val copySpectrum = new Spectrum(curatedRecords.head)
         copySpectrum.setId(null)
-        val copySpectrumResult = new SpectrumResult(copySpectrum.getId, copySpectrum)
-        val result: SpectrumResult = authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(copySpectrumResult).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
+        val result: SpectrumResult = authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(copySpectrum).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
         assert(result.getMonaId.startsWith("MoNA_000001"))
         assert(spectrumRepository.count() == 2)
       }
@@ -142,4 +132,3 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
     }
   }
 }
-*/

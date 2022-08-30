@@ -1,10 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.json
 
 import org.scalatest.wordspec.AnyWordSpec
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import org.springframework.boot.test.context.SpringBootTest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
+
 import java.io.InputStreamReader
 import scala.jdk.CollectionConverters._
 
@@ -12,41 +13,40 @@ import scala.jdk.CollectionConverters._
   * Created by wohlgemuth on 2/25/16.
   */
 @SpringBootTest
-@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class JSONDomainReaderTest extends AnyWordSpec {
 
   "we should be able to create an instance of the reader" when {
-    val reader = JSONDomainReader.create[SpectrumResult]
+    val reader = JSONDomainReader.create[Spectrum]
 
     "which should be of the tpye spectrum" should {
       "check type" in {
-        assert(reader.isInstanceOf[JSONDomainReader[SpectrumResult]])
+        assert(reader.isInstanceOf[JSONDomainReader[Spectrum]])
       }
     }
 
     "it should be able to read a spectrum" should {
       val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-      val spectrum: SpectrumResult = reader.read(input)
+      val spectrum: Spectrum = reader.read(input)
 
       "its splash key should equal the exspectations" in {
-        assert(spectrum.getSpectrum.getSplash.getSplash == "splash10-0z50000000-9c8c58860a0fadd33800")
+        assert(spectrum.getSplash.getSplash == "splash10-0z50000000-9c8c58860a0fadd33800")
       }
 
       "its compounds inchi key should be also equal the exspectations" in {
-        assert(spectrum.getSpectrum.getCompound.get(1).getInchiKey == "QASFUMOKHFSJGL-LAFRSMQTSA-N")
+        assert(spectrum.getCompound.get(1).getInchiKey == "QASFUMOKHFSJGL-LAFRSMQTSA-N")
       }
 
       "it should be possible to access it's metatadata" in {
-        assert(spectrum.getSpectrum.getMetaData != null)
-        assert(spectrum.getSpectrum.getMetaData.size() > 0)
+        assert(spectrum.getMetaData != null)
+        assert(spectrum.getMetaData.size() > 0)
       }
 
       "we should be able to access it's compounds metadata" in {
-        assert(spectrum.getSpectrum.getCompound.get(0).getMetaData != null)
-        assert(spectrum.getSpectrum.getCompound.get(0).getMetaData.size() > 0)
+        assert(spectrum.getCompound.get(0).getMetaData != null)
+        assert(spectrum.getCompound.get(0).getMetaData.size() > 0)
       }
 
-      spectrum.getSpectrum.getCompound.get(0).getMetaData.asScala.foreach { metaData =>
+      spectrum.getCompound.get(0).getMetaData.asScala.foreach { metaData =>
 
         metaData.getName match {
           case "total exact mass" =>
@@ -64,7 +64,7 @@ class JSONDomainReaderTest extends AnyWordSpec {
           case "Tocris Bioscience" =>
             "the Tocris Bioscience should be of type Integer" in {
               assert(metaData.getValue.isInstanceOf[String])
-              assert(metaData.getName.asInstanceOf[String] === "1623")
+              assert(metaData.getValue === "1623")
             }
 
           case _ => //nada
@@ -74,11 +74,12 @@ class JSONDomainReaderTest extends AnyWordSpec {
   }
 
   "we should be able to read an array of spectrum as well" when {
-    val reader: JSONDomainReader[Array[SpectrumResult]] = JSONDomainReader.create[Array[SpectrumResult]]
+    val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json"))
 
+
     "it should cause no erros" should {
-      val result: Array[SpectrumResult] = reader.read(input)
+      val result: Array[Spectrum] = reader.read(input)
 
       "it's lenght of reqd objects should fit the expsectations" in {
         assert(result.length == 59)

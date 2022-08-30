@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.io
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io
 
 import java.io.{IOException, InterruptedIOException, PrintWriter, Writer}
 

@@ -1,4 +1,3 @@
-/*
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
 import com.jayway.restassured.RestAssured
@@ -52,4 +51,3 @@ class SpectrumFeedbackRestControllerTest extends AbstractGenericRESTControllerTe
 
   override val deleteRequiresAuthentication: Boolean = false
 }
-*/

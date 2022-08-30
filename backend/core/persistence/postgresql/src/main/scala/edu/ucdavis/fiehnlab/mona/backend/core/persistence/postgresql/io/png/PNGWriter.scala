@@ -6,8 +6,8 @@ import de.erichseifert.gral.io.plots.DrawableWriterFactory
 import de.erichseifert.gral.plots.BarPlot.BarRenderer
 import de.erichseifert.gral.plots.XYPlot.XYPlotArea2D
 import de.erichseifert.gral.plots.{BarPlot, Plot, XYPlot}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.DomainWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.DomainWriter
 
 import java.awt.{BasicStroke, Color, Font}
 import java.io.{ByteArrayOutputStream, Writer}

@@ -1,5 +1,4 @@
-/*
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
+/*package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
 
 import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured
@@ -7,8 +6,8 @@ import com.jayway.restassured.RestAssured.given
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISubmitterMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Submitter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import org.junit.runner.RunWith
