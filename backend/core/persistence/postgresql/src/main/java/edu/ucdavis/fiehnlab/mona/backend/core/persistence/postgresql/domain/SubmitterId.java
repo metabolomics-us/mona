@@ -4,11 +4,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class SubmitterId implements Serializable {
-    private Long id;
     private String emailAddress;
 
-    public SubmitterId(Long id, String emailAddress) {
-        this.id = id;
+    public SubmitterId(String emailAddress) {
         this.emailAddress = emailAddress;
     }
 
@@ -19,20 +17,12 @@ public class SubmitterId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SubmitterId that = (SubmitterId) o;
-        return id.equals(that.id) && emailAddress.equals(that.emailAddress);
+        return Objects.equals(emailAddress, that.emailAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, emailAddress);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        return Objects.hash(emailAddress);
     }
 
     public String getEmailAddress() {

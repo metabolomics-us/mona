@@ -20,21 +20,17 @@ public class News {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "submitted", nullable = false)
-    private Date submitted;
+    private Date submitted = new Date();
 
     private String title;
 
     private String content;
 
-    @PrePersist
-    protected void onCreate() {
-        submitted = new Date();
-    }
-
     public News() {}
 
     public News(Long id, String title, String content) {
         this.id = id;
+        this.submitted = new Date();
         this.title = title;
         this.content = content;
     }

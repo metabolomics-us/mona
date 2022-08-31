@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @IdClass(SubmitterId.class)
@@ -11,22 +12,10 @@ import javax.persistence.*;
 @Profile({"mona.persistence"})
 public class Submitter {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "submitter_gen_id")
-    @SequenceGenerator(name = "submitter_gen_id", initialValue = 1, allocationSize = 50)
-    private Long id;
-    @Id
     private String emailAddress;
     private String firstName;
     private String lastName;
     private String institution;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getEmailAddress() {
         return emailAddress;
@@ -67,5 +56,18 @@ public class Submitter {
         this.firstName = firstName;
         this.lastName = firstName;
         this.institution = institution;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Submitter submitter = (Submitter) o;
+        return Objects.equals(emailAddress, submitter.emailAddress) && Objects.equals(firstName, submitter.firstName) && Objects.equals(lastName, submitter.lastName) && Objects.equals(institution, submitter.institution);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(emailAddress, firstName, lastName, institution);
     }
 }

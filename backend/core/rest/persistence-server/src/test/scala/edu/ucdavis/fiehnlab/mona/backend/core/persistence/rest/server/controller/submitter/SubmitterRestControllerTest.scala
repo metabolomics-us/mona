@@ -1,52 +1,54 @@
-/*package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
 
 import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Users
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{Spectrum}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Submitter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{Spectrum, SubmitterDAO}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{SpectrumResult, Submitter}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by sajjan on 3/9/16.
   */
-@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
-class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Submitter]("/submitters") {
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
+class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[SubmitterDAO, String]("/submitters") {
 
   @LocalServerPort
   private val port = 0
 
   @Autowired
-  val submitterRepository: ISubmitterMongoRepository = null
+  val submitterRepository: SubmitterRepository = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   /**
-    * object to use for gets
-    *
-    * @return
-    */
-  override def getValue: Submitter = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))).submitter
+   * object to use for gets
+   *
+   * @return
+   */
+  override def getValue: SubmitterDAO = {
+    val temp = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
+    val tempResult = new SpectrumResult(temp.getId, temp)
+    tempResult.getSpectrum.getSubmitter
+  }
 
   /**
     * returns an id for us for testing
     *
     * @return
     */
-  override def getId: String = getValue.id
+  override def getId: String = getValue.getEmailAddress
 
   override val requiresAuthForAllRequests: Boolean = true
 
@@ -56,7 +58,7 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
     RestAssured.baseURI = s"http://localhost:$port/rest"
 
     "when connected we should be able to" should {
-      val submitter: Submitter = Submitter("test", "test", "Test", "User", "UC Davis")
+      val submitter: Submitter = new Submitter("test", "Test", "User", "UC Davis")
 
       "create a test submitter" in {
         submitterRepository.deleteAll()
@@ -74,7 +76,7 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
       }
 
       "not modify the submitter when authenticated as another user" in {
-        val newSubmitter = submitter.copy(institution = "UCSF")
+        val newSubmitter = new Submitter(submitter.getEmailAddress, submitter.getFirstName, submitter.getLastName, "UCSF")
         authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(newSubmitter).when().put(s"/submitters/test").`then`().statusCode(403)
 
         val result: Submitter = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get(s"/submitters/test").`then`().statusCode(200).extract().as(classOf[Submitter])
@@ -82,7 +84,7 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
       }
 
       "update one's own submitter with matching user" in {
-        val newSubmitter = submitter.copy(institution = "UCSD")
+        val newSubmitter = new Submitter(submitter.getEmailAddress, submitter.getFirstName, submitter.getLastName, "UCSD")
         authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(newSubmitter).when().put(s"/submitters/test").`then`().statusCode(200)
 
         val result: Submitter = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get(s"/submitters/test").`then`().statusCode(200).extract().as(classOf[Submitter])
@@ -100,14 +102,14 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
       "can list ones own submitter when authenticated" in {
         val result: Array[Submitter] = authenticate("test", "test-secret").when().contentType("application/json; charset=UTF-8").get(s"/submitters").`then`().statusCode(200).extract().as(classOf[Array[Submitter]])
         assert(result.length == 1)
-        assert(result.head.id == "test")
-        assert(result.head.institution == "UCSD")
+        assert(result.head.getEmailAddress == "test")
+        assert(result.head.getInstitution == "UCSD")
       }
 
       "can view ones own submitter when authenticated" in {
         val result: Submitter = authenticate("test", "test-secret").when().contentType("application/json; charset=UTF-8").get(s"/submitters/test").`then`().statusCode(200).extract().as(classOf[Submitter])
-        assert(result.id == "test")
-        assert(result.institution == "UCSD")
+        assert(result.getEmailAddress == "test")
+        assert(result.getInstitution == "UCSD")
       }
 
       "cannot list other's submitters when authenticated" in {
@@ -120,25 +122,25 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
       "can list and view all submitters as admin" in {
         val result: Array[Submitter] = authenticate().when().contentType("application/json; charset=UTF-8").get(s"/submitters").`then`().statusCode(200).extract().as(classOf[Array[Submitter]])
         assert(result.length == 1)
-        assert(result.head.id == "test")
-        assert(result.head.institution == "UCSD")
+        assert(result.head.getEmailAddress == "test")
+        assert(result.head.getInstitution == "UCSD")
 
         authenticate().when().contentType("application/json; charset=UTF-8").get(s"/submitters/test").`then`().statusCode(200).extract().as(classOf[Submitter])
       }
 
       "handle full email addresses" should {
         "can create a test user with a full email address" in {
-          userRepository.save(User("test@test.com", "test-secret"))
-          submitterRepository.save(Submitter("test@test.com", "test@test.com", "Test", "User", "UC Davis"))
+          userRepository.save(new Users("test@test.com", "test-secret"))
+          submitterRepository.save(new Submitter("test@test.com",  "Test", "User", "UC Davis"))
 
-          assert(userRepository.existsById("test@test.com"))
-          assert(submitterRepository.existsById("test@test.com"))
+          assert(userRepository.existsByEmailAddress("test@test.com"))
+          assert(submitterRepository.existsByEmailAddress("test@test.com"))
         }
 
         "can access submitter information with full email address if logged in as that user" in {
           val result: Submitter = authenticate("test@test.com", "test-secret").when().contentType("application/json; charset=UTF-8").get(s"/submitters/test@test.com").`then`().statusCode(200).extract().as(classOf[Submitter])
-          assert(result.id == "test@test.com")
-          assert(result.institution == "UC Davis")
+          assert(result.getEmailAddress == "test@test.com")
+          assert(result.getInstitution == "UC Davis")
 
           given().when().contentType("application/json; charset=UTF-8").get(s"/submitters/test@test.com").`then`().statusCode(401)
           authenticate("test", "test-secret").when().contentType("application/json; charset=UTF-8").get(s"/submitters/test@test.com").`then`().statusCode(403)
@@ -148,4 +150,3 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
     }
   }
 }
-*/
