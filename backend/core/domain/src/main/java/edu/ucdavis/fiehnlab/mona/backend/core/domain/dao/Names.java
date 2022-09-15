@@ -6,12 +6,18 @@ import java.util.Objects;
 public class Names implements Serializable {
     private Boolean computed;
     private String name;
-    private Long score;
+    private Double score;
     private String source;
 
     public Names() {
     }
 
+    public Names(Boolean computed, String name, Double score, String source) {
+        this.computed = computed;
+        this.name = name;
+        this.score = score;
+        this.source = source;
+    }
     public Boolean getComputed() {
         return computed;
     }
@@ -20,11 +26,27 @@ public class Names implements Serializable {
         return name;
     }
 
-    public Long getScore() {
+    public Double getScore() {
         return score;
     }
 
     public String getSource() { return source;}
+
+    public void setComputed(Boolean computed) {
+        this.computed = computed;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     @Override
     public boolean equals(Object o) {

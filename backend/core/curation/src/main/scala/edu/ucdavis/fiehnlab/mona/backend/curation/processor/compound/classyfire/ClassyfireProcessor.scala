@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire
 
 import java.net.InetAddress
-
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CompoundProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
@@ -12,8 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.web.client.{HttpStatusCodeException, RestOperations}
 
-import scala.collection.mutable.ArrayBuffer
-
+import scala.collection.mutable
+import scala.collection.mutable.{ArrayBuffer, Buffer}
+import scala.jdk.CollectionConverters._
 /**
   * this class connects to the external classifier processor and computes classification information for this spectra
   */
@@ -47,18 +47,20 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   override def process(spectrum: Spectrum): Spectrum = {
 
     if (isReachable) {
-      logger.info(s"${spectrum.id}: Retrieving classification data from ClassyFire")
+      logger.info(s"${spectrum.getId}: Retrieving classification data from ClassyFire")
 
-      val compounds = spectrum.compound.map(compound =>
-        if (compound.classification == null) {
-          classify(compound.copy(classification = Array[MetaData]()), spectrum.id)
+      val compounds = spectrum.getCompound.asScala.map(compound =>
+        if (compound.getClassification == null) {
+          compound.setClassification(Buffer[MetaDataDAO]().asJava)
+          classify(compound, spectrum.getId)
         } else {
-          classify(compound, spectrum.id)
+          classify(compound, spectrum.getId)
         }
       )
-      spectrum.copy(compound = compounds)
+      spectrum.setCompound(compounds.asJava)
+      spectrum
     } else {
-      logger.error(s"${spectrum.id}: ClassyFire is unreachable!")
+      logger.error(s"${spectrum.getId}: ClassyFire is unreachable!")
       spectrum
     }
   }
@@ -69,27 +71,27 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     * @param compound
     * @return
     */
-  def classify(compound: Compound, id: String): Compound = {
+  def classify(compound: CompoundDAO, id: String): CompoundDAO = {
     // Look for a ClassyFire query id
-    val classyfireQueryId: Array[MetaData] = compound.classification.filter(_.name == "ClassyFire Query ID")
+    val classyfireQueryId: Buffer[MetaDataDAO] = compound.getClassification.asScala.filter(_.getName == "ClassyFire Query ID")
 
     // Find provided or calculated InChIKey
     val inchiKey: String =
-      if (compound.metaData.exists(x => x.name == CommonMetaData.INCHI_KEY && x.computed)) {
+      if (compound.getMetaData.asScala.exists(x => x.getName == CommonMetaData.INCHI_KEY && x.getComputed)) {
         logger.info(s"Getting computed inchikey")
-        compound.metaData.filter(x => x.name == CommonMetaData.INCHI_KEY && x.computed).map(_.value.toString).headOption.orNull
+        compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.INCHI_KEY && x.getComputed).map(_.getValue.toString).headOption.orNull
       } else {
         logger.info(s"Getting submitted inchikey")
-        compound.inchiKey
+        compound.getInchiKey
       }
     // Retrieve classyfire query
-    if (compound.classification.length > classyfireQueryId.length) {
+    if (compound.getClassification.size() > classyfireQueryId.length) {
       logger.info(s"$id: Already have ClassyFire data, skipping...")
       compound
     }
 
     else if (classyfireQueryId.nonEmpty) {
-      val url = s"http://classyfire.wishartlab.com/queries/${classyfireQueryId.head.value.toString}.json"
+      val url = s"http://classyfire.wishartlab.com/queries/${classyfireQueryId.head.getValue.toString}.json"
       logger.info(s"$id: Invoking url: $url")
 
       try {
@@ -110,12 +112,12 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
             compound
           }
         } else {
-          logger.warn(s"$id: Received status code ${result.getStatusCode} for query id ${compound.inchiKey}")
+          logger.warn(s"$id: Received status code ${result.getStatusCode} for query id ${compound.getInchiKey}")
           scheduleClassification(compound, id)
         }
       } catch {
         case x: HttpStatusCodeException =>
-          logger.warn(s"$id: Received status code ${x.getStatusCode} for ${compound.inchiKey}")
+          logger.warn(s"$id: Received status code ${x.getStatusCode} for ${compound.getInchiKey}")
           scheduleClassification(compound, id)
       }
     }
@@ -138,12 +140,12 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
           logger.info(s"$id: ClassyFire request successful")
           processClassification(compound, id, result.getBody, url)
         } else {
-          logger.warn(s"$id: Received status code ${result.getStatusCode} for ${compound.inchiKey}")
+          logger.warn(s"$id: Received status code ${result.getStatusCode} for ${compound.getInchiKey}")
           scheduleClassification(compound, id)
         }
       } catch {
         case x: HttpStatusCodeException =>
-          logger.warn(s"$id: Received status code ${x.getStatusCode} for ${compound.inchiKey}")
+          logger.warn(s"$id: Received status code ${x.getStatusCode} for ${compound.getInchiKey}")
           scheduleClassification(compound, id)
       }
     }
@@ -156,37 +158,48 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     * @param classification
     * @return
     */
-  def processClassification(compound: Compound, id: String, classification: ClassyfireResult, url: String): Compound = {
+  def processClassification(compound: CompoundDAO, id: String, classification: ClassyfireResult, url: String): CompoundDAO = {
 
-    val buffer: ArrayBuffer[MetaData] = ArrayBuffer()
+    val buffer: ArrayBuffer[MetaDataDAO] = ArrayBuffer()
 
-    if (classification.kingdom != null)
-      buffer += MetaData("classification", computed = true, hidden = false, "kingdom", null, null, null, classification.kingdom.name)
+    if (classification.kingdom != null) {
+      val metaData = new MetaDataDAO(null, "kingdom", classification.kingdom.name, false, "classification", true, null)
+      buffer += metaData
+    }
 
-    if (classification.superclass != null)
-      buffer += MetaData("classification", computed = true, hidden = false, "superclass", null, null, null, classification.superclass.name)
+    if (classification.superclass != null) {
+      val metaData = new MetaDataDAO(null, "superclass", classification.superclass.name, false, "classification", true, null)
+      buffer += metaData
+    }
 
-    if (classification.`class` != null)
-      buffer += MetaData("classification", computed = true, hidden = false, "class", null, null, null, classification.`class`.name)
+    if (classification.`class` != null) {
+      val metaData = new MetaDataDAO(null, "class", classification.`class`.name, false, "classification", true, null)
+      buffer += metaData
+    }
 
-    if (classification.subclass != null)
-      buffer += MetaData("classification", computed = true, hidden = false, "subclass", null, null, null, classification.subclass.name)
+    if (classification.subclass != null) {
+      val metaData = new MetaDataDAO(null, "subclass", classification.subclass.name, false, "classification", true, null)
+      buffer += metaData
+    }
 
     if (classification.intermediate_nodes != null) {
       var level = 1
       classification.intermediate_nodes.foreach { parent =>
-        buffer += MetaData("classification", computed = true, hidden = false, s"direct parent level $level", null, null, null, parent.name)
+        val metaData = new MetaDataDAO(null, s"direct parent level $level", parent.name, false, "classification", true, null)
+        buffer += metaData
         level = level + 1
       }
     }
 
     if (classification.direct_parent != null && classification.direct_parent.name != null) {
-      buffer += MetaData("classification", computed = true, hidden = false, "direct parent", null, null, null, classification.direct_parent.name)
+      val metaData = new MetaDataDAO(null, "direct parent", classification.direct_parent.name, false, "classification", true, null)
+      buffer += metaData
     }
 
     if (classification.alternative_parents != null) {
       classification.alternative_parents.foreach { parent =>
-        buffer += MetaData("classification", computed = true, hidden = false, "alternative parent", null, null, null, parent.name)
+        val metaData = new MetaDataDAO(null, "alternative parent", parent.name, false, "classification", true, null)
+        buffer += metaData
       }
     }
 
@@ -204,13 +217,14 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     //      }
     //    }
 
-    if (compound.classification != null) {
-      compound.classification.foreach {
+    if (compound.getClassification != null) {
+      compound.getClassification.asScala.foreach {
         buffer += _
       }
     }
 
-    compound.copy(classification = buffer.toArray)
+    compound.setClassification(buffer.asJava)
+    compound
   }
 
   /**
@@ -218,17 +232,17 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     *
     * @param compound
     */
-  def scheduleClassification(compound: Compound, id: String): Compound = {
+  def scheduleClassification(compound: CompoundDAO, id: String): CompoundDAO = {
 
     logger.info(s"$id: Scheduling compound classification from structure")
 
     // Submit InChI or SMILES if available, sorted
-    val inchikey: Array[MetaData] = compound.metaData.filter(x => x.name == CommonMetaData.INCHI_CODE && x.computed)
-    val smiles: Array[MetaData] = compound.metaData.filter(x => x.name == CommonMetaData.SMILES && x.computed)
+    val inchikey: Buffer[MetaDataDAO] = compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.INCHI_CODE && x.getComputed)
+    val smiles: mutable.Buffer[MetaDataDAO] = compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.SMILES && x.getComputed)
 
     val structure: String =
-      if (inchikey.nonEmpty) inchikey.head.value.toString
-      else if (smiles.nonEmpty) smiles.head.value.toString
+      if (inchikey.nonEmpty) inchikey.head.getValue.toString
+      else if (smiles.nonEmpty) smiles.head.getValue.toString
       else ""
 
     if (structure != null) {
@@ -240,14 +254,15 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
         if (result.getStatusCode == HttpStatus.OK) {
           logger.info(s"$id: Scheduled with query id ${result.getBody.id}")
-          compound.copy(classification = Array(MetaData("none", computed = false, hidden = true, "ClassyFire Query ID", null, null, null, result.getBody.id)))
+          compound.setClassification(ArrayBuffer[MetaDataDAO](new MetaDataDAO(null, "ClassyFire Query ID", result.getBody.id.toString, true, "none", false, null)).asJava)
+          compound
         } else {
           logger.info(s"$id: Received status code ${result.getStatusCode} for $structure")
           compound
         }
       } catch {
         case x: HttpStatusCodeException =>
-          logger.warn(s"$id: Received status code ${x.getStatusCode} for ${compound.inchiKey}")
+          logger.warn(s"$id: Received status code ${x.getStatusCode} for ${compound.getInchiKey}")
           compound
       }
     } else {

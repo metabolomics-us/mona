@@ -10,6 +10,11 @@ public class Impacts implements Serializable {
     public Impacts() {
     }
 
+    public Impacts(Double value, String reason) {
+        this.value = value;
+        this.reason = reason;
+    }
+
    public Double getValue() { return value; }
 
     public String getReason() {

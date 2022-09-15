@@ -1,12 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.chemspider
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestOperations
+
+import scala.collection.mutable.Buffer
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 4/6/17.
@@ -21,19 +24,20 @@ class FetchChemSpiderCompoundData extends ItemProcessor[Spectrum, Spectrum] with
 
 
   override def process(spectrum: Spectrum): Spectrum = {
-    val updatedCompound: Array[Compound] = spectrum.compound.map(compound => fetchCompoundData(compound, spectrum.id))
+    val updatedCompound: Buffer[CompoundDAO] = spectrum.getCompound.asScala.map(compound => fetchCompoundData(compound, spectrum.getId))
 
     // Assembled spectrum with updated compounds
-    spectrum.copy(compound = updatedCompound)
+    spectrum.setCompound(updatedCompound.asJava)
+    spectrum
   }
 
   /**
-    * Requests compound properties from ChemSpider
-    *
-    * @param compound
-    * @return
-    */
-  def fetchCompoundData(compound: Compound, id: String): Compound = {
+   * Requests compound properties from ChemSpider
+   *
+   * @param compound
+   * @return
+   */
+  def fetchCompoundData(compound: CompoundDAO, id: String): CompoundDAO = {
     compound
   }
 

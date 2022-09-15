@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller
 
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{Roles, Users}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles, Users}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest

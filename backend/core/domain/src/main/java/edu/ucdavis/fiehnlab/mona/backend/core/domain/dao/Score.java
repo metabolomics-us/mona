@@ -13,6 +13,13 @@ public class Score implements Serializable {
     public Score() {
     }
 
+    public Score(List<Impacts> impacts, Double score, Double relativeScore, Double scaledScore) {
+        this.impacts = impacts;
+        this.score = score;
+        this.relativeScore = relativeScore;
+        this.scaledScore = scaledScore;
+    }
+
     public List<Impacts> getImpacts() {
         return impacts;
     }
@@ -27,6 +34,22 @@ public class Score implements Serializable {
 
     public Double getScaledScore() {
         return scaledScore;
+    }
+
+    public void setImpacts(List<Impacts> impacts) {
+        this.impacts = impacts;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public void setRelativeScore(Double relativeScore) {
+        this.relativeScore = relativeScore;
+    }
+
+    public void setScaledScore(Double scaledScore) {
+        this.scaledScore = scaledScore;
     }
 
     @Override

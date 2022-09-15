@@ -1,9 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain._
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao._
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
+import scala.collection.mutable.Buffer
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 3/11/16.
@@ -18,35 +20,33 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    logger.info(s"${spectrum.id}: Filtering computed data")
+    logger.info(s"${spectrum.getId}: Filtering computed data")
 
-    val filteredCompound: Array[Compound] =
-      if (spectrum.compound != null) {
-        spectrum.compound.map(compound =>
-          compound.copy(
-            metaData = filterMetaData(compound.metaData),
-            names = filterNames(compound.names),
-            tags = filterTags(compound.tags)
-          )
-        )
+    val filteredCompound: Buffer[CompoundDAO] =
+      if (spectrum.getCompound != null) {
+        spectrum.getCompound.asScala.map { compound =>
+          compound.setMetaData(filterMetaData(compound.getMetaData.asScala).asJava)
+          compound.setNames(filterNames(compound.getNames.asScala).asJava)
+          compound.setTags(filterTags(compound.getTags.asScala).asJava)
+          compound
+        }
       } else {
-        Array()
+        Buffer[CompoundDAO]()
       }
 
-    val filteredMetaData: Array[MetaData] = filterMetaData(spectrum.metaData)
-    val filteredTags: Array[Tags] = filterTags(spectrum.tags)
+    val filteredMetaData: Buffer[MetaDataDAO] = filterMetaData(spectrum.getMetaData.asScala)
+    val filteredTags: Buffer[TagDAO] = filterTags(spectrum.getTags.asScala)
 
-    logger.info(s"${spectrum.id}: Filtered metadata from ${Option(spectrum.metaData).getOrElse(Array()).length} -> ${filteredMetaData.length}")
-    logger.info(s"${spectrum.id}: Filtered tags from ${Option(spectrum.tags).getOrElse(Array()).length} -> ${filteredTags.length}")
+    logger.info(s"${spectrum.getId}: Filtered metadata from ${Option(spectrum.getMetaData.asScala).getOrElse(Buffer[MetaDataDAO]()).length} -> ${filteredMetaData.length}")
+    logger.info(s"${spectrum.getId}: Filtered tags from ${Option(spectrum.getTags.asScala).getOrElse(Buffer[TagDAO]()).length} -> ${filteredTags.length}")
 
     // Assembled filtered spectrum
-    spectrum.copy(
-      compound = filteredCompound,
-      metaData = filteredMetaData,
-      splash = null,
-      score = Score(Array(), 0.0),
-      tags = filteredTags
-    )
+    spectrum.setCompound(filteredCompound.asJava)
+    spectrum.setMetaData(filteredMetaData.asJava)
+    spectrum.setSplash(null)
+    spectrum.setScore(new Score(Buffer[Impacts]().asJava, 0.0, 0.0, 0.0))
+    spectrum.setTags(filteredTags.asJava)
+    spectrum
   }
 
   /**
@@ -55,11 +55,11 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     * @param metaData
     * @return
     */
-  def filterMetaData(metaData: Array[MetaData]): Array[MetaData] = {
+  def filterMetaData(metaData: Buffer[MetaDataDAO]): Buffer[MetaDataDAO] = {
     if (metaData != null) {
-      metaData.filter(!_.computed)
+      metaData.filter(!_.getComputed)
     } else {
-      Array()
+      Buffer[MetaDataDAO]()
     }
   }
 
@@ -69,11 +69,11 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     * @param names
     * @return
     */
-  def filterNames(names: Array[Names]): Array[Names] = {
+  def filterNames(names: Buffer[Names]): Buffer[Names] = {
     if (names != null) {
-      names.filter(!_.computed)
+      names.filter(!_.getComputed)
     } else {
-      Array()
+      Buffer[Names]()
     }
   }
 
@@ -83,11 +83,11 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     * @param tags
     * @return
     */
-  def filterTags(tags: Array[Tags]): Array[Tags] = {
+  def filterTags(tags: Buffer[TagDAO]): Buffer[TagDAO] = {
     if (tags != null) {
-      tags.filter(!_.ruleBased)
+      tags.filter(!_.getRuleBased)
     } else {
-      Array()
+      Buffer[TagDAO]()
     }
   }
 }

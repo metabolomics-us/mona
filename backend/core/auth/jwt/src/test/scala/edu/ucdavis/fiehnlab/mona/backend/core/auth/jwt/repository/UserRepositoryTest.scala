@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository
 
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.{EmbeddedAuthConfig, JWTAuthenticationConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Users
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Users
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

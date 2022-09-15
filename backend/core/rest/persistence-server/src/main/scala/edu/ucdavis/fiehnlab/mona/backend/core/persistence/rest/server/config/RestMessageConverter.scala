@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
 import java.util
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.DomainWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.msp.MSPWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.png.PNGWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.io.sdf.SDFWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.png.PNGWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf.SDFWriter
 import org.springframework.http.{HttpInputMessage, HttpOutputMessage, MediaType}
 import org.springframework.http.converter.AbstractHttpMessageConverter
 

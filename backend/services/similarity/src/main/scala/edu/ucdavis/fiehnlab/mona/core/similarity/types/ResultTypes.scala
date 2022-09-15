@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.types
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 
 /**
   * Created by sajjan on 12/28/16.
@@ -28,5 +28,5 @@ case class SearchResult(hit: Spectrum, score: Double) extends Ordered[SearchResu
 
   override def compare(that: SearchResult): Int = this.score.compareTo(that.score)
 
-  override def toString: String = s"${hit.splash}: $score"
+  override def toString: String = s"${hit.getSplash.getSplash}: $score"
 }

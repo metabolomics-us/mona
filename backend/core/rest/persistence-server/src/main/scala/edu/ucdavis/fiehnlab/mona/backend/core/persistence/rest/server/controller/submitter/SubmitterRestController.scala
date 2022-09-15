@@ -6,7 +6,7 @@ import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.{ServletRequest, ServletResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Submitter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository

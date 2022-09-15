@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{Buffer, ArrayBuffer}
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 4/16/16.
@@ -22,8 +23,8 @@ class NormalizeDerivatizationTypeValue extends ItemProcessor[Spectrum, Spectrum]
     */
   override def process(spectrum: Spectrum): Spectrum = {
 
-    val metaData: Array[MetaData] = spectrum.metaData
-    val matches: Array[MetaData] = metaData.filter(_.name.toLowerCase == CommonMetaData.DERIVATIZATION_TYPE.toLowerCase)
+    val metaData: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala
+    val matches: Buffer[MetaDataDAO] = metaData.filter(_.getName.toLowerCase == CommonMetaData.DERIVATIZATION_TYPE.toLowerCase)
 
     null
   }

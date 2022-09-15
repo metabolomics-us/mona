@@ -1,0 +1,14 @@
+#basic configuration how to connect to the configuration server
+spring:
+  application:
+    name: bootstrap-service
+  config:
+    import: optional:configserver:${SPRING_CONFIG_URI:http://localhost:1111}
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+
+
+#basic information who we are
+info:
+  component: MoNA Bootstrap Service

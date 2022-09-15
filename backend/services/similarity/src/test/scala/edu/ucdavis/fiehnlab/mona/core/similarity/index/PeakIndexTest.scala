@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.core.similarity.index
 import java.io.InputStreamReader
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 import org.scalatest.matchers.should.Matchers
@@ -21,7 +21,7 @@ class PeakIndexTest extends AnyWordSpec with Matchers with LazyLogging {
     val records: Array[SimpleSpectrum] = JSONDomainReader
       .create[Array[Spectrum]]
       .read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-      .map(s => new SimpleSpectrum(s.id, s.spectrum))
+      .map(s => new SimpleSpectrum(s.getId, s.getSpectrum))
 
     val spectrum: SimpleSpectrum = records.head
 

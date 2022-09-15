@@ -14,7 +14,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.{Se
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.synchronization.CountListener
 import th.co.geniustree.springdata.jpa.repository.support.JpaSpecificationExecutorWithProjectionImpl
 
-@EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain", "edu.ucdavis.fiehnlab.mona.backend.core.domain.dao"))
+@EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.domain"))
 @Configuration
 @Import(Array(classOf[DomainConfig], classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration]))
 @ComponentScan(basePackageClasses = Array(classOf[SpectrumPersistenceService],  classOf[CountListener],

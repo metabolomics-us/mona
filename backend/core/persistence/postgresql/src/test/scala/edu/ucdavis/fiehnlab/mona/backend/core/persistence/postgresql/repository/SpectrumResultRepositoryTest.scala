@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 
 import java.io.InputStreamReader
 

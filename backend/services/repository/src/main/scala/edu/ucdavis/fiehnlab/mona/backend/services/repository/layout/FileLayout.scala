@@ -1,12 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.repository.layout
 
-import java.io.File
-import java.util.Calendar
+import com.typesafe.scalalogging.LazyLogging
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Spectrum}
+import java.io.File
+import java.util.{Calendar, Locale}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CurationUtilities
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
+
+import java.text.SimpleDateFormat
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlg_000 on 5/17/2016.
@@ -43,7 +47,7 @@ class InchiKeyLayout(val baseDir: File) extends FileLayout {
     * @param spectrum
     * @return
     */
-  override def layout(spectrum: Spectrum): File = new File(baseDir, spectrum.compound(0).inchiKey)
+  override def layout(spectrum: Spectrum): File = new File(baseDir, spectrum.getCompound.get(0).getInchiKey)
 }
 
 /**
@@ -51,7 +55,7 @@ class InchiKeyLayout(val baseDir: File) extends FileLayout {
   *
   * @param baseDir
   */
-class YearMonthDayInchiKeyLayout(val baseDir: File) extends FileLayout {
+class YearMonthDayInchiKeyLayout(val baseDir: File) extends FileLayout with LazyLogging{
   /**
     * defines a layout where to store the given spectrum
     * on a file system
@@ -61,13 +65,18 @@ class YearMonthDayInchiKeyLayout(val baseDir: File) extends FileLayout {
     */
   override def layout(spectrum: Spectrum): File = {
     val calendar = Calendar.getInstance()
-    calendar.setTime(spectrum.lastUpdated)
+    val formatter: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+    logger.info(s"${spectrum.getLastUpdated}")
+    calendar.setTime(formatter.parse(spectrum.getLastUpdated))
+    logger.info(s"${formatter.parse(spectrum.getLastUpdated)}")
 
     val year = new File(baseDir, calendar.get(Calendar.YEAR).toString)
     val yearMonth = new File(year, calendar.get(Calendar.MONTH).toString)
     val yearMonthDay = new File(yearMonth, calendar.get(Calendar.DAY_OF_MONTH).toString)
 
-    new File(yearMonthDay, spectrum.compound(0).inchiKey)
+    logger.info(s"Year month day is: ${yearMonthDay}")
+
+    new File(yearMonthDay, spectrum.getCompound.get(0).getInchiKey)
   }
 }
 
@@ -81,7 +90,7 @@ class SubmitterInchiKeySplashId(val baseDir: File) extends FileLayout {
     */
   override def layout(spectrum: Spectrum): File = {
 
-    var institution = spectrum.submitter.institution
+    var institution = spectrum.getSubmitter.getInstitution
 
     if (institution == null) {
       institution = "None"
@@ -93,18 +102,18 @@ class SubmitterInchiKeySplashId(val baseDir: File) extends FileLayout {
     val submitterDir = new File(baseDir, institution)
 
 
-    var compound: Compound = CurationUtilities.getFirstBiologicalCompound(spectrum)
+    var compound: CompoundDAO = CurationUtilities.getFirstBiologicalCompound(spectrum)
 
     if (compound == null) {
-      compound = spectrum.compound.head
+      compound = spectrum.getCompound.asScala.head
     }
 
     val inchiKey: String =
-      if (compound.inchiKey != null) compound.inchiKey
-      else compound.metaData.filter(_.name == "InChIKey").map(_.value.toString).headOption.getOrElse("none")
+      if (compound.getInchiKey != null) compound.getInchiKey
+      else compound.getMetaData.asScala.filter(_.getName == "InChIKey").map(_.getValue.toString).headOption.getOrElse("none")
 
     val inchiKeyDir = new File(submitterDir, inchiKey)
-    val splashDir = new File(inchiKeyDir, SplashUtil.splash(spectrum.spectrum, SpectraType.MS))
+    val splashDir = new File(inchiKeyDir, SplashUtil.splash(spectrum.getSpectrum, SpectraType.MS))
 
     splashDir
   }

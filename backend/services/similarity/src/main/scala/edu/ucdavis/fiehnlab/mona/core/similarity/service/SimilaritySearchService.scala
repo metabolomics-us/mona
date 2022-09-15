@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.core.similarity.types._
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 class SimilaritySearchService extends LazyLogging {
 
   @Autowired
-  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
+  val spectrumResultRepository: SpectrumResultRepository = null
 
   @Autowired
   val indexUtils: IndexUtils = null
@@ -58,7 +58,7 @@ class SimilaritySearchService extends LazyLogging {
       // Sort by score and return SearchResult objects
       .sortBy(-_.score)
       .take(size)
-      .map(x => SearchResult(spectrumMongoRepository.findById(x.hit.id).get(), x.score))
+      .map(x => SearchResult(spectrumResultRepository.findByMonaId(x.hit.id).getSpectrum, x.score))
   }
 
   /**
@@ -73,7 +73,7 @@ class SimilaritySearchService extends LazyLogging {
       .view
       .filter(spectrum => request.peaks.forall(mz => spectrum.ions.exists(ion => Math.abs(ion.mz - mz) <= searchTolerance)))
       .take(size)
-      .map(x => SearchResult(spectrumMongoRepository.findById(x.id).get(), 1))
+      .map(x => SearchResult(spectrumResultRepository.findByMonaId(x.id).getSpectrum, 1))
       .toArray
   }
 

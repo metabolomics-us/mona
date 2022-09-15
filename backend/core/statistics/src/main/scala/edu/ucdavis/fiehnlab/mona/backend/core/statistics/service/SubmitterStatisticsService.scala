@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views.SpectraSubmitters
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsSubmitter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.views.SpectraSubmitters
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmitter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsSubmitterRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SpectraSubmittersRepository
 import org.springframework.beans.factory.annotation.Autowired

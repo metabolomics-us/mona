@@ -54,7 +54,7 @@ public class Spectrum implements Serializable {
 
     private String dateCreated = new Date().toString();
 
-    private String lastCurated = new Date().toString();
+    private String lastCurated;
 
     @Type(type = "json")
     @Column(name = "splash", columnDefinition = "jsonb")
@@ -76,20 +76,36 @@ public class Spectrum implements Serializable {
     public Spectrum() {
     }
 
+    public Spectrum(List<CompoundDAO> compound, String id, List<MetaDataDAO> metaData, List<MetaDataDAO> annotations, Score score, String spectrum, String lastUpdated, String dateCreated, String lastCurated, Splash splash, SubmitterDAO submitter, List<TagDAO> tags, LibraryDAO library) {
+        this.compound = compound;
+        this.id = id;
+        this.metaData = metaData;
+        this.annotations = annotations;
+        this.score = score;
+        this.spectrum = spectrum;
+        this.lastUpdated = lastUpdated;
+        this.dateCreated = dateCreated;
+        this.lastCurated = lastCurated;
+        this.splash = splash;
+        this.submitter = submitter;
+        this.tags = tags;
+        this.library = library;
+    }
+
     public Spectrum(Spectrum spectrum) {
-        this.compound = spectrum.compound;
-        this.id = spectrum.id;
-        this.metaData = spectrum.metaData;
-        this.annotations = spectrum.annotations;
-        this.score = spectrum.score;
-        this.spectrum = spectrum.spectrum;
-        this.lastUpdated = spectrum.lastUpdated;
-        this.dateCreated = spectrum.dateCreated;
-        this.lastCurated = spectrum.lastCurated;
-        this.splash = spectrum.splash;
-        this.submitter = spectrum.submitter;
-        this.tags = spectrum.tags;
-        this.library = spectrum.library;
+        this.compound = spectrum.getCompound();
+        this.id = spectrum.getId();
+        this.metaData = spectrum.getMetaData();
+        this.annotations = spectrum.getAnnotations();
+        this.score = spectrum.getScore();
+        this.spectrum = spectrum.getSpectrum();
+        this.lastUpdated = spectrum.getLastUpdated();
+        this.dateCreated = spectrum.getDateCreated();
+        this.lastCurated = spectrum.getLastCurated();
+        this.splash = spectrum.getSplash();
+        this.submitter = spectrum.getSubmitter();
+        this.tags = spectrum.getTags();
+        this.library = spectrum.getLibrary();
     }
 
     public List<CompoundDAO> getCompound() {

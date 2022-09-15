@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.service
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.IndexType.IndexType
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{IndexType, SimpleSpectrum}
@@ -14,6 +15,9 @@ import org.springframework.context.ApplicationListener
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.stereotype.Service
 
+import scala.jdk.CollectionConverters._
+import scala.collection.mutable.Buffer
+
 /**
   * Created by sajjan on 1/3/17.
   */
@@ -21,7 +25,7 @@ import org.springframework.stereotype.Service
 class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent] with LazyLogging {
 
   @Autowired
-  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
+  val spectrumResultRepository: SpectrumResultRepository = null
 
   @Autowired
   val indexUtils: IndexUtils = null
@@ -38,18 +42,18 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
 
 
   private def addToIndex(spectrum: Spectrum, indexName: String, indexType: IndexType): Int = {
-    val precursorMZ: Option[MetaData] = spectrum.metaData.find(_.name == CommonMetaData.PRECURSOR_MASS)
-    val tags: Array[String] = spectrum.tags.map(_.text)
+    val precursorMZ: Option[MetaDataDAO] = spectrum.getMetaData.asScala.find(_.getName == CommonMetaData.PRECURSOR_MASS)
+    val tags: Buffer[String] = spectrum.getTags.asScala.map(_.getText)
 
     if (precursorMZ.isDefined) {
       try {
-        val precursorString: String = precursorMZ.get.value.toString
-        indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, precursorString.toDouble, tags), indexName, indexType)
+        val precursorString: String = precursorMZ.get.getValue.toString
+        indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, precursorString.toDouble, tags.toArray), indexName, indexType)
       } catch {
-        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, tags), indexName, indexType)
+        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, tags.toArray), indexName, indexType)
       }
     } else {
-      indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, tags), indexName, indexType)
+      indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, tags.toArray), indexName, indexType)
     }
   }
 
@@ -57,16 +61,16 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
   def populateIndices(): Unit = {
     logger.info("Populating indices...")
 
-    val it = new DynamicIterable[Spectrum, String](null, 10) {
-      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
-        spectrumMongoRepository.findAll(pageable)
+    val it = new DynamicIterable[SpectrumResult, String](null, 10) {
+      override def fetchMoreData(query: String, pageable: Pageable): Page[SpectrumResult] = {
+        spectrumResultRepository.findAll(pageable)
       }
     }.iterator
 
     var counter: Int = 0
 
     while (it.hasNext) {
-      val spectrum: Spectrum = it.next()
+      val spectrum: Spectrum = it.next().getSpectrum
 
       // Add precursor information if available
       val mainIndexSize: Int = addToIndex(spectrum, "default", IndexType.DEFAULT)
@@ -75,9 +79,9 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
       counter += 1
 
       if (counter % 10000 == 0) {
-        logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.id}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
+        logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.getId}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
       } else {
-        logger.debug(s"\tIndexed spectrum #$counter with id ${spectrum.id}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
+        logger.debug(s"\tIndexed spectrum #$counter with id ${spectrum.getId}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
       }
     }
 

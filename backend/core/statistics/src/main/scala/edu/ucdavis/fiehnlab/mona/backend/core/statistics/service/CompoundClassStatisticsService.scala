@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsCompoundClassesRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsCompoundClasses
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsCompoundClasses
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.{CompoundRepository}
 import org.springframework.beans.factory.annotation.{Autowired}
 import org.springframework.stereotype.Service

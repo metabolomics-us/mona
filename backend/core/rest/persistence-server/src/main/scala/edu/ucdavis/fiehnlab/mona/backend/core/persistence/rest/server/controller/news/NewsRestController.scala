@@ -2,7 +2,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.news
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.News
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.News
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.NewsRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}

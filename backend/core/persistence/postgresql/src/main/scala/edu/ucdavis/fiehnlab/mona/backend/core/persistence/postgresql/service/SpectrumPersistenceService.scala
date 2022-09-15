@@ -6,8 +6,8 @@ import cz.jirutka.rsql.parser.RSQLParser
 import cz.jirutka.rsql.parser.ast.{ComparisonOperator, Node}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventScheduler}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views.SearchTable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{SpectrumResult, SpectrumResultId}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.views.SearchTable
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{SpectrumResult, SpectrumResultId}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository.SparseSearchTable

@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 
 import java.util.concurrent.Future
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.MetaDataStatisticsService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.{MetaDataValueCount, StatisticsMetaData}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.{MetaDataValueCount, StatisticsMetaData}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{RequestParam, _}

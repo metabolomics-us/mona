@@ -6,11 +6,11 @@ import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsTag
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsMetaData
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsGlobal
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsCompoundClasses
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsSubmitter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsTag
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsCompoundClasses
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmitter
 
 /**
   * Created by sajjan on 8/4/16.

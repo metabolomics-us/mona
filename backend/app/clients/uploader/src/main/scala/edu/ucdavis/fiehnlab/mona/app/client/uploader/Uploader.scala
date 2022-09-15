@@ -1,14 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.app.client.uploader
 
-import org.springframework.boot.SpringApplication
+import org.springframework.boot.{SpringApplication, WebApplicationType}
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchAutoConfiguration, ElasticsearchDataAutoConfiguration}
 
 /**
   * Created by wohlg on 3/19/2016.
   */
 
-@SpringBootApplication(exclude = Array(classOf[ElasticsearchDataAutoConfiguration], classOf[ElasticsearchAutoConfiguration]))
+@SpringBootApplication()
 class Uploader {
 
 }
@@ -18,7 +17,7 @@ class Uploader {
   */
 object Uploader extends App {
   val app = new SpringApplication(classOf[Uploader])
-  app.setWebEnvironment(false)
+  app.setWebApplicationType(WebApplicationType.NONE)
 
   val context = app.run(args: _*)
 }

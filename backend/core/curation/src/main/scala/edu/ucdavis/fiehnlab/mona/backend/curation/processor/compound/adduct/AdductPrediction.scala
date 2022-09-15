@@ -1,11 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.adduct
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, CompoundDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical.AdductBuilder
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 1/19/18.
@@ -23,22 +24,22 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
     */
   override def process(spectrum: Spectrum): Spectrum = {
     // Get computed total exact mass from the biological compound if it exists
-    val biologicalCompound: Compound =
-      if (spectrum.compound.exists(_.kind == "biological")) {
-        spectrum.compound.find(_.kind == "biological").head
-      } else if (spectrum.compound.nonEmpty) {
-        spectrum.compound.head
+    val biologicalCompound: CompoundDAO =
+      if (spectrum.getCompound.asScala.exists(_.getKind == "biological")) {
+        spectrum.getCompound.asScala.find(_.getKind == "biological").head
+      } else if (spectrum.getCompound.asScala.nonEmpty) {
+        spectrum.getCompound.asScala.head
       } else {
         null
       }
 
     if (biologicalCompound == null) {
-      logger.info(s"${spectrum.id}: Valid compound could not be found!")
+      logger.info(s"${spectrum.getId}: Valid compound could not be found!")
       spectrum
     } else {
       // Get total exact mass from biological compound
       val theoreticalMass: Double = {
-        val x: String = CurationUtilities.findMetaDataValue(biologicalCompound.metaData, CommonMetaData.TOTAL_EXACT_MASS)
+        val x: String = CurationUtilities.findMetaDataValue(biologicalCompound.getMetaData.asScala, CommonMetaData.TOTAL_EXACT_MASS)
 
         if (x == null) {
           -1
@@ -48,11 +49,11 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
       }
 
       // Get ionization mode
-      val ionizationMode: String = CurationUtilities.findMetaDataValue(spectrum.metaData, CommonMetaData.IONIZATION_MODE)
+      val ionizationMode: String = CurationUtilities.findMetaDataValue(spectrum.getMetaData.asScala, CommonMetaData.IONIZATION_MODE)
 
       // Get precursor mass and type from the spectrum if it exists
       val precursorMass: Double = {
-        val x: String = CurationUtilities.findMetaDataValue(spectrum.metaData, CommonMetaData.PRECURSOR_MASS)
+        val x: String = CurationUtilities.findMetaDataValue(spectrum.getMetaData.asScala, CommonMetaData.PRECURSOR_MASS)
 
         if (x == null) {
           -1
@@ -61,7 +62,7 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
             x.split('/').last.toDouble
           } catch {
             case e: Throwable =>
-              logger.warn(s"${spectrum.id}: Invalid precursor m/z: '$x'")
+              logger.warn(s"${spectrum.getId}: Invalid precursor m/z: '$x'")
               -1
           }
         }
@@ -69,7 +70,7 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
 
       // Handle the case where multiple precursor types are given separated by slashes
       val precursorType: String = {
-        val x: String = CurationUtilities.findMetaDataValue(spectrum.metaData, CommonMetaData.PRECURSOR_TYPE)
+        val x: String = CurationUtilities.findMetaDataValue(spectrum.getMetaData.asScala, CommonMetaData.PRECURSOR_TYPE)
 
         if (x == null) {
           x
@@ -83,23 +84,24 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
 
 
       if (theoreticalMass < 0) {
-        logger.info(s"${spectrum.id}: Computed exact mass was not found, unable to validate adduct/precursor information")
+        logger.info(s"${spectrum.getId}: Computed exact mass was not found, unable to validate adduct/precursor information")
         spectrum
       }
 
       else if (precursorMass < 0 && adductFunction == null) {
-        logger.info(s"${spectrum.id}: Precursor m/z and type were not found, unable to validate adduct/precursor information")
+        logger.info(s"${spectrum.getId}: Precursor m/z and type were not found, unable to validate adduct/precursor information")
         spectrum
       }
 
       // Predict a precursor mass
       else if (precursorMass < 0 && adductFunction != null) {
         val predictedPrecursorMass = adductFunction(theoreticalMass)
-        logger.info(s"${spectrum.id}: Predicting precursor m/z = $predictedPrecursorMass given theoretical mass = $theoreticalMass and adduct = $adductMatch")
+        logger.info(s"${spectrum.getId}: Predicting precursor m/z = $predictedPrecursorMass given theoretical mass = $theoreticalMass and adduct = $adductMatch")
 
-        spectrum.copy(
-          metaData = spectrum.metaData :+ MetaData("mass spectrometry", computed = true, hidden = false, CommonMetaData.PRECURSOR_MASS, null, null, null, predictedPrecursorMass)
-        )
+        val addedList = spectrum.getMetaData
+        addedList.add(new MetaDataDAO(null, CommonMetaData.PRECURSOR_MASS, predictedPrecursorMass.toString, false, "mass spectrometry", true, null))
+        spectrum.setMetaData(addedList)
+        spectrum
       }
 
       // Predict a precursor type
@@ -117,26 +119,27 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
         val (dist, predictedAdduct): (Double, String) = adductMap.map { case (x, f) => (Math.abs(f(theoreticalMass) - precursorMass), x) }.minBy(_._1)
 
         if (dist < PRECURSOR_MATCH_TOLERANCE) {
-          logger.info(s"${spectrum.id}: Predicting precursor type = $predictedAdduct given theoretical mass = $theoreticalMass, precursor m/z = $precursorMass and delta = $dist")
+          logger.info(s"${spectrum.getId}: Predicting precursor type = $predictedAdduct given theoretical mass = $theoreticalMass, precursor m/z = $precursorMass and delta = $dist")
 
-          spectrum.copy(
-            metaData = spectrum.metaData :+ MetaData("mass spectrometry", computed = true, hidden = false, CommonMetaData.PRECURSOR_TYPE, null, null, null, predictedAdduct)
-          )
+          val addedList = spectrum.getMetaData
+          addedList.add(new MetaDataDAO(null, CommonMetaData.PRECURSOR_TYPE, predictedAdduct, false, "mass spectrometry", true, null))
+          spectrum.setMetaData(addedList)
+          spectrum
         } else {
-          logger.info(s"${spectrum.id}: Unable to determine precursor type given theoretical mass = $theoreticalMass, precursor m/z = $precursorMass and delta = $dist")
+          logger.info(s"${spectrum.getId}: Unable to determine precursor type given theoretical mass = $theoreticalMass, precursor m/z = $precursorMass and delta = $dist")
 
-          spectrum.copy(
-            score = CurationUtilities.addImpact(spectrum.score, -5, "Unable to determine a valid adduct for the provided compound and precursor m/z")
-          )
+          val score = CurationUtilities.addImpact(spectrum.getScore, -5, "Unable to determine a valid adduct for the provided compound and precursor m/z")
+          spectrum.setScore(score)
+          spectrum
         }
       }
 
       else {
-        logger.info(s"${spectrum.id}: Precursor information validated successfully")
+        logger.info(s"${spectrum.getId}: Precursor information validated successfully")
 
-        spectrum.copy(
-          score = CurationUtilities.addImpact(spectrum.score, 1, "Precursor information and provided compound validated")
-        )
+        val score = CurationUtilities.addImpact(spectrum.getScore, 1, "Precursor information and provided compound validated")
+        spectrum.setScore(score)
+        spectrum
       }
     }
   }

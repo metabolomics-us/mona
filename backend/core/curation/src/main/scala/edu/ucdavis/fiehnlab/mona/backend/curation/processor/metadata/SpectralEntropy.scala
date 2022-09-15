@@ -1,19 +1,20 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 
 import scala.math._
 import scala.util.control.Breaks._
 import org.springframework.batch.item.ItemProcessor
-
+import scala.jdk.CollectionConverters._
+import scala.collection.mutable.{Buffer, ArrayBuffer}
 @Step(description = "this step will calculate entropy for a given spectrum and update the metadata")
 class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   override def process(spectrum: Spectrum): Spectrum = {
-    val spec_a: String = spectrum.spectrum
+    val spec_a: String = spectrum.getSpectrum
     val array_a: Array[Array[Double]] = toArray(spec_a)
 
     val clean_a: Array[Array[Double]] = clean_spectrum(array_a)
@@ -30,11 +31,12 @@ class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging
     logger.info(s"Calculated Spectral Entropy is: ${entropy_a}")
     logger.info(s"Calculated Normalized Entropy is: ${normalized_entropy_a}")
 
-    val updatedMetaData: Array[MetaData] = spectrum.metaData :+
-      MetaData("computed", computed = true, hidden = false, CommonMetaData.SPECTRAL_ENTROPY, null, null, null, entropy_a) :+
-      MetaData("computed", computed = true, hidden = false, CommonMetaData.NORMALIZED_ENTROPY, null, null, null, normalized_entropy_a)
+    val updatedMetaData: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala :+
+      new MetaDataDAO(null, CommonMetaData.SPECTRAL_ENTROPY, entropy_a.toString, false, "computed", true, null) :+
+      new MetaDataDAO(null, CommonMetaData.NORMALIZED_ENTROPY, normalized_entropy_a.toString, false, "computed", true, null)
 
-    spectrum.copy(metaData = updatedMetaData)
+    spectrum.setMetaData(updatedMetaData.asJava)
+    spectrum
   }
 
   private def toArray(spec: String): Array[Array[Double]] = {

@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 
 import com.jayway.restassured.RestAssured
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.News
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.News
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import org.scalatest.concurrent.Eventually

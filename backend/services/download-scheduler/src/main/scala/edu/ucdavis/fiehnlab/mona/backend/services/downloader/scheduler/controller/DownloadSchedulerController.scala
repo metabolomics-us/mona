@@ -5,8 +5,8 @@ import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryRepository, QueryExportRepository}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{QueryExport, PredefinedQuery}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.DownloadSchedulerService
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.InputStreamResource
@@ -27,10 +27,10 @@ class DownloadSchedulerController extends LazyLogging {
   val downloadSchedulerService: DownloadSchedulerService = null
 
   @Autowired
-  val queryExportRepository: QueryExportMongoRepository = null
+  val queryExportRepository: QueryExportRepository = null
 
   @Autowired
-  val predefinedQueryRepository: PredefinedQueryMongoRepository = null
+  val predefinedQueryRepository: PredefinedQueryRepository = null
 
   @Value("${mona.downloads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_downloads")
   val exportDir: String = null
@@ -55,7 +55,7 @@ class DownloadSchedulerController extends LazyLogging {
 
       new AsyncResult[ResponseEntity[InputStreamResource]](new ResponseEntity(HttpStatus.NOT_FOUND))
     } else {
-      val exportPath: Path = Paths.get(exportDir, queryExport.exportFile)
+      val exportPath: Path = Paths.get(exportDir, queryExport.getExportFile)
 
       logger.info(s"\t-> Attempting to download file ${exportPath.toAbsolutePath.toString}...")
 

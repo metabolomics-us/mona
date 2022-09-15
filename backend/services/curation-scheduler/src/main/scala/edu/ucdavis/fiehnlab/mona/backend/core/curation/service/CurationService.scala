@@ -4,7 +4,7 @@ import java.util.Date
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.batch.item.ItemProcessor

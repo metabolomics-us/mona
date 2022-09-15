@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsTagRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.TagsRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.LibraryRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsTag
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsTag
 import org.springframework.beans.factory.annotation.{Autowired}
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

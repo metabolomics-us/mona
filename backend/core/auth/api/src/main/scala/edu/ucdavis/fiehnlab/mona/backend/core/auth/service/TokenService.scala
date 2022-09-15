@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Users
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Users
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 
 /**

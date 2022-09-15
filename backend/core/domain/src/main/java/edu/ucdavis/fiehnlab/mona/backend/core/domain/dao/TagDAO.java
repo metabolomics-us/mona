@@ -12,12 +12,25 @@ public class TagDAO implements Serializable {
     public TagDAO() {
     }
 
+    public TagDAO(String text, Boolean ruleBased) {
+        this.text = text;
+        this.ruleBased = ruleBased;
+    }
+
     public String getText() {
         return text;
     }
 
     public Boolean getRuleBased() {
         return ruleBased;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setRuleBased(Boolean ruleBased) {
+        this.ruleBased = ruleBased;
     }
 
     @Override

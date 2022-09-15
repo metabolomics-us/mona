@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository;
 
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult;
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResultId;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResultId;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

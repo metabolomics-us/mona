@@ -6,7 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -19,9 +20,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.Collections;
 
 @Configuration
+@EnableWebSecurity
 @EnableSwagger2
 @Profile("docker")
-public class SwaggerConfig extends WebSecurityConfigurerAdapter {
+public class SwaggerConfig {
 
     @Value("${spring.application.name}")
     private String appName;
@@ -53,8 +55,9 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
                 Collections.emptyList());
     }
 
-    @Override
-    public void configure(WebSecurity web) {
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) ->
         // Swagger endpoint for rest documentation
         web.ignoring()
                 .antMatchers(HttpMethod.GET, "/v2/api-docs")

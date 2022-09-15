@@ -1,14 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.repository.listener
 
 import java.io.{File, InputStreamReader}
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.WebRepository
@@ -20,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 
 import scala.util.Properties
@@ -29,8 +28,8 @@ import scala.util.Properties
 /**
   * Created by wohlg_000 on 5/18/2016.
   */
-@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[WebRepository]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles(Array("test"))
 class WebRepositoryListenerTest extends AnyWordSpec with LazyLogging {
 
   @LocalServerPort
@@ -84,7 +83,7 @@ class WebRepositoryListenerTest extends AnyWordSpec with LazyLogging {
         repositoryListener.received(Event(spectrum, eventType = Event.ADD))
         val spectra = given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").`then`().statusCode(200).extract().as(classOf[Spectrum])
 
-        assert(spectra.id == "252")
+        assert(spectra.getId == "252")
       }
 
       "be able to delete our spectra file" in {

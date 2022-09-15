@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CurationUtilities
 import org.springframework.batch.item.ItemProcessor
@@ -17,15 +17,12 @@ class SpectrumIonCountScoringRule  extends ItemProcessor[Spectrum, Spectrum] wit
     */
   override def process(spectrum: Spectrum): Spectrum = {
 
-    if (spectrum.spectrum.split(" ").length < 3) {
-      spectrum.copy(
-        score = CurationUtilities.addImpact(spectrum.score, -2, "Too few ions for validation and similarity comparisons")
-      )
-    } else if (spectrum.spectrum.split(" ").length > 1000) {
-
-      spectrum.copy(
-        score = CurationUtilities.addImpact(spectrum.score, -2, "Excessive number of ions")
-      )
+    if (spectrum.getSpectrum.split(" ").length < 3) {
+      spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -2, "Too few ions for validation and similarity comparisons"))
+      spectrum
+    } else if (spectrum.getSpectrum.split(" ").length > 1000) {
+      spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -2, "Excessive number of ions"))
+      spectrum
     } else {
       spectrum
     }

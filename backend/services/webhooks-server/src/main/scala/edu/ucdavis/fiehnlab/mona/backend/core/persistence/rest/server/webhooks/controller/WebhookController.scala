@@ -3,15 +3,15 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.{ServletRequest, ServletResponse}
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.service.WebHookService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.domain.{WebHook, WebHookResult}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
@@ -41,7 +41,7 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     *
     * @return
     */
-  override def getRepository: PagingAndSortingRepository[WebHook, String] = webhookRepository
+  override def getRepository: JpaRepository[WebHook, String] = webhookRepository
 
 
   /**
@@ -58,7 +58,7 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
       super.doList(page, size)
     } else {
       new AsyncResult[ResponseEntity[Iterable[WebHook]]](
-        new ResponseEntity(webhookRepository.findByUsername(loginInfo.username), HttpStatus.OK)
+        new ResponseEntity(webhookRepository.findByEmailAddress(loginInfo.emailAddress), HttpStatus.OK)
       )
     }
   }
@@ -79,7 +79,7 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     } else if (webhookRepository.existsById(id)) {
       val existingWebHook: WebHook = webhookRepository.findById(id).get()
 
-      if (existingWebHook.username == loginInfo.username) {
+      if (existingWebHook.getEmailAddress == loginInfo.emailAddress) {
         new AsyncResult[ResponseEntity[WebHook]](new ResponseEntity[WebHook](existingWebHook, HttpStatus.OK))
       } else {
         new AsyncResult[ResponseEntity[WebHook]](new ResponseEntity[WebHook](HttpStatus.FORBIDDEN))
@@ -102,16 +102,18 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
 
     if (loginInfo.roles.contains("ADMIN")) {
       super.doSave(webHook)
-    } else if (webhookRepository.existsById(webHook.name)) {
-      val existingWebHook: WebHook = webhookRepository.findById(webHook.name).get()
+    } else if (webhookRepository.existsById(webHook.getName)) {
+      val existingWebHook: WebHook = webhookRepository.findById(webHook.getName).get()
 
-      if (existingWebHook.username == loginInfo.username) {
-        super.doSave(webHook.copy(username = loginInfo.username))
+      if (existingWebHook.getEmailAddress == loginInfo.emailAddress) {
+        webHook.setUsername(loginInfo.emailAddress)
+        super.doSave(webHook)
       } else {
         new AsyncResult[ResponseEntity[WebHook]](new ResponseEntity[WebHook](HttpStatus.FORBIDDEN))
       }
     } else {
-      super.doSave(webHook.copy(username = loginInfo.username))
+      webHook.setUsername(loginInfo.emailAddress)
+      super.doSave(webHook)
     }
   }
 
@@ -128,10 +130,10 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
 
     if (loginInfo.roles.contains("ADMIN")) {
       super.doPut(id, webHook)
-    } else if (webhookRepository.existsById(webHook.name)) {
-      val existingWebHook: WebHook = webhookRepository.findById(webHook.name).get()
+    } else if (webhookRepository.existsById(webHook.getName)) {
+      val existingWebHook: WebHook = webhookRepository.findById(webHook.getName).get()
 
-      if (existingWebHook.username == loginInfo.username) {
+      if (existingWebHook.getEmailAddress == loginInfo.emailAddress) {
         super.doPut(id, webHook)
       } else {
         new AsyncResult[ResponseEntity[WebHook]](new ResponseEntity[WebHook](HttpStatus.FORBIDDEN))

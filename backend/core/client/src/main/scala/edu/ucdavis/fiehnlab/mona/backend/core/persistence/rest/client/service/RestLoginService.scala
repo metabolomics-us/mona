@@ -6,7 +6,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, Log
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
-import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 
 import scala.reflect._
@@ -25,7 +24,9 @@ class RestLoginService(val remoteServer: String, val remotePort: Int, val protoc
     *
     * @return
     */
-  override def login(request: LoginRequest): LoginResponse = restOperations.postForEntity(s"$protocol://$remoteServer:$remotePort/rest/auth/login", request, classOf[LoginResponse]).getBody
+  override def login(request: LoginRequest): LoginResponse = {
+    restOperations.postForEntity(s"$protocol://$remoteServer:$remotePort/rest/auth/login", request, classOf[LoginResponse]).getBody
+  }
 
   /**
     * generates publicly interesting info about the given token
@@ -39,7 +40,6 @@ class RestLoginService(val remoteServer: String, val remotePort: Int, val protoc
     header.setAccept(util.Arrays.asList(MediaType.APPLICATION_JSON))
 
     val url = s"$protocol://$remoteServer:$remotePort/rest/auth/info"
-    logger.info(s"invoking url: $url")
 
     restOperations.exchange(url, HttpMethod.POST, new HttpEntity[LoginResponse](LoginResponse(token), header), classOf[LoginInfo]).getBody
   }

@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.writer
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -42,15 +42,15 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
   override def write(spectrum: Spectrum): Unit = {
 
     try {
-      if (spectrum.id == null) {
+      if (spectrum.getId == null) {
         logger.debug("adding spectra to server")
         monaSpectrumRestClient.add(spectrum)
       } else {
-        logger.debug(s"updating spectra on server ${spectrum.id}")
+        logger.debug(s"updating spectra on server ${spectrum.getId}")
 
         try {
-          val s = monaSpectrumRestClient.get(spectrum.id)
-          monaSpectrumRestClient.updateAsync(spectrum, spectrum.id)
+          val s = monaSpectrumRestClient.get(spectrum.getId)
+          monaSpectrumRestClient.updateAsync(spectrum, spectrum.getId)
         } catch {
           case e: HttpClientErrorException =>
             if (e.getMessage.contains("404")) {

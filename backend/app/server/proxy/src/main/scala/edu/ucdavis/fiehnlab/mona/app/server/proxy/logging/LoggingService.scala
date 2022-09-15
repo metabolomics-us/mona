@@ -10,6 +10,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.repository.LogMessageMongoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import edu.ucdavis.fiehnlab.mona.app.server.proxy.domain.LogMessage
 
 /**
   * Created by sajjan on 12/20/16.
@@ -41,7 +42,7 @@ class LoggingService extends LazyLogging {
         val city: String = if (response != null && response.getCity != null) response.getCity.getName else null
 
         // Create logging message
-        val logMessage: LogMessage = LogMessage(
+        val logMessage: LogMessage = new LogMessage(
           null, httpStatus, httpMethod, requestURI, requestQueryString, postData,
           country, region, city,
           duration, new Date

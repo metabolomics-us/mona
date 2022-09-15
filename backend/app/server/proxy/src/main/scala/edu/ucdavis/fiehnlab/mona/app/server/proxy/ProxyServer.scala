@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConf
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.web.ResourceProperties
+import org.springframework.boot.autoconfigure.web.WebProperties.Resources
 import org.springframework.boot.web.servlet.MultipartConfigFactory
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient
@@ -20,6 +20,7 @@ import org.springframework.core.io.Resource
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.stereotype.Controller
+import org.springframework.util.unit.DataSize
 import org.springframework.web.servlet.config.annotation.{CorsRegistry, ResourceHandlerRegistry, WebMvcConfigurer, WebMvcConfigurerAdapter}
 import org.springframework.web.servlet.resource.PathResourceResolver
 
@@ -43,8 +44,8 @@ class ProxyServer {
   @Bean(name = Array("multipartConfigElement"))
   def multipartConfigElement: MultipartConfigElement = {
     val factory: MultipartConfigFactory = new MultipartConfigFactory()
-    factory.setMaxFileSize(multipartMaxFileSize)
-    factory.setMaxRequestSize(multipartMaxRequestSize)
+    factory.setMaxFileSize(DataSize.parse(multipartMaxFileSize))
+    factory.setMaxRequestSize(DataSize.parse(multipartMaxRequestSize))
     factory.setLocation(System.getProperty("java.io.tmpdir"))
     factory.createMultipartConfig()
   }
@@ -59,7 +60,7 @@ class ProxyServer {
 class CorsConfig extends WebMvcConfigurer with LazyLogging {
 
   @Autowired
-  val resourceProperties: ResourceProperties = null
+  val resourceProperties: Resources = null
 
   override def addCorsMappings(registry: CorsRegistry): Unit = registry.addMapping("/**")
 

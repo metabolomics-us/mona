@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: repository-service
+  config:
+    import: optional:configserver:${SPRING_CONFIG_URI:http://localhost:1111}
+
+server:
+  port:8888
+
+info:
+  component: MoNA Repository Service

@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.bootstrap.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.PredefinedQueryMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.PredefinedQuery
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.PredefinedQueryRepository
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.PredefinedQuery
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class BootstrapDownloaderService extends LazyLogging {
   @Autowired
-  val predefinedQueryRepository: PredefinedQueryMongoRepository = null
+  val predefinedQueryRepository: PredefinedQueryRepository = null
 
 
   /**
@@ -26,7 +26,7 @@ class BootstrapDownloaderService extends LazyLogging {
   def saveQuery(label: String, description: String, query: String): Unit = {
     if (!predefinedQueryRepository.existsById(label)) {
       logger.info(s"Saving predefined query: $label")
-      predefinedQueryRepository.save(PredefinedQuery(label, description, query, 0, null, null, null))
+      predefinedQueryRepository.save(new PredefinedQuery(label, description, query, 0, null, null, null))
     }
   }
 

@@ -1,0 +1,48 @@
+## default connection pool
+spring:
+  rabbitmq:
+    host: 127.0.0.1
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+  properties:
+    hibernate:
+      format_sql: false
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/mona-test
+    username: mona
+    password: asdf
+
+server:
+  port: 44444
+
+eureka:
+  client:
+    enabled: false
+
+security:
+  user:
+    name: admin
+    password: secret
+
+mona:
+  bus:
+    exclusive: true
+  persistence:
+    host: 127.0.0.1
+    database: mona-test
+  rest:
+    server:
+      user: admin
+      password: secret
+      host: 127.0.0.1
+      port: 44444

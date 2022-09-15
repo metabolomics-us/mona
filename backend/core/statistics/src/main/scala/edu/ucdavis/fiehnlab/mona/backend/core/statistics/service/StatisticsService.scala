@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 import java.util.Date
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumResultRepository, StatisticsGlobalRepository, StatisticsTagRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.StatisticsGlobal
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.{CompoundRepository, MetaDataRepository, SpectraSubmittersRepository, TagsRepository}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort

@@ -1,36 +1,35 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.core.similarity.config.SimilarityConfig
 import edu.ucdavis.fiehnlab.mona.core.similarity.index.IndexRegistry
 import edu.ucdavis.fiehnlab.mona.core.similarity.types._
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
-import org.junit.runner.RunWith
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{ComponentScan, Configuration}
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by sajjan on 5/26/16.
   */
-@RunWith(classOf[SpringRunner])
-@DataMongoTest
 @SpringBootTest(classes = Array(classOf[TestConfig], classOf[SimilarityConfig]))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SimilaritySearchServiceTest extends AnyWordSpec with Matchers with LazyLogging {
 
   @Autowired
   val similaritySearchService: SimilaritySearchService = null
 
   @Autowired
-  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
+  val postSpectrumResultRepository: SpectrumResultRepository = null
 
   @Autowired
   val indexUtils: IndexUtils = null
@@ -59,11 +58,11 @@ class SimilaritySearchServiceTest extends AnyWordSpec with Matchers with LazyLog
       val totalSpectra: Int = correctMatches.length + incorrectMatches.length
 
       "load some data" in {
-        spectrumMongoRepository.deleteAll()
+        postSpectrumResultRepository.deleteAll()
 
         (correctMatches ++ incorrectMatches).foreach { x =>
-          val spectrum: Spectrum = Spectrum(null, x.id, null, null, null, null, null, null, x.spectrum, null, null, null, null, null)
-          spectrumMongoRepository.save(spectrum)
+          val spectrum: Spectrum = new Spectrum(null, x.id, null, null, null, x.spectrum, null, null, null, null, null, null, null)
+          postSpectrumResultRepository.save(new SpectrumResult(spectrum.getId, spectrum))
         }
       }
 
@@ -76,12 +75,12 @@ class SimilaritySearchServiceTest extends AnyWordSpec with Matchers with LazyLog
         val hits: Array[SearchResult] = similaritySearchService.search(SimilaritySearchRequest(testSpectrum, 0.9, -1, 0, 0, false, "composite"), totalSpectra)
 
         assert(hits.length == 3)
-        assert(hits.map(_.hit.id).sorted.sameElements(correctMatches.map(_.id).sorted))
+        assert(hits.map(_.hit.getId).sorted.sameElements(correctMatches.map(_.id).sorted))
       }
     }
   }
 }
 
-@Configuration
-@ComponentScan(basePackageClasses = Array(classOf[MongoConfig], classOf[SimilaritySearchService], classOf[IndexUtils], classOf[IndexRegistry]))
+@SpringBootApplication(scanBasePackages = Array())
+@Import(Array(classOf[SimilaritySearchService], classOf[IndexUtils], classOf[IndexRegistry], classOf[PostgresqlConfiguration]))
 class TestConfig

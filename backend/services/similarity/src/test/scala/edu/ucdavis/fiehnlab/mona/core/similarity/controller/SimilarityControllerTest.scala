@@ -1,13 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.controller
 
-/*
 import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.core.similarity.SimilarityService
 import edu.ucdavis.fiehnlab.mona.core.similarity.service.SimilarityStartupService
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.AlgorithmTypes.AlgorithmType
@@ -20,21 +20,21 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by sajjan on 5/26/16.
   */
-@RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[SimilarityService]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = Array(classOf[SimilarityService]), webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLogging {
 
   @LocalServerPort
   private val port = 0
 
   @Autowired
-  val mongoRepository: ISpectrumMongoRepositoryCustom = null
+  val postSpectrumResultRepository: SpectrumResultRepository = null
 
   @Autowired
   val similarityStartupService: SimilarityStartupService = null
@@ -51,10 +51,10 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "load some data" in {
-      mongoRepository.deleteAll()
-      exampleRecords.foreach(mongoRepository.save(_))
+      postSpectrumResultRepository.deleteAll()
+      exampleRecords.foreach(x=> postSpectrumResultRepository.save(new SpectrumResult(x.getId, x)))
 
-      assert(mongoRepository.count() == 59)
+      assert(postSpectrumResultRepository.count() == 59)
     }
 
     "populate the indices" in {
@@ -74,7 +74,7 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
 
     "list available algorithms" in {
       val result: Array[AlgorithmType] = given().contentType("application/json; charset=UTF-8").when().get("/algorithms").`then`().statusCode(200).extract().body().as(classOf[Array[AlgorithmType]])
-      assert(result.length == 5)
+      assert(result.length == 6)
     }
 
     /* "perform a simple similarity query" in {
@@ -229,6 +229,3 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
 case class RestIndexDefinition(indexType: RestIndexTypeDefinition, indexName: String, indexSize: Int)
 
 case class RestIndexTypeDefinition(enumClass: String, value: String)
-
-
- */

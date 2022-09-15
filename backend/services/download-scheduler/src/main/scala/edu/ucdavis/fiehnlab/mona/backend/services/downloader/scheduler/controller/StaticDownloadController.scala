@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.controll
 import java.nio.file.{Files, Path}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.StaticDownload
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.StaticDownload
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.StaticDownloadService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.InputStreamResource
@@ -34,7 +34,7 @@ class StaticDownloadController extends LazyLogging {
                            @RequestParam(value = "category", required = false) category: String,
                            @RequestParam(value = "description", required = false) description: String): StaticDownload = {
 
-    StaticDownload(staticDownloadService.storeStaticFile(file, category, description))
+    new StaticDownload(staticDownloadService.storeStaticFile(file, category, description))
   }
 
   @RequestMapping(path = Array("/static/{filename:.+}"), method = Array(RequestMethod.GET))

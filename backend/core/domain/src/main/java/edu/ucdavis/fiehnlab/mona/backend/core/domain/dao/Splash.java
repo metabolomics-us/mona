@@ -13,6 +13,14 @@ public class Splash implements Serializable {
     public Splash() {
     }
 
+    public Splash(String block1, String block2, String block3, String block4, String splash) {
+        this.block1 = block1;
+        this.block2 = block2;
+        this.block3 = block3;
+        this.block4 = block4;
+        this.splash = splash;
+    }
+
     public String getBlock1() {
         return block1;
     }

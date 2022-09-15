@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{Roles, Users}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles, Users}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable

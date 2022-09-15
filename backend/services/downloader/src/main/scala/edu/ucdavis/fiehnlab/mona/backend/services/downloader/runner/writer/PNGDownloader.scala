@@ -2,9 +2,9 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
 import java.nio.file.{Files, Path}
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.png.PNGWriter
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExport
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.QueryExport
 
 /**
   * Created by sajjan on 5/3/18.
@@ -58,5 +58,5 @@ class PNGDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = 
   /**
     *
     */
-  override def writeSpectrum(spectrum: Spectrum): Unit = pngWriter.write(spectrum, exportWriter)
+  override def writeSpectrum(spectrum: SpectrumResult): Unit = pngWriter.write(spectrum, exportWriter)
 }

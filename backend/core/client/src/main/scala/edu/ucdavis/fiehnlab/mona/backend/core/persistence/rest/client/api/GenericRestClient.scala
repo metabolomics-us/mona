@@ -19,7 +19,7 @@ import scala.reflect.{ClassTag, _}
 /**
   * a generic approach to connect to a REST server and execute operations against it. It assumes compliance with CRUD operations
   */
-class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
+class GenericRestClient[T: ClassTag, V: ClassTag, ID](basePath: String) extends LazyLogging {
 
   /**
     * internal private
@@ -65,8 +65,8 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param dao
     * @return
     */
-  def add(dao: T): T = {
-    restOperations.exchange(s"$requestPath", HttpMethod.POST, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass).getBody.asInstanceOf[T]
+  def add(dao: T): V = {
+    restOperations.exchange(s"$requestPath", HttpMethod.POST, new HttpEntity[T](dao, buildHeaders), classTag[V].runtimeClass).getBody.asInstanceOf[V]
   }
 
   /**
@@ -84,7 +84,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param dao
     * @param id
     */
-  def updateAsync(dao: T, id: ID): Unit = restOperations.exchange(s"$requestPath/$id", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass)
+  def updateAsync(dao: T, id: ID): Unit = restOperations.exchange(s"$requestPath/$id", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[V].runtimeClass)
 
 
   /**
@@ -93,8 +93,8 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param dao
     * @return
     */
-  def update(dao: T, id: ID): T = {
-    restOperations.exchange(s"$requestPath/$id", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass)
+  def update(dao: T, id: ID): V = {
+    restOperations.exchange(s"$requestPath/$id", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[V].runtimeClass)
     get(id)
   }
 
@@ -103,7 +103,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     *
     * @param id
     */
-  def delete(id: ID) = restOperations.exchange(s"$requestPath/$id", HttpMethod.DELETE, new HttpEntity[Nothing](buildHeaders), classTag[T].runtimeClass)
+  def delete(id: ID) = restOperations.exchange(s"$requestPath/$id", HttpMethod.DELETE, new HttpEntity[Nothing](buildHeaders), classTag[V].runtimeClass)
 
   /**
     * loads the object specified by the id
@@ -111,8 +111,8 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param id
     * @return
     */
-  def get(id: ID): T = {
-    restOperations.exchange(s"$requestPath/$id", HttpMethod.GET, new HttpEntity[T](buildHeaders), classTag[T].runtimeClass).getBody.asInstanceOf[T]
+  def get(id: ID): V = {
+    restOperations.exchange(s"$requestPath/$id", HttpMethod.GET, new HttpEntity[V](buildHeaders), classTag[V].runtimeClass).getBody.asInstanceOf[V]
   }
 
   /**
@@ -121,8 +121,8 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param query
     * @return
     */
-  def stream(query: Option[String], fetchSize: Option[Int] = Some(10)): Iterable[T] = {
-    new DynamicIterable[T, Option[String]](query, fetchSize.get) {
+  def stream(query: Option[String], fetchSize: Option[Int] = Some(10)): Iterable[V] = {
+    new DynamicIterable[V, Option[String]](query, fetchSize.get) {
 
       /**
         * required for the pagination
@@ -134,7 +134,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
       /**
         * loads more data from the server for the given query
         */
-      override def fetchMoreData(query: Option[String], pageable: Pageable): Page[T] = {
+      override def fetchMoreData(query: Option[String], pageable: Pageable): Page[V] = {
 
         var path: String = s"$requestPath"
 
@@ -154,7 +154,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
         }
 
         logger.debug(s"calling path: $path")
-        val result = restOperations.getForObject(path, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
+        val result = restOperations.getForObject(path, classTag[Array[V]].runtimeClass).asInstanceOf[Array[V]]
 
         logger.debug(s"received: ${
           result.length
@@ -167,7 +167,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
           s => logger.info(s"\tspectra: $s")
         }
 
-        new PageImpl[T](result.toList.asJava, pageable, internalCount)
+        new PageImpl[V](result.toList.asJava, pageable, internalCount)
       }
     }.asScala
   }
@@ -180,7 +180,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param pageSize optional page size
     * @return
     */
-  def list(query: Option[String] = None, page: Option[Int] = None, pageSize: Option[Int] = None): Iterable[T] = {
+  def list(query: Option[String] = None, page: Option[Int] = None, pageSize: Option[Int] = None): Iterable[V] = {
 
     val utilizedPageSize: String = pageSize match {
       case Some(a) => s"?size=$a"
@@ -208,8 +208,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
       case _ =>
         s"$requestPath$utilizedPageSize$pageToLookAt"
     }
-    logger.info(s"path to invoke: $pathToInvoke")
-    restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
+    restOperations.getForEntity(pathToInvoke, classTag[Array[V]].runtimeClass).getBody.asInstanceOf[Array[V]]
   }
 
   /**
@@ -218,7 +217,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param username
     * @param password
     */
-  final def login(username: String, password: String): GenericRestClient[T, ID] = {
+  final def login(username: String, password: String): GenericRestClient[T, V, ID] = {
     logger.debug(s"logging in using service: $loginService")
     val token = loginService.login(LoginRequest(username, password)).token
     login(token)
@@ -230,7 +229,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     *
     * @param token
     */
-  final def login(token: String): GenericRestClient[T, ID] = {
+  final def login(token: String): GenericRestClient[T, V, ID] = {
     logger.debug("utilizing token for authorization in this instance")
     this.token = token
     this

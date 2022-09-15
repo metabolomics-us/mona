@@ -15,6 +15,26 @@ public class MetaDataDAO implements Serializable {
     public MetaDataDAO() {
     }
 
+    public MetaDataDAO(String url, String name, String value, Boolean hidden, String category, Boolean computed, String unit) {
+        this.url = url;
+        this.name = name;
+        this.value = value;
+        this.hidden = hidden;
+        this.category = category;
+        this.computed = computed;
+        this.unit = unit;
+    }
+
+    public MetaDataDAO(MetaDataDAO meta) {
+        this.url = meta.getUrl();
+        this.name = meta.getName();
+        this.value = meta.getValue();
+        this.hidden = meta.getHidden();
+        this.category = meta.getCategory();
+        this.computed = meta.getComputed();
+        this.unit = meta.getUnit();
+    }
+
     public String getUrl() {
         return url;
     }
@@ -41,6 +61,34 @@ public class MetaDataDAO implements Serializable {
 
     public String getUnit() {
         return unit;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setHidden(Boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setComputed(Boolean computed) {
+        this.computed = computed;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     @Override

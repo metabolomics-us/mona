@@ -14,9 +14,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
   * provides us with the specifics for a JWT based authentication
   * in the Mona system
   */
-@EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain"))
+@EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.domain"))
 @EnableJpaRepositories(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository"))
-@ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain", "edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt"))
+@ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt"))
 @EnableAutoConfiguration
 @Configuration
 class JWTAuthenticationConfig {

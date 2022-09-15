@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.app.client.repository.service;
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum;
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper;
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService;
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient;
@@ -92,7 +93,7 @@ public class RepositoryService {
     }
 
     public void initializeWebHookRepository(String token) {
-        String username = loginService.info(token).username();
+        String username = loginService.info(token).emailAddress();
         logger.info("Token verification successful");
 
         initializeDownloadDirectory();
@@ -111,10 +112,10 @@ public class RepositoryService {
         try {
             if (eventType.equals("add") || Objects.equals(eventType, "update")) {
                 logger.info("Saving spectrum with id: " + id);
-                Spectrum spectrum = monaSpectrumRestClient.get(id);
+                SpectrumResult spectrumResult = monaSpectrumRestClient.get(id);
 
                 File spectrumFile = new File(getDownloadDirectory(), id + ".json");
-                MonaMapper.create().writeValue(spectrumFile, spectrum);
+                MonaMapper.create().writeValue(spectrumFile, spectrumResult.getSpectrum());
                 logger.info("Wrote spectrum " + id + " to: " + spectrumFile.getPath());
             }
         } catch (IOException e) {

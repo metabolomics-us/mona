@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationC
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.{IUserRepository, UserRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{Roles, Users}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles, Users}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
 import org.springframework.beans.factory.annotation.{Autowired, Value}

@@ -2,18 +2,16 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.StaticDownload
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.StaticDownload
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.mock.web.MockMultipartFile
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
-@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class StaticDownloadServiceTest extends AbstractSpringControllerTest with LazyLogging {
 
   @Autowired
@@ -40,7 +38,7 @@ class StaticDownloadServiceTest extends AbstractSpringControllerTest with LazyLo
       val fileList: Array[StaticDownload] = staticDownloadService.listStaticDownloads()
 
       assert(fileList.length == 1)
-      assert(fileList.map(_.fileName).last == "monaRecord.json")
+      assert(fileList.map(_.getFileName).last == "monaRecord.json")
       staticDownloadService.fileExists("monaRecord.json")
     }
 
@@ -54,7 +52,7 @@ class StaticDownloadServiceTest extends AbstractSpringControllerTest with LazyLo
       val fileList: Array[StaticDownload] = staticDownloadService.listStaticDownloads()
 
       assert(fileList.length == 1)
-      assert(fileList.map(_.fileName).last == "monaRecord.json")
+      assert(fileList.map(_.getFileName).last == "monaRecord.json")
       staticDownloadService.fileExists("monaRecord.json")
       staticDownloadService.fileExists("monaRecord.json.description.txt")
     }
@@ -69,7 +67,7 @@ class StaticDownloadServiceTest extends AbstractSpringControllerTest with LazyLo
       val fileList: Array[StaticDownload] = staticDownloadService.listStaticDownloads()
 
       assert(fileList.length == 2)
-      assert(fileList.map(_.fileName).contains("gcmsRecord.json"))
+      assert(fileList.map(_.getFileName).contains("gcmsRecord.json"))
       staticDownloadService.fileExists("gcmsRecord.json")
     }
   }

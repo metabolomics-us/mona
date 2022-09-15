@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Users
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Users
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository

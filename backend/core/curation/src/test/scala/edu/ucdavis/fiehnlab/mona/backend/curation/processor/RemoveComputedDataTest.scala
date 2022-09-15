@@ -2,9 +2,10 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
 import java.io.InputStreamReader
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.wordspec.AnyWordSpec
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 3/11/16.
@@ -22,28 +23,28 @@ class RemoveComputedDataTest extends AnyWordSpec {
       val processedSpectrum = processor.process(spectrumGiven)
 
       "remove the computed metadata for the spectrum" in {
-        assert(processedSpectrum.metaData.forall(!_.computed))
+        assert(processedSpectrum.getMetaData.asScala.forall(!_.getComputed))
       }
 
       "remove the computed metadata for each compound" in {
-        processedSpectrum.compound.foreach { compound =>
-          assert(compound.metaData.forall(!_.computed))
+        processedSpectrum.getCompound.asScala.foreach { compound =>
+          assert(compound.getMetaData.asScala.forall(!_.getComputed))
         }
       }
 
       "remove the computed names for each compound" in {
-        processedSpectrum.compound.foreach { compound =>
-          assert(compound.names.forall(!_.computed))
+        processedSpectrum.getCompound.asScala.foreach { compound =>
+          assert(compound.getNames.asScala.forall(!_.getComputed))
         }
       }
 
       "remove the computed tags for the spectrum" in {
-        assert(processedSpectrum.tags.forall(!_.ruleBased))
+        assert(processedSpectrum.getTags.asScala.forall(!_.getRuleBased))
       }
 
       "remove the computed tags for each compound" in {
-        processedSpectrum.compound.foreach { compound =>
-          assert(compound.tags.forall(!_.ruleBased))
+        processedSpectrum.getCompound.asScala.foreach { compound =>
+          assert(compound.getTags.asScala.forall(!_.getRuleBased))
         }
       }
     }

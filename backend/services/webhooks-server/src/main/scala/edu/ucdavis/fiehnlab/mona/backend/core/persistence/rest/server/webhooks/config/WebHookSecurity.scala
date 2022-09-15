@@ -9,9 +9,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.r
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.service.WebHookService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
 import org.springframework.core.annotation.Order
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -19,7 +20,8 @@ import org.springframework.security.config.http.SessionCreationPolicy
 
 @Configuration
 @EnableAutoConfiguration
-@EnableMongoRepositories(basePackageClasses = Array(classOf[WebHookRepository], classOf[WebHookResultRepository]))
+@EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.domain"))
+@EnableJpaRepositories(basePackageClasses = Array(classOf[WebHookRepository], classOf[WebHookResultRepository]))
 @ComponentScan(basePackageClasses = Array(classOf[WebhookController], classOf[WebHookRepository], classOf[WebHookService], classOf[WebHookEventBusListener]))
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[SwaggerConfig]))
 @Order(1)

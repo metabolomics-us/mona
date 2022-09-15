@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Sequence
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Sequence
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SequenceRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona</groupId>
     <artifactId>backend</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>2.6.3-SNAPSHOT</version>
     <name>backend</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona</groupId>
         <artifactId>mona</artifactId>
-        <version>2.0-SNAPSHOT</version>
+        <version>2.6.3-SNAPSHOT</version>
     </parent>
 
     <packaging>pom</packaging>
@@ -75,7 +75,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
 
             <!-- MoNA modules -->
             <dependency>
@@ -143,62 +142,17 @@
             </dependency>
 
             <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.io</groupId>
-                <artifactId>massbank</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-                <artifactId>persistence</artifactId>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+                <artifactId>postgresql</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>elastic</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>elastic</artifactId>
+                <artifactId>postgresql</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>mongo</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>mongo</artifactId>
-                <type>test-jar</type>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>rsql</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>rsql</artifactId>
-                <scope>test</scope>
-                <type>test-jar</type>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>service</artifactId>
-                <version>${project.version}</version>
             </dependency>
 
             <dependency>

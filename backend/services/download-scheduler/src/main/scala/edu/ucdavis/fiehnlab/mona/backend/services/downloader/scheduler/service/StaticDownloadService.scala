@@ -5,7 +5,7 @@ import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.StaticDownload
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.StaticDownload
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -71,9 +71,9 @@ class StaticDownloadService extends LazyLogging {
         val descriptionFile: Path = Paths.get(file.toAbsolutePath +".description.txt")
 
         if (Files.exists(descriptionFile)) {
-          StaticDownload(staticDownloadDir.relativize(file).toString, new String(Files.readAllBytes(descriptionFile)))
+          new StaticDownload(staticDownloadDir.relativize(file).toString, new String(Files.readAllBytes(descriptionFile)))
         } else {
-          StaticDownload(staticDownloadDir.relativize(file).toString)
+          new StaticDownload(staticDownloadDir.relativize(file).toString)
         }
       }.toArray
   }

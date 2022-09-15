@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import java.util.Date
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.TokenService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{Roles, Users}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles, Users}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import io.jsonwebtoken.{Claims, Jwts, SignatureAlgorithm}
 import org.apache.commons.lang3.time.DateUtils

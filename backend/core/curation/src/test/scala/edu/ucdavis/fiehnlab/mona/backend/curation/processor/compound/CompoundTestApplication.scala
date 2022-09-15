@@ -5,5 +5,5 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.{Bean, ComponentScan}
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = Array())
 class CompoundTestApplication

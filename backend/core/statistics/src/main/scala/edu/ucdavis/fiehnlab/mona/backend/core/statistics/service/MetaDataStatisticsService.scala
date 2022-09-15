@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.statistics.{MetaDataValueCount, StatisticsMetaData}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.{MetaDataValueCount, StatisticsMetaData}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsMetaDataRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.MetaDataRepository
 import org.springframework.beans.factory.annotation.{Autowired}

@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation.runner
 
 import java.io.InputStreamReader
-
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
@@ -12,8 +11,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration, Primary}
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -22,8 +20,8 @@ import scala.language.postfixOps
 /**
   * Created by sajjan on 5/31/2017.
   */
-@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[CurationRunner], classOf[TestConfig]))
+@ActiveProfiles(Array("test"))
 class CurationRunnerTest extends AnyWordSpec with Eventually with LazyLogging {
 
   @Autowired
@@ -62,7 +60,7 @@ class TestCurationListener extends CurationListener(null, null) with LazyLogging
   var messageCount: Int = 0
 
   override def handleMessage(spectra: Spectrum): Unit = {
-    logger.info(s"Received spectrum: ${spectra.id}")
+    logger.info(s"Received spectrum: ${spectra.getId}")
     messageCount += 1
   }
 

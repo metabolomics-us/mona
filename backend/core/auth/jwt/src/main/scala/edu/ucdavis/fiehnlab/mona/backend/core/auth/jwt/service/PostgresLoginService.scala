@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.TokenService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.Users
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Users
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}

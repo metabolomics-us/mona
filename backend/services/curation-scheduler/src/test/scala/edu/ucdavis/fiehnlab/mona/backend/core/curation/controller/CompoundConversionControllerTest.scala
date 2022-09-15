@@ -5,20 +5,25 @@ import com.jayway.restassured.RestAssured.given
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.MonaNotificationBusCounterConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.test.context.TestContextManager
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.web.bind.annotation.GetMapping
 
 /**
   * Created by sajjan on 12/11/2016.
   */
-@RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[CurationScheduler], classOf[MonaNotificationBusCounterConfiguration]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = Array(classOf[CurationScheduler], classOf[MonaNotificationBusCounterConfiguration]), webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class CompoundConversionControllerTest extends AbstractSpringControllerTest with Eventually {
 
   @LocalServerPort

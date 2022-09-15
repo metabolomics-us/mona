@@ -1,13 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation.listener
 
-import java.util.Date
-
+import java.util.{Date, Locale}
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, EventBusListener}
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurationService
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+
+import java.text.SimpleDateFormat
 
 /**
   * listens to the event bus and every time it finds a matching message it will forward it to the
@@ -26,7 +27,8 @@ class CurationEventBusListener @Autowired()(val bus: EventBus[Spectrum]) extends
     * @return
     */
   private def shouldScheduleCuration(spectrum: Spectrum): Boolean = {
-    spectrum.lastCurated == null || (new Date().getTime - spectrum.lastCurated.getTime) / (60 * 1000) >= 15
+    val formatter: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+    spectrum.getLastCurated == null || (new Date().getTime - formatter.parse(spectrum.getLastCurated).getTime) / (60 * 1000) >= 15
   }
 
   /**

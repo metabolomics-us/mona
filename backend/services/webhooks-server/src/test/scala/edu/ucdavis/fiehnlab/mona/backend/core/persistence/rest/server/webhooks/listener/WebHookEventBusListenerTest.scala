@@ -2,24 +2,21 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.
 
 import java.io.InputStreamReader
 import java.util.Date
-
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, ReceivedEventCounter}
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.WebHook
-import org.junit.runner.RunWith
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.domain.WebHook
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -28,8 +25,8 @@ import scala.language.postfixOps
   * Created by wohlgemuth on 4/8/16.
   */
 
-@RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = Array(classOf[TestConfig]), webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Eventually {
 
   @LocalServerPort
@@ -53,7 +50,7 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
 
     "create a webhook" in {
       webHookRepository.deleteAll()
-      webHookRepository.save(WebHook("test", s"http://localhost:$port/info?id=", "none provided", "test"))
+      webHookRepository.save(new WebHook("test", s"http://localhost:$port/info?id=", "none provided", "test"))
     }
 
     "event bus needs to be of type Spectrum" in {

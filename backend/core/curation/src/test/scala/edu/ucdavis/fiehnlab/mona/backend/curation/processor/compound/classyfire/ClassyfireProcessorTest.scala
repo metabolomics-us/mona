@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire
 
 import java.io.InputStreamReader
-
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CompoundTestApplication
@@ -11,14 +10,16 @@ import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
+
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 5/5/16.
   */
-@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[CompoundTestApplication], classOf[RestClientConfig]))
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class ClassyfireProcessorTest extends AnyWordSpec with LazyLogging {
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
@@ -33,20 +34,18 @@ class ClassyfireProcessorTest extends AnyWordSpec with LazyLogging {
     val spectrumGiven: Spectrum = exampleRecords.head
 
     "process" in {
-      /*
       assert(classyfireProcessor != null)
 
       if (classyfireProcessor.isReachable) {
         val output = classyfireProcessor.process(spectrumGiven)
 
-        output.compound.foreach { compound =>
-          assert(compound.classification.length > 0)
+        output.getCompound.asScala.foreach { compound =>
+          assert(compound.getClassification.size() > 0)
         }
       } else {
         logger.error("ClassyFire is offline - skipping test")
       }
 
-       */
     }
   }
 }

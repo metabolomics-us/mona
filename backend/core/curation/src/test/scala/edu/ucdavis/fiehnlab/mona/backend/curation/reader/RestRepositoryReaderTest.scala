@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.reader
 
 import java.io.InputStreamReader
-
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles, Users}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.GenericRestClient
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
@@ -15,7 +15,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 
 import scala.jdk.CollectionConverters._
@@ -23,13 +23,13 @@ import scala.jdk.CollectionConverters._
 /**
   * Created by wohlgemuth on 3/18/16.
   */
-@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class RestRepositoryReaderTest extends AnyWordSpec {
 
 
   @Autowired
-  val spectrumRestClient: GenericRestClient[Spectrum, String] = null
+  val spectrumRestClient: GenericRestClient[Spectrum, SpectrumResult, String] = null
 
   @Autowired
   val restRepositoryReaderAll: RestRepositoryReader = null
@@ -48,18 +48,18 @@ class RestRepositoryReaderTest extends AnyWordSpec {
 
     "we need to login " in {
       userRepository.deleteAll()
-      userRepository.save(User("admin", "secret", Array(Role("ADMIN")).toList.asJava))
+      userRepository.save(new Users("admin", "secret", Array(new Roles("ADMIN")).toList.asJava))
       spectrumRestClient.login("admin", "secret")
     }
 
     "we need to prepare the database " in {
-      spectrumRestClient.list().foreach(x => spectrumRestClient.delete(x.id))
+      spectrumRestClient.list().foreach(x => spectrumRestClient.delete(x.getMonaId))
       exampleRecords.foreach(spectrumRestClient.add)
     }
 
     "read" in {
       var count = 0
-      var data: Spectrum = null
+      var data: SpectrumResult = null
 
       do {
         data = restRepositoryReaderAll.read()

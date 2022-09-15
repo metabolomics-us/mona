@@ -28,26 +28,22 @@ class DownloadListenerConfig {
 
   @Bean
   @Qualifier("message-listener-query-export")
-  def queryExportListenerContainer(connectionFactory: ConnectionFactory, queryExportListener: QueryExportListener,
-                messageConverter: MessageConverter): SimpleMessageListenerContainer = {
+  def queryExportListenerContainer(connectionFactory: ConnectionFactory, queryExportListener: QueryExportListener): SimpleMessageListenerContainer = {
 
     val container = new SimpleMessageListenerContainer()
     container.setConnectionFactory(connectionFactory)
     container.setMessageListener(queryExportListener)
-    container.setMessageConverter(messageConverter)
     container.setQueues(exportQueue)
     container
   }
 
   @Bean
   @Qualifier("message-listener-predefined-query")
-  def predefinedQueryListenerContainer(connectionFactory: ConnectionFactory, predefinedQueryExportListener: PredefinedQueryExportListener,
-                messageConverter: MessageConverter): SimpleMessageListenerContainer = {
+  def predefinedQueryListenerContainer(connectionFactory: ConnectionFactory, predefinedQueryExportListener: PredefinedQueryExportListener): SimpleMessageListenerContainer = {
 
     val container = new SimpleMessageListenerContainer()
     container.setConnectionFactory(connectionFactory)
     container.setMessageListener(predefinedQueryExportListener)
-    container.setMessageConverter(messageConverter)
     container.setQueues(predefinedQueue)
     container
   }

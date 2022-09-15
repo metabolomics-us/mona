@@ -4,7 +4,7 @@ import java.io.File
 import javax.annotation.PreDestroy
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, EventBusListener}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.layout.FileLayout
 import org.eclipse.jgit.api.Git
@@ -29,25 +29,25 @@ class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: F
       dir.mkdirs()
     }
 
-    val file = new File(layout.layout(event.content), s"${event.content.id}.json")
+    val file = new File(layout.layout(event.content), s"${event.content.getId}.json")
 
     logger.info(s"file is: ${file}")
     event.eventType match {
       //we only care about ADDs at this point in time
       case Event.ADD =>
         //writes the spectra to the while
-        logger.info(s"\twriting spectrum with id ${event.content.id}")
+        logger.info(s"\twriting spectrum with id ${event.content.getId}")
         objectMapper.writeValue(file, event.content)
         gitAdd(file)
       case Event.UPDATE =>
         //writes the spectra to the while
-        logger.info(s"\twriting spectrum with id ${event.content.id}")
+        logger.info(s"\twriting spectrum with id ${event.content.getId}")
         objectMapper.writeValue(file, event.content)
         gitUpdate(file)
 
       case Event.DELETE =>
         if (file.exists()) {
-          logger.info(s"\tdeleted spectrum with id ${event.content.id}")
+          logger.info(s"\tdeleted spectrum with id ${event.content.getId}")
           gitRemove(file)
           file.delete()
         }
@@ -66,7 +66,7 @@ class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: F
     logger.info(s"adding to git ${path}")
     val spectrum: Spectrum = objectMapper.readValue(file, classOf[Spectrum])
     val cache = git.add().addFilepattern(path).call()
-    git.commit().setMessage(s"added spectra ${spectrum.id} to the repository").call()
+    git.commit().setMessage(s"added spectra ${spectrum.getId} to the repository").call()
     git.push().setRemote("origin/master").setRefSpecs(new RefSpec("master")).call()
   }
 
@@ -81,7 +81,7 @@ class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: F
 
     val spectrum: Spectrum = objectMapper.readValue(file, classOf[Spectrum])
     git.add().setUpdate(true).addFilepattern(path).call()
-    git.commit().setMessage(s"updated spectra ${spectrum.id} to the repository").setCommitter(spectrum.submitter.emailAddress, spectrum.submitter.emailAddress).call()
+    git.commit().setMessage(s"updated spectra ${spectrum.getId} to the repository").setCommitter(spectrum.getSubmitter.getEmailAddress, spectrum.getSubmitter.getEmailAddress).call()
     git.push().setRemote("origin/master").setRefSpecs(new RefSpec("master")).call()
   }
 
@@ -97,7 +97,7 @@ class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: F
     logger.info(s"removing file: ${filePath}")
     val spectrum: Spectrum = objectMapper.readValue(file, classOf[Spectrum])
     git.rm().addFilepattern(filePath).call()
-    git.commit().setMessage(s"removed spectra ${spectrum.id} from the repository").setCommitter(spectrum.submitter.emailAddress, spectrum.submitter.emailAddress).call()
+    git.commit().setMessage(s"removed spectra ${spectrum.getId} from the repository").setCommitter(spectrum.getSubmitter.getEmailAddress, spectrum.getSubmitter.getEmailAddress).call()
     git.push().setRemote("origin/master").setRefSpecs(new RefSpec("master")).call()
   }
 

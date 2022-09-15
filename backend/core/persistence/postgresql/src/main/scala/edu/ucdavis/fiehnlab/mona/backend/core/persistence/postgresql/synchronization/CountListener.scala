@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.synchroniz
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, PersistenceEventListener}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Component}

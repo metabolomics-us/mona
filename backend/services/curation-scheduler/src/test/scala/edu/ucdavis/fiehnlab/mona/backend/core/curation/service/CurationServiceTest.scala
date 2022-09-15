@@ -2,16 +2,18 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.service
 
 import java.io.InputStreamReader
 import javax.annotation.PostConstruct
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaNotificationBusCounterConfiguration, Notification}
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessageListener
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.controller.CurationController
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
@@ -23,7 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.stereotype.Component
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 
 import scala.concurrent.duration._
@@ -32,8 +35,8 @@ import scala.language.postfixOps
 /**
   * Created by wohlg on 4/12/2016.
   */
-@RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[CurationScheduler], classOf[MonaNotificationBusCounterConfiguration]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = Array(classOf[CurationScheduler], classOf[MonaNotificationBusCounterConfiguration]), webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired
@@ -49,7 +52,13 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
   val curationController: CurationController = null
 
   @Autowired
-  val mongoRepository: ISpectrumMongoRepositoryCustom = null
+  val matRepository: MaterializedViewRepository = null
+
+  @Autowired
+  val searchTableRepository: SearchTableRepository = null
+
+  @Autowired
+  val spectrumResultRepository: SpectrumResultRepository = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -58,8 +67,16 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "load some data" in {
-      mongoRepository.deleteAll()
-      exampleRecords.foreach(x => mongoRepository.save(x))
+      spectrumResultRepository.deleteAll()
+      exampleRecords.foreach(x => spectrumResultRepository.save(new SpectrumResult(x.getId, x)))
+    }
+
+    s"we should be able to refresh our materialized view" in {
+      eventually(timeout(180 seconds)) {
+        matRepository.refreshSearchTable()
+        logger.info("sleep...")
+        assert(searchTableRepository.count() == 59610)
+      }
     }
 
     "scheduleSpectra" in {
@@ -68,7 +85,7 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
 
       curationService.scheduleSpectrum(exampleSpectrum)
 
-      eventually(timeout(10 seconds)) {
+      eventually(timeout(80 seconds)) {
         assert(testCurationRunner.messageReceived)
         assert(notificationCounter.getEventCount == count + 1)
       }
@@ -83,7 +100,7 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
 
         curationController.curateByQuery("")
 
-        eventually(timeout(10 seconds)) {
+        eventually(timeout(80 seconds)) {
           assert(testCurationRunner.messageReceived)
           assert(testCurationRunner.messageCount == 59)
           assert(notificationCounter.getEventCount - count == 59)
@@ -98,9 +115,9 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
         val count = notificationCounter.getEventCount
         testCurationRunner.resetMessageStatus()
 
-        curationController.curateByQuery("metaData=q='name==\"ion mode\" and value==negative'")
+        curationController.curateByQuery("metadataName==\'ion mode\' and metadataValue==\'negative\'")
 
-        eventually(timeout(10 seconds)) {
+        eventually(timeout(80 seconds)) {
           assert(testCurationRunner.messageReceived)
           assert(testCurationRunner.messageCount == 25)
           assert(notificationCounter.getEventCount - count == 25)
@@ -133,7 +150,7 @@ class TestCurationRunner extends GenericMessageListener[Spectrum] with LazyLoggi
     container.setConnectionFactory(connectionFactory)
     container.setQueues(queue)
     container.setMessageListener(this)
-    container.setRabbitAdmin(rabbitAdmin)
+    container.setAmqpAdmin(rabbitAdmin)
     container.start()
   }
 

@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumFeedbackRepository, SubmitterRepository}
 import org.springframework.beans.factory.annotation.Autowired
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.{SpectrumFeedback, SpectrumFeedbackId}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{SpectrumFeedback, SpectrumFeedbackId}
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
 import org.springframework.data.domain.{PageRequest, Sort, Pageable, Page}

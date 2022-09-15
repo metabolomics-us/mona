@@ -49,6 +49,54 @@ public class CompoundDAO implements Serializable {
     public CompoundDAO() {
     }
 
+    public CompoundDAO(String kind, List<TagDAO> tags, String inchi, List<Names> names, String molFile, Boolean computed, String inchiKey, List<MetaDataDAO> metaData, List<MetaDataDAO> classification) {
+        this.kind = kind;
+        this.tags = tags;
+        this.inchi = inchi;
+        this.names = names;
+        this.molFile = molFile;
+        this.computed = computed;
+        this.inchiKey = inchiKey;
+        this.metaData = metaData;
+        this.classification = classification;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
+    public void setTags(List<TagDAO> tags) {
+        this.tags = tags;
+    }
+
+    public void setInchi(String inchi) {
+        this.inchi = inchi;
+    }
+
+    public void setNames(List<Names> names) {
+        this.names = names;
+    }
+
+    public void setMolFile(String molFile) {
+        this.molFile = molFile;
+    }
+
+    public void setComputed(Boolean computed) {
+        this.computed = computed;
+    }
+
+    public void setInchiKey(String inchiKey) {
+        this.inchiKey = inchiKey;
+    }
+
+    public void setMetaData(List<MetaDataDAO> metaData) {
+        this.metaData = metaData;
+    }
+
+    public void setClassification(List<MetaDataDAO> classification) {
+        this.classification = classification;
+    }
+
     public String getKind() {
         return kind;
     }

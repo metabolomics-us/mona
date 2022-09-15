@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{ MonaMapper}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.domain.views.Compound
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.views.Compound
 
 import scala.jdk.StreamConverters.StreamHasToScala
 import org.springframework.transaction.support.TransactionTemplate
