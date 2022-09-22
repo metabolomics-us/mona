@@ -4,11 +4,12 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.{MetaDataValueCount, StatisticsMetaData}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsMetaDataRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.MetaDataRepository
-import org.springframework.beans.factory.annotation.{Autowired}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-import scala.collection.mutable.{Map}
+import scala.collection.mutable.Map
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
 
@@ -17,6 +18,7 @@ import scala.jdk.StreamConverters.StreamHasToScala
   * Created by sajjan on 9/27/16.
   */
 @Service
+@Profile(Array("mona.persistence"))
 class MetaDataStatisticsService extends LazyLogging{
   @Autowired
   private val statisticsMetaDataRepository: StatisticsMetaDataRepository = null

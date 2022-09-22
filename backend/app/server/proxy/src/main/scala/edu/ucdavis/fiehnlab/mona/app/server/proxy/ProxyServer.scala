@@ -59,6 +59,11 @@ class ProxyServer {
 @Configuration
 class CorsConfig extends WebMvcConfigurer with LazyLogging {
 
+  @Bean
+  def resources(): Resources = {
+    new Resources
+  }
+
   @Autowired
   val resourceProperties: Resources = null
 

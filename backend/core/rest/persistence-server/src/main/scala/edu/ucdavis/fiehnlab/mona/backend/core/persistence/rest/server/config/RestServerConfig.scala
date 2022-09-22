@@ -24,7 +24,6 @@ import org.springframework.security.web.SecurityFilterChain
 @EnableAutoConfiguration
 @ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller"))
 @Order(1)
-@Profile(Array("mona.persistence"))
 class RestServerConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired

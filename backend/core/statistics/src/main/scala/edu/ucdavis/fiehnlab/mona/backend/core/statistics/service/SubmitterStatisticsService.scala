@@ -5,6 +5,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmit
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsSubmitterRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SpectraSubmittersRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -13,6 +14,7 @@ import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
 
 @Service
+@Profile(Array("mona.persistence"))
 class SubmitterStatisticsService {
   @Autowired
   val statisticsSubmitterRepository: StatisticsSubmitterRepository = null

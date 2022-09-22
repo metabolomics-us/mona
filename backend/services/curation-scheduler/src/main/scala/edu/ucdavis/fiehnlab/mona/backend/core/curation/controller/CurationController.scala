@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
-import io.swagger.annotations.ApiModel
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.http.{HttpStatus, ResponseEntity}
@@ -108,5 +108,5 @@ class CurationController extends LazyLogging {
   }
 }
 
-@ApiModel
+@Schema
 case class CurationJobScheduled(count: Int)

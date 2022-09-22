@@ -8,8 +8,9 @@ spring:
     multipart:
       max-file-size: 128MB
       max-request-size: 128MB
-
-#basic information who we are
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 info:
   component: MoNA Edge Server
 
@@ -20,6 +21,10 @@ logging:
 #on which port do we run
 server:
   port: 8080
+
+springdoc:
+  swagger-ui:
+    config-url: /swagger-config.json
 
 #configuration for the failover clients
 hystrix:

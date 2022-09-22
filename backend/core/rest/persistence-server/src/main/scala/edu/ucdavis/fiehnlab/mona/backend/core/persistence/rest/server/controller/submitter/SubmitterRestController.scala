@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
@@ -25,6 +26,7 @@ import scala.jdk.CollectionConverters._
 @CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/submitters"))
+@Profile(Array("mona.persistence"))
 class SubmitterRestController extends LazyLogging{
 
   @Autowired

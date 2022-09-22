@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.{CompoundRepository, MetaDataRepository, SpectraSubmittersRepository, TagsRepository}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.{Async, Scheduled}
 import org.springframework.stereotype.Service
@@ -19,6 +20,7 @@ import scala.jdk.StreamConverters.StreamHasToScala
   * Created by sajjan on 8/2/16.
  * */
 @Service
+@Profile(Array("mona.persistence"))
 class StatisticsService extends LazyLogging {
   @Autowired
   private val spectrumResultRepository: SpectrumResultRepository = null

@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service
   */
 @Service
 class BootstrapDownloaderService extends LazyLogging {
+
   @Autowired
-  val predefinedQueryRepository: PredefinedQueryRepository = null
+  val predefinedQueryRepo: PredefinedQueryRepository = null
 
 
   /**
@@ -24,9 +25,9 @@ class BootstrapDownloaderService extends LazyLogging {
     * @return
     */
   def saveQuery(label: String, description: String, query: String): Unit = {
-    if (!predefinedQueryRepository.existsById(label)) {
+    if (!predefinedQueryRepo.existsById(label)) {
       logger.info(s"Saving predefined query: $label")
-      predefinedQueryRepository.save(new PredefinedQuery(label, description, query, 0, null, null, null))
+      predefinedQueryRepo.save(new PredefinedQuery(label, description, query, 0, null, null, null))
     }
   }
 

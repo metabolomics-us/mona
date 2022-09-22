@@ -6,9 +6,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumFeedbackRepository, SubmitterRepository}
 import org.springframework.beans.factory.annotation.Autowired
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{SpectrumFeedback, SpectrumFeedbackId}
+import org.springframework.context.annotation.Profile
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
-import org.springframework.data.domain.{PageRequest, Sort, Pageable, Page}
+import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
 
@@ -24,6 +25,7 @@ import scala.jdk.CollectionConverters._
 @CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/feedback"))
+@Profile(Array("mona.persistence"))
 class SpectrumFeedbackRestController extends LazyLogging{
 
   @Autowired

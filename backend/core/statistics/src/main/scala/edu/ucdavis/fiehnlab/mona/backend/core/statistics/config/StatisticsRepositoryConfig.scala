@@ -15,6 +15,4 @@ import org.springframework.context.annotation.Profile
 @ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.statistics"))
 @EnableAutoConfiguration
 @Configuration
-@Import(Array(classOf[PostgresqlConfiguration]))
-@Profile(Array("mona.persistence"))
 class StatisticsRepositoryConfig

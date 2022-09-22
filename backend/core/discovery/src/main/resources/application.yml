@@ -1,14 +1,6 @@
 spring:
   application:
     name: discovery
-  cloud:
-    config:
-      server:
-        prefix: /config
-        bootstrap: true
-        git:
-          uri: https://github.com/metabolomics-us/mona-config
-        default-label: PostgresqlChange
 
 server:
   port: 8761

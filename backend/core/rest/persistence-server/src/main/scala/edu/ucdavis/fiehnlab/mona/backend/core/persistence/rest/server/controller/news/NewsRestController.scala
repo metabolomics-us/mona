@@ -5,12 +5,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.News
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.NewsRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
-import scala.jdk.CollectionConverters._
 
+import scala.jdk.CollectionConverters._
 import java.util.concurrent.Future
 import javax.servlet.{ServletRequest, ServletResponse}
 import javax.validation.Valid
@@ -21,6 +22,7 @@ import javax.validation.Valid
 @CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/news"))
+@Profile(Array("mona.persistence"))
 class NewsRestController{
 
   @Autowired

@@ -18,5 +18,7 @@ import org.springframework.context.annotation.Import
 class WebHookServer
 
 object WebHookServer extends App {
-  new SpringApplication(classOf[WebHookServer]).run()
+  var app = new SpringApplication(classOf[WebHookServer])
+  app.setAdditionalProfiles("mona.persistence")
+  app.run()
 }

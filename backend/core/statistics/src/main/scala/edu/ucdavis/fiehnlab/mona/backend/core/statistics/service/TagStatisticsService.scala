@@ -4,11 +4,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.TagsRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.LibraryRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsTag
-import org.springframework.beans.factory.annotation.{Autowired}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-import scala.collection.mutable.{Map}
+import scala.collection.mutable.Map
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
 
@@ -16,6 +17,7 @@ import scala.jdk.StreamConverters.StreamHasToScala
   * Created by sajjan on 9/27/16.
  * */
 @Service
+@Profile(Array("mona.persistence"))
 class TagStatisticsService {
 
   @Autowired

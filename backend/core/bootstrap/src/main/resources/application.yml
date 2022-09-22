@@ -3,11 +3,10 @@ spring:
   application:
     name: bootstrap-service
   config:
-    import: optional:configserver:${SPRING_CONFIG_URI:http://localhost:1111}
+    import: optional:configserver:http://localhost:1111/
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
-
 
 #basic information who we are
 info:

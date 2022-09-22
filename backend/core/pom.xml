@@ -21,6 +21,7 @@
         <module>domain</module>
         <module>amqp</module>
         <module>discovery</module>
+        <module>config</module>
         <module>persistence</module>
         <module>statistics</module>
         <module>auth</module>

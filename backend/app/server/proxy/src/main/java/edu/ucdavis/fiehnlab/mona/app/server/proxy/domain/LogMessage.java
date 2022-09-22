@@ -1,20 +1,23 @@
 package edu.ucdavis.fiehnlab.mona.app.server.proxy.domain;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.context.annotation.Profile;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "logs")
 @Profile({"mona.persistence"})
 public class LogMessage implements Serializable {
   @Id
-  private String id;
+  @GeneratedValue(generator = "uuid2")
+  @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+  @Column(name = "id", columnDefinition = "VARCHAR(255)")
+  private UUID id;
   private Integer httpStatus;
   private String httpMethod;
   private String path;
@@ -26,8 +29,7 @@ public class LogMessage implements Serializable {
   private Long duration;
   private Date date;
 
-  public LogMessage(String id, Integer httpStatus, String httpMethod, String path, String queryString, String postData, String clientCountry, String clientRegion, String clientCity, Long duration, Date date) {
-    this.id = id;
+  public LogMessage(Integer httpStatus, String httpMethod, String path, String queryString, String postData, String clientCountry, String clientRegion, String clientCity, Long duration, Date date) {
     this.httpStatus = httpStatus;
     this.httpMethod = httpMethod;
     this.path = path;
@@ -43,11 +45,11 @@ public class LogMessage implements Serializable {
   public LogMessage() {
   }
 
-  public String getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(UUID id) {
     this.id = id;
   }
 

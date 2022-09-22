@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.statistics
 
 import java.util.concurrent.Future
-
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
@@ -11,6 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaDa
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsCompoundClasses
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmitter
+import org.springframework.context.annotation.Profile
 
 /**
   * Created by sajjan on 8/4/16.
@@ -18,6 +18,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmit
 @CrossOrigin
 @RestController
 @RequestMapping(Array("/rest"))
+@Profile(Array("mona.persistence"))
 class StatisticsRestController {
 
   @Autowired

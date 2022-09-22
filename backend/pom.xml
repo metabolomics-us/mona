@@ -41,30 +41,11 @@
                 <version>2.7.1</version>
             </dependency>
 
-            <!-- RSQL dependencies -->
-            <dependency>
-                <groupId>com.github.rutledgepaulv</groupId>
-                <artifactId>rest-query-engine</artifactId>
-                <version>0.6.3-SNAPSHOT-GERT</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.rutledgepaulv</groupId>
-                <artifactId>q-builders</artifactId>
-                <version>1.4</version>
-            </dependency>
-
             <!-- Swagger documentation dependencies -->
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>2.7.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>2.7.0</version>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>1.6.11</version>
             </dependency>
 
             <!-- Spring Cloud -->
@@ -236,7 +217,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.2.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>

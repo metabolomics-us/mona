@@ -3,8 +3,9 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsCompoundClassesRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsCompoundClasses
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.{CompoundRepository}
-import org.springframework.beans.factory.annotation.{Autowired}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.CompoundRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -16,6 +17,7 @@ import scala.jdk.StreamConverters.StreamHasToScala
   * Created by sajjan on 9/27/16.
   */
 @Service
+@Profile(Array("mona.persistence"))
 class CompoundClassStatisticsService extends LazyLogging{
   @Autowired
   private val compoundRepository: CompoundRepository = null
