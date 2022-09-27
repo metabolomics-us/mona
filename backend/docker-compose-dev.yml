@@ -69,8 +69,9 @@ services:
   bootstrap:
     image: public.ecr.aws/fiehnlab/mona-bootstrap:test
     depends_on:
+      - discovery
       - config-server
-    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 #
 #  # Webhook support to notify external apis
   webhooks:
@@ -79,7 +80,8 @@ services:
       - "4444:4444"
     depends_on:
       - config-server
-    entrypoint: bash -c "./wait-for-it.sh rabbitmq:15672 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 #
 #  # Scheduler for curation jobs
   curationScheduler:
@@ -88,8 +90,8 @@ services:
       - "5555:5555"
     depends_on:
       - config-server
-      - rabbitmq
-    entrypoint: bash -c "./wait-for-it.sh rabbitmq:15672 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 #
 #  # Serves the content of MoNA as a repository
   repository:
@@ -98,8 +100,8 @@ services:
       - "8888:8888"
     depends_on:
       - discovery
-      - rabbitmq
-    entrypoint: bash -c "./wait-for-it.sh rabbitmq:15672 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+      - config-server
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - repository-data:/data
 
@@ -112,8 +114,8 @@ services:
   persistence:
     image: public.ecr.aws/fiehnlab/mona-persistence-server:test
     depends_on:
-      - curationScheduler
-      - rabbitmq
+      - webhooks
+      - discovery
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 
   # Main authentication service
@@ -127,8 +129,8 @@ services:
     ports:
     - "9999:9999"
     depends_on:
-      - curationScheduler
-      - rabbitmq
+      - webhooks
+      - discovery
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 
 
@@ -154,7 +156,7 @@ services:
       - "7777:7777"
     depends_on:
       - persistence
-      - rabbitmq
+      - webhooks
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - downloader-data:/data
@@ -164,5 +166,5 @@ services:
     image: public.ecr.aws/fiehnlab/mona-curation-runner:test
     depends_on:
       - persistence
-      - rabbitmq
+      - webhooks
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"

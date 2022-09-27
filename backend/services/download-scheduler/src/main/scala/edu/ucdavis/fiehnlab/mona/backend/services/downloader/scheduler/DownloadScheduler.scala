@@ -14,10 +14,10 @@ import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.security.config.annotation.web.builders.{HttpSecurity}
-import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityCustomizer}
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter, WebSecurityCustomizer}
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.config.annotation.web.builders.{WebSecurity}
 
 /**
   * Created by sajjan on 5/25/16.
@@ -28,18 +28,17 @@ import org.springframework.security.web.SecurityFilterChain
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration],
   classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig], classOf[DownloadConfig], classOf[DownloadListenerConfig]))
-class DownloadScheduler extends LazyLogging {
+class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Autowired
   val restSecurityService: RestSecurityService = null
 
   /**
-    * only authenticated users can schedule downloads from the system
-    *
-    * @param http
-    */
-  @Bean
-  def filterChain(http: HttpSecurity): SecurityFilterChain = {
+   * only authenticated users can schedule downloads from the system
+   *
+   * @param http
+   */
+  override final def configure(http: HttpSecurity): Unit = {
     restSecurityService.prepare(http)
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
@@ -56,12 +55,9 @@ class DownloadScheduler extends LazyLogging {
 
       // must be an admin to upload static files
       .antMatchers(HttpMethod.POST, "/rest/downloads/static").hasAuthority("ADMIN")
-    http.build()
   }
 
-  @Bean
-  def webSecurityCustomizer(): WebSecurityCustomizer = {
-    web =>
+  override def configure(web: WebSecurity): Unit = {
     web.ignoring().antMatchers(HttpMethod.GET, "/*")
       .antMatchers(HttpMethod.GET, "/rest/downloads/retrieve/**")
       .antMatchers(HttpMethod.GET, "/rest/downloads/predefined")

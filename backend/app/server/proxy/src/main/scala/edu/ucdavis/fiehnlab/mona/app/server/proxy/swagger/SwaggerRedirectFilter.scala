@@ -1,3 +1,4 @@
+/*
 package edu.ucdavis.fiehnlab.mona.app.server.proxy.swagger
 
 import javax.servlet.http.HttpServletRequest
@@ -37,3 +38,4 @@ class SwaggerRedirectFilter extends ZuulFilter with LazyLogging {
     null
   }
 }
+*/
