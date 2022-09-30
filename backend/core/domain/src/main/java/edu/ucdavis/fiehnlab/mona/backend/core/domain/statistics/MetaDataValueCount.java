@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -17,6 +18,8 @@ public class MetaDataValueCount implements Serializable {
     @SequenceGenerator(name = "metadata_value_count", initialValue = 1, allocationSize = 50)
     private Long id;
 
+    @Column(columnDefinition = "varchar(4096)",length = 4096)
+    @Size(max = 4096)
     private String value;
 
     private Integer count;

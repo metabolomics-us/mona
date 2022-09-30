@@ -11,6 +11,8 @@ spring:
     host: 127.0.0.1
   application:
     name: webhook-service
+  main:
+    allow-bean-definition-overriding: true
 
 #our local server port
 server:

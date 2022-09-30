@@ -137,7 +137,7 @@
     <!-- display spectra as list -->
     <div class="col-md-12" *ngIf="pagination.table !== true">
         <div *ngFor="let spectrum of spectra" class="m-md-3">
-            <display-spectra-panel [spectrum]="spectrum"></display-spectra-panel>
+            <display-spectra-panel [spectrumResult]="spectrum"></display-spectra-panel>
         </div>
     </div>
 

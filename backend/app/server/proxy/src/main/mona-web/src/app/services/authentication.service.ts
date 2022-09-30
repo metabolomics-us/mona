@@ -33,9 +33,9 @@ export class AuthenticationService{
     }
 
     pullSubmitterData(credentials: any) {
-        if (credentials.username === 'admin') {
-          this.currentUserSubject.next({emailAddress: credentials.username, accessToken: credentials.accessToken,
-            firstName: credentials.username, lastName: '', institution: '', roles: [{authority: 'ADMIN'}]});
+        if (credentials.emailAddress === 'admin') {
+          this.currentUserSubject.next({emailAddress: credentials.emailAddress, accessToken: credentials.accessToken,
+            firstName: credentials.emailAddress, lastName: '', institution: '', roles: [{authority: 'ADMIN'}]});
           this.isAuthenticatedSubject.next(true);
         } else {
           const config = {
@@ -44,7 +44,7 @@ export class AuthenticationService{
               Authorization: 'Bearer ' + credentials.accessToken
             }
           };
-          this.http.get(`${environment.REST_BACKEND_SERVER}/rest/submitters/${credentials.username}`, config).subscribe((res: User) => {
+          this.http.get(`${environment.REST_BACKEND_SERVER}/rest/submitters/${credentials.emailAddress}`, config).subscribe((res: User) => {
             this.currentUserSubject.next({
               emailAddress: res.emailAddress, accessToken: credentials.accessToken,
               firstName: res.firstName, lastName: res.lastName, institution: res.institution, roles: res.roles || []
@@ -56,13 +56,13 @@ export class AuthenticationService{
         }
     }
 
-    login(userName, password): Observable<any> {
+    login(emailAddress, password): Observable<any> {
         return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/auth/login`,
-          JSON.stringify({username: userName, password}),
+          JSON.stringify({emailAddress: emailAddress, password}),
             {headers: {'Content-Type': 'application/json'}}
         ).pipe(map((x: any) => {
             this.cookie.update('AuthorizationToken', x.token);
-            this.pullSubmitterData({username: userName, accessToken: x.token});
+            this.pullSubmitterData({emailAddress: emailAddress, accessToken: x.token});
         }));
     }
 
@@ -89,7 +89,7 @@ export class AuthenticationService{
           (res: any) => {
             this.logger.debug(res);
             const credentials = {
-              username: res.username, accessToken
+              emailAddress: res.emailAddress, accessToken
             };
             this.pullSubmitterData(credentials);
           }, (() => {

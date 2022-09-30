@@ -58,10 +58,13 @@ export class Spectrum {
 		return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/similarity/search`, data, config)
 			.pipe(first(), map((res: any) => {
 				 let result;
+         console.log(res);
 				 result = res.map((spectrum) => {
 					spectrum.hit.similarity = spectrum.score;
+          console.log(spectrum.hit);
 					return spectrum.hit;
 				  });
+         console.log(result);
 				 return result;
 			}));
 	}

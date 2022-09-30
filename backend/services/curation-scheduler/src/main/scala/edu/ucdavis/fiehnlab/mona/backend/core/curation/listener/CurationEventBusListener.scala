@@ -27,7 +27,7 @@ class CurationEventBusListener @Autowired()(val bus: EventBus[Spectrum]) extends
     * @return
     */
   private def shouldScheduleCuration(spectrum: Spectrum): Boolean = {
-    val formatter: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+    val formatter: SimpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
     spectrum.getLastCurated == null || (new Date().getTime - formatter.parse(spectrum.getLastCurated).getTime) / (60 * 1000) >= 15
   }
 

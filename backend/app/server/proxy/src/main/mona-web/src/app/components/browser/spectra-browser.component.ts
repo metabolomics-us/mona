@@ -229,9 +229,9 @@ export class SpectraBrowserComponent implements OnInit{
         for (let i = 0; i < spectra.length; i++) {
             const metaDataMap = {};
 
-            if (typeof spectra[i].compound !== 'undefined') {
-                for (let j = 0; j < spectra[i].compound.length; j++) {
-                    spectra[i].compound[j].metaData.forEach((metaData) => {
+            if (typeof spectra[i].spectrum.compound !== 'undefined') {
+                for (let j = 0; j < spectra[i].spectrum.compound.length; j++) {
+                    spectra[i].spectrum.compound[j].metaData.forEach((metaData) => {
                         if (metaData.name === 'total exact mass') {
                             metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
                         } else {
@@ -243,13 +243,13 @@ export class SpectraBrowserComponent implements OnInit{
                         }
                     });
 
-                    if (spectra[i].compound.kind === 'biological') {
+                    if (spectra[i].spectrum.compound.kind === 'biological') {
                         break;
                     }
                 }
             }
 
-            spectra[i].metaData.forEach((metaData) => {
+            spectra[i].spectrum.metaData.forEach((metaData) => {
                 if (metaData.name === 'mass accuracy' || metaData.name === 'mass error') {
                     metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
                 } else {
@@ -466,6 +466,7 @@ export class SpectraBrowserComponent implements OnInit{
 
         if (res.length > 0) {
             // Add data to spectra object
+            console.log(res);
             this.spectra = this.addMetadataMap(res);
         }
         this.hideSplash();

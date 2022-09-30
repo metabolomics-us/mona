@@ -156,6 +156,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "proxy"
+    }
+  },
+  "defaultProject": "proxy",
+  "cli": {
+    "analytics": "cca8616e-edf9-44e4-a2d0-0e72cca14259"
+  }
 }

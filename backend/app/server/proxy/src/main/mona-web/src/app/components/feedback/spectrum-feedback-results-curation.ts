@@ -34,7 +34,7 @@ export class SpectrumFeedbackResultsCurationComponent implements OnInit, OnChang
     this.cleanCount = 0;
     this.noisyCount = 0;
 
-    this.feedbackCache.resolveFeedback(this.spectrum.id).pipe(first()).subscribe((res) => {
+    this.feedbackCache.resolveFeedback(this.spectrum.monaId).pipe(first()).subscribe((res) => {
       this.currentFeedback = res;
       this.calculateCommunity();
       this.calculateCurated();
@@ -67,11 +67,11 @@ export class SpectrumFeedbackResultsCurationComponent implements OnInit, OnChang
   }
 
   calculateCurated() {
-    this.normalizedEntropy = this.spectrum.metaData.filter((metadata) => {
+    this.normalizedEntropy = this.spectrum.spectrum.metaData.filter((metadata) => {
       return metadata.name === 'normalized entropy';
     });
 
-    this.spectralEntropy = this.spectrum.metaData.filter((metadata) => {
+    this.spectralEntropy = this.spectrum.spectrum.metaData.filter((metadata) => {
       return metadata.name === 'spectral entropy';
     });
 
@@ -88,7 +88,7 @@ export class SpectrumFeedbackResultsCurationComponent implements OnInit, OnChang
   }
 
   isGCMS(): boolean {
-    if (this.spectrum.tags.filter(x => x.text === 'GC-MS').length > 0) {
+    if (this.spectrum.spectrum.tags.filter(x => x.text === 'GC-MS').length > 0) {
       return true;
     }
     return false;

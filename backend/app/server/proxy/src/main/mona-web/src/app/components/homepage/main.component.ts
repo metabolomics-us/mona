@@ -8,6 +8,7 @@ import {Subscription} from "rxjs";
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {faSearch, faChartBar, faExclamationTriangle, faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {SpectrumResult} from "../../mocks/spectrum-result.model";
 
 @Component({
     selector: 'main',
@@ -16,7 +17,7 @@ import {faSearch, faChartBar, faExclamationTriangle, faSpinner} from '@fortaweso
 export class MainComponent implements OnInit, OnDestroy{
     private popupOpenSubscription!: Subscription;
     showcaseSpectraIds;
-    showcaseSpectra;
+    showcaseSpectra: SpectrumResult[];
     totalCount;
     faSearch = faSearch;
     faChartBar = faChartBar;
