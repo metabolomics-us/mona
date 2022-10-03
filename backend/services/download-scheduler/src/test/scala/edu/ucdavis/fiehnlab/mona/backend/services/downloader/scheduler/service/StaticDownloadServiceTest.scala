@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.StaticDownload
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import org.springframework.beans.factory.annotation.Autowired

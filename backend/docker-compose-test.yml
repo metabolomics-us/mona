@@ -44,7 +44,7 @@ services:
         mode: replicated
 
   rabbitmq:
-    image: rabbitmq:3.6-management
+    image: rabbitmq
     hostname: rabbitmq
     ports:
       - "5672:5672"

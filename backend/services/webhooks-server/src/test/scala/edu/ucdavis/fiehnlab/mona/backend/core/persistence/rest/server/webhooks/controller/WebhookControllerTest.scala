@@ -5,10 +5,10 @@ import com.jayway.restassured.RestAssured._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.{WebHookRepository, WebHookResultRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.domain.{WebHook, WebHookResult}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractGenericRESTControllerTest
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired

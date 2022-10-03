@@ -11,7 +11,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +22,7 @@ import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.ActiveProfiles
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractGenericRESTControllerTest
 
 import scala.concurrent.duration._
 import scala.language.postfixOps

@@ -10,9 +10,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SequenceRepository, SubmitterRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.scalatest.concurrent.Eventually
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest

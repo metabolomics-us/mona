@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
@@ -8,10 +8,10 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import com.jayway.restassured.specification.RequestSpecification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles,Users}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles, Users}
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType

@@ -4,7 +4,7 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.builder.MultiPartSpecBuilder
 import com.jayway.restassured.specification.MultiPartSpecification
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.StaticDownload
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.StaticDownloadService

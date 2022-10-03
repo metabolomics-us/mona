@@ -15,8 +15,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData.StatisticsMetaDataSummary
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.LocalServerPort
