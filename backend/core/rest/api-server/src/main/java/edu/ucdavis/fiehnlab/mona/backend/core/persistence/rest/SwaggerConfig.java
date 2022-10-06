@@ -24,7 +24,7 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
         return new OpenAPI()
                 .info(new Info().title("MassBank of North America (MoNA)")
                         .description("API Documentation for the " + appName)
-                        .version("v2")
+                        .version("v3")
                         .license(new License().name("GNU Lesser General Public License").url("http://www.gnu.org/licenses/lgpl-3.0.en.html")));
 
     }
@@ -33,7 +33,11 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         // Swagger endpoint for rest documentation
         web.ignoring()
-                .antMatchers(HttpMethod.GET, "/v3/api-docs")
-                .antMatchers(HttpMethod.GET, "/webjars/**");
+                .antMatchers(HttpMethod.OPTIONS, "/**")
+                .antMatchers("/swagger-ui/**")
+                .antMatchers("/swagger-resources/**")
+                .antMatchers("/v3/api-docs/**")
+                .antMatchers("/configuration/**")
+                .antMatchers("/webjars/**");
     }
 }

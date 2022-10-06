@@ -43,7 +43,7 @@ export const routes: Routes = [
     {
       path: 'spectra/display/:id',
       component: SpectrumViewerComponent,
-      resolve: {spectrum: SpectrumResolver}
+      resolve: {spectrumResult: SpectrumResolver}
     },
     {path: 'spectra/browse', component: SpectraBrowserComponent},
     {path: 'spectra/similaritySearch', component: SpectraBrowserComponent},

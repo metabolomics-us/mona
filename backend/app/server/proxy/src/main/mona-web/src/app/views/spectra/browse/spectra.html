@@ -156,15 +156,15 @@
             <tbody>
             <tr *ngIf="spectra.length === 0"></tr>
 
-            <tr *ngFor="let spectrum of spectra" (click)="viewSpectrum(spectrum.id)">
+            <tr *ngFor="let spectrumResult of spectra" (click)="viewSpectrum(spectrumResult.monaId)">
                 <td>
                     <div>
-                        <div><a style="cursor: pointer" [routerLink]="[viewSpectrum(spectrum.id)]">{{spectrum.id}}</a></div>
-                        <div *ngIf="spectrum.score">
-                            <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
+                        <div><a style="cursor: pointer" [routerLink]="[viewSpectrum(spectrumResult.monaId)]">{{spectrumResult.monaId}}</a></div>
+                        <div *ngIf="spectrumResult.spectrum.score">
+                            <ngb-rating [(rate)]="spectrumResult.spectrum.score.score" max="5" readonly="true"></ngb-rating>
                         </div>
-                        <div *ngIf="spectrum.similarity !== undefined">
-                            <h4><span class="label label-primary" >Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}}</span></h4>
+                        <div *ngIf="spectrumResult.spectrum.similarity !== undefined">
+                            <h4><span class="label label-primary" >Similarity: {{spectrumResult.spectrum.similarity * 1000 | number:'1.0-0'}}</span></h4>
                         </div>
                         <div>
                           <h6><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h6>
@@ -174,24 +174,24 @@
                 <td>
                     <div>
                         <ul class="list-unstyled">
-                            <li *ngFor="let name of spectrum.compound[0].names | slice:0:3">{{name.name}}</li>
+                            <li *ngFor="let name of spectrumResult.spectrum.compound[0].names | slice:0:3">{{name.name}}</li>
                         </ul>
                     </div>
                 </td>
                 <td>
                     <div class="text-center" style="width:150px;height:150px">
-                        <div [libChemdoodle]="spectrum.compound[0].molFile" class="center-block" readonly="true"
-                             [id]="'bioSketch_'+spectrum.id+'_true'" [width]="150" [height]="150"></div>
+                        <div [libChemdoodle]="spectrumResult.spectrum.compound[0].molFile" class="center-block" readonly="true"
+                             [id]="'bioSketch_'+spectrumResult.spectrum.id+'_true'" [width]="150" [height]="150"></div>
                     </div>
                 </td>
                 <td>
                   <div class="masspec-mini text-center">
-                    <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.id" [miniPlot]="true" [spectrum]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
+                    <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrumResult.spectrum.id" [miniPlot]="true" [spectrum]="spectrumResult.spectrum.spectrum"></lib-ng-mass-spec-plotter>
                   </div>
                 </td>
                 <td>
                     <div>
-                        <p class="text-center">{{spectrum.metaDataMap['total exact mass']}}</p>
+                        <p class="text-center">{{spectrumResult.metaDataMap['total exact mass']}}</p>
                     </div>
                 </td>
             </tr>

@@ -56,25 +56,25 @@ class BootstrapDownloaderService extends LazyLogging {
   def createLibraryQueries(): Unit = {
     logger.info("Creating library queries")
 
-    saveQuery("Libraries - MassBank", "MassBank Spectral Database", "tags.text==MassBank")
-    saveQuery("Libraries - MassBank - CASMI 2012", "CASMI 2012", """tags.text=="CASMI 2012"""")
-    saveQuery("Libraries - MassBank - CASMI 2016", "CASMI 2016", """tags.text=="CASMI 2016"""")
-    saveQuery("Libraries - ReSpect", "RIKEN MS^n Spectral Database for Phytochemicals", """tags.text=="ReSpect"""")
-    saveQuery("Libraries - HMDB", "Human Metabolome Database", """tags.text=="HMDB"""")
-    saveQuery("Libraries - GNPS", "Global Natural Product Social Molecular Networking Library", """tags.text=="GNPS"""")
-    saveQuery("Libraries - MetaboBASE", "Bruker Sumner MetaboBASE Plant Library", """tags.text=="MetaboBASE"""")
-    saveQuery("Libraries - RIKEN IMS Oxidized Phospholipids", "RIKEN IMS Oxidized Phospholipids", """tags.text=="RIKEN OxPLs"""")
-    saveQuery("Libraries - RTX5 Fiehnlib", "RTX5 Fiehn Lab Metabolic Profiling Library", """tags.text=="FiehnLib"""")
-    saveQuery("Libraries - Fiehn HILIC", "Fiehn HILIC Library", """tags.text=="Fiehn HILIC"""")
-    saveQuery("Libraries - Pathogen Box", "Pathogen Box Library", """tags.text=="PathogenBox"""")
+    saveQuery("Libraries - MassBank", "MassBank Spectral Database", "text==MassBank")
+    saveQuery("Libraries - MassBank - CASMI 2012", "CASMI 2012", """text=='CASMI 2012'""")
+    saveQuery("Libraries - MassBank - CASMI 2016", "CASMI 2016", """text=='CASMI 2016'""")
+    saveQuery("Libraries - ReSpect", "RIKEN MS^n Spectral Database for Phytochemicals", """text=='ReSpect'""")
+    saveQuery("Libraries - HMDB", "Human Metabolome Database", """text=="HMDB"""")
+    saveQuery("Libraries - GNPS", "Global Natural Product Social Molecular Networking Library", """text=='GNPS'""")
+    saveQuery("Libraries - MetaboBASE", "Bruker Sumner MetaboBASE Plant Library", """text=='MetaboBASE'""")
+    saveQuery("Libraries - RIKEN IMS Oxidized Phospholipids", "RIKEN IMS Oxidized Phospholipids", """text=='RIKEN OxPLs'""")
+    saveQuery("Libraries - RTX5 Fiehnlib", "RTX5 Fiehn Lab Metabolic Profiling Library", """text=='FiehnLib'""")
+    saveQuery("Libraries - Fiehn HILIC", "Fiehn HILIC Library", """text=='Fiehn HILIC'""")
+    saveQuery("Libraries - Pathogen Box", "Pathogen Box Library", """text=='PathogenBox'""")
 
-    saveQuery("Libraries - Vaniya/Fiehn Natural Products Library", "Vaniya/Fiehn Natural Products Library", """tags.text=="VF-NPL"""")
-    saveQuery("Libraries - Vaniya/Fiehn Natural Products Library - VF-NPL QTOF", "Vaniya/Fiehn Natural Products QTOF Library", """tags.text=="VF-NPL QTOF"""")
-    saveQuery("Libraries - Vaniya/Fiehn Natural Products Library - VF-NPL QExactive", "Vaniya/Fiehn Natural Products Q Exactive Library", """tags.text=="VF-NPL QExactive"""")
-    saveQuery("Libraries - Vaniya/Fiehn Natural Products Library - VF-NPL LTQ", "Vaniya/Fiehn Natural Products LTQ Library", """tags.text=="VF-NPL LTQ"""")
+    saveQuery("Libraries - Vaniya/Fiehn Natural Products Library", "Vaniya/Fiehn Natural Products Library", """text=='VF-NPL'""")
+    saveQuery("Libraries - Vaniya/Fiehn Natural Products Library - VF-NPL QTOF", "Vaniya/Fiehn Natural Products QTOF Library", """text=='VF-NPL QTOF'""")
+    saveQuery("Libraries - Vaniya/Fiehn Natural Products Library - VF-NPL QExactive", "Vaniya/Fiehn Natural Products Q Exactive Library", """text=='VF-NPL QExactive'""")
+    saveQuery("Libraries - Vaniya/Fiehn Natural Products Library - VF-NPL LTQ", "Vaniya/Fiehn Natural Products LTQ Library", """text=='VF-NPL LTQ'""")
 
-    saveQuery("Libraries - LipidBlast", "LipidBlast In-Silico MS/MS Database for Lipid Identification", """tags.text=="LipidBlast"""")
-    saveQuery("Libraries - FAHFA", "Fatty Acid ester of Hydroxyl Fatty Acid In-Silico Library", """tags.text=="FAHFA"""")
+    saveQuery("Libraries - LipidBlast", "LipidBlast In-Silico MS/MS Database for Lipid Identification", """text=='LipidBlast'""")
+    saveQuery("Libraries - FAHFA", "Fatty Acid ester of Hydroxyl Fatty Acid In-Silico Library", """text=='FAHFA'""")
   }
 
   /**
@@ -87,30 +87,30 @@ class BootstrapDownloaderService extends LazyLogging {
 
     // Create export for all spectra
     saveQuery("All Spectra", "All Spectra", "")
-    saveQuery("All Spectra - Experimental Spectra", "Experimental Spectra", """tags.text!="In-Silico"""")
-    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", """tags.text=="In-Silico"""")
+    saveQuery("All Spectra - Experimental Spectra", "Experimental Spectra", """text!="In-Silico"""")
+    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", """text=="In-Silico"""")
 
     saveQuery(
       "GC-MS Spectra",
-      """tags.text=="GC-MS""""
+      """text=="GC-MS""""
     )
 
 
     saveQuery(
       "LC-MS Spectra",
-      """tags.text=="LC-MS""""
+      """text=="LC-MS""""
     )
     saveQuery(
       "LC-MS Spectra - LC-MS/MS Spectra",
-      """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"'"""
+      """text=='LC-MS' and metadataName=='ms level' and metadataValue=='MS2'"""
     )
     saveQuery(
       "LC-MS Spectra - LC-MS/MS Spectra - LC-MS/MS Positive Mode",
-      """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"' and metaData=q='name=="ionization mode" and value=="positive"'"""
+      """text=='LC-MS' and metadataName=='ms level' and metadataValue=='MS2' and metadataName=='ionization mode' and metadataValue=='positive'"""
     )
     saveQuery(
       "LC-MS Spectra - LC-MS/MS Spectra - LC-MS/MS Negative Mode",
-      """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"' and metaData=q='name=="ionization mode" and value=="negative"'"""
+      """text=='LC-MS' and metadataName=='ms level' and metadataValue=='MS2' and metadataName=='ionization mode' and metadataValue=='negative'"""
     )
   }
 }

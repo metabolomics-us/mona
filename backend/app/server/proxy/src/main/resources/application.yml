@@ -10,6 +10,12 @@ spring:
     multipart:
       max-file-size: 128MB
       max-request-size: 128MB
+  profiles:
+    include:
+      - swagger
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 info:
   component: MoNA Edge Server
@@ -25,3 +31,4 @@ server:
 springdoc:
   swagger-ui:
     config-url: /swagger-config.json
+    use-root-path: true

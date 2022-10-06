@@ -41,23 +41,23 @@ export class SpectrumReviewComponent implements OnInit{
       if (!this.hasSubmitted) {
         this.authenticationService.currentUser.subscribe((data: any) => {
           const payload = {
-            monaID: this.spectrum.id,
-            userID: data.emailAddress,
+            monaId: this.spectrum.monaId,
+            emailAddress: data.emailAddress,
             name: 'spectrum_quality',
             value
           };
           this.feedback.save(payload).subscribe(() => {
             this.submitting = false;
             this.submitted = true;
-            this.feedbackCache.updateFeedback(this.spectrum.id);
+            this.feedbackCache.updateFeedback(this.spectrum.monaId);
           });
         });
       } else {
         let existingSubmission = null;
         this.authenticationService.currentUser.subscribe((data: any) => {
-          this.feedbackCache.resolveFeedback(this.spectrum.id).subscribe((res) => {
+          this.feedbackCache.resolveFeedback(this.spectrum.monaId).subscribe((res) => {
             for (const x of res) {
-              if (x.userID === data.emailAddress) {
+              if (x.emailAddress === data.emailAddress) {
                 existingSubmission = x;
               }
             }
@@ -67,7 +67,7 @@ export class SpectrumReviewComponent implements OnInit{
               this.feedback.save(existingSubmission).subscribe(() => {
                 this.submitting = false;
                 this.submitted = true;
-                this.feedbackCache.updateFeedback(this.spectrum.id);
+                this.feedbackCache.updateFeedback(this.spectrum.monaId);
               });
             }
           });
@@ -77,9 +77,9 @@ export class SpectrumReviewComponent implements OnInit{
 
     checkExistingFeedback() {
       this.authenticationService.currentUser.subscribe((data) => {
-        this.feedbackCache.resolveFeedback(this.spectrum.id).subscribe((res: any) => {
+        this.feedbackCache.resolveFeedback(this.spectrum.monaId).subscribe((res: any) => {
           for (const x of res) {
-            if (x.userID === data.emailAddress) {
+            if (x.emailAddress === data.emailAddress) {
               this.hasSubmitted = true;
               this.existingFeedback = x;
             }

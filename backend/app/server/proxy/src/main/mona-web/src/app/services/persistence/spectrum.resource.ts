@@ -7,6 +7,7 @@ import { map, first } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
+import {SpectrumResult} from "../../mocks/spectrum-result.model";
 
 @Injectable()
 export class Spectrum {
@@ -22,8 +23,8 @@ export class Spectrum {
 		return params;
 	}
 
-	get(id: string): Observable<any> {
-		return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/${id}`);
+	get(id: string): Observable<SpectrumResult[]> {
+		return this.http.get<SpectrumResult[]>(`${environment.REST_BACKEND_SERVER}/rest/spectra/${id}`);
 	}
 
 	update(data: any): Observable<any> {
@@ -61,10 +62,9 @@ export class Spectrum {
          console.log(res);
 				 result = res.map((spectrum) => {
 					spectrum.hit.similarity = spectrum.score;
-          console.log(spectrum.hit);
-					return spectrum.hit;
+          //Return in SpectrumResult format
+					return {spectrum: spectrum.hit, monaId: spectrum.id};
 				  });
-         console.log(result);
 				 return result;
 			}));
 	}

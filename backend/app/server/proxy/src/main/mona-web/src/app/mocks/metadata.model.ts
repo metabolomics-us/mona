@@ -1,7 +1,7 @@
 export class Metadata {
   url: string;
   name: string;
-  value: string;
+  value: any;
   hidden: boolean;
   category: string;
   computed: boolean;

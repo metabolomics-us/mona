@@ -23,13 +23,14 @@ import {faBookmark} from '@fortawesome/free-regular-svg-icons';
 import {BehaviorSubject} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MassDeleteModalComponent} from './mass-delete-modal.component';
+import {SpectrumResult} from "../../mocks/spectrum-result.model";
 
 @Component({
     selector: 'spectra-browser',
     templateUrl: '../../views/spectra/browse/spectra.html'
 })
 export class SpectraBrowserComponent implements OnInit{
-    spectra;
+    spectra: SpectrumResult[];
     pagination;
     searchSplash;
     editQuery;
@@ -225,7 +226,7 @@ export class SpectraBrowserComponent implements OnInit{
     /**
      * Get total exact mass as accurate mass of spectrum
      */
-    addMetadataMap(spectra) {
+    addMetadataMap(spectra: SpectrumResult[]) {
         for (let i = 0; i < spectra.length; i++) {
             const metaDataMap = {};
 
@@ -243,7 +244,7 @@ export class SpectraBrowserComponent implements OnInit{
                         }
                     });
 
-                    if (spectra[i].spectrum.compound.kind === 'biological') {
+                    if (spectra[i].spectrum.compound[j].kind === 'biological') {
                         break;
                     }
                 }
@@ -461,7 +462,7 @@ export class SpectraBrowserComponent implements OnInit{
         }
     }
 
-    searchSuccess = (res) => {
+    searchSuccess = (res: SpectrumResult[]) => {
         this.duration = (Date.now() - this.startTime) / 1000;
 
         if (res.length > 0) {

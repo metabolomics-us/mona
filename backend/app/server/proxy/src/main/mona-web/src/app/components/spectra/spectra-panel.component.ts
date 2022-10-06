@@ -90,7 +90,7 @@ export class SpectraPanelComponent implements OnInit{
      * displays the spectrum for the given index
      */
     viewSpectrum(): string {
-        this.spectrumCache.setSpectrum(this.spectrumResult.spectrum);
+        this.spectrumCache.setSpectrum(this.spectrumResult);
         return '/spectra/display/' + this.spectrumResult.monaId;
     }
 

@@ -101,7 +101,9 @@ class StatisticsService extends LazyLogging {
     *
     * @return
     **/
+  @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def updateGlobalStatistics(): StatisticsGlobal = {
+    globalStatisticsRepository.deleteAll()
     // Spectrum count
     val spectrumCount: Long = spectrumResultRepository.count()
     val compoundCount: Long = generateCompoundCount()

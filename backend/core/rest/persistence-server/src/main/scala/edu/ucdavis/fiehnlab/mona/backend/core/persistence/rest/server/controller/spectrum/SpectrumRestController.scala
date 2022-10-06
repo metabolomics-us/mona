@@ -16,6 +16,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.SubmitterDAO
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{SpectrumResult, Submitter}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
 import org.springframework.context.annotation.Profile
 
 import javax.servlet.{ServletRequest, ServletResponse}
@@ -38,9 +39,18 @@ class SpectrumRestController extends LazyLogging {
   val submitterMongoRepository: SubmitterRepository = null
 
   @Autowired
+  val materializedViewRepository: MaterializedViewRepository = null
+
+  @Autowired
   val loginService: LoginService = null
 
 
+  @RequestMapping(path = Array("/refresh"), method = Array(RequestMethod.POST))
+  @Async
+  def refreshView(): String = {
+    materializedViewRepository.refreshSearchTable()
+    "Materialized View Being Refreshed Manually"
+  }
 
   /**
     * Executes a search against the repository and can cause out of memory errors.  It is recommended to utilize this

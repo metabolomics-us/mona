@@ -23,9 +23,7 @@ public class SwaggerUiConfig {
     List<AbstractSwaggerUiConfigProperties.SwaggerUrl> urls = new LinkedList<>();
     discoveryClient.getServices().forEach(serviceName ->
       discoveryClient.getInstances(serviceName).forEach(serviceInstance -> {
-          SwaggerUrl swaggerUrl = new SwaggerUrl();
-          swaggerUrl.setName(serviceName);
-          swaggerUrl.setUrl(serviceInstance.getUri() + "/v3/api-docs");
+          SwaggerUrl swaggerUrl = new SwaggerUrl("mona", serviceInstance.getUri() + "/v3/api-docs", serviceName);
           urls.add(swaggerUrl);
         }
       )
