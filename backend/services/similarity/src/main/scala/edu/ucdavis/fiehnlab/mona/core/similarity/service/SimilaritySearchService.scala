@@ -47,7 +47,7 @@ class SimilaritySearchService extends LazyLogging {
 
     val algorithmType: AlgorithmTypes.Value = getSimilarityType(request.algorithm)
     // Perform similarity search, order by score and return a maximum of 50 or a default 25 hits
-    val results: Array[ComputationalResult] = indexUtils.search(spectrum, algorithmType, minSimilarity, request.precursorToleranceDa, request.removePrecursorIon).toArray
+    val results: Array[ComputationalResult] = indexUtils.search(spectrum, algorithmType, minSimilarity, request.precursorToleranceDa, request.removePrecursorIon, request.checkAllAdducts).toArray
     logger.info(s"Search discovered ${results.length} hits")
 
     results

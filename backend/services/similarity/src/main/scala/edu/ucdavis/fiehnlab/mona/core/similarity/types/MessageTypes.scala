@@ -18,15 +18,16 @@ case class SimilaritySearchRequest(
                                     requiredTags: Array[String],
                                     filterTags: Array[String],
                                     removePrecursorIon: Boolean,
-                                    algorithm: String
+                                    algorithm: String,
+                                    checkAllAdducts: Boolean
                                   )
 
 object SimilaritySearchRequest {
   def apply(spectrum: String, minSimilarity: Double): SimilaritySearchRequest =
-    SimilaritySearchRequest(spectrum, minSimilarity, 0.0, 0.01, 0.0, Array(), Array(), false, "default")
+    SimilaritySearchRequest(spectrum, minSimilarity, 0.0, 0.01, 0.0, Array(), Array(), false, "default", false)
 
-  def apply(spectrum: String, minSimilarity: Double, precursorMZ: Double, precursorToleranceDa: Double, precursorTolerancePPM: Double, removePrecursorIon: Boolean, algorithm: String): SimilaritySearchRequest =
-    SimilaritySearchRequest(spectrum, minSimilarity, precursorMZ, precursorToleranceDa, precursorTolerancePPM, Array(), Array(), removePrecursorIon, algorithm)
+  def apply(spectrum: String, minSimilarity: Double, precursorMZ: Double, precursorToleranceDa: Double, precursorTolerancePPM: Double, removePrecursorIon: Boolean, algorithm: String, checkAllAdducts: Boolean): SimilaritySearchRequest =
+    SimilaritySearchRequest(spectrum, minSimilarity, precursorMZ, precursorToleranceDa, precursorTolerancePPM, Array(), Array(), removePrecursorIon, algorithm, checkAllAdducts)
 }
 
 

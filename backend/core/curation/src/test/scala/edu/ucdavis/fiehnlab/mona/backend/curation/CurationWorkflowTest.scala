@@ -4,9 +4,10 @@ import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
+import edu.ucdavis.fiehnlab.mona.backend.curation.config.RestClientTestConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
 import org.junit.runner.RunWith
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired

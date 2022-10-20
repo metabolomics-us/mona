@@ -99,6 +99,7 @@ class MSPWriter extends DomainWriter {
   }
 
   /**
+<<<<<<< HEAD
    * Writes InChI metadata string if one is present exists
    *
    * @param spectrum
@@ -121,6 +122,8 @@ class MSPWriter extends DomainWriter {
     }
   }
   /**
+=======
+>>>>>>> dev
     * Writes the comment string containing all available metadata in the format "name=value"
     *
     * @param spectrum

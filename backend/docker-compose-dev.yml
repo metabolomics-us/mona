@@ -30,6 +30,9 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+    logging:
+      options:
+        max-size: "100M"
 
 
   #
@@ -61,6 +64,9 @@ services:
       - JAVA_OPTS='-Xmx2g -XX:+UseParallelGC'
       - GIT_USER=${GIT_USER}
       - GIT_PASS=${GIT_PASS}
+    logging:
+      options:
+        max-size: "100M"
 
 
   #
@@ -102,6 +108,9 @@ services:
     entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - repository-data:/data
+    logging:
+      options:
+        max-size: "100M"
 
 
   #
@@ -158,6 +167,9 @@ services:
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - downloader-data:/data
+    logging:
+      options:
+        max-size: "100M"
 
   # Run scheduled curation tasks
   curationRunner:

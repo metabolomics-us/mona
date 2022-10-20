@@ -72,7 +72,7 @@ class SimilaritySearchServiceTest extends AnyWordSpec with Matchers with LazyLog
       }
 
       "should properly find matching spectra and not return results with adjacent ions" in {
-        val hits: Array[SearchResult] = similaritySearchService.search(SimilaritySearchRequest(testSpectrum, 0.9, -1, 0, 0, false, "composite"), totalSpectra)
+        val hits: Array[SearchResult] = similaritySearchService.search(SimilaritySearchRequest(testSpectrum, 0.9, -1, 0, 0, false, "composite", false), totalSpectra)
 
         assert(hits.length == 3)
         assert(hits.map(_.hit.getId).sorted.sameElements(correctMatches.map(_.id).sorted))

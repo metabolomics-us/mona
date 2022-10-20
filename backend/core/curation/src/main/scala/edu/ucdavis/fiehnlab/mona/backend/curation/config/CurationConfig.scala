@@ -113,6 +113,9 @@ class CurationConfig extends LazyLogging {
           new CalculateMassAccuracy,
           new MassAccuracyValidation,
 
+          // Calculate Adducts after other curations complete
+          new CalculateAllAdducts,
+
           // Add validation metadata
           new FinalizeCuration
         )

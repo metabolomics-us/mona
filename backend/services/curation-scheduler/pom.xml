@@ -65,6 +65,13 @@
         </dependency>
 
         <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>client</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
             <artifactId>api-server</artifactId>
             <scope>test</scope>
