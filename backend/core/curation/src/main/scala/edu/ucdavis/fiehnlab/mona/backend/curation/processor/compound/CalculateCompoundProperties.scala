@@ -10,7 +10,6 @@ import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
 
-import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, Buffer}
 import scala.jdk.CollectionConverters._
 

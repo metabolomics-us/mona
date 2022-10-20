@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Score, Sp
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
-import scala.collection.mutable.{Buffer, ArrayBuffer}
+import scala.collection.mutable.{Buffer}
 import scala.jdk.CollectionConverters._
 /**
   * Created by sajjan on 4/16/16.

@@ -7,15 +7,14 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.Post
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import, Profile}
+import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.http._
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
-import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter, WebSecurityCustomizer}
+import org.springframework.security.config.annotation.web.configuration.{WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, PathMatchConfigurer, WebMvcConfigurer}
-import org.springframework.security.web.SecurityFilterChain
 /**
   * this class configures all our controller and also prepares security measures for these mentioned controllers
   */

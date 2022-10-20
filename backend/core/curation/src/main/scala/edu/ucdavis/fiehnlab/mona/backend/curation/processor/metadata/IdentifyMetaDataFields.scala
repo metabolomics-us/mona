@@ -6,7 +6,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CommonTags}
 import org.springframework.batch.item.ItemProcessor
 
-import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, Buffer}
 import scala.jdk.CollectionConverters._
 /**

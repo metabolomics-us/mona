@@ -36,26 +36,16 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-        </dependency>
-
       <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-webflux-core</artifactId>
+        <version>1.6.11</version>
       </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
-            <artifactId>api-server</artifactId>
-          <exclusions>
-            <exclusion>
-              <groupId>org.springframework.cloud</groupId>
-              <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-webflux-ui</artifactId>
+        <version>1.6.11</version>
+      </dependency>
 
       <dependency>
         <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
@@ -73,6 +63,16 @@
         <artifactId>spring-cloud-starter-gateway</artifactId>
       </dependency>
 
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-webflux</artifactId>
+      </dependency>
+
         <!-- config server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -83,17 +83,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-amqp</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.maxmind.geoip2</groupId>
-            <artifactId>geoip2</artifactId>
-            <version>2.5.0</version>
         </dependency>
     </dependencies>
 

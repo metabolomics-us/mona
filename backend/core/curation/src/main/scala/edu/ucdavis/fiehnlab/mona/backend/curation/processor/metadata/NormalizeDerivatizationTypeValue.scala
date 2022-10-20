@@ -3,10 +3,10 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData}
 import org.springframework.batch.item.ItemProcessor
 
-import scala.collection.mutable.{Buffer, ArrayBuffer}
+import scala.collection.mutable.{Buffer}
 import scala.jdk.CollectionConverters._
 
 /**

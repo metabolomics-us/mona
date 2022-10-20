@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{HttpEntity, HttpMethod}
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder

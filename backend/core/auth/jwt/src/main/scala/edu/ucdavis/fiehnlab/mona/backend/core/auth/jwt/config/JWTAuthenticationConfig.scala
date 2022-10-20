@@ -1,14 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.{IUserRepository, UserRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.{JWTAuthenticationService, JWTRestSecurityService, JWTTokenService}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 
 /**
   * provides us with the specifics for a JWT based authentication
@@ -18,6 +17,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @EnableJpaRepositories(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository"))
 @ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt"))
 @EnableAutoConfiguration
+@EnableWebSecurity
 @Configuration
 class JWTAuthenticationConfig {
 

@@ -15,7 +15,6 @@ spring:
 #our local server port
 server:
   port: 2222
-  forward-headers-strategy: native
 
 
 #basic information who we are

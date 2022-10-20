@@ -6,8 +6,6 @@ server:
   port: 8761
 
 eureka:
-  instance:
-    preferIpAddress: true
   client:
     registerWithEureka: false
     fetchRegistry: false

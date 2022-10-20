@@ -9,7 +9,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.{Page, PageImpl, Pageable}
 import org.springframework.http._
-import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 
 import scala.jdk.CollectionConverters._

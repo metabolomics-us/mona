@@ -1,7 +1,7 @@
 #basic configuration how to connect to the configuration server
 spring:
   config:
-    import: optional:configserver:${SPRING_CONFIG_URL}:http://localhost:1111
+    import: optional:configserver:http://localhost:1111
   application:
     name: auth-service
   main:

@@ -17,11 +17,9 @@
 
     <packaging>pom</packaging>
 
-    <description>All modules under this module, will be used to build standalone applications and will required docker to work.</description>
+    <description>All modules under this module, will be used to build standalone applications and will be required docker to work.</description>
 
     <modules>
         <module>server</module>
-        <module>clients</module>
-        <module>util</module>
     </modules>
 </project>

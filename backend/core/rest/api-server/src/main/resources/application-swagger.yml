@@ -1,10 +1,1 @@
-springdoc:
-  paths-to-match: /rest/**
-  swagger-ui:
-    validator-url: validatorUrl
-    doc-expansion: none
-    operations-sorter: alpha
-    default-model-rendering: model
-    supported-submit-methods: get,post,put,delete,patch
-    try-it-out-enabled: false
-    display-request-duration: true
+

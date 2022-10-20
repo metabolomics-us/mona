@@ -1,7 +1,5 @@
 #basic configuration how to connect to the configuration server
 spring:
-  main:
-    web-application-type: reactive
   application:
     name: proxy-service
   config:
@@ -10,12 +8,6 @@ spring:
     multipart:
       max-file-size: 128MB
       max-request-size: 128MB
-  profiles:
-    include:
-      - swagger
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
 
 info:
   component: MoNA Edge Server
@@ -27,8 +19,3 @@ logging:
 #on which port do we run
 server:
   port: 8080
-
-springdoc:
-  swagger-ui:
-    config-url: /swagger-config.json
-    use-root-path: true

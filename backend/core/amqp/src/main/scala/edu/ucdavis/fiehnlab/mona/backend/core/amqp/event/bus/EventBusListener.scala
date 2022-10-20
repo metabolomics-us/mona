@@ -12,7 +12,6 @@ import org.springframework.amqp.core._
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
-import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 
 import scala.reflect._

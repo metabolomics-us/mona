@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.app
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.{IUserRepository, UserRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles, Users}
@@ -49,7 +49,6 @@ class AuthCommandRunner extends CommandLineRunner with LazyLogging {
       val newUser = new Users(adminUser, adminPassword)
       newUser.setRoles(List(new Roles("ADMIN")).asJava)
       userRepository.save(newUser)
-      //val user = userRepository.save(new User(adminUser, adminPassword, List(new Roles("ADMIN")).asJava))
       logger.info(s"created default user: $newUser as admin, based on central credentials")
     } else {
       logger.info("utilizing existing user account")

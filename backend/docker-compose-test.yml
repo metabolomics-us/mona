@@ -1,25 +1,6 @@
 version: '3'
 
 services:
-#  mongodb:
-#    image: mongo:3.6.4
-#    ports:
-#      - "27017:27017"
-#
-#  elasticsearch:
-#    image: elasticsearch:5.6.16
-#    environment:
-#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-#    ports:
-#       - "9200:9200"
-#       - "9300:9300"
-#    volumes:
-#      - "./elasticsearch-test.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
-#
-#  elasticsearch_head:
-#    image: mobz/elasticsearch-head:5
-#    ports:
-#     - "9100:9100"
   postgresql13:
     image: postgres:13.4
     hostname: postgresql

@@ -19,14 +19,14 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=mona
-      - POSTGRES_PASSWORD=Fiehnlab2022!
+      - POSTGRES_USER=mona-test
+      - POSTGRES_PASSWORD=test
       - "ES_JAVA_OPTS=-Xmx6g"
     volumes:
       - postgresql-data:/data
 
   rabbitmq:
-    image: rabbitmq
+    image: rabbitmq:3.10.10-management
     ports:
       - "15672:15672"
       - "5672:5672"

@@ -9,7 +9,7 @@ import scala.math._
 import scala.util.control.Breaks._
 import org.springframework.batch.item.ItemProcessor
 import scala.jdk.CollectionConverters._
-import scala.collection.mutable.{Buffer, ArrayBuffer}
+import scala.collection.mutable.{Buffer}
 @Step(description = "this step will calculate entropy for a given spectrum and update the metadata")
 class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
