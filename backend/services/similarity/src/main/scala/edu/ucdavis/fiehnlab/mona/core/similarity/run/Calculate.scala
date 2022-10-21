@@ -1,10 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.run
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO}
 import edu.ucdavis.fiehnlab.mona.core.similarity.index.Index
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{ComputationalResult, SimpleSpectrum}
+import scala.jdk.CollectionConverters._
+import scala.collection.mutable.Buffer
 
 /**
   * provides us with simple standardized ways to calculated spectra against each other and ensure that
@@ -37,10 +39,10 @@ trait Calculate extends LazyLogging {
     Math.abs(unknownPrecursorMZ - referencePrecursorMZ)
   }
 
-  def findAdductMatch(unknownPrecursorMz: Double, precursorToleranceDa: Double, knownCompounds: Array[Compound]): Boolean = {
-    val biologicalCompound: Compound =
-      if (knownCompounds.exists(_.kind == "biological")) {
-        knownCompounds.find(_.kind == "biological").head
+  def findAdductMatch(unknownPrecursorMz: Double, precursorToleranceDa: Double, knownCompounds: Array[CompoundDAO]): Boolean = {
+    val biologicalCompound: CompoundDAO =
+      if (knownCompounds.exists(_.getKind == "biological")) {
+        knownCompounds.find(_.getKind == "biological").head
       } else if (knownCompounds.nonEmpty) {
         knownCompounds.head
       } else {
@@ -48,14 +50,16 @@ trait Calculate extends LazyLogging {
       }
 
     if (biologicalCompound == null) {
-      logger.debug(s"Compound not on spectra")
+      logger.info(s"Compound not on spectra")
       false
     } else {
-      val theoreticalAdducts: Array[MetaData] = biologicalCompound.metaData.filter(x => x.category == "theoretical adduct")
+      val theoreticalAdducts: Buffer[MetaDataDAO] = biologicalCompound.getMetaData.asScala.filter(x => x.getCategory == "theoretical adduct")
       if(theoreticalAdducts.length == 0) {
         false
       } else {
-        theoreticalAdducts.exists(x => calculateAbsolute(unknownPrecursorMz, x.value.asInstanceOf[Double]) <= precursorToleranceDa)
+        theoreticalAdducts.exists{x =>
+          calculateAbsolute(unknownPrecursorMz, x.getValue.toDouble) <= precursorToleranceDa
+        }
       }
 
     }

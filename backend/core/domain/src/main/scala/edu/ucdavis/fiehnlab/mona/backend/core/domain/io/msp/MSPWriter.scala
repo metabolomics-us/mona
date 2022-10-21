@@ -99,31 +99,6 @@ class MSPWriter extends DomainWriter {
   }
 
   /**
-<<<<<<< HEAD
-   * Writes InChI metadata string if one is present exists
-   *
-   * @param spectrum
-   * @param writer
-   */
-  def buildCompoundInChi(spectrum: SpectrumResult, writer: PrintWriter): Unit = {
-    val compound: CompoundDAO = spectrum.getSpectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getSpectrum.getCompound.asScala.head)
-
-    if (compound != null) {
-      if(compound.getInchi != null && compound.getInchi.nonEmpty) {
-        writer.println(s"InChI: ${compound.getInchi}")
-      }
-      else {
-        val metaData: Option[MetaDataDAO] = compound.getMetaData.asScala.find(_.getName == "InChI")
-
-        if (metaData.isDefined) {
-          writer.println(s"InChI: ${metaData.get.getValue}")
-        }
-      }
-    }
-  }
-  /**
-=======
->>>>>>> dev
     * Writes the comment string containing all available metadata in the format "name=value"
     *
     * @param spectrum
@@ -190,7 +165,6 @@ class MSPWriter extends DomainWriter {
     // MetaData
     p.println(s"DB#: ${spectrum.getSpectrum.getId}")
     buildCompoundInchiKey(spectrum, p)
-    buildCompoundInChi(spectrum, p)
     buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "Precursor_type", "precursor type", p)
     buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "Spectrum_type", "ms level", p)
     buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "PrecursorMZ", "precursor m/z", p)

@@ -29,11 +29,11 @@ class CalculateMassAccuracyTest extends AnyWordSpec with Matchers {
 
         val massAccuracy: Option[MetaDataDAO] = processedSpectrum.getMetaData.asScala.find(_.getName == CommonMetaData.MASS_ACCURACY)
         massAccuracy.isDefined shouldBe true
-        massAccuracy.get.getValue.toString.toDouble shouldBe 50.9472 +- 1.0e-4
+        massAccuracy.get.getValue.toDouble shouldBe 52.63049236000388 +- 1.0e-4
 
         val massError: Option[MetaDataDAO] = processedSpectrum.getMetaData.asScala.find(_.getName == CommonMetaData.MASS_ERROR)
         massError.isDefined shouldBe true
-        massError.get.getValue.toString.toDouble shouldBe -0.021 +- 1.0e-4
+        massError.get.getValue.toDouble shouldBe -0.021 +- 1.0e-2
       }
     }
   }

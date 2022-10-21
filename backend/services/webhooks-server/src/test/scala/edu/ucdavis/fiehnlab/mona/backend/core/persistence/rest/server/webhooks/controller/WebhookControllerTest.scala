@@ -174,7 +174,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook, S
         eventually(timeout(60 seconds)) {
             matRepository.refreshSearchTable()
             logger.info("sleep...")
-            assert(searchTableRepository.count() == 59610)
+            assert(searchTableRepository.count() == 59616)
         }
 
 
@@ -202,7 +202,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook, S
         eventually(timeout(60 seconds)) {
             matRepository.refreshSearchTable()
             logger.info("sleep...")
-            assert(searchTableRepository.count() == 59610)
+            assert(searchTableRepository.count() == 59616)
         }
 
         eventually(timeout(50 seconds), interval(1000 millis)) {
@@ -230,7 +230,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook, S
         eventually(timeout(60 seconds)) {
             matRepository.refreshSearchTable()
             logger.info("sleep...")
-            assert(searchTableRepository.count() == 59610)
+            assert(searchTableRepository.count() == 59616)
         }
 
 
@@ -258,7 +258,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook, S
         eventually(timeout(60 seconds)) {
             matRepository.refreshSearchTable()
             logger.info("sleep...")
-            assert(searchTableRepository.count() == 59610)
+            assert(searchTableRepository.count() == 59616)
         }
 
         eventually(timeout(50 seconds), interval(1000 millis)) {
@@ -314,7 +314,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook, S
         eventually(timeout(60 seconds)) {
             matRepository.refreshSearchTable()
             logger.info("sleep...")
-            assert(searchTableRepository.count() == 59610)
+            assert(searchTableRepository.count() == 59616)
         }
 
         eventually(timeout(50 seconds), interval(1000 millis)) {
@@ -331,7 +331,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook, S
         eventually(timeout(60 seconds)) {
           matRepository.refreshSearchTable()
           logger.info("sleep...")
-          assert(searchTableRepository.count() == 59610)
+          assert(searchTableRepository.count() == 59616)
         }
 
         eventually(timeout(50 seconds), interval(1000 millis)) {
@@ -365,7 +365,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook, S
         eventually(timeout(60 seconds)) {
             matRepository.refreshSearchTable()
             logger.info("sleep...")
-            assert(searchTableRepository.count() == 59610)
+            assert(searchTableRepository.count() == 59616)
         }
 
         //ensure the new spectra is now added
@@ -432,7 +432,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook, S
         eventually(timeout(180 seconds)) {
             matRepository.refreshSearchTable()
             logger.info("sleep...")
-            assert(searchTableRepository.count() == 59610)
+            assert(searchTableRepository.count() == 59616)
         }
 
         Thread.sleep(8000)
@@ -447,7 +447,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook, S
         eventually(timeout(60 seconds)) {
             matRepository.refreshSearchTable()
             logger.info("sleep...")
-            assert(searchTableRepository.count() == 59610)
+            assert(searchTableRepository.count() == 59616)
         }
 
         //ensure the new spectra is now update

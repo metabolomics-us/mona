@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.types
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, CompoundDAO}
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.SpectrumUtils
 
 /**
@@ -29,7 +29,7 @@ case class Ion(mz: Double, intensity: Double) {
   * @param ions
   * @param public
   */
-class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Double, val tags: Array[String], val public: Boolean, val compound: Array[Compound]) {
+class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Double, val tags: Array[String], val public: Boolean, val compound: Array[CompoundDAO]) {
 
   /**
     * Constructors
@@ -43,19 +43,19 @@ class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Doub
 
   def this(id: String, spectrumString: String, precursorMZ: Double, tags: Array[String]) = this(id, SpectrumUtils.stringToIons(spectrumString), precursorMZ, tags, true, Array())
 
-  def this(id: String, spectrumString: String, precursorMZ: Double, tags: Array[String], compound: Array[Compound]) = this(id, SpectrumUtils.stringToIons(spectrumString), precursorMZ, tags, true, compound)
+  def this(id: String, spectrumString: String, precursorMZ: Double, tags: Array[String], compound: Array[CompoundDAO]) = this(id, SpectrumUtils.stringToIons(spectrumString), precursorMZ, tags, true, compound)
 
   def this(id: String, spectrumString: String, tags: Array[String]) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, tags, true, Array())
 
-  def this(id: String, spectrumString: String, tags: Array[String], compound: Array[Compound]) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, tags, true, compound)
+  def this(id: String, spectrumString: String, tags: Array[String], compound: Array[CompoundDAO]) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, tags, true, compound)
 
   def this(id: String, spectrumString: String) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, Array(), true, Array())
 
   def this(id: String, spectrumString: String, precursorMZ: Double) = this(id, SpectrumUtils.stringToIons(spectrumString), precursorMZ, Array(), true, Array())
 
-  def this(id: String, spectrumString: String, precursorMZ: Double, compounds: Array[Compound]) = this(id, SpectrumUtils.stringToIons(spectrumString), precursorMZ, Array(), true, compounds)
+  def this(id: String, spectrumString: String, precursorMZ: Double, compounds: Array[CompoundDAO]) = this(id, SpectrumUtils.stringToIons(spectrumString), precursorMZ, Array(), true, compounds)
 
-  def this(id: String, spectrumString: String, compounds: Array[Compound]) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, Array(), true, compounds)
+  def this(id: String, spectrumString: String, compounds: Array[CompoundDAO]) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, Array(), true, compounds)
 
   def this(spectrum: StoredSpectrum) = this(spectrum.id, spectrum.spectrum)
 

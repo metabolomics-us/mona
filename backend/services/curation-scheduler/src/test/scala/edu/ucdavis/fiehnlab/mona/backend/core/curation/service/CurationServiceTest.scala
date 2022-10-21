@@ -75,7 +75,7 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
       eventually(timeout(180 seconds)) {
         matRepository.refreshSearchTable()
         logger.info("sleep...")
-        assert(searchTableRepository.count() == 59610)
+        assert(searchTableRepository.count() == 59616)
       }
     }
 

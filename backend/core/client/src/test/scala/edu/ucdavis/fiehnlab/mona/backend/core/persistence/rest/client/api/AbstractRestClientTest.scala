@@ -72,7 +72,7 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
         eventually(timeout(180 seconds)) {
           matRepository.refreshSearchTable()
           logger.info("sleep...")
-          assert(searchTableRepository.count() == 59610)
+          assert(searchTableRepository.count() == 59616)
         }
       }
 

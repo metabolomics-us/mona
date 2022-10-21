@@ -97,17 +97,6 @@ class SDFWriter extends DomainWriter{
     }
   }
 
-<<<<<<< HEAD
-  def buildCompoundInChI(compound: CompoundDAO, writer: PrintWriter): Unit = {
-    if (compound.getInchi != null && compound.getInchi.nonEmpty) {
-      printMetaData("INCHI", compound.getInchi, writer)
-    } else {
-      buildMetaData(compound.getMetaData.asScala.toArray, "InChI", "INCHI", writer)
-    }
-  }
-=======
->>>>>>> dev
-
   /**
     * Writes the comment string containing all available metadata in the format "name=value"
     *
@@ -171,7 +160,6 @@ class SDFWriter extends DomainWriter{
     buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "COLLISION ENERGY", "collision energy", p)
     buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "ION MODE", "ionization mode", p, x => x.charAt(0).toUpper.toString)
     buildCompoundInchiKey(compound, p)
-    buildCompoundInChI(compound, p)
     buildMetaData(compound.getMetaData.asScala.toArray, "FORMULA", "molecular formula", p)
     buildMetaData(compound.getMetaData.asScala.toArray, "EXACT MASS", "total exact mass", p)
     buildMetaData(compound.getMetaData.asScala.toArray, "MW", "total exact mass", p, x => (x.toDouble + 0.2).toInt.toString)

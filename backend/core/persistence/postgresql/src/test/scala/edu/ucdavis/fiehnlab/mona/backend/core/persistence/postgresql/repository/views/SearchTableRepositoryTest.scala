@@ -70,7 +70,7 @@ class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLoggi
         eventually(timeout(180 seconds)) {
           matRepository.refreshSearchTable()
           logger.info("sleep...")
-          assert(searchTableRepository.count() == 59610)
+          assert(searchTableRepository.count() == 59616)
         }
 
       }
@@ -189,7 +189,7 @@ class SearchTableRepositoryTest extends AnyWordSpec with Matchers with LazyLoggi
         eventually(timeout(200 seconds)) {
           matRepository.refreshSearchTable()
           logger.info("sleep...")
-          assert(searchTableRepository.count() == 70118)
+          assert(searchTableRepository.count() == 70124)
         }
 
       }

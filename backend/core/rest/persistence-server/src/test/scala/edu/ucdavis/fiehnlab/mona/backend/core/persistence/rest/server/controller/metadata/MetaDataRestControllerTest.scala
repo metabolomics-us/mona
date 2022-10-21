@@ -74,7 +74,7 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest with Event
         eventually(timeout(180 seconds)) {
           matRepository.refreshSearchTable()
           logger.info("sleep...")
-          assert(searchTableRepository.count() == 59610)
+          assert(searchTableRepository.count() == 59616)
         }
 
       }
@@ -85,7 +85,7 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest with Event
 
       "we should be able to query all meta data names from the service" in {
         val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/names").`then`().log().all(true).statusCode(200).extract().body().as(classOf[Array[StatisticsMetaData]])
-        assert(result.length == 240)
+        assert(result.length == 241)
       }
 
       "we should be able to search for metadata names" in {
