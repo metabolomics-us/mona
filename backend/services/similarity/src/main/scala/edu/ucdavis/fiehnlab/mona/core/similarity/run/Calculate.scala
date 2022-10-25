@@ -37,27 +37,11 @@ trait Calculate extends LazyLogging {
     Math.abs(unknownPrecursorMZ - referencePrecursorMZ)
   }
 
-  def findAdductMatch(unknownPrecursorMz: Double, precursorToleranceDa: Double, knownCompounds: Array[Compound]): Boolean = {
-    val biologicalCompound: Compound =
-      if (knownCompounds.exists(_.kind == "biological")) {
-        knownCompounds.find(_.kind == "biological").head
-      } else if (knownCompounds.nonEmpty) {
-        knownCompounds.head
-      } else {
-        null
-      }
-
-    if (biologicalCompound == null) {
-      logger.debug(s"Compound not on spectra")
+  def findAdductMatch(unknownPrecursorMz: Double, precursorToleranceDa: Double, theoreticalAdducts: Array[Double]): Boolean = {
+    if(theoreticalAdducts.length == 0) {
       false
     } else {
-      val theoreticalAdducts: Array[MetaData] = biologicalCompound.metaData.filter(x => x.category == "theoretical adduct")
-      if(theoreticalAdducts.length == 0) {
-        false
-      } else {
-        theoreticalAdducts.exists(x => calculateAbsolute(unknownPrecursorMz, x.value.asInstanceOf[Double]) <= precursorToleranceDa)
-      }
-
+      theoreticalAdducts.exists(x => calculateAbsolute(unknownPrecursorMz, x) <= precursorToleranceDa)
     }
   }
 }
