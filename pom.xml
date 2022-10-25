@@ -560,7 +560,7 @@
 
             <properties>
                 <docker.registry>public.ecr.aws/fiehnlab</docker.registry>
-                <docker.baseImage>java</docker.baseImage>
+                <docker.baseImage>openjdk:8</docker.baseImage>
                 <docker.imagePrefix>mona</docker.imagePrefix>
                 <docker.imageName>${docker.imagePrefix}-${project.name}</docker.imageName>
                 <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
