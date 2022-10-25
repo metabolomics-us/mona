@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.core.similarity.service
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.IndexType.IndexType
@@ -44,16 +44,25 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
   private def addToIndex(spectrum: Spectrum, indexName: String, indexType: IndexType): Int = {
     val precursorMZ: Option[MetaDataDAO] = spectrum.getMetaData.asScala.find(_.getName == CommonMetaData.PRECURSOR_MASS)
     val tags: Buffer[String] = spectrum.getTags.asScala.map(_.getText)
+    val biologicalCompound: CompoundDAO =
+      if (spectrum.getCompound.asScala.exists(_.getKind == "biological")) {
+        spectrum.getCompound.asScala.find(_.getKind == "biological").head
+      } else if (spectrum.getCompound.asScala.nonEmpty) {
+        spectrum.getCompound.asScala.head
+      } else {
+        null
+      }
+    val theoreticalAdducts: Buffer[Double] = biologicalCompound.getMetaData.asScala.filter(x => x.getCategory == "theoretical adduct").map(_.getValue.toDouble)
 
     if (precursorMZ.isDefined) {
       try {
         val precursorString: String = precursorMZ.get.getValue
-        indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, precursorString.toDouble, tags.toArray, spectrum.getCompound.asScala.toArray), indexName, indexType)
+        indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, precursorString.toDouble, tags.toArray, theoreticalAdducts.toArray), indexName, indexType)
       } catch {
-        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, tags.toArray, spectrum.getCompound.asScala.toArray), indexName, indexType)
+        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, tags.toArray, theoreticalAdducts.toArray), indexName, indexType)
       }
     } else {
-      indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, tags.toArray), indexName, indexType)
+      indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, tags.toArray, theoreticalAdducts.toArray), indexName, indexType)
     }
   }
 
