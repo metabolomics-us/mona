@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.views.SpectraSubmitters
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmitter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.views.SpectrumSubmitterStatistics
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsSubmitterRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SpectraSubmittersRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SpectrumSubmitterRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -20,13 +20,13 @@ class SubmitterStatisticsService {
   val statisticsSubmitterRepository: StatisticsSubmitterRepository = null
 
   @Autowired
-  val spectraSubmittersRepository: SpectraSubmittersRepository = null
+  val spectraSubmittersRepository: SpectrumSubmitterRepository = null
 
 
   @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def updateSubmitterStatistics(): Unit = {
     statisticsSubmitterRepository.deleteAll()
-    val submitterObjects: Map[String, SpectraSubmitters] = Map()
+    val submitterObjects: Map[String, SpectrumSubmitterStatistics] = Map()
     val submitterCounter: Map[String, Integer] = Map()
     val submitterScores: Map[String, ListBuffer[Double]] = Map()
     spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>

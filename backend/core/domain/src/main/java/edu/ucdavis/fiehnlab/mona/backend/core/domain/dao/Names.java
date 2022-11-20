@@ -1,12 +1,40 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Type;
+import org.springframework.context.annotation.Profile;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Entity
+@Table(name = "name")
+@Profile({"mona.persistence"})
 public class Names implements Serializable {
+    @Id
+    @JsonIgnore
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "names_count")
+    @SequenceGenerator(name = "names_count", initialValue = 1, allocationSize = 200)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private CompoundDAO compound;
+
     private Boolean computed;
+
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "name")
     private String name;
+
     private Double score;
+
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "source")
     private String source;
 
     public Names() {
@@ -18,6 +46,14 @@ public class Names implements Serializable {
         this.score = score;
         this.source = source;
     }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Boolean getComputed() {
         return computed;
     }
@@ -53,11 +89,11 @@ public class Names implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Names names = (Names) o;
-        return Objects.equals(computed, names.computed) && Objects.equals(name, names.name) && Objects.equals(score, names.score) && Objects.equals(source, names.source);
+        return id.equals(names.id) && compound.equals(names.compound) && Objects.equals(computed, names.computed) && Objects.equals(name, names.name) && Objects.equals(score, names.score) && Objects.equals(source, names.source);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(computed, name, score, source);
+        return Objects.hash(id, compound, computed, name, score, source);
     }
 }

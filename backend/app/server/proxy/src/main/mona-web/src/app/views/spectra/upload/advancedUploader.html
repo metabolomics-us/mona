@@ -124,6 +124,21 @@
                                placeholder="Optional" [(ngModel)]="library.submitter.institution">
                       </div>
                     </div>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label"><strong>Additional Tags</strong></label>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                      <div class="col-md">
+                        <tag-input [(ngModel)]="batchTagList"  id="batchTags" name="batchTags"
+                                   [identifyBy]="'text'"
+                                   [displayBy]="'text'"
+                                   [trimTags]="false"
+                                   [maxItems]="3">
+                          <tag-input-dropdown [autocompleteItems]="tags"></tag-input-dropdown>
+                        </tag-input>
+                      </div>
+                    </div>
                     <button class="btn btn-info float-right" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles()">Submit</button>
                   </form>
                 </div>

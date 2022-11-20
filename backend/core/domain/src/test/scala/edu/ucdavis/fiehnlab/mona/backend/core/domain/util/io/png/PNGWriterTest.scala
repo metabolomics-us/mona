@@ -5,7 +5,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.boot.test.context.SpringBootTest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.png.PNGWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 
 import java.io.{InputStreamReader, StringWriter}
 
@@ -23,10 +22,9 @@ class PNGWriterTest extends AnyWordSpec {
         val reader = JSONDomainReader.create[Spectrum]
         val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
         val spectrum: Spectrum = reader.read(input)
-        val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
         val out: StringWriter = new StringWriter()
-        writer.write(spectrumResult, out)
+        writer.write(spectrum, out)
 
         "contain the spectrum id" in {
           assert(out.toString.startsWith("252"))
@@ -37,10 +35,9 @@ class PNGWriterTest extends AnyWordSpec {
         val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
         val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json"))
         val spectrum: Spectrum = reader.read(input).head
-        val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
         val out: StringWriter = new StringWriter()
-        writer.write(spectrumResult, out)
+        writer.write(spectrum, out)
 
         "contain the spectrum id" in {
           assert(out.toString.startsWith("AU100601"))

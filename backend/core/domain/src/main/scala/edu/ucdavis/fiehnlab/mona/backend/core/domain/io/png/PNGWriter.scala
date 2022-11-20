@@ -7,7 +7,7 @@ import de.erichseifert.gral.plots.BarPlot.BarRenderer
 import de.erichseifert.gral.plots.XYPlot.XYPlotArea2D
 import de.erichseifert.gral.plots.{BarPlot, Plot, XYPlot}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 
 import java.awt.{BasicStroke, Color, Font}
 import java.io.{ByteArrayOutputStream, Writer}
@@ -21,9 +21,9 @@ class PNGWriter extends DomainWriter {
   override val CRLF: Boolean = false
 
 
-  private def createPlot(spectrum: SpectrumResult): Plot = {
+  private def createPlot(spectrum: Spectrum): Plot = {
     // Normalize spectrum
-    val ions = spectrum.getSpectrum.getSpectrum.split(' ')
+    val ions = spectrum.getSpectrum.split(' ')
       .map(x => (x.split(':')(0).toDouble, x.split(':')(1).toDouble))
       .sortBy(-_._2)
       .take(250)
@@ -44,7 +44,7 @@ class PNGWriter extends DomainWriter {
     plot.setPointRenderers(data, lines)
 
     // Add title
-    plot.getTitle.setText("MoNA "+ spectrum.getMonaId)
+    plot.getTitle.setText("MoNA "+ spectrum.getId)
     plot.getTitle.setFont(new Font(plot.getTitle.getFont.getFamily, Font.PLAIN, 14))
     plot.setBackground(Color.white)
 
@@ -89,9 +89,9 @@ class PNGWriter extends DomainWriter {
     * @param spectrum
     * @return
     */
-  def write(spectrum: SpectrumResult, writer: Writer): Unit = write(spectrum, writer, 400, 300)
+  def write(spectrum: Spectrum, writer: Writer): Unit = write(spectrum, writer, 400, 300)
 
-  def write(spectrum: SpectrumResult, writer: Writer, x: Int, y: Int): Unit = {
+  def write(spectrum: Spectrum, writer: Writer, x: Int, y: Int): Unit = {
     val p = getPrintWriter(writer)
     val plot: Plot = createPlot(spectrum)
 
@@ -102,7 +102,7 @@ class PNGWriter extends DomainWriter {
     val encodedPlot: String = Base64.getEncoder.encodeToString(baos.toByteArray)
     baos.close()
 
-    p.print(spectrum.getMonaId)
+    p.print(spectrum.getId)
     p.print(',')
     p.println(encodedPlot)
     p.flush()

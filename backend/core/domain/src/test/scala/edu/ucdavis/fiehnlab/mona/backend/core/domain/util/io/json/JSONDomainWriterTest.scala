@@ -5,7 +5,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.boot.test.context.SpringBootTest
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainWriter
 
 import java.io.{InputStreamReader, StringReader, StringWriter}
@@ -20,7 +19,6 @@ class JSONDomainWriterTest extends AnyWordSpec with LazyLogging {
     val reader = JSONDomainReader.create[Spectrum]
     val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
     val spectrum: Spectrum = reader.read(input)
-    val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
     val writer = new JSONDomainWriter
 
@@ -28,17 +26,17 @@ class JSONDomainWriterTest extends AnyWordSpec with LazyLogging {
       val out = new StringWriter()
 
       "write a spectrum out" in {
-        writer.write(spectrumResult, out)
+        writer.write(spectrum, out)
       }
 
       "and we must be able to read it again" in {
         logger.info(s"${out}")
-        val reader2 = JSONDomainReader.create[SpectrumResult]
-        val spectrumReRead: SpectrumResult = reader2.read(new StringReader(out.toString))
+        val reader2 = JSONDomainReader.create[Spectrum]
+        val spectrumReRead: Spectrum = reader2.read(new StringReader(out.toString))
 
         //stupid arrays break simple equality check....
-        assert(spectrumReRead.getMonaId == spectrum.getId)
-        assert(spectrumReRead.getSpectrum.getMetaData.size() == spectrum.getMetaData.size())
+        assert(spectrumReRead.getId == spectrum.getId)
+        assert(spectrumReRead.getMetaData.size() == spectrum.getMetaData.size())
       }
     }
   }

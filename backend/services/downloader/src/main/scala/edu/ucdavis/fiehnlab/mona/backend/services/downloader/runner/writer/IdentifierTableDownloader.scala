@@ -1,11 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
 import java.nio.file.{Files, Path}
-
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.QueryExport
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.CompoundDAO
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.MetaDataDAO
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
+
 import scala.jdk.CollectionConverters._
 
 /**
@@ -59,20 +57,20 @@ class IdentifierTableDownloader(export: QueryExport, downloadDir: Path, compress
   /**
     *
     */
-  override def writeSpectrum(spectrum: SpectrumResult): Unit = {
+  override def writeSpectrum(spectrum: Spectrum): Unit = {
     val sb: StringBuilder = new StringBuilder
-    sb.append(spectrum.getMonaId).append(',')
+    sb.append(spectrum.getId).append(',')
 
     // Add SPLASH
-    if (spectrum.getSpectrum.getSplash != null) {
-      sb.append(spectrum.getSpectrum.getSplash.getSplash)
+    if (spectrum.getSplash != null) {
+      sb.append(spectrum.getSplash.getSplash)
     }
     sb.append(',')
 
     // Get compound and structures
-    if (spectrum.getSpectrum.getCompound != null && spectrum.getSpectrum.getCompound.asScala.nonEmpty) {
+    if (spectrum.getCompound != null && spectrum.getCompound.asScala.nonEmpty) {
       // Add InChIKey
-      val compound: CompoundDAO = spectrum.getSpectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getSpectrum.getCompound.asScala.head)
+      val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
       if (compound.getInchiKey != null && compound.getInchiKey.nonEmpty) {
         sb.append(compound.getInchiKey).append(',')

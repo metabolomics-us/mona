@@ -4,7 +4,6 @@ import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles, Users}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.GenericRestClient
@@ -29,7 +28,7 @@ class RestRepositoryReaderTest extends AnyWordSpec {
 
 
   @Autowired
-  val spectrumRestClient: GenericRestClient[Spectrum, SpectrumResult, String] = null
+  val spectrumRestClient: GenericRestClient[Spectrum, String] = null
 
   @Autowired
   val restRepositoryReaderAll: RestRepositoryReader = null
@@ -53,13 +52,13 @@ class RestRepositoryReaderTest extends AnyWordSpec {
     }
 
     "we need to prepare the database " in {
-      spectrumRestClient.list().foreach(x => spectrumRestClient.delete(x.getMonaId))
+      spectrumRestClient.list().foreach(x => spectrumRestClient.delete(x.getId))
       exampleRecords.foreach(spectrumRestClient.add)
     }
 
     "read" in {
       var count = 0
-      var data: SpectrumResult = null
+      var data: Spectrum = null
 
       do {
         data = restRepositoryReaderAll.read()

@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
@@ -103,7 +102,7 @@ class WebHookService extends LazyLogging {
           logger.info("adding spectra")
 
           logger.info(s"fetching spectrum from remote mona server for id: $id")
-          val spectrum: SpectrumResult = monaSpectrumRestClient.get(id)
+          val spectrum: Spectrum = monaSpectrumRestClient.get(id)
 
           val result = spectrumPersistenceService.save(spectrum)
 
@@ -140,7 +139,7 @@ class WebHookService extends LazyLogging {
           logger.info("updating spectra")
           logger.info(s"fetching spectrum from remote mona server for id: $id")
 
-          val spectrum: SpectrumResult = monaSpectrumRestClient.get(id)
+          val spectrum: Spectrum = monaSpectrumRestClient.get(id)
           val result = spectrumPersistenceService.update(spectrum)
 
           new ResponseEntity[Any](result, HttpStatus.OK)
@@ -163,9 +162,9 @@ class WebHookService extends LazyLogging {
     logger.info(s"expected spectra to pull: $count")
     var counter = 0
 
-    monaSpectrumRestClient.stream(query).foreach { spectrum: SpectrumResult =>
+    monaSpectrumRestClient.stream(query).foreach { spectrum: Spectrum =>
       counter = counter + 1
-      logger.info(s"spectrum: ${spectrum.getMonaId} - ${spectrum.getSpectrum.getSplash.getSplash}")
+      logger.info(s"spectrum: ${spectrum.getId} - ${spectrum.getSplash.getSplash}")
       spectrumPersistenceService.save(spectrum)
     }
 
@@ -181,7 +180,7 @@ class WebHookService extends LazyLogging {
   def push(query: Option[String] = None): Unit = {
     //should send it as job to the backend
     spectrumPersistenceService.findAll().asScala.foreach { spectrum =>
-      trigger(spectrum.getMonaId, Event.UPDATE)
+      trigger(spectrum.getId, Event.UPDATE)
     }
   }
 }

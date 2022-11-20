@@ -31,6 +31,7 @@ export class AdvancedUploaderComponent implements OnInit{
   // Loaded spectra data/status
   spectraLoaded;
   currentSpectrum;
+  batchTagList;
   spectra;
   spectrumErrors;
   spectraIndex;
@@ -111,6 +112,7 @@ export class AdvancedUploaderComponent implements OnInit{
 		this.libraryIDNum = 1;
 		this.ionCuts = {};
 		this.ionTableSort = '-ion';
+    this.batchTagList = [];
 
 		this.addSpectra = new EventEmitter<any>();
 
@@ -309,7 +311,13 @@ export class AdvancedUploaderComponent implements OnInit{
               this.library.link = 'http://massbank.us';
             }
             spectrum.library = this.library;
-            spectrum.tags = [this.library.tag];
+            spectrum.tags = []
+            if (this.batchTagList.length > 0) {
+              for(const tag of this.batchTagList) {
+                spectrum.tags.push({ruleBased: false, text: tag.text})
+              }
+            }
+            spectrum.tags.push(this.library.tag);
             if (this.library.submitter.emailAddress !== null) {
               this.library.submitter.id = this.library.submitter.emailAddress;
               spectrum.submitter = this.library.submitter;
@@ -353,7 +361,13 @@ export class AdvancedUploaderComponent implements OnInit{
             this.library.link = 'http://massbank.us';
           }
           spectrum.library = this.library;
-          spectrum.tags = [this.library.tag];
+          spectrum.tags = []
+          if (this.batchTagList.length > 0) {
+            for(const tag of this.batchTagList) {
+              spectrum.tags.push({ruleBased: false, text: tag.text})
+            }
+          }
+          spectrum.tags.push(this.library.tag);
           if (this.library.submitter.emailAddress !== null) {
             this.library.submitter.id = this.library.submitter.emailAddress;
             spectrum.submitter = this.library.submitter;
@@ -420,7 +434,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	  let promiseBuffer = [];
 	  // Move to the upload status page then execute the upload process
    this.router.navigate(['/upload/status']).then(() => {
-     // set timeout for 1 second so we can navigate to upload status page first
+     // set timeout for 1 second, so we can navigate to upload status page first
      setTimeout( () => {
        for (const file of this.files) {
          this.uploadLibraryService.loadSpectraFile(file, async (data, origin) => {
@@ -434,7 +448,7 @@ export class AdvancedUploaderComponent implements OnInit{
            await Promise.all(promiseBuffer.map(p => p.catch(() => undefined)));
            // Reset our array so we can go again.
            promiseBuffer = [];
-           });
+         }).then();
          }
        }, 1000);
    });

@@ -1,9 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.context.annotation.Profile;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Entity
+@Table(name = "submitters")
+@Profile({"mona.persistence"})
 public class SubmitterDAO implements Serializable {
+    @Id
     private String emailAddress;
     private String firstName;
     private String lastName;
@@ -17,6 +25,13 @@ public class SubmitterDAO implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.institution = institution;
+    }
+
+    public SubmitterDAO(SubmitterDAO submitter) {
+        this.emailAddress = submitter.getEmailAddress();
+        this.firstName = submitter.getFirstName();
+        this.lastName = submitter.getFirstName();
+        this.institution = submitter.getInstitution();
     }
 
     public String getEmailAddress() {
@@ -62,13 +77,5 @@ public class SubmitterDAO implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(emailAddress, firstName, lastName, institution);
-    }
-
-    @Override
-    public String toString() {
-        return "submitter = " +
-                 firstName + " " +
-                 lastName + " " +
-                 "(" + institution + ")";
     }
 }

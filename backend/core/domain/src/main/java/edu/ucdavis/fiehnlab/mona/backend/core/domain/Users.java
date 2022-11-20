@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @IdClass(UserId.class)
@@ -20,7 +21,7 @@ public class Users {
 
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER, targetEntity = Roles.class, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER,  cascade = CascadeType.ALL)
     @JoinColumn(name = "users_id", referencedColumnName = "id")
     @JoinColumn(name = "users_email_address", referencedColumnName = "emailAddress")
     private List<Roles> roles;
@@ -77,9 +78,16 @@ public class Users {
 
     public Users(){}
 
-    /*@JoinTable(
-            name = "users_roles",
-            joinColumns = {@JoinColumn(name = "users_id", referencedColumnName = "id"), @JoinColumn(name = "users_email_address", referencedColumnName = "emailAddress")},
-            inverseJoinColumns = {@JoinColumn(name = "roles_id", referencedColumnName = "id"), @JoinColumn(name = "roles_email_address", referencedColumnName = "emailAddress")}
-    )*/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Users users = (Users) o;
+        return Objects.equals(id, users.id) && Objects.equals(emailAddress, users.emailAddress) && Objects.equals(password, users.password) && Objects.equals(roles, users.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, emailAddress, password, roles);
+    }
 }

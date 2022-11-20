@@ -6,4 +6,5 @@ export class Metadata {
   category: string;
   computed: boolean;
   unit: string;
+  nodes: {};
 }

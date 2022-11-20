@@ -2,20 +2,20 @@
     <div class="card-header">
         <div class="card-title">
             <span class="float-left mr-2" *ngIf="(auth.isAdmin() && auth.isLoggedIn()) || (sameSubmitter())"><input type="checkbox" id="massDeleteToggle" [checked]="deletionMark.selected" (change)="massDeleteToggle($event)"> Mark for Deletion </span>
-            <span class="float-left"><a style="cursor: pointer" [routerLink]="[viewSpectrum()]">{{spectrumResult.spectrum.compound[0].names[0].name}}</a></span>
-            <span class="float-right">Score: <ngb-rating *ngIf="spectrumResult.spectrum.score" [(rate)]="spectrumResult.spectrum.score.score" [max]="5" [readonly]="true"></ngb-rating></span>
+            <span class="float-left"><a style="cursor: pointer" [routerLink]="[viewSpectrum()]">{{spectrum.compound[0].names[0].name}}</a></span>
+            <span class="float-right">Score: <ngb-rating *ngIf="spectrum.score" [(rate)]="spectrum.score.score" [max]="5" [readonly]="true"></ngb-rating></span>
         </div>
     </div>
 
     <div class="card-body">
         <div class="card-group">
             <div class="col-lg-6 col-md-7 col-sm-6">
-                <div class="card-columns" *ngIf="spectrumResult.spectrum.similarity">
+                <div class="card-columns" *ngIf="spectrum.similarity">
                         <ul class="list-inline">
                             <li>
                                 <h4 class="text-md-left">
                                     <label>
-                                        Similarity: {{1000 * spectrumResult.spectrum.similarity | number:"1.0-0"}}
+                                        Similarity: {{1000 * spectrum.similarity | number:"1.0-0"}}
                                     </label>
                                 </h4>
                             </li>
@@ -26,29 +26,29 @@
                   <div class="row">
                     <div class="col-12">
                       <div class="masspec-medium">
-                        <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrumResult.monaId" [spectrum]="spectrumResult.spectrum.spectrum" [miniPlot]="true"></lib-ng-mass-spec-plotter>
+                        <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.id" [spectrum]="spectrum.spectrum" [miniPlot]="true"></lib-ng-mass-spec-plotter>
                       </div>
                     </div>
                     <div class="col-12 offset-4">
                       <div style="width: 175px; height: 175px">
-                        <div [libChemdoodle]="spectrumResult.spectrum.compound[0].molFile" readonly="true"
-                             [id]="'bioSketch_'+spectrumResult.monaId+'_false'" [height]="175" [width]="175">
+                        <div [libChemdoodle]="spectrum.compound[0].molFile" readonly="true"
+                             [id]="'bioSketch_'+spectrum.id+'_false'" [height]="175" [width]="175">
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="card-text p-2 text-left" *ngIf="spectrumResult.spectrum.library">
-                  <h6><display-library-reference [spectrum]="spectrumResult"></display-library-reference></h6>
+                <div class="card-text p-2 text-left" *ngIf="spectrum.library">
+                  <h6><display-library-reference [spectrum]="spectrum"></display-library-reference></h6>
                 </div>
                 <div class="card-text p-2 text-left">
-                  <h5><spectrum-feedback-results-curation [spectrum]="spectrumResult"></spectrum-feedback-results-curation></h5>
+                  <h5><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h5>
                 </div>
             </div>
 
             <div class="col-lg-6 col-md-5 col-sm-6">
                 <div class="row top5"
-                     *ngFor="let meta of spectrumResult.spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
+                     *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
 
                     <div class="col-lg-5 col-md-5 col-sm-6">
                         <metadata-query [metaData]="meta">
@@ -64,8 +64,8 @@
     </div>
 
     <div class="card-footer">
-        <div class="float-left mr-1" *ngFor="let tag of spectrumResult.spectrum.tags">
-          <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrumResult"></tag-query>
+        <div class="float-left mr-1" *ngFor="let tag of spectrum.tags">
+          <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
         </div>
 
       <a class="btn btn-success float-right" [routerLink]="[viewSpectrum()]">

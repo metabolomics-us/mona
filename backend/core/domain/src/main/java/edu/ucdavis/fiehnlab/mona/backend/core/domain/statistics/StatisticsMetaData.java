@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics;
 
+import org.hibernate.annotations.BatchSize;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 
@@ -69,12 +70,12 @@ public class StatisticsMetaData implements Serializable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StatisticsMetaData that = (StatisticsMetaData) o;
-        return Objects.equals(name, that.name) && Objects.equals(count, that.count) && Objects.equals(metaDataValueCount, that.metaDataValueCount);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(count, that.count) && Objects.equals(metaDataValueCount, that.metaDataValueCount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, count, metaDataValueCount);
+        return Objects.hash(id, name, count, metaDataValueCount);
     }
 
     public interface StatisticsMetaDataSummary{

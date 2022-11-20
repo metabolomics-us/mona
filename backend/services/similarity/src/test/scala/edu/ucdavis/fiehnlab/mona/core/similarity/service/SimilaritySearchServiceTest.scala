@@ -1,10 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumSubmitter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import edu.ucdavis.fiehnlab.mona.core.similarity.config.SimilarityConfig
 import edu.ucdavis.fiehnlab.mona.core.similarity.index.IndexRegistry
 import edu.ucdavis.fiehnlab.mona.core.similarity.types._
@@ -14,9 +14,10 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 5/26/16.
@@ -29,7 +30,7 @@ class SimilaritySearchServiceTest extends AnyWordSpec with Matchers with LazyLog
   val similaritySearchService: SimilaritySearchService = null
 
   @Autowired
-  val postSpectrumResultRepository: SpectrumResultRepository = null
+  val postSpectrumResultRepository: SpectrumRepository = null
 
   @Autowired
   val indexUtils: IndexUtils = null
@@ -61,8 +62,8 @@ class SimilaritySearchServiceTest extends AnyWordSpec with Matchers with LazyLog
         postSpectrumResultRepository.deleteAll()
 
         (correctMatches ++ incorrectMatches).foreach { x =>
-          val spectrum: Spectrum = new Spectrum(null, x.id, null, null, null, x.spectrum, null, null, null, null, null, null, null)
-          postSpectrumResultRepository.save(new SpectrumResult(spectrum.getId, spectrum))
+          val spectrum: Spectrum = new Spectrum(Array(new CompoundDAO()).toList.asJava, x.id, Array().toList.asJava, null, null, x.spectrum, null, null, null, null, new SpectrumSubmitter(), null, null)
+          postSpectrumResultRepository.save(spectrum)
         }
       }
 

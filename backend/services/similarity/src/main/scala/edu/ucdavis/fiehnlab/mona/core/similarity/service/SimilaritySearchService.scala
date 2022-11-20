@@ -1,11 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.core.similarity.types._
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 /**
   * Created by sajjan on 2/28/17.
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Service
 class SimilaritySearchService extends LazyLogging {
 
   @Autowired
-  val spectrumResultRepository: SpectrumResultRepository = null
+  val spectrumPersistenceService: SpectrumPersistenceService = null
 
   @Autowired
   val indexUtils: IndexUtils = null
@@ -24,6 +26,7 @@ class SimilaritySearchService extends LazyLogging {
     * @param request
     * @return
     */
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def search(request: SimilaritySearchRequest, size: Int): Array[SearchResult] = {
     val spectrum: SimpleSpectrum =
     if (request.removePrecursorIon == false && request.precursorMZ == 0.0) {
@@ -58,7 +61,7 @@ class SimilaritySearchService extends LazyLogging {
       // Sort by score and return SearchResult objects
       .sortBy(-_.score)
       .take(size)
-      .map(x => SearchResult(spectrumResultRepository.findByMonaId(x.hit.id).getSpectrum, x.score))
+      .map(x => SearchResult(spectrumPersistenceService.findByMonaId(x.hit.id), x.score))
   }
 
   /**
@@ -66,6 +69,7 @@ class SimilaritySearchService extends LazyLogging {
     * @param request
     * @return
     */
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def peakSearch(request: PeakSearchRequest, size: Int): Array[SearchResult] = {
     val searchTolerance: Double = if (request.tolerance > 0) request.tolerance else 1
 
@@ -73,7 +77,7 @@ class SimilaritySearchService extends LazyLogging {
       .view
       .filter(spectrum => request.peaks.forall(mz => spectrum.ions.exists(ion => Math.abs(ion.mz - mz) <= searchTolerance)))
       .take(size)
-      .map(x => SearchResult(spectrumResultRepository.findByMonaId(x.id).getSpectrum, 1))
+      .map(x => SearchResult(spectrumPersistenceService.findByMonaId(x.id), 1))
       .toArray
   }
 

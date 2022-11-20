@@ -4,6 +4,7 @@
  * This controller is handling the browsing of spectra
  */
 import {Spectrum} from '../../services/persistence/spectrum.resource';
+import {SpectrumModel} from "../../mocks/spectrum.model";
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Location} from '@angular/common';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
@@ -23,14 +24,13 @@ import {faBookmark} from '@fortawesome/free-regular-svg-icons';
 import {BehaviorSubject} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MassDeleteModalComponent} from './mass-delete-modal.component';
-import {SpectrumResult} from "../../mocks/spectrum-result.model";
 
 @Component({
     selector: 'spectra-browser',
     templateUrl: '../../views/spectra/browse/spectra.html'
 })
 export class SpectraBrowserComponent implements OnInit{
-    spectra: SpectrumResult[];
+    spectra: SpectrumModel[];
     pagination;
     searchSplash;
     editQuery;
@@ -226,13 +226,13 @@ export class SpectraBrowserComponent implements OnInit{
     /**
      * Get total exact mass as accurate mass of spectrum
      */
-    addMetadataMap(spectra: SpectrumResult[]) {
+    addMetadataMap(spectra: SpectrumModel[]) {
         for (let i = 0; i < spectra.length; i++) {
             const metaDataMap = {};
 
-            if (typeof spectra[i].spectrum.compound !== 'undefined') {
-                for (let j = 0; j < spectra[i].spectrum.compound.length; j++) {
-                    spectra[i].spectrum.compound[j].metaData.forEach((metaData) => {
+            if (typeof spectra[i].compound !== 'undefined') {
+                for (let j = 0; j < spectra[i].compound.length; j++) {
+                    spectra[i].compound[j].metaData.forEach((metaData) => {
                         if (metaData.name === 'total exact mass') {
                             metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
                         } else {
@@ -244,13 +244,13 @@ export class SpectraBrowserComponent implements OnInit{
                         }
                     });
 
-                    if (spectra[i].spectrum.compound[j].kind === 'biological') {
+                    if (spectra[i].compound[j].kind === 'biological') {
                         break;
                     }
                 }
             }
 
-            spectra[i].spectrum.metaData.forEach((metaData) => {
+            spectra[i].metaData.forEach((metaData) => {
                 if (metaData.name === 'mass accuracy' || metaData.name === 'mass error') {
                     metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
                 } else {
@@ -393,7 +393,6 @@ export class SpectraBrowserComponent implements OnInit{
      */
     calculateResultCount() {
         this.spectrum.searchSpectraCount({
-            endpoint: 'count',
             query: this.query,
             text: this.textQuery
         }).pipe(first()).subscribe((res: any) => {
@@ -462,12 +461,11 @@ export class SpectraBrowserComponent implements OnInit{
         }
     }
 
-    searchSuccess = (res: SpectrumResult[]) => {
+    searchSuccess = (res: SpectrumModel[]) => {
         this.duration = (Date.now() - this.startTime) / 1000;
 
         if (res.length > 0) {
             // Add data to spectra object
-            console.log(res);
             this.spectra = this.addMetadataMap(res);
         }
         this.hideSplash();

@@ -8,7 +8,7 @@ import {FeedbackCacheService} from '../../services/feedback/feedback-cache.servi
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 import {MassDeletionService} from '../../services/persistence/mass-deletion.service';
 import {AuthenticationService} from '../../services/authentication.service';
-import {SpectrumResult} from "../../mocks/spectrum-result.model";
+import {SpectrumModel} from "../../mocks/spectrum.model";
 
 @Component({
     selector: 'display-spectra-panel',
@@ -16,7 +16,7 @@ import {SpectrumResult} from "../../mocks/spectrum-result.model";
 })
 
 export class SpectraPanelComponent implements OnInit{
-    @Input() spectrumResult: SpectrumResult;
+    @Input() spectrum: SpectrumModel;
     currentFeedback;
     IMPORTANT_METADATA;
     importantMetadata;
@@ -40,20 +40,20 @@ export class SpectraPanelComponent implements OnInit{
         this.importantMetadata = [];
         this.secondaryMetadata = [];
 
-        this.deletionMark = this.massDelete.getObject(this.spectrumResult.monaId);
+        this.deletionMark = this.massDelete.getObject(this.spectrum.id);
         if (typeof this.deletionMark === 'undefined') {
           this.deletionMark = {
-            id: this.spectrumResult.monaId,
+            id: this.spectrum.id,
             selected: false
           };
           this.massDelete.addForDeletion(this.deletionMark);
         }
 
-        if (typeof this.spectrumResult.spectrum.score === 'undefined') {
-          this.spectrumResult.spectrum.score = {score: 0, relativeScore: 0, scaledScore: 0, impacts: []};
+        if (typeof this.spectrum.score === 'undefined') {
+          this.spectrum.score = {score: 0, relativeScore: 0, scaledScore: 0, impacts: []};
         }
 
-        this.spectrumResult.spectrum.metaData.forEach((metaData, index) => {
+        this.spectrum.metaData.forEach((metaData, index) => {
             metaData.value = this.truncateDecimal(metaData.value, 4);
 
             if (this.IMPORTANT_METADATA.indexOf(metaData.name.toLowerCase()) > -1) {
@@ -75,9 +75,9 @@ export class SpectraPanelComponent implements OnInit{
             }
         });
 
-        this.spectrumResult.spectrum.metaData = this.importantMetadata.concat(this.secondaryMetadata).slice(0, 12);
+        this.spectrum.metaData = this.importantMetadata.concat(this.secondaryMetadata).slice(0, 12);
 
-        this.feedbackCache.resolveFeedback(this.spectrumResult.monaId).subscribe((res) => {
+        this.feedbackCache.resolveFeedback(this.spectrum.id).subscribe((res) => {
           this.currentFeedback = res;
         });
     }
@@ -90,18 +90,18 @@ export class SpectraPanelComponent implements OnInit{
      * displays the spectrum for the given index
      */
     viewSpectrum(): string {
-        this.spectrumCache.setSpectrum(this.spectrumResult);
-        return '/spectra/display/' + this.spectrumResult.monaId;
+        this.spectrumCache.setSpectrum(this.spectrum);
+        return '/spectra/display/' + this.spectrum.id;
     }
 
     massDeleteToggle(e: any) {
-      this.massDelete.toggleCheckbox(this.spectrumResult.monaId);
+      this.massDelete.toggleCheckbox(this.spectrum.id);
       this.deletionMark.selected = !this.deletionMark.selected;
     }
 
     sameSubmitter(): boolean {
       if (this.auth.isLoggedIn()) {
-        if (this.auth.getCurrentUser().emailAddress === this.spectrumResult.spectrum.submitter.emailAddress) {
+        if (this.auth.getCurrentUser().emailAddress === this.spectrum.submitter.emailAddress) {
           return true;
         }
       }

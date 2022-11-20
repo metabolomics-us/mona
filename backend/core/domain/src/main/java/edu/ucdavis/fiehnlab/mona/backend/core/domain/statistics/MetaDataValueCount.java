@@ -45,12 +45,12 @@ public class MetaDataValueCount implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MetaDataValueCount that = (MetaDataValueCount) o;
-        return Objects.equals(value, that.value) && Objects.equals(count, that.count);
+        return Objects.equals(id, that.id) && Objects.equals(value, that.value) && Objects.equals(count, that.count) && Objects.equals(statisticsMetaData, that.statisticsMetaData);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value, count);
+        return Objects.hash(id, value, count, statisticsMetaData);
     }
 
     public String getValue() {

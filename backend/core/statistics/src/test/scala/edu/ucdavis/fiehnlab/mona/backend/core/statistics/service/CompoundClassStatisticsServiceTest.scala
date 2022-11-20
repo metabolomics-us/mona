@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 class CompoundClassStatisticsServiceTest extends AnyWordSpec {
 
   @Autowired
-  val spectrumResultsRepo: SpectrumResultRepository = null
+  val spectrumResultsRepo: SpectrumRepository = null
 
   @Autowired
   val monaMapper: ObjectMapper = {
@@ -41,7 +40,7 @@ class CompoundClassStatisticsServiceTest extends AnyWordSpec {
     "load data" in {
       spectrumResultsRepo.deleteAll()
       exampleRecords.foreach { spectrum =>
-        spectrumResultsRepo.save(new SpectrumResult(spectrum.getId, spectrum))
+        spectrumResultsRepo.save(spectrum)
       }
       assert(spectrumResultsRepo.count() == 50)
     }

@@ -10,16 +10,15 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusCon
 import org.springframework.stereotype.Component
 import org.springframework.boot.context.properties.ConfigurationProperties
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.EventScheduler
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.{SequenceService, SpectrumPersistenceService}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.{SpectrumPersistenceService}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.synchronization.CountListener
-import th.co.geniustree.springdata.jpa.repository.support.JpaSpecificationExecutorWithProjectionImpl
 
 @EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.domain"))
 @Configuration
 @Import(Array(classOf[DomainConfig], classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration]))
 @ComponentScan(basePackageClasses = Array(classOf[SpectrumPersistenceService],  classOf[CountListener],
-  classOf[EventScheduler[Spectrum]], classOf[SequenceService]))
-@EnableJpaRepositories(repositoryBaseClass = classOf[JpaSpecificationExecutorWithProjectionImpl[_,_]], basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository"))
+  classOf[EventScheduler[Spectrum]]))
+@EnableJpaRepositories(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository"))
 @Profile(Array("mona.persistence"))
 class PostgresqlConfiguration {
 

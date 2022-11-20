@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
 import java.nio.file.Path
-
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf.SDFWriter
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.QueryExport
 
@@ -38,5 +37,5 @@ class SDFDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = 
   /**
     *
     */
-  override def writeSpectrum(spectrum: SpectrumResult): Unit = sdfWriter.write(spectrum, exportWriter)
+  override def writeSpectrum(spectrum: Spectrum): Unit = sdfWriter.write(spectrum, exportWriter)
 }

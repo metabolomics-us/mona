@@ -12,8 +12,8 @@ export class Feedback {
   constructor(public http: HttpClient) {
   }
 
-  get(monaID: string): Observable<any> {
-    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/feedback/${monaID}`);
+  get(id: string): Observable<any> {
+    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/feedback/${id}`);
   }
 
   save(payload: any): Observable<any> {

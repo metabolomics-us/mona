@@ -8,14 +8,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaNotificatio
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessageListener
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.controller.CurationController
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
-import org.junit.runner.RunWith
+import org.hibernate.Hibernate
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
@@ -25,9 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.stereotype.Component
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -37,7 +35,7 @@ import scala.language.postfixOps
   */
 @SpringBootTest(classes = Array(classOf[CurationScheduler], classOf[MonaNotificationBusCounterConfiguration]), webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
-class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
+class CurationServiceTest extends AbstractSpringControllerTest with Eventually with BeforeAndAfterEach {
 
   @Autowired
   val testCurationRunner: TestCurationRunner = null
@@ -52,59 +50,96 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
   val curationController: CurationController = null
 
   @Autowired
-  val matRepository: MaterializedViewRepository = null
+  val spectrumResultRepository: SpectrumRepository = null
 
   @Autowired
-  val searchTableRepository: SearchTableRepository = null
+  private val transactionManager: PlatformTransactionManager = null
 
-  @Autowired
-  val spectrumResultRepository: SpectrumResultRepository = null
+  private var transactionTemplate: TransactionTemplate = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
+
+  protected override def beforeEach() = (
+    transactionTemplate = new TransactionTemplate(transactionManager)
+    )
+
+  protected override def afterEach() = (
+    transactionTemplate = null
+    )
 
   "CurationServiceTest" should {
     val exampleSpectrum: Spectrum = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "load some data" in {
-      spectrumResultRepository.deleteAll()
-      exampleRecords.foreach(x => spectrumResultRepository.save(new SpectrumResult(x.getId, x)))
-    }
-
-    s"we should be able to refresh our materialized view" in {
-      eventually(timeout(180 seconds)) {
-        matRepository.refreshSearchTable()
-        logger.info("sleep...")
-        assert(searchTableRepository.count() == 59616)
+      transactionTemplate.execute{ x =>
+        spectrumResultRepository.deleteAll()
+        Hibernate.initialize()
+        x
       }
+
+      transactionTemplate.execute{ x =>
+        exampleRecords.foreach(y => spectrumResultRepository.save(y))
+        Hibernate.initialize()
+        x
+      }
+
     }
 
     "scheduleSpectra" in {
-      val count = notificationCounter.getEventCount
+      val count = transactionTemplate.execute{ x =>
+        val z = notificationCounter.getEventCount
+        Hibernate.initialize(z)
+        z
+      }
       testCurationRunner.resetMessageStatus()
 
-      curationService.scheduleSpectrum(exampleSpectrum)
-
-      eventually(timeout(80 seconds)) {
-        assert(testCurationRunner.messageReceived)
-        assert(notificationCounter.getEventCount == count + 1)
+      transactionTemplate.execute{ x =>
+        curationService.scheduleSpectrum(exampleSpectrum)
+        Hibernate.initialize()
+        x
       }
+
+
+      transactionTemplate.execute{ x =>
+        eventually(timeout(80 seconds)) {
+          assert(testCurationRunner.messageReceived)
+          assert(notificationCounter.getEventCount == count + 1)
+        }
+        Hibernate.initialize()
+        x
+      }
+
     }
 
     "schedule all spectra via controller" in {
       (1 to 10).foreach { i =>
         logger.info(s"Test $i/10")
 
-        val count = notificationCounter.getEventCount
+        val count = transactionTemplate.execute{ x =>
+          val z = notificationCounter.getEventCount
+          Hibernate.initialize(z)
+          z
+        }
         testCurationRunner.resetMessageStatus()
 
-        curationController.curateByQuery("")
-
-        eventually(timeout(80 seconds)) {
-          assert(testCurationRunner.messageReceived)
-          assert(testCurationRunner.messageCount == 59)
-          assert(notificationCounter.getEventCount - count == 59)
+        transactionTemplate.execute{ x =>
+          curationController.curateByQuery("")
+          Hibernate.initialize()
+          x
         }
+
+
+        transactionTemplate.execute{ x =>
+          eventually(timeout(80 seconds)) {
+            assert(testCurationRunner.messageReceived)
+            assert(testCurationRunner.messageCount == 59)
+            assert(notificationCounter.getEventCount - count == 59)
+          }
+          Hibernate.initialize()
+          x
+        }
+
       }
     }
 
@@ -112,16 +147,30 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
       (1 to 10).foreach { i =>
         logger.info(s"Test $i/10")
 
-        val count = notificationCounter.getEventCount
+        val count = transactionTemplate.execute { x =>
+          val z = notificationCounter.getEventCount
+          Hibernate.initialize(z)
+          z
+        }
         testCurationRunner.resetMessageStatus()
 
-        curationController.curateByQuery("metadataName==\'ion mode\' and metadataValue==\'negative\'")
-
-        eventually(timeout(80 seconds)) {
-          assert(testCurationRunner.messageReceived)
-          assert(testCurationRunner.messageCount == 25)
-          assert(notificationCounter.getEventCount - count == 25)
+        transactionTemplate.execute{ x =>
+          curationController.curateByQuery("metaData.name:'ion mode' and metaData.value:'negative'")
+          Hibernate.initialize()
+          x
         }
+
+
+        transactionTemplate.execute{ x =>
+          eventually(timeout(80 seconds)) {
+            assert(testCurationRunner.messageReceived)
+            assert(testCurationRunner.messageCount == 25)
+            assert(notificationCounter.getEventCount - count == 25)
+          }
+          Hibernate.initialize()
+          x
+        }
+
       }
     }
   }

@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 
 import java.io.{PrintWriter, Writer}
 import scala.jdk.CollectionConverters._
@@ -21,8 +20,8 @@ class MSPWriter extends DomainWriter {
     * @param writer
     * @return
     */
-  def buildNames(spectrum: SpectrumResult, synonyms: Boolean, writer: PrintWriter): Unit = {
-    val compound: CompoundDAO = spectrum.getSpectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getSpectrum.getCompound.asScala.head)
+  def buildNames(spectrum: Spectrum, synonyms: Boolean, writer: PrintWriter): Unit = {
+    val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
     if (compound != null && compound.getNames.asScala.nonEmpty) {
       // TODO Re-enable sorting by score when implemented
@@ -48,8 +47,8 @@ class MSPWriter extends DomainWriter {
     * @param writer
     * @return
     */
-  def buildCompoundMetaData(spectrum: SpectrumResult, name: String, fieldName: String, writer: PrintWriter, transform: String => String = identity): Unit = {
-    val compound: CompoundDAO = spectrum.getSpectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getSpectrum.getCompound.asScala.head)
+  def buildCompoundMetaData(spectrum: Spectrum, name: String, fieldName: String, writer: PrintWriter, transform: String => String = identity): Unit = {
+    val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
     if (compound != null) {
       buildMetaData(compound.getMetaData.asScala.toArray, name, fieldName, writer, transform)
@@ -80,8 +79,8 @@ class MSPWriter extends DomainWriter {
     * @param spectrum
     * @param writer
     */
-  def buildCompoundInchiKey(spectrum: SpectrumResult, writer: PrintWriter): Unit = {
-    val compound: CompoundDAO = spectrum.getSpectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getSpectrum.getCompound.asScala.head)
+  def buildCompoundInchiKey(spectrum: Spectrum, writer: PrintWriter): Unit = {
+    val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
     if (compound != null) {
       if (compound.getInchiKey != null && compound.getInchiKey.nonEmpty) {
@@ -105,7 +104,7 @@ class MSPWriter extends DomainWriter {
     * @param writer
     * @return
     */
-  def buildComments(spectrum: SpectrumResult, writer: PrintWriter): Unit = {
+  def buildComments(spectrum: Spectrum, writer: PrintWriter): Unit = {
     val excludedMetaData = Array(
       "inchikey", "total exact mass", "molecular formula",
       "instrument", "instrument type", "precursor type", "precursor m/z", "ms level",
@@ -125,8 +124,8 @@ class MSPWriter extends DomainWriter {
     * @param writer
     * @return
     */
-  def buildSpectraString(spectrum: SpectrumResult, writer: PrintWriter): Unit = {
-    val ions: Array[String] = spectrum.getSpectrum.getSpectrum.split(" ").map(_.split(":").mkString(" "))
+  def buildSpectraString(spectrum: Spectrum, writer: PrintWriter): Unit = {
+    val ions: Array[String] = spectrum.getSpectrum.split(" ").map(_.split(":").mkString(" "))
 
     writer.println(s"Num Peaks: ${ions.length}")
     ions.foreach(writer.println)
@@ -142,7 +141,7 @@ class MSPWriter extends DomainWriter {
     * @param spectrum
     * @return
     */
-  def write(spectrum: SpectrumResult, writer: Writer): Unit = {
+  def write(spectrum: Spectrum, writer: Writer): Unit = {
     val p = getPrintWriter(writer)
 
     // Name and synonyms, including NIST-specific fields
@@ -163,16 +162,16 @@ class MSPWriter extends DomainWriter {
     // https://github.com/cbroeckl/RAMClustR/blob/master/R/ramclustR2.R
 
     // MetaData
-    p.println(s"DB#: ${spectrum.getSpectrum.getId}")
+    p.println(s"DB#: ${spectrum.getId}")
     buildCompoundInchiKey(spectrum, p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "Precursor_type", "precursor type", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "Spectrum_type", "ms level", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "PrecursorMZ", "precursor m/z", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "Instrument_type", "instrument type", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "Instrument", "instrument", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "Ion_mode", "ionization mode", p, x => x.charAt(0).toUpper.toString)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "Collision_energy", "collision energy", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "Retention_index", "retention index", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "Precursor_type", "precursor type", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "Spectrum_type", "ms level", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "PrecursorMZ", "precursor m/z", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "Instrument_type", "instrument type", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "Instrument", "instrument", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "Ion_mode", "ionization mode", p, x => x.charAt(0).toUpper.toString)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "Collision_energy", "collision energy", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "Retention_index", "retention index", p)
     buildCompoundMetaData(spectrum, "Formula", "molecular formula", p)
     buildCompoundMetaData(spectrum, "MW", "total exact mass", p, x => (x.toDouble + 0.2).toInt.toString)
     buildCompoundMetaData(spectrum, "ExactMass", "total exact mass", p)

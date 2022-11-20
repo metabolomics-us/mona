@@ -6,9 +6,9 @@ import {Submitter} from "./submitter.model";
 import {Splash} from "./splash.model";
 import {Library} from "./library.model";
 
-export class Spectrum {
+export class SpectrumModel {
   compound: Compound[];
-  id: String;
+  id: string;
   metaData: Metadata[];
   annotations: Metadata[];
   score: Score;
@@ -21,4 +21,5 @@ export class Spectrum {
   tags: Tag[];
   library: Library;
   similarity: number;
+  metaDataMap:{};
 }

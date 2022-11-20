@@ -21,7 +21,7 @@ import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
 import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
 import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
-import {SpectrumResult} from "../../mocks/spectrum-result.model";
+import {SpectrumModel} from "../../mocks/spectrum.model";
 
 @Component({
     selector: 'spectrum-viewer',
@@ -29,8 +29,8 @@ import {SpectrumResult} from "../../mocks/spectrum-result.model";
 })
 export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     @ViewChild('acc') accordion: NgbAccordion;
-    delayedspectrum: SpectrumResult;
-    spectrum;
+    delayedspectrum: SpectrumModel;
+    spectrum: SpectrumModel;
     score;
     massSpec;
     accordionStatus;
@@ -63,7 +63,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     ngOnInit() {
       this.route.params.subscribe((data) => {
         this.delayedspectrum = this.route.snapshot.data.spectrumResult;
-        this.feedbackCache.resolveFeedback(this.delayedspectrum.monaId).subscribe((res) => {
+        this.feedbackCache.resolveFeedback(this.delayedspectrum.id).subscribe((res) => {
           this.currentFeedback = res;
         });
         this.accordionStatus = {
@@ -124,9 +124,9 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
 
     setSpectrum() {
       // truncate metadata
-      if (typeof this.delayedspectrum.spectrum.metaData !== 'undefined') {
-        for (let i = 0; i < this.delayedspectrum.spectrum.metaData.length; i++) {
-          const curMeta = this.delayedspectrum.spectrum.metaData[i];
+      if (typeof this.delayedspectrum.metaData !== 'undefined') {
+        for (let i = 0; i < this.delayedspectrum.metaData.length; i++) {
+          const curMeta = this.delayedspectrum.metaData[i];
 
           const name = curMeta.name.toLowerCase();
 
@@ -141,9 +141,9 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
       }
 
       // truncate compounds
-      if (typeof this.delayedspectrum.spectrum.compound !== 'undefined') {
-        for (let i = 0; i < this.delayedspectrum.spectrum.compound.length; i++) {
-          const compoundMeta = this.delayedspectrum.spectrum.compound[i].metaData;
+      if (typeof this.delayedspectrum.compound !== 'undefined') {
+        for (let i = 0; i < this.delayedspectrum.compound.length; i++) {
+          const compoundMeta = this.delayedspectrum.compound[i].metaData;
           for (let j = 0, m = compoundMeta.length; j < m; j++) {
             const metadata = compoundMeta[j];
             const name = metadata.name.toLowerCase();
@@ -160,18 +160,18 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
       this.ionRegex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
 
       // Parse spectrum string to generate ion list
-      let match = this.ionRegex.exec(this.delayedspectrum.spectrum.spectrum);
+      let match = this.ionRegex.exec(this.delayedspectrum.spectrum);
 
       while (match !== null) {
         // Find annotation
         let annotation = '';
         let computed = false;
 
-        if (typeof this.delayedspectrum.spectrum.annotations !== 'undefined') {
-          for (let i = 0; i < this.delayedspectrum.spectrum.annotations.length; i++) {
-            if (this.delayedspectrum.spectrum.annotations[i].value === parseFloat(match[1])) {
-              annotation = this.delayedspectrum.spectrum.annotations[i].name;
-              computed = this.delayedspectrum.spectrum.annotations[i].computed;
+        if (typeof this.delayedspectrum.annotations !== 'undefined') {
+          for (let i = 0; i < this.delayedspectrum.annotations.length; i++) {
+            if (this.delayedspectrum.annotations[i].value === parseFloat(match[1])) {
+              annotation = this.delayedspectrum.annotations[i].name;
+              computed = this.delayedspectrum.annotations[i].computed;
             }
           }
         }
@@ -198,8 +198,8 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
         match = this.ionRegex.exec(this.delayedspectrum.spectrum);
       }
 
-      if (typeof this.spectrum.spectrum.compound !== 'undefined') {
-        for (let i = 0; i < this.spectrum.spectrum.compound.length; i++) {
+      if (typeof this.spectrum.compound !== 'undefined') {
+        for (let i = 0; i < this.spectrum.compound.length; i++) {
           this.accordionStatus.isCompoundOpen.push(i === 0);
         }
       }
@@ -225,10 +225,10 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
           return;
         }
 
-        this.spectrumService.searchSimilarSpectra({spectrum: this.spectrum.spectrum, minSimilarity: 0.5}).pipe(first()).subscribe(
+        this.spectrumService.searchSimilarSpectra({spectrum: this.spectrum, minSimilarity: 0.5}).pipe(first()).subscribe(
             (res: any) => {
                 const data = res;
-                this.similarSpectra = data.filter((x) => x.id !== this.spectrum.monaId);
+                this.similarSpectra = data.filter((x) => x.id !== this.spectrum.id);
                 this.loadingSimilarSpectra = false;
             }, (res) => {
                 this.loadingSimilarSpectra = false;

@@ -69,10 +69,7 @@ class CalculateAllAdducts extends ItemProcessor[Spectrum, Spectrum] with LazyLog
               new MetaDataDAO(null, x, f(theoreticalMass).toString, true, "theoretical adduct", true, null)
             )
           }
-          val newMetaData = biologicalCompound.getMetaData
-          newMetaData.addAll(updatedMetadata.asJava)
-          biologicalCompound.setMetaData(newMetaData)
-
+          biologicalCompound.setMetaData(updatedMetadata.asJava)
           updatedCompoundSet.update(biologicalIndex, biologicalCompound)
 
           spectrum.setCompound(updatedCompoundSet.asJava)

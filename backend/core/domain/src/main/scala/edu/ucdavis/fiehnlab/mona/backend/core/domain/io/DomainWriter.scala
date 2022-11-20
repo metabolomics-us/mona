@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.CompoundDAO
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, Spectrum}
 
 import java.io.{OutputStream, OutputStreamWriter, PrintWriter, Writer}
 import scala.jdk.CollectionConverters._
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 
 /**
   * Created by wohlgemuth on 5/27/16.
@@ -35,10 +34,10 @@ trait DomainWriter {
   /**
     * Gets all miscellaneous metadata for comments fields
     */
-  def getAdditionalMetaData(spectrum: SpectrumResult, excludedMetaData: Array[String] = Array()): Array[(String, Any)] = {
-    val compound: CompoundDAO = spectrum.getSpectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getSpectrum.getCompound.asScala.head)
+  def getAdditionalMetaData(spectrum: Spectrum, excludedMetaData: Array[String] = Array()): Array[(String, Any)] = {
+    val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
-    val metadata = (compound.getMetaData.asScala ++ spectrum.getSpectrum.getMetaData.asScala)
+    val metadata = (compound.getMetaData.asScala ++ spectrum.getMetaData.asScala)
       .filter(x => !excludedMetaData.contains(x.getName.toLowerCase))
       .filter(x => x.getValue != null)
       .map(x => {
@@ -49,16 +48,16 @@ trait DomainWriter {
         }
       })
 
-    if (spectrum.getSpectrum.getSplash != null) {
-      metadata.append(("SPLASH", spectrum.getSpectrum.getSplash.getSplash))
+    if (spectrum.getSplash != null) {
+      metadata.append(("SPLASH", spectrum.getSplash.getSplash))
     }
 
-    if (spectrum.getSpectrum.getSubmitter != null) {
-      metadata.append(("submitter", spectrum.getSpectrum.getSubmitter.toString))
+    if (spectrum.getSubmitter != null) {
+      metadata.append(("submitter", spectrum.getSubmitter.toString))
     }
 
-    if (spectrum.getSpectrum.getScore != null && spectrum.getSpectrum.getScore.getScore > 0) {
-      metadata.append(("MoNA Rating", spectrum.getSpectrum.getScore.getScore.toString))
+    if (spectrum.getScore != null && spectrum.getScore.getScore > 0) {
+      metadata.append(("MoNA Rating", spectrum.getScore.getScore.toString))
     }
 
     metadata.toArray
@@ -70,7 +69,7 @@ trait DomainWriter {
     * @param spectrum
     * @return
     */
-  def write(spectrum: SpectrumResult, writer: Writer): Unit
+  def write(spectrum: Spectrum, writer: Writer): Unit
 
-  def write(spectrum: SpectrumResult, outputStream: OutputStream): Unit = write(spectrum, new OutputStreamWriter(outputStream))
+  def write(spectrum: Spectrum, outputStream: OutputStream): Unit = write(spectrum, new OutputStreamWriter(outputStream))
 }

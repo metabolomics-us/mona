@@ -4,10 +4,9 @@ import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{Spectrum, SubmitterDAO}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SequenceRepository, SubmitterRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SubmitterRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import org.scalatest.concurrent.Eventually
@@ -39,7 +38,7 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
   val submitterRepository: SubmitterRepository = null
 
   @Autowired
-  private val sequenceRepository: SequenceRepository = null
+  val spectrumPersistenceService: SpectrumPersistenceService = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -51,12 +50,10 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
     "we should be able to reset the repository" in {
       spectrumRepository.deleteAll()
       submitterRepository.deleteAll()
-      sequenceRepository.deleteAll()
 
       eventually(timeout(10 seconds)) {
         assert(spectrumRepository.count() == 0)
         assert(submitterRepository.count() == 0)
-        assert(sequenceRepository.count() == 0)
       }
     }
 
@@ -68,26 +65,27 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
       }
 
       "create a test submitter" in {
-        submitterRepository.save(new Submitter( "test", "", "", ""))
-        submitterRepository.save(new Submitter("test2", "", "", ""))
-        submitterRepository.save(new Submitter("ntho@chem.uoa.gr", "", "", ""))
+        submitterRepository.save(new SubmitterDAO( "test", "test", "test", "test"))
+        submitterRepository.save(new SubmitterDAO("test2", "", "", ""))
+        submitterRepository.save(new SubmitterDAO("ntho@chem.uoa.gr", "", "", ""))
         assert(submitterRepository.count() == 3)
       }
 
       "upload a spectrum as a regular user" in {
         assert(spectrumRepository.count() == 0)
 
-        val result: SpectrumResult = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
+        val result: Spectrum = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[Spectrum])
         assert(spectrumRepository.count() == 1)
-        assert(result.getMonaId == curatedRecords.head.getId)
-        assert(result.getSpectrum.getSubmitter.getEmailAddress == "test")
+        assert(result.getId == curatedRecords.head.getId)
+        assert(result.getSubmitter.getEmailAddress == "test")
       }
 
       "overwrite the spectrum as the same user and ensure that the date is propagated" in {
-        val spectrum: SpectrumResult = given().contentType("application/json; charset=UTF-8").when().get("/spectra/AU100601").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
-        val result: SpectrumResult = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
-        assert(spectrumRepository.count() == 1)
-        assert(spectrum.getSpectrum.getDateCreated.compareTo(result.getSpectrum.getDateCreated) == 0)
+        val spectrum: Spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra/AU100601").`then`().statusCode(200).extract().as(classOf[Spectrum])
+        val result: Spectrum = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[Spectrum])
+        assert(spectrumPersistenceService.count() == 1)
+        assert(spectrum.getDateCreated.compareTo(result.getDateCreated) == 0)
+
       }
 
       "not overwrite the spectrum as a different regular user" in {
@@ -98,8 +96,8 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
       "assign a MoNA id if one is not provided" in {
         val copySpectrum = new Spectrum(curatedRecords.head)
         copySpectrum.setId(null)
-        val result: SpectrumResult = authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(copySpectrum).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
-        assert(result.getMonaId.startsWith("MoNA_000001"))
+        val result: Spectrum = authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(copySpectrum).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[Spectrum])
+        assert(result.getId.startsWith("MoNA_0000001"))
         assert(spectrumRepository.count() == 2)
       }
     }
@@ -116,16 +114,16 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
       }
 
       "not be able to update user's own spectrum id to overwrite another user's spectrum" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().put(s"/spectra/MoNA_000001").`then`().statusCode(409)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().put(s"/spectra/MoNA_0000001").`then`().statusCode(409)
         assert(spectrumRepository.count() == 2)
       }
 
       "update a spectrum id" in {
         given().contentType("application/json; charset=UTF-8").when().get("/spectra/test").`then`().statusCode(404)
 
-        val result: SpectrumResult = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().put(s"/spectra/test").`then`().statusCode(200).extract().as(classOf[SpectrumResult])
+        val result: Spectrum = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(headRecord).when().put(s"/spectra/test").`then`().statusCode(200).extract().as(classOf[Spectrum])
         assert(spectrumRepository.count() == 2)
-        assert(result.getMonaId == "test")
+        assert(result.getId == "test")
 
         given().contentType("application/json; charset=UTF-8").when().get("/spectra/test").`then`().statusCode(200)
       }

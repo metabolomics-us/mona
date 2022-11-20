@@ -3,8 +3,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.{WebHookRepository, WebHookResultRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.domain.{WebHook, WebHookResult}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
@@ -36,12 +34,6 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook, S
 
   @Autowired
   val spectrumPersistenceService: SpectrumPersistenceService = null
-
-  @Autowired
-  val matRepository: MaterializedViewRepository = null
-
-  @Autowired
-  val searchTableRepository: SearchTableRepository = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

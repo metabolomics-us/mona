@@ -110,7 +110,9 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
             spectrum.getTags.asScala :+ new TagDAO(CommonTags.GCMS_SPECTRUM, true)
 
         spectrum.setTags(updatedTags.asJava)
-        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Chromatography identified as GC-MS"))
+
+        val score = CurationUtilities.addImpact(spectrum.getScore, 1, "Chromatography identified as GC-MS")
+        spectrum.setScore(score)
         spectrum
       }
 

@@ -1,13 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.util
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao._
-import scala.collection.mutable.{Buffer, ArrayBuffer}
+
+import scala.collection.mutable.{ArrayBuffer, Buffer}
 import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 4/20/16.
   */
-object CurationUtilities {
+object CurationUtilities extends LazyLogging {
   final def getCompounds(s: Spectrum, kind: String): Array[CompoundDAO] = s.getCompound.asScala.toArray.filter(_.getKind == kind)
 
   final def getBiologicalCompounds(s: Spectrum): Array[CompoundDAO] = getCompounds(s, "biological")
@@ -45,13 +47,14 @@ object CurationUtilities {
     */
   final def addImpact(score: Score, impactValue: Double, impactReason: String): Score = {
     if (score == null || score.getImpacts == null) {
-      val impacts: java.util.List[Impacts] =  List(new Impacts(impactValue, impactReason)).asJava
+      val impacts: java.util.List[Impacts] =  Array(new Impacts(impactValue, impactReason)).toList.asJava
       val zero: Double = 0.0
       new Score(impacts, zero, zero, zero)
     } else {
-      val impacts: java.util.List[Impacts] = score.getImpacts
-      impacts.add(new Impacts(impactValue, impactReason))
-      score.setImpacts(impacts)
+      val impacts: ArrayBuffer[Impacts] = ArrayBuffer[Impacts]()
+      impacts.appendAll(score.getImpacts.asScala)
+      impacts.append(new Impacts(impactValue, impactReason))
+      score.setImpacts(impacts.asJava)
       score
     }
   }

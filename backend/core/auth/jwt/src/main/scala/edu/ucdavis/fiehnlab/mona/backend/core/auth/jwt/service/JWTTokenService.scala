@@ -10,6 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import io.jsonwebtoken.{Claims, Jwts, SignatureAlgorithm}
 import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
 import scala.jdk.CollectionConverters._
 
@@ -28,6 +29,7 @@ class JWTTokenService extends TokenService with LazyLogging{
     * @param user
     * @return
     */
+  @Transactional
   override def generateToken(user: Users, timeOfLife: Int = 24 * 7): String = {
 
     val issueDate = new Date()

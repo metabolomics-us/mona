@@ -15,5 +15,4 @@ spring:
       mode: always
       schema-locations:
         - classpath:/queries/spectrum_fields.sql
-        - classpath:/queries/index.sql
       continue-on-error: false

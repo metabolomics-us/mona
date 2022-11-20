@@ -17,7 +17,6 @@ import scala.collection.Set
   */
 @Component
 class IndexUtils extends LazyLogging {
-
   @Autowired
   private val indexRegistry: IndexRegistry = null
 

@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData
 import org.springframework.http.{HttpEntity, HttpMethod}
 import org.springframework.stereotype.Component
@@ -13,7 +12,7 @@ import java.net.{URI, URLEncoder}
   * specific client to work with MoNA spectrums and there MetaData
   */
 @Component
-class MonaSpectrumRestClient extends GenericRestClient[Spectrum, SpectrumResult, String](s"rest/spectra") {
+class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/spectra") {
 
   val metaDataPath = "rest/metaData"
 

@@ -2,10 +2,10 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.synchroniz
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, PersistenceEventListener}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.{Component}
+import org.springframework.stereotype.Component
 import org.springframework.context.annotation.Profile
 
 /**
@@ -13,17 +13,17 @@ import org.springframework.context.annotation.Profile
  */
 @Component
 @Profile(Array("mona.persistence"))
-class CountListener extends PersistenceEventListener[SpectrumResult] with LazyLogging {
+class CountListener extends PersistenceEventListener[Spectrum] with LazyLogging {
   @Autowired
-  val spectrumResultRepository: SpectrumResultRepository = null
+  val spectrumPersistenceService: SpectrumPersistenceService = null
 
   /**
    * an entry was added to the system
    *
    * @param event
    */
-  override def added(event: Event[SpectrumResult]): Unit = {
-    logger.debug(s"added spectrum count is now ${spectrumResultRepository.count()}")
+  override def added(event: Event[Spectrum]): Unit = {
+    logger.debug(s"added spectrum count is now ${spectrumPersistenceService.count()}")
   }
 
   /**
@@ -31,8 +31,8 @@ class CountListener extends PersistenceEventListener[SpectrumResult] with LazyLo
    *
    * @param event
    */
-  override def updated(event: Event[SpectrumResult]): Unit = {
-    logger.debug(s"updated spectrum count is now ${spectrumResultRepository.count()}")
+  override def updated(event: Event[Spectrum]): Unit = {
+    logger.debug(s"updated spectrum count is now ${spectrumPersistenceService.count()}")
   }
 
   /**
@@ -40,8 +40,8 @@ class CountListener extends PersistenceEventListener[SpectrumResult] with LazyLo
    *
    * @param event
    */
-  override def deleted(event: Event[SpectrumResult]): Unit = {
-    logger.debug(s"deleted spectrum count is now ${spectrumResultRepository.count()}")
+  override def deleted(event: Event[Spectrum]): Unit = {
+    logger.debug(s"deleted spectrum count is now ${spectrumPersistenceService.count()}")
   }
 
   /**

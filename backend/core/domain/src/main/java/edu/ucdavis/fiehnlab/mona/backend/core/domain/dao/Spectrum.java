@@ -1,82 +1,98 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
 
-import com.vladmihalcea.hibernate.type.json.JsonType;
-
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumSubmitter;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Sequence.SpectrumSequenceIdGenerator;
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.validators.NullOrNotBlank;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.springframework.context.annotation.Profile;
 
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-@TypeDef(
-        name = "json",
-        typeClass = JsonType.class
-)
+@Entity
+@Table(name = "spectrum")
+@Profile({"mona.persistence"})
 public class Spectrum implements Serializable {
-    @Type(type = "json")
-    @Column(name = "compound", columnDefinition = "jsonb")
+    @Column(name = "compound")
     @NotEmpty
     @NotNull
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "spectrum_id")
     private List<CompoundDAO> compound;
 
     @Column(name = "id")
     @Size(min = 1)
     @NullOrNotBlank
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_seq")
+    @GenericGenerator(
+            name = "spectrum_seq",
+            strategy = "edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Sequence.SpectrumSequenceIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = SpectrumSequenceIdGenerator.INCREMENT_PARAM, value = "250"),
+                    @org.hibernate.annotations.Parameter(name = SpectrumSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "MoNA_"),
+                    @org.hibernate.annotations.Parameter(name = SpectrumSequenceIdGenerator.NUMBER_FORMAT_PARAMETER, value = "%07d")
+            }
+    )
     private String id;
 
-    @Type(type = "json")
-    @Column(name = "metaData", columnDefinition = "jsonb")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "spectrum_metadata_id")
+    @Column(name = "metaData")
+    @BatchSize(size = 50)
     private List<MetaDataDAO> metaData;
 
-    @Type(type = "json")
-    @Column(columnDefinition = "jsonb")
-    private List<MetaDataDAO> annotations = Collections.EMPTY_LIST;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "spectrum_annotation_id")
+    @Column(name = "annotations")
+    @BatchSize(size = 50)
+    private List<MetaDataDAO> annotations = new ArrayList<>();
 
-    @Type(type = "json")
-    @Column( name = "score", columnDefinition = "jsonb")
-    private Score score;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "score_id")
+    private Score score = new Score(Arrays.asList(new Impacts(0.0,"")), 0.0,0.0,0.0);
 
     @Column(name = "spectrum")
     @NotEmpty
     @NotBlank
+    @Type(type = "org.hibernate.type.TextType")
     private String spectrum;
 
     private String lastUpdated = new Date().toString();
 
     private String dateCreated = new Date().toString();
 
-    private String lastCurated;
+    private String lastCurated = "";
 
-    @Type(type = "json")
-    @Column(name = "splash", columnDefinition = "jsonb")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "splash_id")
     private Splash splash;
 
-    @Type(type = "json")
-    @Column(name = "submitter", columnDefinition = "jsonb")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "submitter_id")
     @NotNull
-    private SubmitterDAO submitter;
+    private SpectrumSubmitter submitter;
 
-    @Type(type = "json")
-    @Column(name = "tags", columnDefinition = "jsonb")
+    @Column(name = "tags")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "spectrum_id")
     private List<TagDAO> tags;
 
-    @Type(type = "json")
-    @Column(name = "library", columnDefinition = "jsonb")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "library_id")
     private LibraryDAO library;
 
     public Spectrum() {
     }
 
-    public Spectrum(List<CompoundDAO> compound, String id, List<MetaDataDAO> metaData, List<MetaDataDAO> annotations, Score score, String spectrum, String lastUpdated, String dateCreated, String lastCurated, Splash splash, SubmitterDAO submitter, List<TagDAO> tags, LibraryDAO library) {
+    public Spectrum(List<CompoundDAO> compound, String id, List<MetaDataDAO> metaData, List<MetaDataDAO> annotations, Score score, String spectrum, String lastUpdated, String dateCreated, String lastCurated, Splash splash, SpectrumSubmitter submitter, List<TagDAO> tags, LibraryDAO library) {
         this.compound = compound;
         this.id = id;
         this.metaData = metaData;
@@ -108,6 +124,7 @@ public class Spectrum implements Serializable {
         this.library = spectrum.getLibrary();
     }
 
+
     public List<CompoundDAO> getCompound() {
         return compound;
     }
@@ -132,7 +149,7 @@ public class Spectrum implements Serializable {
         return splash;
     }
 
-    public SubmitterDAO getSubmitter() {
+    public SpectrumSubmitter getSubmitter() {
         return submitter;
     }
 
@@ -192,7 +209,7 @@ public class Spectrum implements Serializable {
         this.splash = splash;
     }
 
-    public void setSubmitter(SubmitterDAO submitter) {
+    public void setSubmitter(SpectrumSubmitter submitter) {
         this.submitter = submitter;
     }
 

@@ -84,9 +84,9 @@
             <br />
 
             <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="true">
-                <ng-template ngbSlide *ngFor="let spectrumResult of showcaseSpectra">
+                <ng-template ngbSlide *ngFor="let spectrum of showcaseSpectra">
                     <div class="picsum-img-wrapper">
-                      <display-spectra-panel class="text-left" [spectrumResult]="spectrumResult"></display-spectra-panel>
+                      <display-spectra-panel class="text-left" [spectrum]="spectrum"></display-spectra-panel>
                     </div>
                 </ng-template>
                 <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">

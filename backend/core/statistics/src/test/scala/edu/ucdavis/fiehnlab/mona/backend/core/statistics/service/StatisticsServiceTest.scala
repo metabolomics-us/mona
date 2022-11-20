@@ -7,8 +7,7 @@ import java.io.InputStreamReader
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumResultRepository, StatisticsGlobalRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumRepository, StatisticsGlobalRepository}
 import org.scalatest.wordspec.AnyWordSpec
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 class StatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
   @Autowired
-  val spectrumResultsRepo: SpectrumResultRepository = null
+  val spectrumResultsRepo: SpectrumRepository = null
 
   @Autowired
   val monaMapper: ObjectMapper = {
@@ -48,7 +47,7 @@ class StatisticsServiceTest extends AnyWordSpec with LazyLogging {
       spectrumResultsRepo.deleteAll()
 
       exampleRecords.foreach { spectrum =>
-        spectrumResultsRepo.save(new SpectrumResult(spectrum.getId, spectrum))
+        spectrumResultsRepo.save(spectrum)
       }
       assert(spectrumResultsRepo.count() == 50)
     }
@@ -63,10 +62,10 @@ class StatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
       assert(result.getSpectrumCount == 50)
       assert(result.getCompoundCount == 21)
-      assert(result.getMetaDataCount == 574)
-      assert(result.getMetaDataValueCount == 5254)
+      assert(result.getMetaDataCount == 573)
+      assert(result.getMetaDataValueCount == 5154)
       assert(result.getTagCount == 2)
-      assert(result.getTagValueCount == 100)
+      assert(result.getTagValueCount == 150)
       assert(result.getSubmitterCount == 4)
     }
   }

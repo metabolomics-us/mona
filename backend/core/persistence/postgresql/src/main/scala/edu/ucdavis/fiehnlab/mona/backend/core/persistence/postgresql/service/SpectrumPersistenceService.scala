@@ -2,23 +2,18 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import cz.jirutka.rsql.parser.RSQLParser
-import cz.jirutka.rsql.parser.ast.{ComparisonOperator, Node}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventScheduler}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.views.SearchTable
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{SpectrumResult, SpectrumResultId}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository.SparseSearchTable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.rsql.{CustomRsqlVisitor, RSQLOperatorsCustom}
 import org.springframework.beans.factory.annotation.Autowired
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.filter.FilterSpecificationDistinct
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 import java.lang
 import java.util.{Date, List}
@@ -31,21 +26,16 @@ class SpectrumPersistenceService extends LazyLogging {
   val fetchSize = 10
 
   @Autowired
-  val spectrumResultRepository: SpectrumResultRepository = null
-
-  @Autowired
-  val searchTableRepository: SearchTableRepository = null
+  val spectrumResultRepository: SpectrumRepository = null
 
   @Autowired
   val objectMapper: ObjectMapper = null
 
-  @Autowired
-  val sequenceService: SequenceService = null
+//  @Autowired
+//  val sequenceService: SequenceService = null
 
   @Autowired(required = false)
   val eventScheduler: EventScheduler[Spectrum] = null
-
-  val operators: java.util.Set[ComparisonOperator] = RSQLOperatorsCustom.newDefaultOperators()
 
   final def fireAddEvent(spectrum: Spectrum): Unit = {
     logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.getId} has been added")
@@ -65,13 +55,6 @@ class SpectrumPersistenceService extends LazyLogging {
       eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrumResult, new Date, Event.DELETE))
     }
   }
-
-  /*final def fireDeleteEvent(spectrumSparse: SparseSearchTable): Unit = {
-    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrumSparse.getMonaId} has been deleted")
-    if (eventSchedulerSparse != null) {
-      eventSchedulerSparse.scheduleEventProcessing(Event[SparseSearchTable](spectrumSparse, new Date, Event.DELETE))
-    }
-  }*/
 
   /**
    * will be invoked everytime a spectrum will be updated in the system
@@ -101,12 +84,13 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @CacheEvict(value = Array("spectra"))
-  final def update(spectrum: SpectrumResult): SpectrumResult = {
-    //val serialized = objectMapper.writeValueAsString(spectrum);
+  @Transactional
+  final def update(spectrum: Spectrum): Unit = {
+    spectrum.setLastUpdated(new Date().toString)
     val result = spectrumResultRepository.save(spectrum)
-    //val result = spectrumResultRepository.save(spectrum.copy(lastUpdated = new Date()).toString)
-    fireUpdateEvent(result.getSpectrum)
-    result
+
+    fireUpdateEvent(result)
+//    result
   }
 
   /**
@@ -116,20 +100,10 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @CacheEvict(value = Array("spectra"))
-  final def save[S <: SpectrumResult](entity: S): S = {
-    if(entity.getMonaId == null || entity.getMonaId == "") {
-      val nextMonaId = sequenceService.getNextMoNAID
-      entity.setMonaId(nextMonaId)
-      entity.getSpectrum.setId(nextMonaId)
-    }
-    //val transformedEntity = entity.copy(
-    //  monaId = Option(entity.getMonaId).getOrElse(sequenceService.getNextMoNAID),
-      //dateCreated = Option(entity.dateCreated).getOrElse(new Date),
-      //lastUpdated = new Date
-    //)
-
+  @Transactional
+  final def save[S <: Spectrum](entity: S): S = {
     val result = spectrumResultRepository.save(entity)
-    fireAddEvent(result.getSpectrum)
+    fireAddEvent(result)
     result
   }
 
@@ -138,7 +112,7 @@ class SpectrumPersistenceService extends LazyLogging {
    *
    * @param spectra
    */
-  def update(spectra: lang.Iterable[SpectrumResult]): Unit = spectra.asScala.foreach(update)
+  def update(spectra: lang.Iterable[Spectrum]): Unit = spectra.asScala.foreach(update)
 
   /**
    * removes the spectrum from the repository
@@ -147,18 +121,12 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @CacheEvict(value = Array("spectra"))
-  final def delete(spectrum: SpectrumResult): Unit = {
+  @Transactional
+  final def delete(spectrum: Spectrum): Unit = {
     spectrumResultRepository.delete(spectrum)
-    fireDeleteEvent(spectrum.getSpectrum)
+    spectrumResultRepository.flush()
+    fireDeleteEvent(spectrum)
   }
-
-  @CacheEvict(value = Array("spectra"))
-  final def deleteSparse(spectrum: SparseSearchTable): Unit = {
-    val spectrumResult = spectrumResultRepository.findByMonaId(spectrum.getMonaId)
-    spectrumResultRepository.delete(spectrumResult)
-    fireDeleteEvent(spectrumResult.getSpectrum)
-  }
-
 
   /**
    * retrieves the spectrum from the repository
@@ -167,22 +135,24 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
-  def findByMonaId(id: String): SpectrumResult = spectrumResultRepository.findByMonaId(id)
+  @Transactional
+  def findByMonaId(id: String): Spectrum = spectrumResultRepository.findById(id).orElse(null)
 
   /**
    *
    * @param request
    * @return
    */
-  private def findDataForQuery(rsqlQuery: String, request: Pageable): Page[SpectrumResult] = {
-    logger.debug(s"executing query: \n$rsqlQuery\n")
-    val rootNode: Node = new RSQLParser(operators).parse(rsqlQuery)
-    val spec: Specification[SearchTable] = rootNode.accept(new CustomRsqlVisitor[SearchTable]())
-    val rez: java.util.List[String] = searchTableRepository.getMonaIdsFromResult(spec, classOf[SparseSearchTable], request)
-    spectrumResultRepository.findAllByMonaIdIn(rez, PageRequest.of(0, request.getPageSize))
+  @Transactional
+  private def findDataForQuery(query: String, request: Pageable): Page[Spectrum] = {
+    logger.debug(s"executing query: \n$query\n")
+    val spec: Specification[Spectrum] = new FilterSpecificationDistinct[Spectrum](query)
+    val rez: Page[Spectrum] = spectrumResultRepository.findAll(spec, request)
+    rez
   }
 
-  private def findDataForEmptyQuery(request: Pageable): Page[SpectrumResult] = {
+  @Transactional
+  private def findDataForEmptyQuery(request: Pageable): Page[Spectrum] = {
     logger.debug(s"executing empty query to findAll")
     spectrumResultRepository.findAll(request)
   }
@@ -192,13 +162,14 @@ class SpectrumPersistenceService extends LazyLogging {
    *
    * @return
    */
-  def findAll(): lang.Iterable[SpectrumResult] = {
-    new DynamicIterable[SpectrumResult, String]("", fetchSize) {
+  @Transactional
+  def findAll(): lang.Iterable[Spectrum] = {
+    new DynamicIterable[Spectrum, String]("", fetchSize) {
 
       /**
        * loads more data from the server for the given query
        */
-      override def fetchMoreData(query: String, pageable: Pageable): Page[SpectrumResult] = findDataForEmptyQuery(pageable)
+      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForEmptyQuery(pageable)
     }
 
   }
@@ -207,7 +178,7 @@ class SpectrumPersistenceService extends LazyLogging {
    * fires a synchronization event, so that system updates all it's clients. Be aware that this is very expensive!
    */
   def forceSynchronization(): Unit = findAll().asScala.foreach{ x =>
-    fireSyncEvent(x.getSpectrum)
+    fireSyncEvent(x)
   }
   //def forceSynchronization(): Unit = findAll().iterator().asScala.foreach(fireSyncEvent)
 
@@ -215,27 +186,22 @@ class SpectrumPersistenceService extends LazyLogging {
   /**
    * queries for all the spectra matching this query
    *
-   * @param rsqlQuery
-   * @param textQuery
+   * @param query
    * @return
    */
+  @Transactional
   @Cacheable(value = Array("spectra"))
-  def findAll(rsqlQuery: String): lang.Iterable[SpectrumResult] = {
+  def findAll(query: String): lang.Iterable[Spectrum] = {
 
     /**
      * generates a new dynamic fetchable
      */
-    val test = new DynamicIterable[SpectrumResult, String](rsqlQuery, fetchSize) {
+    val test = new DynamicIterable[Spectrum, String](query, fetchSize) {
 
       /**
        * loads more data from the server for the given query
        */
-      override def fetchMoreData(query: String, pageable: Pageable): Page[SpectrumResult] = findDataForQuery(query, pageable)
-    }
-    logger.info(s"${test.asScala.size}")
-    test.asScala.foreach{
-      x =>
-        logger.info(s"${x.getMonaId}")
+      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, pageable)
     }
     test
   }
@@ -247,7 +213,8 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param pageable
    * @return
    */
-  def findAll(query: String, pageable: Pageable): Page[SpectrumResult] = findDataForQuery(query, pageable)
+  @Transactional
+  def findAll(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, pageable)
 
   /**
    * returns the count of all spectra
@@ -255,6 +222,7 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
+  @Transactional
   def count(): Long = spectrumResultRepository.count()
 
   /**
@@ -263,28 +231,29 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
+  @Transactional
   def count(query: String): Long = {
-    val rootNode: Node = new RSQLParser(operators).parse(query)
-    val spec: Specification[SearchTable] = rootNode.accept(new CustomRsqlVisitor[SearchTable]())
-    val count: Long = searchTableRepository.countAll(spec, classOf[SparseSearchTable])
+    val spec: Specification[Spectrum] = new FilterSpecificationDistinct[Spectrum](query)
+    val count: Long = spectrumResultRepository.count(spec)
     count
   }
 
   @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteSpectraByIdIn(ids: java.util.List[String]): Unit = {
-    spectrumResultRepository.findAllByMonaIdIn(ids).asScala.foreach(delete)
+    spectrumResultRepository.findAllByIdIn(ids).asScala.foreach(delete)
   }
 
   @CacheEvict(value = Array("spectra"), allEntries = true)
-  def deleteSpectraByQuery(rsqlQuery: String): Unit = {
-    val rootNode: Node = new RSQLParser(operators).parse(rsqlQuery)
-    val spec: Specification[SearchTable] = rootNode.accept(new CustomRsqlVisitor[SearchTable]())
-    searchTableRepository.findAllWithoutPagination(spec, classOf[SparseSearchTable]).asScala.foreach(deleteSparse)
+  @Transactional
+  def deleteSpectraByQuery(query: String): Unit = {
+    val spec: Specification[Spectrum] = new FilterSpecificationDistinct[Spectrum](query)
+    spectrumResultRepository.findAll(spec).asScala.foreach(delete)
   }
 
   /**
    * delete all objects in the system
    */
+  @Transactional
   @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteAll(): Unit = spectrumResultRepository.findAll().asScala.foreach(delete)
 
@@ -295,7 +264,8 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
-  def findAll(ids: java.util.List[String]): java.util.List[SpectrumResult] = spectrumResultRepository.findAllByMonaIdIn(ids)
+  @Transactional
+  def findAll(ids: java.util.List[String]): java.util.List[Spectrum] = spectrumResultRepository.findAllByIdIn(ids)
 
   /**
    * checks if the given id exist in the database
@@ -304,7 +274,8 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
-  def existsById(id: String): Boolean = spectrumResultRepository.existsByMonaId(id)
+  @Transactional
+  def existsById(id: String): Boolean = spectrumResultRepository.existsById(id)
 
   /**
    * finds all data with sorting.
@@ -312,7 +283,8 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param sort
    * @return
    */
-  def findAll(sort: Sort): List[SpectrumResult] = spectrumResultRepository.findAll(sort)
+  @Transactional
+  def findAll(sort: Sort): List[Spectrum] = spectrumResultRepository.findAll(sort)
 
   /**
    * finds all with pagination
@@ -320,20 +292,19 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param pageable
    * @return
    */
-  def findAll(pageable: Pageable): Page[SpectrumResult] = spectrumResultRepository.findAll(pageable)
+  @Transactional
+  def findAll(pageable: Pageable): Page[Spectrum] = spectrumResultRepository.findAll(pageable)
 
-  @Cacheable(value = Array("spectra"))
-  def existsById(id: SpectrumResultId): Boolean = spectrumResultRepository.existsById(id)
 
   @CacheEvict(value = Array("spectra"))
-  def deleteById(id: String): Unit = spectrumResultRepository.deleteByMonaId(id)
+  @Transactional
+  def deleteById(id: String): Unit = spectrumResultRepository.deleteById(id)
 
   @CacheEvict(value = Array("spectra"), allEntries = true)
-  def deleteAll(entities: lang.Iterable[_ <: SpectrumResult]): Unit = spectrumResultRepository.deleteAll(entities)
+  def deleteAll(entities: lang.Iterable[_ <: Spectrum]): Unit = spectrumResultRepository.deleteAll(entities)
 
   //def saveAll(spectra: List[SpectrumResult]): Unit = spectrumResultRepository.saveAll(spectra)
-
-  def saveAll[S <: SpectrumResult](entities: lang.Iterable[S]): lang.Iterable[S] = {
+  def saveAll[S <: Spectrum](entities: lang.Iterable[S]): lang.Iterable[S] = {
     entities.asScala.collect {
       case s: S => save(s)
     }.asJava

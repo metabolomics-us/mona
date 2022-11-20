@@ -1,18 +1,18 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service
 
 import java.util.{Date, UUID}
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{QueryExport, PredefinedQuery}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{PredefinedQuery, QueryExport}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsTagRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryRepository, QueryExportRepository}
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ArrayBuffer

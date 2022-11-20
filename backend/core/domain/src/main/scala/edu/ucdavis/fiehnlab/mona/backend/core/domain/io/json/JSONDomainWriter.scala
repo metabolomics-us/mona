@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 
 import java.io.Writer
 
@@ -21,5 +21,5 @@ class JSONDomainWriter extends DomainWriter {
     * @param spectrum
     * @return
     */
-  override def write(spectrum: SpectrumResult, writer: Writer): Unit = mapper.writeValue(writer, spectrum)
+  override def write(spectrum: Spectrum, writer: Writer): Unit = mapper.writeValue(writer, spectrum)
 }

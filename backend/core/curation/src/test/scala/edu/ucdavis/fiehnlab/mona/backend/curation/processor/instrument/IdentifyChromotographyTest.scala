@@ -1,17 +1,19 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument
 
-import java.io.InputStreamReader
+import com.typesafe.scalalogging.LazyLogging
 
+import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonTags
 import org.scalatest.wordspec.AnyWordSpec
+
 import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 3/21/16.
   */
-class IdentifyChromotographyTest extends AnyWordSpec {
+class IdentifyChromotographyTest extends AnyWordSpec with LazyLogging{
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 

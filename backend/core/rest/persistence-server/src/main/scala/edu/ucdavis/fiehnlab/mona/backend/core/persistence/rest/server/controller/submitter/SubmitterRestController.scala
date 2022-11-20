@@ -6,7 +6,7 @@ import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.{ServletRequest, ServletResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.SubmitterDAO
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository
@@ -40,12 +40,12 @@ class SubmitterRestController extends LazyLogging{
   @RequestMapping(path = Array(""), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp", "text/sdf", "image/png"))
   @Async
   @ResponseBody
-  final def list(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer): Future[ResponseEntity[Iterable[Submitter]]] = {
+  final def list(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer): Future[ResponseEntity[Iterable[SubmitterDAO]]] = {
     doList(page, size)
   }
 
-  def adminDoList(page: Integer, size: Integer): Future[ResponseEntity[Iterable[Submitter]]] = {
-    val data: Iterable[Submitter] = {
+  def adminDoList(page: Integer, size: Integer): Future[ResponseEntity[Iterable[SubmitterDAO]]] = {
+    val data: Iterable[SubmitterDAO] = {
       if (size != null) {
         if (page != null) {
           submitterRepository.findAll(PageRequest.of(page, size, Sort.Direction.ASC, "id")).getContent.asScala
@@ -53,9 +53,9 @@ class SubmitterRestController extends LazyLogging{
           submitterRepository.findAll(PageRequest.of(0, size, Sort.Direction.ASC, "id")).getContent.asScala
         }
       } else {
-        new DynamicIterable[Submitter, String]("", fetchSize) {
+        new DynamicIterable[SubmitterDAO, String]("", fetchSize) {
           // loads more data from the server for the given query
-          override def fetchMoreData(query: String, pageable: Pageable): Page[Submitter] = submitterRepository.findAll(pageable)
+          override def fetchMoreData(query: String, pageable: Pageable): Page[SubmitterDAO] = submitterRepository.findAll(pageable)
         }.asScala
       }
     }
@@ -63,7 +63,7 @@ class SubmitterRestController extends LazyLogging{
     val headers = new HttpHeaders()
     // headers.add("Content-Type", servletRequest.getContentType)
 
-    new AsyncResult[ResponseEntity[Iterable[Submitter]]](
+    new AsyncResult[ResponseEntity[Iterable[SubmitterDAO]]](
       new ResponseEntity(data, headers, HttpStatus.OK)
     )
   }
@@ -73,7 +73,7 @@ class SubmitterRestController extends LazyLogging{
     *
     * @return
     */
-  def doList(page: Integer, size: Integer): Future[ResponseEntity[Iterable[Submitter]]] = {
+  def doList(page: Integer, size: Integer): Future[ResponseEntity[Iterable[SubmitterDAO]]] = {
 
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
@@ -81,11 +81,11 @@ class SubmitterRestController extends LazyLogging{
     if (loginInfo.roles.contains("ADMIN")) {
       adminDoList(page, size)
     } else if (submitterRepository.existsByEmailAddress(loginInfo.emailAddress)) {
-      new AsyncResult[ResponseEntity[Iterable[Submitter]]](
-        new ResponseEntity[Iterable[Submitter]](Array(submitterRepository.findByEmailAddress(loginInfo.emailAddress)), HttpStatus.OK)
+      new AsyncResult[ResponseEntity[Iterable[SubmitterDAO]]](
+        new ResponseEntity[Iterable[SubmitterDAO]](Array(submitterRepository.findTopByEmailAddress(loginInfo.emailAddress)), HttpStatus.OK)
       )
     } else {
-      new AsyncResult[ResponseEntity[Iterable[Submitter]]](new ResponseEntity[Iterable[Submitter]](Array.empty[Submitter], HttpStatus.OK))
+      new AsyncResult[ResponseEntity[Iterable[SubmitterDAO]]](new ResponseEntity[Iterable[SubmitterDAO]](Array.empty[SubmitterDAO], HttpStatus.OK))
     }
   }
 
@@ -98,18 +98,18 @@ class SubmitterRestController extends LazyLogging{
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp", "text/sdf", "image/png"))
   @ResponseBody
-  final def get(@PathVariable("id") id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[Submitter]] = {
+  final def get(@PathVariable("id") id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[SubmitterDAO]] = {
     doGet(id, servletRequest, servletResponse)
   }
 
-  def adminDoGet(id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[Submitter]] = {
+  def adminDoGet(id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[SubmitterDAO]] = {
     val headers = new HttpHeaders()
     // headers.add("Content-Type", servletRequest.getContentType)
 
     if (submitterRepository.existsByEmailAddress(id)) {
-      new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](submitterRepository.findByEmailAddress(id), headers, HttpStatus.OK))
+      new AsyncResult[ResponseEntity[SubmitterDAO]](new ResponseEntity[SubmitterDAO](submitterRepository.findTopByEmailAddress(id), headers, HttpStatus.OK))
     } else {
-      new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.NOT_FOUND))
+      new AsyncResult[ResponseEntity[SubmitterDAO]](new ResponseEntity[SubmitterDAO](HttpStatus.NOT_FOUND))
     }
   }
   /**
@@ -118,7 +118,7 @@ class SubmitterRestController extends LazyLogging{
     * @param id
     * @return
     */
-  def doGet(id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[Submitter]] = {
+  def doGet(id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[SubmitterDAO]] = {
 
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
@@ -126,7 +126,7 @@ class SubmitterRestController extends LazyLogging{
     if (loginInfo.roles.contains("ADMIN") || id == loginInfo.emailAddress) {
       adminDoGet(id, servletRequest, servletResponse)
     } else {
-      new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.FORBIDDEN))
+      new AsyncResult[ResponseEntity[SubmitterDAO]](new ResponseEntity[SubmitterDAO](HttpStatus.FORBIDDEN))
     }
   }
 
@@ -140,11 +140,11 @@ class SubmitterRestController extends LazyLogging{
   @Async
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
   @ResponseBody
-  final def save(@Valid @RequestBody resource: Submitter): Future[ResponseEntity[Submitter]] = doSave(resource)
+  final def save(@Valid @RequestBody resource: SubmitterDAO): Future[ResponseEntity[SubmitterDAO]] = doSave(resource)
 
-  def adminDoSave(resource: Submitter): Future[ResponseEntity[Submitter]] = {
-    new AsyncResult[ResponseEntity[Submitter]](
-      new ResponseEntity[Submitter](submitterRepository.save(resource), HttpStatus.OK)
+  def adminDoSave(resource: SubmitterDAO): Future[ResponseEntity[SubmitterDAO]] = {
+    new AsyncResult[ResponseEntity[SubmitterDAO]](
+      new ResponseEntity[SubmitterDAO](submitterRepository.save(resource), HttpStatus.OK)
     )
   }
   /**
@@ -153,21 +153,20 @@ class SubmitterRestController extends LazyLogging{
     * @param submitter
     * @return
     */
-  def doSave(submitter: Submitter): Future[ResponseEntity[Submitter]] = {
+  def doSave(submitter: SubmitterDAO): Future[ResponseEntity[SubmitterDAO]] = {
 
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    logger.info(s"${loginInfo}")
     if (loginInfo.roles.contains("ADMIN")) {
       adminDoSave(submitter)
     } else {
-      val existingUser: Submitter = submitterRepository.findByEmailAddress(loginInfo.emailAddress)
+      val existingUser: SubmitterDAO = submitterRepository.findTopByEmailAddress(loginInfo.emailAddress)
 
       if (existingUser == null || existingUser.getEmailAddress == loginInfo.emailAddress) {
         adminDoSave(submitter)
       } else {
-        new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.CONFLICT))
+        new AsyncResult[ResponseEntity[SubmitterDAO]](new ResponseEntity[SubmitterDAO](HttpStatus.CONFLICT))
       }
     }
   }
@@ -182,12 +181,12 @@ class SubmitterRestController extends LazyLogging{
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
   @ResponseBody
-  final def put(@PathVariable("id") id: String, @Valid @RequestBody resource: Submitter): Future[ResponseEntity[Submitter]] = {
+  final def put(@PathVariable("id") id: String, @Valid @RequestBody resource: SubmitterDAO): Future[ResponseEntity[SubmitterDAO]] = {
     doPut(id, resource)
   }
 
-  def adminDoPut(id: String, resource: Submitter): Future[ResponseEntity[Submitter]] = {
-    new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity(submitterRepository.save(resource), HttpStatus.OK))
+  def adminDoPut(id: String, resource: SubmitterDAO): Future[ResponseEntity[SubmitterDAO]] = {
+    new AsyncResult[ResponseEntity[SubmitterDAO]](new ResponseEntity(submitterRepository.save(resource), HttpStatus.OK))
   }
   /**
     * Saves the provided submitter at the given path
@@ -196,7 +195,7 @@ class SubmitterRestController extends LazyLogging{
     * @param submitter
     * @return
     */
-  def doPut(id: String, submitter: Submitter): Future[ResponseEntity[Submitter]] = {
+  def doPut(id: String, submitter: SubmitterDAO): Future[ResponseEntity[SubmitterDAO]] = {
 
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
@@ -204,7 +203,7 @@ class SubmitterRestController extends LazyLogging{
     if (loginInfo.roles.contains("ADMIN") || id == loginInfo.emailAddress) {
       adminDoPut(id, submitter)
     } else {
-      new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.FORBIDDEN))
+      new AsyncResult[ResponseEntity[SubmitterDAO]](new ResponseEntity[SubmitterDAO](HttpStatus.FORBIDDEN))
     }
   }
 

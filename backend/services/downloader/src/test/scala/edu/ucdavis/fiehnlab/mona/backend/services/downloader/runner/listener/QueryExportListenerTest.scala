@@ -3,24 +3,27 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.listener
 import java.io.InputStreamReader
 import java.util.Date
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryRepository, QueryExportRepository}
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{QueryExport, PredefinedQuery}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{PredefinedQuery, QueryExport}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.Downloader
+import org.hibernate.Hibernate
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 
 /**
   * Created by sajjan on 6/9/16.
   */
 @SpringBootTest(classes = Array(classOf[Downloader]))
 @ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.downloader", "mona.persistence.init"))
-class QueryExportListenerTest extends AnyWordSpec with LazyLogging {
+class QueryExportListenerTest extends AnyWordSpec with LazyLogging{
 
   @Autowired
   val queryExportRepository: QueryExportRepository = null
@@ -29,10 +32,11 @@ class QueryExportListenerTest extends AnyWordSpec with LazyLogging {
   val predefinedQueryRepository: PredefinedQueryRepository = null
 
   @Autowired
-  val spectrumResultRepository: SpectrumResultRepository = null
+  val spectrumResultRepository: SpectrumRepository = null
 
   @Autowired
   val downloadListener: QueryExportListener = null
+
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -43,7 +47,7 @@ class QueryExportListenerTest extends AnyWordSpec with LazyLogging {
     "load some data" in {
       spectrumResultRepository.deleteAll()
       exampleRecords.foreach { x =>
-        spectrumResultRepository.save(new SpectrumResult(x.getId, x))
+        spectrumResultRepository.save(x)
       }
 
       predefinedQueryRepository.deleteAll()

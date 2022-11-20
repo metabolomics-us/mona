@@ -7,8 +7,7 @@ import java.io.InputStreamReader
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumResultRepository, StatisticsTagRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumRepository, StatisticsTagRepository}
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -24,7 +23,7 @@ import scala.jdk.CollectionConverters._
 class TagStatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
   @Autowired
-  val spectrumResultsRepo: SpectrumResultRepository = null
+  val spectrumResultsRepo: SpectrumRepository = null
 
   @Autowired
   val monaMapper: ObjectMapper = {
@@ -47,7 +46,7 @@ class TagStatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
       spectrumResultsRepo.deleteAll()
       exampleRecords.foreach { spectrum =>
-        spectrumResultsRepo.save(new SpectrumResult(spectrum.getId, spectrum))
+        spectrumResultsRepo.save(spectrum)
       }
       assert(spectrumResultsRepo.count() == 59)
     }
@@ -67,7 +66,7 @@ class TagStatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
       spectrumResultsRepo.deleteAll()
       exampleRecords.foreach { spectrum =>
-        spectrumResultsRepo.save(new SpectrumResult(spectrum.getId, spectrum))
+        spectrumResultsRepo.save(spectrum)
       }
       assert(spectrumResultsRepo.count() == 50)
     }

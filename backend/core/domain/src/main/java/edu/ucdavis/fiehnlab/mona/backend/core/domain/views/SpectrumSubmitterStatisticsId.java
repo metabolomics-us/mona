@@ -3,25 +3,25 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.views;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class SpectraSubmittersId implements Serializable {
-    private String monaId;
+public class SpectrumSubmitterStatisticsId implements Serializable {
+    private String id;
 
     private String emailAddress;
 
-    public SpectraSubmittersId() {
+    public SpectrumSubmitterStatisticsId() {
     }
 
-    public SpectraSubmittersId(String monaId, String emailAddress) {
-        this.monaId = monaId;
+    public SpectrumSubmitterStatisticsId(String id, String emailAddress) {
+        this.id = id;
         this.emailAddress = emailAddress;
     }
 
-    public String getMonaId() {
-        return monaId;
+    public String getId() {
+        return id;
     }
 
-    public void setMonaId(String monaId) {
-        this.monaId = monaId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getEmailAddress() {
@@ -36,12 +36,12 @@ public class SpectraSubmittersId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SpectraSubmittersId that = (SpectraSubmittersId) o;
-        return Objects.equals(monaId, that.monaId) && Objects.equals(emailAddress, that.emailAddress);
+        SpectrumSubmitterStatisticsId that = (SpectrumSubmitterStatisticsId) o;
+        return Objects.equals(id, that.id) && Objects.equals(emailAddress, that.emailAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(monaId, emailAddress);
+        return Objects.hash(id, emailAddress);
     }
 }

@@ -5,15 +5,15 @@ import {Observable, of} from 'rxjs';
 import {SpectrumCacheService} from '../services/cache/spectrum-cache.service';
 import {Spectrum} from '../services/persistence/spectrum.resource';
 import {retry} from 'rxjs/operators';
-import {SpectrumResult} from "../mocks/spectrum-result.model";
+import {SpectrumModel} from "../mocks/spectrum.model";
 
 @Injectable({
   providedIn: 'root'
 })
-export class SpectrumResolver implements Resolve<Observable<SpectrumResult[]>> {
+export class SpectrumResolver implements Resolve<Observable<SpectrumModel[]>> {
   constructor(private spectrumCache: SpectrumCacheService, private spectrumService: Spectrum, private logger: NGXLogger) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<SpectrumResult[]> {
+  resolve(route: ActivatedRouteSnapshot): Observable<SpectrumModel[]> {
     const id = route.params.id;
     if (!this.spectrumCache.hasSpectrum() || this.spectrumCache.getSpectrum().id !== id) {
       this.logger.debug('Attempting to fetch spectrum');

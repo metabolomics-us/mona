@@ -36,6 +36,9 @@ class SimilarityService extends WebSecurityConfigurerAdapter {
   override final def configure(http: HttpSecurity): Unit = {
     restSecurityService.prepare(http)
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+      .and()
+      .authorizeRequests()
+      .antMatchers(HttpMethod.POST, "/rest/similarity/refresh").hasAuthority("ADMIN")
   }
 
   /**

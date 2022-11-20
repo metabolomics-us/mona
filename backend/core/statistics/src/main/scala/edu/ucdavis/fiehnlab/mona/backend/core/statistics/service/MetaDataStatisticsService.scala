@@ -31,6 +31,7 @@ class MetaDataStatisticsService extends LazyLogging{
     *
     * @return
     */
+  @Transactional
   def getMetaDataStatistics: Iterable[StatisticsMetaData] = statisticsMetaDataRepository.findAll().asScala
 
   /**
@@ -38,6 +39,7 @@ class MetaDataStatisticsService extends LazyLogging{
     *
     * @return
     */
+  @Transactional
   def getMetaDataStatistics(metaDataName: String): StatisticsMetaData = statisticsMetaDataRepository.findByName(metaDataName)
 
   /**

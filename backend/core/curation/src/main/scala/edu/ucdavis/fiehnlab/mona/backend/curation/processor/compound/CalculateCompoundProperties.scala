@@ -37,9 +37,8 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
       if (spectrum.getScore == null) {
         new Score(impacts.asJava, 0.0, 0.0, 0.0)
       } else {
-        val newImpacts = spectrum.getScore.getImpacts
-        newImpacts.addAll(impacts.asJava)
-        spectrum.getScore.setImpacts(newImpacts)
+        impacts.appendAll(spectrum.getScore.getImpacts.asScala)
+        spectrum.getScore.setImpacts(impacts.asJava)
 
         spectrum.getScore
       }
@@ -60,7 +59,7 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
 
     // Add submitted InChI and InChIKey to metadata if we haven't already
-    if (compound.getInchi != null && !compound.getInchi .isEmpty && compound.getMetaData.asScala.forall(_.getName.toLowerCase != CommonMetaData.INCHI_CODE.toLowerCase)) {
+    if (compound.getInchi != null && !compound.getInchi.isEmpty && compound.getMetaData.asScala.forall(_.getName.toLowerCase != CommonMetaData.INCHI_CODE.toLowerCase)) {
       metaData.append(new MetaDataDAO(null, CommonMetaData.INCHI_CODE, compound.getInchi, false, "none", false, null))
     }
 

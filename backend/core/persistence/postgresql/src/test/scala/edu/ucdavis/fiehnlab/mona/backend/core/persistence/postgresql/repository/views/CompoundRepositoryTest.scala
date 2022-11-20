@@ -4,15 +4,14 @@ import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{ MonaMapper}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.views.Compound
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.CompoundDAO
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 
 import scala.jdk.StreamConverters.StreamHasToScala
 import org.springframework.transaction.support.TransactionTemplate
@@ -26,7 +25,7 @@ class CompoundRepositoryTest extends AnyWordSpec with Matchers with LazyLogging{
   val compoundRepository: CompoundRepository = null
 
   @Autowired
-  val spectrumResultsRepository: SpectrumResultRepository = null
+  val spectrumResultsRepository: SpectrumRepository = null
 
   @Autowired
   val t: TransactionTemplate = null
@@ -52,16 +51,9 @@ class CompoundRepositoryTest extends AnyWordSpec with Matchers with LazyLogging{
       assert(spectrumResultsRepository.count() == 0)
       exampleRecords.foreach { spectrum =>
         //val serialized = mapper.writeValueAsString(spectrum)
-        spectrumResultsRepository.save(new SpectrumResult(spectrum.getId, spectrum))
+        spectrumResultsRepository.save(spectrum)
       }
       assert(spectrumResultsRepository.count() == 59)
-    }
-
-    s"check the metadata" in {
-      val findIt = compoundRepository.findByMonaId("3477764")
-      logger.info(s"${findIt.get(0).getMetadata.get(3).getName}")
-      logger.info(s"${findIt.get(0).getMetadata.get(4).getValue}")
-      logger.info(s"${findIt.get(0).getMetadata.get(2).getCategory}")
     }
 
 
@@ -69,8 +61,8 @@ class CompoundRepositoryTest extends AnyWordSpec with Matchers with LazyLogging{
       val c = t.execute {
          x => compoundRepository.streamAllBy().toScala(Iterator).next()
       }
-      logger.info(s"${c.getMonaId}")
-      c shouldBe an[Compound]
+      logger.info(s"${c.getId}")
+      c shouldBe an[CompoundDAO]
     }
   }
 

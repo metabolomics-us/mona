@@ -7,7 +7,6 @@ import java.util.zip.{ZipEntry, ZipOutputStream}
 import java.util.{Date, UUID}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{PredefinedQuery, QueryExport}
 
 /**
@@ -121,7 +120,7 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
   /**
     * Handle a spectrum object
     */
-  def write(spectrum: SpectrumResult): Unit = {
+  def write(spectrum: Spectrum): Unit = {
     if (counter > 0)
       exportWriter.write(getRecordSeparator)
 
@@ -135,7 +134,7 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
     *
     * @param spectrum
     */
-  protected def writeSpectrum(spectrum: SpectrumResult): Unit
+  protected def writeSpectrum(spectrum: Spectrum): Unit
 
   /**
     * close the export and compress if requested

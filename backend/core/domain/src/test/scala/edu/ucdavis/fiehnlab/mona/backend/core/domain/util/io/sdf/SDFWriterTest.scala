@@ -6,7 +6,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.boot.test.context.SpringBootTest
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf.SDFWriter
 
 import java.io.{InputStreamReader, StringWriter}
@@ -21,11 +20,10 @@ class SDFWriterTest extends AnyWordSpec {
       val reader: ObjectMapper = MonaMapper.create
       val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
       val spectrum: Spectrum = reader.readValue(input, new TypeReference[Spectrum] {})
-      val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
       val writer: SDFWriter = new SDFWriter
       val out: StringWriter = new StringWriter()
-      writer.write(spectrumResult, out)
+      writer.write(spectrum, out)
 
       "Name" in {
         assert(out.toString.contains(">  <NAME>\r\nCY8"))
@@ -80,11 +78,10 @@ class SDFWriterTest extends AnyWordSpec {
       val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
       val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json"))
       val spectrum: Spectrum = reader.read(input).head
-      val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
       val writer: SDFWriter = new SDFWriter
       val out: StringWriter = new StringWriter()
-      writer.write(spectrumResult, out)
+      writer.write(spectrum, out)
 
       println(out.toString)
 
@@ -156,7 +153,7 @@ class SDFWriterTest extends AnyWordSpec {
       val writer: SDFWriter = new SDFWriter
       val out: StringWriter = new StringWriter()
       spectra.foreach{x =>
-        writer.write(new SpectrumResult(x.getId, x), out)
+        writer.write(x, out)
       }
 
       println(out.toString)

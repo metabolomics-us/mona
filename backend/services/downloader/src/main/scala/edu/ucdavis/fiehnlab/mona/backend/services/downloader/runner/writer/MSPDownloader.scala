@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
 import java.nio.file.Path
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.QueryExport
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 
 /**
   * Created by sajjan on 9/13/16.
@@ -37,5 +36,5 @@ class MSPDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = 
   /**
     *
     */
-  override def writeSpectrum(spectrum: SpectrumResult): Unit = mspWriter.write(spectrum, exportWriter)
+  override def writeSpectrum(spectrum: Spectrum): Unit = mspWriter.write(spectrum, exportWriter)
 }

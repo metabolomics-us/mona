@@ -7,25 +7,18 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounte
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaNotificationBusCounterConfiguration, Notification}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext
 import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-import org.springframework.web.bind.annotation.GetMapping
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -48,13 +41,7 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
   val notificationCounter: ReceivedEventCounter[Notification] = null
 
   @Autowired
-  val spectrumResultRepository: SpectrumResultRepository = null
-
-  @Autowired
-  val matRepository: MaterializedViewRepository = null
-
-  @Autowired
-  val searchTableRepository: SearchTableRepository = null
+  val spectrumResultRepository: SpectrumRepository = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -66,20 +53,12 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
 
     "load some data" in {
       spectrumResultRepository.deleteAll()
-      exampleRecords.foreach(x => spectrumResultRepository.save(new SpectrumResult(x.getId, x)))
-    }
-
-    s"we should be able to refresh our materialized view" in {
-      eventually(timeout(180 seconds)) {
-        matRepository.refreshSearchTable()
-        logger.info("sleep...")
-        assert(searchTableRepository.count() == 59616)
-      }
+      exampleRecords.foreach(x => spectrumResultRepository.save(x))
     }
 
     "these must all fail, since we require to be logged in " must {
       "curateByQuery" in {
-        given().contentType("application/json; charset=UTF-8").when().get("/curation?query=metadataName==\'ion mode\' and metadataValue==\'negative\'").`then`().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData.name:'ion mode' and metaData.value:'negative'").`then`().statusCode(401)
       }
 
       "curateById" in {
@@ -93,7 +72,7 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
 
     "these must all fail, since we require to be an admin " must {
       "curateByQuery" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/curation?query=metadataName==\'ion mode\' and metadataValue==\'negative\'").`then`().statusCode(403)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData.name:'ion mode' and metaData.value:'negative'").`then`().statusCode(403)
       }
 
       "curateById" in {
@@ -108,7 +87,7 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
     "these must all pass, since we are logged in " must {
       "curateByQuery" in {
         val count: Long = notificationCounter.getEventCount
-        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation?query=metadataName==\'ion mode\' and metadataValue==\'negative\'").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
+        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData.name:'ion mode' and metaData.value:'negative'").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
 
         assert(result.count == 25)
 
@@ -123,8 +102,8 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
 
       "curateById" in {
         val count: Long = notificationCounter.getEventCount
-        val spec: SpectrumResult = spectrumResultRepository.findAll().iterator().next()
-        val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/curation/${spec.getMonaId}").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
+        val spec: Spectrum = spectrumResultRepository.findAll().iterator().next()
+        val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/curation/${spec.getId}").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
 
         assert(result.count == 1)
 
@@ -155,7 +134,7 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
         assert(result.getScore != null)
         assert(result.getScore.getImpacts.asScala.nonEmpty)
 
-        assert(exampleRecords.head.getLastCurated == null)
+        assert(exampleRecords.head.getLastCurated == "")
         assert(result.getLastCurated != null)
       }
     }

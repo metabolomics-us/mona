@@ -51,14 +51,14 @@ class CompoundClassStatisticsService extends LazyLogging{
     *
     * @return
     */
-  @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def updateCompoundClassStatistics(): Unit = {
     val finalMap: Map[String, Map[String, ArrayBuffer[String]]] = Map()
     compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
       val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
       val compoundClasses: Map[String, String] = Map()
       val compoundClassString: ArrayBuffer[String] = ArrayBuffer()
-      compound.getMetadata.asScala.foreach { metadata =>
+      compound.getMetaData.asScala.foreach { metadata =>
         if (metadata.getName == "InChIKey") {
           inchiKeys.append(metadata.getValue.substring(0, 14))
         }
@@ -86,10 +86,10 @@ class CompoundClassStatisticsService extends LazyLogging{
         for (i <- 0 until compoundClassString.length) {
           val combinedString = compoundClassString.slice(0, i + 1).mkString("|")
           if (!finalMap.contains(combinedString)) {
-            finalMap(combinedString) = Map("spectra" -> ArrayBuffer[String](compound.getMonaId), "compounds" -> inchiKeys)
+            finalMap(combinedString) = Map("spectra" -> ArrayBuffer[String](compound.getSpectrum.getId), "compounds" -> inchiKeys)
           } else {
             if (finalMap(combinedString).contains("spectra")) {
-              finalMap(combinedString)("spectra").append(compound.getMonaId)
+              finalMap(combinedString)("spectra").append(compound.getSpectrum.getId)
             }
             if (finalMap(combinedString).contains("compounds")) {
               finalMap(combinedString)("compounds") ++= (inchiKeys)

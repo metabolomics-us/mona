@@ -9,12 +9,12 @@ import javax.persistence.IdClass;
 import java.util.Objects;
 
 @Entity
-@IdClass(SpectraSubmittersId.class)
-@Subselect("select * from spectra_submitters")
+@IdClass(SpectrumSubmitterStatisticsId.class)
+@Subselect("select * from spectrum_submitter_statistics")
 @Immutable
-public class SpectraSubmitters {
+public class SpectrumSubmitterStatistics {
     @Id
-    private String monaId;
+    private String id;
 
     private String lastName;
 
@@ -27,11 +27,11 @@ public class SpectraSubmitters {
 
     private Double score;
 
-    public SpectraSubmitters() {
+    public SpectrumSubmitterStatistics() {
     }
 
-    public SpectraSubmitters(String monaId, String lastName, String firstName, String institution, String emailAddress, Double score) {
-        this.monaId = monaId;
+    public SpectrumSubmitterStatistics(String id, String lastName, String firstName, String institution, String emailAddress, Double score) {
+        this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
         this.institution = institution;
@@ -39,8 +39,8 @@ public class SpectraSubmitters {
         this.score = score;
     }
 
-    public String getMonaId() {
-        return monaId;
+    public String getId() {
+        return id;
     }
 
     public String getLastName() {
@@ -65,12 +65,12 @@ public class SpectraSubmitters {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SpectraSubmitters that = (SpectraSubmitters) o;
-        return Objects.equals(monaId, that.monaId) && Objects.equals(lastName, that.lastName) && Objects.equals(firstName, that.firstName) && Objects.equals(institution, that.institution) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(score, that.score);
+        SpectrumSubmitterStatistics that = (SpectrumSubmitterStatistics) o;
+        return Objects.equals(id, that.id) && Objects.equals(lastName, that.lastName) && Objects.equals(firstName, that.firstName) && Objects.equals(institution, that.institution) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(score, that.score);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(monaId, lastName, firstName, institution, emailAddress, score);
+        return Objects.hash(id, lastName, firstName, institution, emailAddress, score);
     }
 }

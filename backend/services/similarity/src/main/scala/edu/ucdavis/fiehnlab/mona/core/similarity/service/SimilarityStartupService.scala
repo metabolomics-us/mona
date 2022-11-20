@@ -1,19 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
-import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
-import edu.ucdavis.fiehnlab.mona.core.similarity.types.IndexType.IndexType
-import edu.ucdavis.fiehnlab.mona.core.similarity.types.{IndexType, SimpleSpectrum}
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ApplicationListener
-import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable.Buffer
@@ -25,75 +18,19 @@ import scala.collection.mutable.Buffer
 class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent] with LazyLogging {
 
   @Autowired
-  val spectrumResultRepository: SpectrumResultRepository = null
+  val indexUtils: IndexUtils = null
 
   @Autowired
-  val indexUtils: IndexUtils = null
+  val similarityPopulationService: SimilarityPopulationService = null
 
   @Value("${mona.similarity.autopopulate:true}")
   private val autoPopulate: Boolean = true
 
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   override def onApplicationEvent(e: ApplicationReadyEvent): Unit = {
     if (autoPopulate) {
       logger.info("Starting auto-population of indices")
-      populateIndices()
+      similarityPopulationService.populateIndices()
     }
-  }
-
-
-  private def addToIndex(spectrum: Spectrum, indexName: String, indexType: IndexType): Int = {
-    val precursorMZ: Option[MetaDataDAO] = spectrum.getMetaData.asScala.find(_.getName == CommonMetaData.PRECURSOR_MASS)
-    val tags: Buffer[String] = spectrum.getTags.asScala.map(_.getText)
-    val biologicalCompound: CompoundDAO =
-      if (spectrum.getCompound.asScala.exists(_.getKind == "biological")) {
-        spectrum.getCompound.asScala.find(_.getKind == "biological").head
-      } else if (spectrum.getCompound.asScala.nonEmpty) {
-        spectrum.getCompound.asScala.head
-      } else {
-        null
-      }
-    val theoreticalAdducts: Buffer[Double] = biologicalCompound.getMetaData.asScala.filter(x => x.getCategory == "theoretical adduct").map(_.getValue.toDouble)
-
-    if (precursorMZ.isDefined) {
-      try {
-        val precursorString: String = precursorMZ.get.getValue
-        indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, precursorString.toDouble, tags.toArray, theoreticalAdducts.toArray), indexName, indexType)
-      } catch {
-        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, tags.toArray, theoreticalAdducts.toArray), indexName, indexType)
-      }
-    } else {
-      indexUtils.addToIndex(new SimpleSpectrum(spectrum.getId, spectrum.getSpectrum, tags.toArray, theoreticalAdducts.toArray), indexName, indexType)
-    }
-  }
-
-
-  def populateIndices(): Unit = {
-    logger.info("Populating indices...")
-
-    val it = new DynamicIterable[SpectrumResult, String](null, 10) {
-      override def fetchMoreData(query: String, pageable: Pageable): Page[SpectrumResult] = {
-        spectrumResultRepository.findAll(pageable)
-      }
-    }.iterator
-
-    var counter: Int = 0
-
-    while (it.hasNext) {
-      val spectrum: Spectrum = it.next().getSpectrum
-
-      // Add precursor information if available
-      val mainIndexSize: Int = addToIndex(spectrum, "default", IndexType.DEFAULT)
-      val peakIndexSize: Int = addToIndex(spectrum, "default", IndexType.PEAK)
-
-      counter += 1
-
-      if (counter % 10000 == 0) {
-        logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.getId}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
-      } else {
-        logger.debug(s"\tIndexed spectrum #$counter with id ${spectrum.getId}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
-      }
-    }
-
-    logger.info(s"\tFinished indexing $counter spectrum, index size = ${indexUtils.getIndexSize}")
   }
 }

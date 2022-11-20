@@ -1,11 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.controller
 
-import edu.ucdavis.fiehnlab.mona.core.similarity.service.SimilaritySearchService
+import edu.ucdavis.fiehnlab.mona.core.similarity.service.{ SimilarityPopulationService, SimilaritySearchService}
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.AlgorithmTypes.AlgorithmType
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.IndexType.IndexType
 import edu.ucdavis.fiehnlab.mona.core.similarity.types._
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.scheduling.annotation.Async
 import org.springframework.web.bind.annotation._
 
 import scala.collection.Set
@@ -23,6 +24,9 @@ class SimilarityController {
 
   @Autowired
   val similaritySearchService: SimilaritySearchService = null
+
+  @Autowired
+  val populateService: SimilarityPopulationService = null
 
 
   /**
@@ -71,6 +75,13 @@ class SimilarityController {
 
     indexTypes.flatMap(indexType => indexUtilities.getIndexNames(indexType)
       .map(indexName => IndexSummary(indexType, indexName, indexUtilities.getIndexSize(indexName, indexType))))
+  }
+
+  @RequestMapping(path = Array("/refresh"), method = Array(RequestMethod.POST))
+  @Async
+  def refreshIndices: String = {
+    populateService.populateIndices()
+    "Similarity Service Being Refreshed"
   }
 
   /**

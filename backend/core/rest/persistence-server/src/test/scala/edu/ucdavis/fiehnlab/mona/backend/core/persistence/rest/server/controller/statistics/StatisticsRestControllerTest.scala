@@ -6,7 +6,6 @@ import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.LocalServerPort
@@ -49,7 +48,7 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
 
         //save each record
         exampleRecords.foreach {
-          x => spectrumRepository.save(new SpectrumResult(x.getId, x))
+          x => spectrumRepository.save(x)
         }
       }
 
@@ -63,7 +62,7 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
 
       "get metadata statistics" in {
         val result: Array[StatisticsMetaData] = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/statistics/metaData").`then`().log().all(true).statusCode(200).extract().as(classOf[Array[StatisticsMetaData]])
-        assert(result.length == 574)
+        assert(result.length == 573)
       }
 
       "get tag statistics" in {
@@ -81,10 +80,10 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
 
         assert(result.getSpectrumCount == 50)
         assert(result.getCompoundCount == 21)
-        assert(result.getMetaDataCount == 574)
-        assert(result.getMetaDataValueCount == 5254)
+        assert(result.getMetaDataCount == 573)
+        assert(result.getMetaDataValueCount == 5154)
         assert(result.getTagCount == 2)
-        assert(result.getTagValueCount == 100)
+        assert(result.getTagValueCount == 150)
         assert(result.getSubmitterCount == 4)
       }
 

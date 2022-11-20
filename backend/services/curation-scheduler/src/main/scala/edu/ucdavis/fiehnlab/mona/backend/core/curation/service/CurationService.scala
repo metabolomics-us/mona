@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation.service
 
 import java.util.Date
-
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
@@ -10,6 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 /**
   * Created by wohlg on 4/12/2016.
@@ -36,6 +36,7 @@ class CurationService {
     *
     * @param spectrum
     */
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def scheduleSpectrum(spectrum: Spectrum): Unit = {
     rabbitTemplate.convertAndSend(queueName, spectrum)
     notifications.sendEvent(Event(Notification(CurationScheduled(spectrum), getClass.getName)))
@@ -46,6 +47,7 @@ class CurationService {
     * @param spectrum
     * @return
     */
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def curateSpectrum(spectrum: Spectrum): Spectrum = curationWorkflow.process(spectrum)
 }
 

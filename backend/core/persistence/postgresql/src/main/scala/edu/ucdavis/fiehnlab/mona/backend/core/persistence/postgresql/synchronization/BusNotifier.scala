@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.context.annotation.Profile
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * forwards events to the event bus listener

@@ -7,10 +7,9 @@ import com.typesafe.scalalogging.LazyLogging
 import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.MetaDataRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumResultRepository, StatisticsMetaDataRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumRepository, StatisticsMetaDataRepository}
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -33,7 +32,7 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec with LazyLogging{
   val metaDataStatisticsService: MetaDataStatisticsService = null
 
   @Autowired
-  val spectrumResultsRepo: SpectrumResultRepository = null
+  val spectrumResultsRepo: SpectrumRepository = null
 
   @Autowired
   val metaDataRepository: MetaDataRepository = null
@@ -52,7 +51,7 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec with LazyLogging{
     "load data" in {
       spectrumResultsRepo.deleteAll()
      exampleRecords.foreach { spectrum =>
-        spectrumResultsRepo.save(new SpectrumResult(spectrum.getId, spectrum))
+        spectrumResultsRepo.save(spectrum)
       }
       assert(spectrumResultsRepo.count() == 59)
     }
@@ -62,12 +61,12 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec with LazyLogging{
       "persist metadata statistics" in {
         statisticsMetaDataRepository.deleteAll()
         metaDataStatisticsService.updateMetaDataStatistics()
-        assert(statisticsMetaDataRepository.count() == 241)
+        assert(statisticsMetaDataRepository.count() == 240)
       }
 
       "get metadata names from repository" in {
         val result: Array[StatisticsMetaData.StatisticsMetaDataSummary] = metaDataStatisticsService.getMetaDataNames
-        assert(result.length == 241)
+        assert(result.length == 240)
         assert(result.forall(_.getCount > 0))
       }
 

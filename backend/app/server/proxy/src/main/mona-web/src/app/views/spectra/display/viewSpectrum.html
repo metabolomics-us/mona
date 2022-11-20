@@ -4,29 +4,29 @@
             <div class="card">
                 <div class="card-header">
                   <div class="card-title">
-                    <h3 class="float-left">Spectrum {{spectrum.monaId}} for {{spectrum.spectrum.compound[0].names[0].name}}</h3>
+                    <h3 class="float-left">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h3>
                     <h3 class="float-right"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h3>
                   </div>
                 </div>
 
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-12" *ngIf="spectrum.spectrum.score">
+                        <div class="col-md-12" *ngIf="spectrum.score">
                             <span placement="right"
-                                  ngbTooltip="Click to see the explanation for the {{0.0 + spectrum.spectrum.score.score | number:'1.2-2'}} / 5 score"
+                                  ngbTooltip="Click to see the explanation for the {{0.0 + spectrum.score.score | number:'1.2-2'}} / 5 score"
                                   (click)="showScore = !showScore">
                                 Rating:
-                                <ngb-rating [(rate)]="spectrum.spectrum.score.score" max="5" readonly="true"></ngb-rating>
+                                <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
                               <fa-icon [icon]="faQuestionCircle"></fa-icon>
                             </span>
                         </div>
                     </div>
 
-                    <div class="row" *ngIf="showScore && spectrum.spectrum.score">
+                    <div class="row" *ngIf="showScore && spectrum.score">
                         <div class="col-md-12">
                             <div class="card top17">
                                 <div class="card-header">
-                                    Explanation for the {{spectrum.spectrum.score.score | number:'1.2-2'}} / 5 star score
+                                    Explanation for the {{spectrum.score.score | number:'1.2-2'}} / 5 star score
                                 </div>
                                 <div class="card-body">
                                     <table class="table">
@@ -37,7 +37,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr *ngFor=" let impact of spectrum.spectrum.score.impacts|orderBy: '-value'"
+                                        <tr *ngFor=" let impact of spectrum.score.impacts|orderBy: '-value'"
                                             [ngClass]="impact.value < 0 ? 'danger' : (impact.value > 0 ? 'success' : 'warning')">
                                             <td>{{impact.value | number:'1.2-2'}}</td>
                                             <td>{{impact.reason}}</td>
@@ -46,11 +46,11 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="card top17" *ngIf="!spectrum.spectrum.score">This spectrum has not yet been curated.</div>
+                            <div class="card top17" *ngIf="!spectrum.score">This spectrum has not yet been curated.</div>
                         </div>
                     </div>
 
-                    <div class="row top5" *ngIf="spectrum.spectrum.library !== null">
+                    <div class="row top5" *ngIf="spectrum.library !== null">
                         <div class="col-md-12">
                             <ul class="list-unstyled">
                                 <li>
@@ -65,7 +65,7 @@
                     <div class="row top5">
                         <div class="col-md-8">
                             <ul class="list-inline">
-                                <li *ngFor="let tag of spectrum.spectrum.tags">
+                                <li *ngFor="let tag of spectrum.tags">
                                     <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
                                 </li>
                             </ul>
@@ -80,14 +80,14 @@
                         <div class="col-md-9">
                             <ul class="list-inline">
                                 <li>
-                                    <div class="h5" *ngIf="spectrum.spectrum.splash">
+                                    <div class="h5" *ngIf="spectrum.splash">
                                         SPLASH<sup><a href="http://splash.fiehnlab.ucdavis.edu" target="_blank"><fa-icon [icon]="faQuestionCircle"></fa-icon></a></sup>:
-                                        <splash-query [value]="spectrum.spectrum.splash">{{spectrum.spectrum.splash.splash}}</splash-query>
+                                        <splash-query [value]="spectrum.splash">{{spectrum.splash.splash}}</splash-query>
                                     </div>
                                 </li>
                                 <li>
                                     <div class="h5">
-                                        Submitter: <submitter-query [submitter]="spectrum.spectrum.submitter">{{spectrum.spectrum.submitter.firstName}} {{spectrum.spectrum.submitter.lastName}}</submitter-query>
+                                        Submitter: <submitter-query [submitter]="spectrum.submitter">{{spectrum.submitter.firstName}} {{spectrum.submitter.lastName}}</submitter-query>
                                     </div>
                                 </li>
                             </ul>
@@ -102,7 +102,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div *ngIf="currentFeedback.length > 0">
-                              <spectrum-feedback-results-community [spectrumID]="spectrum.monaId" [currentFeedback]="currentFeedback"></spectrum-feedback-results-community>
+                              <spectrum-feedback-results-community [spectrumID]="spectrum.id" [currentFeedback]="currentFeedback"></spectrum-feedback-results-community>
                             </div>
                             <ngb-accordion #acc="ngbAccordion" [closeOthers]="false">
                                 <ngb-panel id="masspecPanel">
@@ -115,8 +115,8 @@
                                     </ng-template>
                                     <ng-template ngbPanelContent>
                                         <div class="masspec-modal">
-                                          <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.monaId"
-                                                                    [spectrum]="spectrum.spectrum.spectrum"></lib-ng-mass-spec-plotter>
+                                          <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.id"
+                                                                    [spectrum]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
                                         </div>
                                     </ng-template>
                                 </ngb-panel>
@@ -233,7 +233,7 @@
                             <h4>Compound Information</h4>
 
                             <ngb-accordion #acc2 activeIds="compoundInfo">
-                                <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.spectrum.compound; index as i">
+                                <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.compound; index as i">
                                     <ng-template *ngIf="accordionStatus.isCompoundOpen[i]" ngbPanelHeader>
                                       <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
                                         <span *ngIf="compound.kind !== null"><strong>{{compound.kind}}</strong></span>
@@ -253,7 +253,7 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <div *ngIf="spectrum.spectrum.metaData.length">
+                            <div *ngIf="spectrum.metaData.length">
                                 <h4>Mass Spectral Metadata</h4>
                                 <table class="table">
                                     <thead>
@@ -263,7 +263,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr *ngFor="let meta of spectrum.spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
+                                    <tr *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
                                         <td class="col-lg-4 col-md-4">
                                           <metadata-query [metaData]="meta"> {{meta.name}}</metadata-query>
                                         </td>

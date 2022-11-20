@@ -9,12 +9,9 @@ import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData.StatisticsMetaDataSummary
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import org.scalatest.concurrent.Eventually
@@ -39,13 +36,7 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest with Event
   private val port = 0
 
   @Autowired
-  val spectrumRepository: SpectrumResultRepository = null
-
-  @Autowired
-  val searchTableRepository: SearchTableRepository = null
-
-  @Autowired
-  val matRepository: MaterializedViewRepository = null
+  val spectrumRepository: SpectrumRepository = null
 
   @Autowired
   val monaMapper: ObjectMapper = {
@@ -66,17 +57,7 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest with Event
         val exampleRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")), new TypeReference[Array[Spectrum]] {})
         assert(exampleRecords.length == 59)
 
-        exampleRecords.foreach { x => spectrumRepository.save(new SpectrumResult(x.getId, x)) }
-      }
-
-      s"we should be able to create our materialized view" in {
-
-        eventually(timeout(180 seconds)) {
-          matRepository.refreshSearchTable()
-          logger.info("sleep...")
-          assert(searchTableRepository.count() == 59616)
-        }
-
+        exampleRecords.foreach { x => spectrumRepository.save(x) }
       }
 
       "we should be able to generate statistics" in {
@@ -85,7 +66,7 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest with Event
 
       "we should be able to query all meta data names from the service" in {
         val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/names").`then`().log().all(true).statusCode(200).extract().body().as(classOf[Array[StatisticsMetaData]])
-        assert(result.length == 241)
+        assert(result.length == 240)
       }
 
       "we should be able to search for metadata names" in {

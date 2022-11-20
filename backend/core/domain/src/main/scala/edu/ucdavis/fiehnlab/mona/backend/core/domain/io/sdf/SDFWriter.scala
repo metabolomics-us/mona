@@ -1,11 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
 
 import java.io.{PrintWriter, Writer}
 import scala.jdk.CollectionConverters._
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 
 /**
   * Created by sajjan on 2/21/18.
@@ -104,7 +103,7 @@ class SDFWriter extends DomainWriter{
     * @param writer
     * @return
     */
-  def buildComments(spectrum: SpectrumResult, writer: PrintWriter): Unit = {
+  def buildComments(spectrum: Spectrum, writer: PrintWriter): Unit = {
     val excludedMetaData = Array(
       "inchikey", "total exact mass", "molecular formula",
       "instrument", "instrument type", "precursor type", "precursor m/z", "ms level",
@@ -125,8 +124,8 @@ class SDFWriter extends DomainWriter{
     * @param writer
     * @return
     */
-  def buildSpectraString(spectrum: SpectrumResult, writer: PrintWriter): Unit = {
-    val ions: Array[String] = spectrum.getSpectrum.getSpectrum.split(" ").map(_.split(":").mkString(" "))
+  def buildSpectraString(spectrum: Spectrum, writer: PrintWriter): Unit = {
+    val ions: Array[String] = spectrum.getSpectrum.split(" ").map(_.split(":").mkString(" "))
 
     printMetaData("NUM PEAKS", ions.length.toString, writer)
     printMetaData("MASS SPECTRAL PEAKS", ions.mkString(getNewLine), writer)
@@ -142,29 +141,29 @@ class SDFWriter extends DomainWriter{
     * @param spectrum
     * @return
     */
-  def write(spectrum: SpectrumResult, writer: Writer): Unit = {
+  def write(spectrum: Spectrum, writer: Writer): Unit = {
     val p = getPrintWriter(writer)
 
-    val compound: CompoundDAO = spectrum.getSpectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getSpectrum.getCompound.asScala.head)
+    val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
     // MOL data, name and synonyms
     buildMOL(compound, p)
     buildNames(compound, synonyms = true, p)
 
     // MetaData
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "PRECURSOR TYPE", "precursor type", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "SPECTRUM TYPE", "ms level", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "PRECURSOR M/Z", "precursor m/z", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "INSTRUMENT TYPE", "instrument type", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "INSTRUMENT", "instrument", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "COLLISION ENERGY", "collision energy", p)
-    buildMetaData(spectrum.getSpectrum.getMetaData.asScala.toArray, "ION MODE", "ionization mode", p, x => x.charAt(0).toUpper.toString)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "PRECURSOR TYPE", "precursor type", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "SPECTRUM TYPE", "ms level", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "PRECURSOR M/Z", "precursor m/z", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "INSTRUMENT TYPE", "instrument type", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "INSTRUMENT", "instrument", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "COLLISION ENERGY", "collision energy", p)
+    buildMetaData(spectrum.getMetaData.asScala.toArray, "ION MODE", "ionization mode", p, x => x.charAt(0).toUpper.toString)
     buildCompoundInchiKey(compound, p)
     buildMetaData(compound.getMetaData.asScala.toArray, "FORMULA", "molecular formula", p)
     buildMetaData(compound.getMetaData.asScala.toArray, "EXACT MASS", "total exact mass", p)
     buildMetaData(compound.getMetaData.asScala.toArray, "MW", "total exact mass", p, x => (x.toDouble + 0.2).toInt.toString)
-    printMetaData("ID", spectrum.getMonaId, p)
-    printMetaData("CONTRIBUTOR", s"${spectrum.getSpectrum.getSubmitter.getFirstName} ${spectrum.getSpectrum.getSubmitter.getLastName}, {${spectrum.getSpectrum.getSubmitter.getInstitution}", p)
+    printMetaData("ID", spectrum.getId, p)
+    printMetaData("CONTRIBUTOR", s"${spectrum.getSubmitter.getFirstName} ${spectrum.getSubmitter.getLastName}, {${spectrum.getSubmitter.getInstitution}", p)
     buildComments(spectrum, p)
     buildSpectraString(spectrum, p)
     p.println("$$$$")

@@ -3,11 +3,11 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service
 import java.io.IOException
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.StaticDownload
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 import scala.jdk.CollectionConverters._

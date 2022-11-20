@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest
 
 import java.io.{InputStreamReader, StringWriter}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 
 /**
   * Created by wohlg_000 on 5/27/2016.
@@ -23,11 +22,10 @@ class MSPWriterTest extends AnyWordSpec {
         val reader = JSONDomainReader.create[Spectrum]
         val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
         val spectrum: Spectrum = reader.read(input)
-        val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
 
         val out: StringWriter = new StringWriter()
-        writer.write(spectrumResult, out)
+        writer.write(spectrum, out)
 
         "result must contain" must {
           "Name" in {
@@ -94,10 +92,9 @@ class MSPWriterTest extends AnyWordSpec {
         val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
         val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json"))
         val spectrum: Spectrum = reader.read(input).head
-        val spectrumResult: SpectrumResult = new SpectrumResult(spectrum.getId, spectrum)
 
         val out: StringWriter = new StringWriter()
-        writer.write(spectrumResult, out)
+        writer.write(spectrum, out)
 
         "result must contain" must {
           "Name" in {

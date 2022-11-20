@@ -117,7 +117,7 @@ class NewsRestController{
     // headers.add("Content-Type", servletRequest.getContentType)
 
     if (newsRepository.existsById(id)) {
-      new AsyncResult[ResponseEntity[News]](new ResponseEntity[News](newsRepository.findById(id).get(), headers, HttpStatus.OK))
+      new AsyncResult[ResponseEntity[News]](new ResponseEntity[News](newsRepository.findById(id).orElse(null), headers, HttpStatus.OK))
     } else {
       new AsyncResult[ResponseEntity[News]](new ResponseEntity[News](HttpStatus.NOT_FOUND))
     }

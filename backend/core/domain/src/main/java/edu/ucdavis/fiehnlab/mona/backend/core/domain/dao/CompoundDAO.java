@@ -1,35 +1,50 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
 
-import com.vladmihalcea.hibernate.type.json.JsonType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.springframework.context.annotation.Profile;
 
-import javax.persistence.Column;
+import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-@TypeDef(
-        name = "json",
-        typeClass = JsonType.class
-)
+@Entity
+@Table(name = "compound")
+@Profile({"mona.persistence"})
 public class CompoundDAO implements Serializable {
+    @Id
+    @JsonIgnore
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "compound_count")
+    @SequenceGenerator(name = "compound_count", initialValue = 1, allocationSize = 200)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private Spectrum spectrum;
+
     @Column(name = "kind")
     private String kind;
 
-    @Type(type = "json")
-    @Column(columnDefinition = "jsonb")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "compound_id")
+    @Column(name = "tags")
     private List<TagDAO> tags;
 
     @Column(name = "inchi")
     private String inchi;
 
-    @Type(type = "json")
-    @Column(name = "names", columnDefinition = "jsonb")
+    @Column(name = "names")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "compound_id")
+    @BatchSize(size = 50)
     private List<Names> names;
 
     @Column(name = "molFile")
+    @Type(type = "org.hibernate.type.TextType")
     private String molFile;
 
     @Column(name = "computed")
@@ -38,13 +53,17 @@ public class CompoundDAO implements Serializable {
     @Column(name = "inchiKey")
     private String inchiKey;
 
-    @Type(type = "json")
-    @Column(name = "metaData", columnDefinition = "jsonb")
+    @Column(name = "metaData")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "compound_metadata_id")
+    @BatchSize(size = 50)
     private List<MetaDataDAO> metaData;
 
-    @Type(type = "json")
-    @Column(name = "classification", columnDefinition = "jsonb")
-    private List<MetaDataDAO> classification = Collections.emptyList();
+    @Column(name = "classification")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "compound_classification_id")
+    @BatchSize(size = 50)
+    private List<MetaDataDAO> classification = new ArrayList<>();
 
     public CompoundDAO() {
     }
@@ -60,6 +79,12 @@ public class CompoundDAO implements Serializable {
         this.metaData = metaData;
         this.classification = classification;
     }
+
+    public Spectrum getSpectrum() {
+        return spectrum;
+    }
+
+    public void setSpectrum(Spectrum spectrum) { this.spectrum = spectrum; }
 
     public void setKind(String kind) {
         this.kind = kind;
@@ -133,16 +158,24 @@ public class CompoundDAO implements Serializable {
         return classification;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CompoundDAO that = (CompoundDAO) o;
-        return Objects.equals(kind, that.kind) && Objects.equals(tags, that.tags) && Objects.equals(inchi, that.inchi) && Objects.equals(names, that.names) && Objects.equals(molFile, that.molFile) && Objects.equals(computed, that.computed) && Objects.equals(inchiKey, that.inchiKey) && Objects.equals(metaData, that.metaData) && Objects.equals(classification, that.classification);
+        return Objects.equals(id, that.id) && Objects.equals(spectrum, that.spectrum) && Objects.equals(kind, that.kind) && Objects.equals(tags, that.tags) && Objects.equals(inchi, that.inchi) && Objects.equals(names, that.names) && Objects.equals(molFile, that.molFile) && Objects.equals(computed, that.computed) && Objects.equals(inchiKey, that.inchiKey) && Objects.equals(metaData, that.metaData) && Objects.equals(classification, that.classification);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(kind, tags, inchi, names, molFile, computed, inchiKey, metaData, classification);
+        return Objects.hash(id, spectrum, kind, tags, inchi, names, molFile, computed, inchiKey, metaData, classification);
     }
 }

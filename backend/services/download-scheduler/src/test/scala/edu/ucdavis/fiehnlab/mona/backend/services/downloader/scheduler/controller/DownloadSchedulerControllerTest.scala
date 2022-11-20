@@ -5,12 +5,8 @@ import java.util.Date
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsTagRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumRepository, StatisticsTagRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryRepository, QueryExportRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{PredefinedQuery, QueryExport}
@@ -38,7 +34,7 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
   private val port = 0
 
   @Autowired
-  val spectrumResultRepository: SpectrumResultRepository = null
+  val spectrumResultRepository: SpectrumRepository = null
 
   @Autowired
   val queryExportRepository: QueryExportRepository = null
@@ -48,12 +44,6 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
 
   @Autowired
   private val tagStatisticsRepository: StatisticsTagRepository = null
-
-  @Autowired
-  val matRepository: MaterializedViewRepository = null
-
-  @Autowired
-  val searchTableRepository: SearchTableRepository = null
 
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
@@ -71,20 +61,12 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       tagStatisticsRepository.deleteAll()
 
       exampleRecords.foreach{ x =>
-        spectrumResultRepository.save(new SpectrumResult(x.getId, x))
+        spectrumResultRepository.save(x)
       }
       assert(spectrumResultRepository.count() == exampleRecords.length)
 
       queryExportRepository.save(new QueryExport("test", "test", "metaData=q='name==\"ion mode\" and value==negative'", "json", "test", new Date, 0, 0, null, null))
       assert(queryExportRepository.count() == 1)
-    }
-
-    s"we should be able to refresh our materialized view" in {
-      eventually(timeout(180 seconds)) {
-        matRepository.refreshSearchTable()
-        logger.info("sleep...")
-        assert(searchTableRepository.count() == 59616)
-      }
     }
 
     // Test download of a spectrum

@@ -3,11 +3,10 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 import java.io.InputStreamReader
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles, SpectrumResult, Users}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Roles, Users}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import org.scalatest.concurrent.Eventually
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
@@ -26,16 +25,13 @@ import scala.language.postfixOps
 abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with LazyLogging with Matchers {
 
   @Autowired
-  val spectrumRestClient: GenericRestClient[Spectrum, SpectrumResult, String] = null
+  val spectrumRestClient: GenericRestClient[Spectrum,  String] = null
 
   @Autowired
   val userRepo: UserRepository = null
 
   @Autowired
-  val matRepository: MaterializedViewRepository = null
-
-  @Autowired
-  val searchTableRepository: SearchTableRepository = null
+  val spectrumRepository: SpectrumRepository = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -58,7 +54,7 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
 
       "we should be able to delete all data" in {
         spectrumRestClient.list().foreach { x =>
-          spectrumRestClient.delete(x.getMonaId)
+          spectrumRestClient.delete(x.getId)
         }
       }
 
@@ -68,15 +64,6 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
         }
       }
 
-      s"we should be able to create our materialized view" in {
-        eventually(timeout(180 seconds)) {
-          matRepository.refreshSearchTable()
-          logger.info("sleep...")
-          assert(searchTableRepository.count() == 59616)
-        }
-      }
-
-
       "we should have 59 spectra" in {
         eventually(timeout(10 seconds)) {
           assert(spectrumRestClient.count() == 59)
@@ -85,22 +72,22 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
 
       "it should be possible to execute count queries" in {
         val test = spectrumRestClient.list().head
-        assert(spectrumRestClient.count(Some(s"monaId==\'${test.getMonaId}\'")) == 1)
+        assert(spectrumRestClient.count(Some(s"id:'${test.getId}'")) == 1)
       }
 
       "it should be possible to update values" in {
         val test = spectrumRestClient.list().toList.head
-        val result = spectrumRestClient.update(test.getSpectrum, "newTestId")
+        val result = spectrumRestClient.update(test, "newTestId")
 
-        assert(result.getMonaId == "newTestId")
-        assert(spectrumRestClient.get("newTestId").getMonaId == "newTestId")
+        assert(result.getId == "newTestId")
+        assert(spectrumRestClient.get("newTestId").getId == "newTestId")
       }
 
       "it should be possible to get values" in {
         val records = spectrumRestClient.list().toList
-        val spectrum = spectrumRestClient.get(records.head.getMonaId)
+        val spectrum = spectrumRestClient.get(records.head.getId)
 
-        assert(spectrum.getMonaId == records.head.getMonaId)
+        assert(spectrum.getId == records.head.getId)
       }
 
       "it should be possible to list all values" in {
@@ -115,7 +102,7 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
       }
 
       "it should be possible to stream all values with no duplicate ids" in {
-        val count = spectrumRestClient.stream(None).map(_.getMonaId).toSet.size
+        val count = spectrumRestClient.stream(None).map(_.getId).toSet.size
         assert(count == 59)
       }
 
@@ -127,10 +114,10 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
       "possible to execute the same query several times and receive always the same result" must {
         for (x <- 1 to 10) {
           s"support pageable sizes of $x" in {
-            var last: Iterable[SpectrumResult] = null
+            var last: Iterable[Spectrum] = null
 
             for (_ <- 1 to 25) {
-              val current: Iterable[SpectrumResult] = spectrumRestClient.list(query = Option("text=like=\'LCMS\'"), pageSize = Option(x), page = Option(0))
+              val current: Iterable[Spectrum] = spectrumRestClient.list(query = Option("tags.text~'LCMS'"), pageSize = Option(x), page = Option(0))
               logger.info(s"${current}")
               if (last == null) {
                 last = current
@@ -141,10 +128,10 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
 
               var run = false
 
-              (current zip last).foreach { s: (SpectrumResult, SpectrumResult) =>
-                logger.info(s"comparing ${s._1.getMonaId} to ${s._2.getMonaId}")
+              (current zip last).foreach { s: (Spectrum, Spectrum) =>
+                logger.info(s"comparing ${s._1.getId} to ${s._2.getId}")
                 run = true
-                assert(s._1.getMonaId == s._2.getMonaId)
+                assert(s._1.getId == s._2.getId)
               }
 
               logger.info("")
@@ -163,15 +150,15 @@ abstract class AbstractRestClientTest extends AnyWordSpec with Eventually with L
       }
 
       "it should be possible to execute queries" in {
-        val data = spectrumRestClient.list(Some("text=like=\'%LCMS%\'"))
-        assert(data.toList.length == 57)
+        val data = spectrumRestClient.list(Some("tags.text~'*LCMS*'"))
+        assert(data.toList.length == 58)
       }
 
       "it should be possible to delete values" in {
         val records = spectrumRestClient.list()
         val countBefore = spectrumRestClient.count()
 
-        spectrumRestClient.delete(records.head.getMonaId)
+        spectrumRestClient.delete(records.head.getId)
 
         eventually(timeout(10 seconds)) {
           val countAfter = spectrumRestClient.count()

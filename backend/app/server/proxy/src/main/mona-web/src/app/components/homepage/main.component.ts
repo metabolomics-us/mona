@@ -8,7 +8,7 @@ import {Subscription} from "rxjs";
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {faSearch, faChartBar, faExclamationTriangle, faSpinner} from '@fortawesome/free-solid-svg-icons';
-import {SpectrumResult} from "../../mocks/spectrum-result.model";
+import {SpectrumModel} from "../../mocks/spectrum.model";
 
 @Component({
     selector: 'main',
@@ -17,7 +17,7 @@ import {SpectrumResult} from "../../mocks/spectrum-result.model";
 export class MainComponent implements OnInit, OnDestroy{
     private popupOpenSubscription!: Subscription;
     showcaseSpectraIds;
-    showcaseSpectra: SpectrumResult[];
+    showcaseSpectra: SpectrumModel[];
     totalCount;
     faSearch = faSearch;
     faChartBar = faChartBar;
@@ -39,8 +39,8 @@ export class MainComponent implements OnInit, OnDestroy{
         this.showcaseSpectraIds.forEach((id) => {
             this.spectrum.get(
                 id).pipe(first()).subscribe(
-                (data: SpectrumResult[]) => {
-                  data.forEach((x:SpectrumResult) => this.showcaseSpectra.push(x));
+                (data: SpectrumModel[]) => {
+                  data.forEach((x:SpectrumModel) => this.showcaseSpectra.push(x));
                 },
                 (error) => {
                     this.logger.error('Failed to obtain spectrum ' + id);
@@ -55,7 +55,6 @@ export class MainComponent implements OnInit, OnDestroy{
 
     calculateResultCount() {
       this.spectrum.searchSpectraCount({
-        endpoint: 'count'
       }).pipe(first()).subscribe((res: any) => {
         this.totalCount = res.count;
       });

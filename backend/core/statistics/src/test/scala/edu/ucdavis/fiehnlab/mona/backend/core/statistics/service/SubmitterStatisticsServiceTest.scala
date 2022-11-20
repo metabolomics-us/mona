@@ -7,8 +7,7 @@ import java.io.InputStreamReader
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumResultRepository, StatisticsSubmitterRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumRepository, StatisticsSubmitterRepository}
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class SubmitterStatisticsServiceTest extends AnyWordSpec with LazyLogging {
   @Autowired
-  val spectrumResultsRepo: SpectrumResultRepository = null
+  val spectrumResultsRepo: SpectrumRepository = null
 
   @Autowired
   val monaMapper: ObjectMapper = {
@@ -44,7 +43,7 @@ class SubmitterStatisticsServiceTest extends AnyWordSpec with LazyLogging {
 
       spectrumResultsRepo.deleteAll()
       exampleRecords.foreach { spectrum =>
-        spectrumResultsRepo.save(new SpectrumResult(spectrum.getId, spectrum))
+        spectrumResultsRepo.save(spectrum)
       }
       assert(spectrumResultsRepo.count() == 59)
     }
@@ -53,7 +52,7 @@ class SubmitterStatisticsServiceTest extends AnyWordSpec with LazyLogging {
       val exampleRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")), new TypeReference[Array[Spectrum]] {})
 
       exampleRecords.foreach { spectrum =>
-        spectrumResultsRepo.save(new SpectrumResult(spectrum.getId, spectrum))
+        spectrumResultsRepo.save(spectrum)
       }
       assert(spectrumResultsRepo.count() == 109)
     }

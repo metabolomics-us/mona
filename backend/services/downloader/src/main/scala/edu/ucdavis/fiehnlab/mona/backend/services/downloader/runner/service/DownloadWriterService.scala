@@ -2,15 +2,15 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.service
 
 import java.lang.Iterable
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 /**
   * Created by sajjan on 6/10/16.
@@ -28,13 +28,14 @@ class DownloadWriterService extends LazyLogging {
     *
     * @param query
     */
-  private def executeQuery(query: String): Iterable[SpectrumResult] = {
-    new DynamicIterable[SpectrumResult, String](query, 250) {
+  @Transactional
+  private def executeQuery(query: String): Iterable[Spectrum] = {
+    new DynamicIterable[Spectrum, String](query, 250) {
 
       /**
         * Loads more data from the server for the given query
         */
-      override def fetchMoreData(query: String, pageable: Pageable): Page[SpectrumResult] = {
+      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
         if (query == null || query.isEmpty) {
           spectrumPersistenceService.findAll(pageable)
         } else {
@@ -65,6 +66,7 @@ class DownloadWriterService extends LazyLogging {
     * @param downloaders
     * @return
     */
+  @Transactional
   def exportQuery(query: String, label: String, downloaders: Array[SpectrumDownloader]): Long = {
 
     var count: Long = 0
@@ -79,7 +81,7 @@ class DownloadWriterService extends LazyLogging {
     val it = executeQuery(query).iterator
 
     while (it.hasNext) {
-      val spectrum: SpectrumResult = it.next()
+      val spectrum: Spectrum = it.next()
 
       // Write the current spectrum for each output format
       downloaders.foreach(_.write(spectrum))

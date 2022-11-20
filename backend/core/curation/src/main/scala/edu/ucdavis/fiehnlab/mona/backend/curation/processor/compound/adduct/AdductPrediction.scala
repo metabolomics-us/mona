@@ -85,11 +85,17 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
 
       if (theoreticalMass < 0) {
         logger.info(s"${spectrum.getId}: Computed exact mass was not found, unable to validate adduct/precursor information")
+        for (meta <- spectrum.getCompound.asScala.head.getMetaData.asScala) {
+          logger.info(s"MetaName: ${meta.getName} and computed: ${meta.getComputed}")
+        }
         spectrum
       }
 
       else if (precursorMass < 0 && adductFunction == null) {
         logger.info(s"${spectrum.getId}: Precursor m/z and type were not found, unable to validate adduct/precursor information")
+        for (meta <- spectrum.getCompound.asScala.head.getMetaData.asScala) {
+          logger.info(s"MetaName: ${meta.getName} and computed: ${meta.getComputed}")
+        }
         spectrum
       }
 
@@ -101,6 +107,9 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
         val addedList = spectrum.getMetaData
         addedList.add(new MetaDataDAO(null, CommonMetaData.PRECURSOR_MASS, predictedPrecursorMass.toString, false, "mass spectrometry", true, null))
         spectrum.setMetaData(addedList)
+        for (meta <- spectrum.getCompound.asScala.head.getMetaData.asScala) {
+          logger.info(s"MetaName: ${meta.getName} and computed: ${meta.getComputed}")
+        }
         spectrum
       }
 
@@ -130,6 +139,9 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
 
           val score = CurationUtilities.addImpact(spectrum.getScore, -5, "Unable to determine a valid adduct for the provided compound and precursor m/z")
           spectrum.setScore(score)
+          for (meta <- spectrum.getCompound.asScala.head.getMetaData.asScala) {
+            logger.info(s"MetaName: ${meta.getName} and computed: ${meta.getComputed}")
+          }
           spectrum
         }
       }
@@ -139,6 +151,9 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
 
         val score = CurationUtilities.addImpact(spectrum.getScore, 1, "Precursor information and provided compound validated")
         spectrum.setScore(score)
+        for (meta <- spectrum.getCompound.asScala.head.getMetaData.asScala) {
+          logger.info(s"MetaName: ${meta.getName} and computed: ${meta.getComputed}")
+        }
         spectrum
       }
     }

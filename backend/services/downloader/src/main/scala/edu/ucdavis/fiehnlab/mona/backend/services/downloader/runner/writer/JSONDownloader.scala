@@ -4,7 +4,6 @@ import java.nio.file.Path
 import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.QueryExport
 
 /**
@@ -39,5 +38,5 @@ class JSONDownloader(export: QueryExport, downloadDir: Path, compress: Boolean =
   /**
     *
     */
-  override def writeSpectrum(spectrum: SpectrumResult): Unit = exportWriter.write(objectMapper.writeValueAsString(spectrum))
+  override def writeSpectrum(spectrum: Spectrum): Unit = exportWriter.write(objectMapper.writeValueAsString(spectrum))
 }

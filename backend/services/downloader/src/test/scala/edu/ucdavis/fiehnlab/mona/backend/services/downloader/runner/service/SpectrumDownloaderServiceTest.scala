@@ -6,23 +6,21 @@ import java.util.UUID
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumResult
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumResultRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.mat.MaterializedViewRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SearchTableRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{PredefinedQuery, QueryExport}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.Downloader
+import org.hibernate.Hibernate
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 
-import scala.concurrent.duration._
 import scala.language.postfixOps
-import scala.util.Properties
-import java.util.Collections
 
 
 /**
@@ -30,44 +28,53 @@ import java.util.Collections
  * */
 @SpringBootTest(classes = Array(classOf[Downloader]))
 @ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.downloader", "mona.persistence.init"))
-class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Eventually{
+class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Eventually with BeforeAndAfterEach{
 
   @Autowired
   val downloaderService: DownloaderService = null
 
   @Autowired
-  val spectrumResultRepository: SpectrumResultRepository = null
-
-  @Autowired
-  val matRepository: MaterializedViewRepository = null
-
-  @Autowired
-  val searchTableRepository: SearchTableRepository = null
+  val spectrumResultRepository: SpectrumRepository = null
 
   val objectMapper: ObjectMapper = MonaMapper.create
 
   @Value("${mona.downloads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_downloads")
   val dir: String = null
 
+  @Autowired
+  private val transactionManager: PlatformTransactionManager = null
+
+  private var transactionTemplate: TransactionTemplate = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
+
+  protected override def beforeEach() = (
+    transactionTemplate = new TransactionTemplate(transactionManager)
+    )
+
+  protected override def afterEach() = (
+    transactionTemplate = null
+    )
 
   "DownloaderServiceTest" should {
     // Populate the database
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "load some data" in {
-      spectrumResultRepository.deleteAll()
-      exampleRecords.foreach{ x =>
-        spectrumResultRepository.save(new SpectrumResult(x.getId, x))
+      transactionTemplate.execute{ x =>
+        spectrumResultRepository.deleteAll()
+        Hibernate.initialize(x)
+        x
       }
-    }
 
-    s"we should be able to refresh our materialized view" in {
-      eventually(timeout(180 seconds)) {
-        matRepository.refreshSearchTable()
-        logger.info("sleep...")
-        assert(searchTableRepository.count() == 59616)
+      transactionTemplate.execute{ x =>
+        exampleRecords.foreach { y =>
+          spectrumResultRepository.save(y)
+        }
+        Hibernate.initialize()
+        x
       }
+
     }
 
     // ID for
@@ -75,14 +82,18 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
 
     "export all spectra as JSON without compression" in {
       val export: QueryExport = new QueryExport("", "All Spectra", "", "json", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.generateQueryExport(export, compress = false)
+      val result: QueryExport = transactionTemplate.execute { x =>
+        val z = downloaderService.generateQueryExport(export, compress = false)
+        Hibernate.initialize(z)
+        z
+      }
 
       assert(result.getCount == 59)
       assert(result.getSize > 0)
       assert(result.getExportFile.endsWith(".json"))
       assert(new String(Files.readAllBytes(Paths.get(dir, result.getQueryFile))).equals(export.getQuery))
 
-      val data: Array[SpectrumResult] = JSONDomainReader.create[Array[SpectrumResult]].read(Files.newBufferedReader(Paths.get(dir, result.getExportFile)))
+      val data: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(Files.newBufferedReader(Paths.get(dir, result.getExportFile)))
       assert(data.length == 59)
 
       Files.delete(Paths.get(dir, result.getQueryFile))
@@ -91,8 +102,11 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
 
     "export all spectra as JSON with compression" in {
       val export: QueryExport = new QueryExport("", "All Spectra", "", "json", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.generateQueryExport(export)
-
+      val result: QueryExport = transactionTemplate.execute { x =>
+        val z = downloaderService.generateQueryExport(export)
+        Hibernate.initialize(z)
+        z
+      }
       assert(result.getCount == 59)
       assert(result.getSize > 0)
       assert(result.getExportFile.endsWith(".zip"))
@@ -104,7 +118,12 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
 
     "export all spectra as MSP without compression" in {
       val export: QueryExport = new QueryExport("", "All Spectra", "", "msp", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.generateQueryExport(export, compress = false)
+      val result: QueryExport = transactionTemplate.execute { x =>
+        val z = downloaderService.generateQueryExport(export, compress = false)
+        Hibernate.initialize(z)
+        z
+      }
+
 
       assert(result.getCount == 59)
       assert(result.getSize > 0)
@@ -120,7 +139,11 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
 
     "export all spectra as MSP with compression" in {
       val export: QueryExport = new QueryExport("", "All Spectra", "", "msp", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.generateQueryExport(export)
+      val result: QueryExport = transactionTemplate.execute { x =>
+        val z = downloaderService.generateQueryExport(export)
+        Hibernate.initialize(z)
+        z
+      }
 
       assert(result.getCount == 59)
       assert(result.getSize > 0)
@@ -132,15 +155,19 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
     }
 
     "export negative mode spectra as JSON" in {
-      val export: QueryExport = new QueryExport("", "Negative Mode Spectra", "metadataName==\'ion mode\' and metadataValue==\'negative\'", "json", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.generateQueryExport(export, compress = false)
+      val export: QueryExport = new QueryExport("", "Negative Mode Spectra", "metaData.name:'ion mode' and metaData.value:'negative'", "json", null, null, 0, 0, null, null)
+      val result: QueryExport = transactionTemplate.execute { x =>
+        val z = downloaderService.generateQueryExport(export, compress = false)
+        Hibernate.initialize(z)
+        z
+      }
 
       assert(result.getCount == 25)
       assert(result.getSize > 0)
       assert(result.getExportFile.endsWith(".json"))
       assert(new String(Files.readAllBytes(Paths.get(dir, result.getQueryFile))).equals(export.getQuery))
 
-      val data: Array[SpectrumResult] = JSONDomainReader.create[Array[SpectrumResult]].read(Files.newBufferedReader(Paths.get(dir, result.getExportFile)))
+      val data: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(Files.newBufferedReader(Paths.get(dir, result.getExportFile)))
       assert(data.length == 25)
 
       Files.delete(Paths.get(dir, result.getQueryFile))
@@ -148,8 +175,12 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
     }
 
     "export negative mode spectra as MSP" in {
-      val export: QueryExport = new QueryExport("", "Negative Mode Spectra", "metadataName==\'ion mode\' and metadataValue==\'negative\'", "msp", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.generateQueryExport(export, compress = false)
+      val export: QueryExport = new QueryExport("", "Negative Mode Spectra", "metaData.name:'ion mode' and metaData.value:'negative'", "msp", null, null, 0, 0, null, null)
+      val result: QueryExport = transactionTemplate.execute { x =>
+        val z =  downloaderService.generateQueryExport(export, compress = false)
+        Hibernate.initialize(z)
+        z
+      }
 
       assert(result.getCount == 25)
       assert(result.getSize > 0)
@@ -165,7 +196,11 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
 
     "export predefined query for all spectra" in {
       val query: PredefinedQuery = new PredefinedQuery("All Spectra", "", "", 0, null, null, null)
-      val result: PredefinedQuery = downloaderService.generatePredefinedExport(query, compress = false, enableAllSpectraStaticFiles = true)
+      val result: PredefinedQuery = transactionTemplate.execute { x =>
+        val z = downloaderService.generatePredefinedExport(query, compress = false, enableAllSpectraStaticFiles = true)
+        Hibernate.initialize(z)
+        z
+      }
 
       assert(result.getQueryCount == 59)
 
@@ -205,8 +240,12 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
     }
 
     "export predefined query for query" in {
-      val query: PredefinedQuery = new PredefinedQuery("Negative Mode Spectra", "", "metadataName==\'ion mode\' and metadataValue==\'negative\'", 0, null, null, null)
-      val result: PredefinedQuery = downloaderService.generatePredefinedExport(query, compress = false, enableAllSpectraStaticFiles = true)
+      val query: PredefinedQuery = new PredefinedQuery("Negative Mode Spectra", "", "metaData.name:'ion mode' and metaData.value:'negative'", 0, null, null, null)
+      val result: PredefinedQuery = transactionTemplate.execute { x =>
+        val z = downloaderService.generatePredefinedExport(query, compress = false, enableAllSpectraStaticFiles = true)
+        Hibernate.initialize(z)
+        z
+      }
 
       assert(result.getQueryCount == 25)
 
