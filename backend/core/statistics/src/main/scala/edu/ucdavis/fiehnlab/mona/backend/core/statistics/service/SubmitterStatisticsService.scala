@@ -22,13 +22,12 @@ class SubmitterStatisticsService {
   @Autowired
   val spectraSubmittersRepository: SpectrumSubmitterRepository = null
 
-
-  @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
-  def updateSubmitterStatistics(): Unit = {
-    statisticsSubmitterRepository.deleteAll()
+  @Transactional(readOnly = true)
+  def updateSubmitterStatisticsHelper(): (Map[String, SpectrumSubmitterStatistics], Map[String, Integer], Map[String, ListBuffer[Double]]) = {
     val submitterObjects: Map[String, SpectrumSubmitterStatistics] = Map()
     val submitterCounter: Map[String, Integer] = Map()
     val submitterScores: Map[String, ListBuffer[Double]] = Map()
+
     spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
       if (submitterObjects.contains(submitter.getEmailAddress)) {
         submitterCounter(submitter.getEmailAddress) += 1
@@ -39,6 +38,14 @@ class SubmitterStatisticsService {
         submitterScores(submitter.getEmailAddress) = ListBuffer[Double](submitter.getScore)
       }
     }
+    (submitterObjects, submitterCounter, submitterScores)
+  }
+
+  @Transactional
+  def updateSubmitterStatistics(): Unit = {
+    statisticsSubmitterRepository.deleteAll()
+    val (submitterObjects, submitterCounter, submitterScores) = updateSubmitterStatisticsHelper()
+
     submitterObjects.foreach { case (key, value) =>
       val averagedScore = submitterScores(key).sum / submitterScores(key).length
       val entry = new StatisticsSubmitter(value.getEmailAddress, value.getFirstName, value.getLastName, value.getInstitution, submitterCounter(key), averagedScore)

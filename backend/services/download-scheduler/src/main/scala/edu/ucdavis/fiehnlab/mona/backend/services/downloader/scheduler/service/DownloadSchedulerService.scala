@@ -99,10 +99,10 @@ class DownloadSchedulerService extends LazyLogging {
         (1 to tagComponents.length).foreach { i =>
           val tagLabel: String = tagComponents.slice(0, i).mkString(" - ")
 
-          if (predefinedQueryRepository.findByQuery(s"""tags.text=="$tagLabel"""").isEmpty) {
+          if (predefinedQueryRepository.findByQuery(s"tags.text:'$tagLabel'").isEmpty) {
             logger.info(s"Creating new predefined download for ${tag.getText}: $tagLabel")
 
-            predefinedQueryRepository.save(new PredefinedQuery(s"Libraries - $tagLabel", tagLabel, s"""tags.text=="$tagLabel"""", 0, null, null, null))
+            predefinedQueryRepository.save(new PredefinedQuery(s"Libraries - $tagLabel", tagLabel, s"tags.text:'$tagLabel'", 0, null, null, null))
           }
         }
       }

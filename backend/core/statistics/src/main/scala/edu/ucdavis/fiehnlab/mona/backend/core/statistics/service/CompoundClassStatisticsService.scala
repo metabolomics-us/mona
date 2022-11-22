@@ -46,13 +46,8 @@ class CompoundClassStatisticsService extends LazyLogging{
     */
   def countCompoundClassStatistics: Long = statisticsCompoundClassesRepository.count()
 
-  /**
-    * Collect a list of compound class groups with spectrum and compound counts
-    *
-    * @return
-    */
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
-  def updateCompoundClassStatistics(): Unit = {
+  @Transactional(readOnly = true)
+  def updateCompoundClassStatisticsHelper(): Map[String, Map[String,ArrayBuffer[String]]] = {
     val finalMap: Map[String, Map[String, ArrayBuffer[String]]] = Map()
     compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
       val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
@@ -99,6 +94,16 @@ class CompoundClassStatisticsService extends LazyLogging{
 
       }
     }
+    finalMap
+  }
+  /**
+    * Collect a list of compound class groups with spectrum and compound counts
+    *
+    * @return
+    */
+  @Transactional
+  def updateCompoundClassStatistics(): Unit = {
+    val finalMap = updateCompoundClassStatisticsHelper()
     finalMap.foreach { case (key, value) =>
       val spectraCount = finalMap(key)("spectra").distinct.length
       val compoundsCount = finalMap(key)("compounds").distinct.length

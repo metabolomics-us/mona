@@ -30,20 +30,13 @@ class TagStatisticsService extends LazyLogging{
   @Autowired
   private val libraryRepository: LibraryRepository = null
 
-  /**
-   * Collect a list of unique tags with their respective counts
-   *
-   * @return
-   * */
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
-  def updateTagStatistics(): Unit = {
-    statisticsTagRepository.deleteAll()
-
+  @Transactional(readOnly = true)
+  def updateTagStatisticsHelper(): (Map[String, Int], Map[String, Boolean]) = {
     val tagsCounter: Map[String, Int] = Map()
     val tagsRuleBase: Map[String, Boolean] = Map()
     tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
       //Exclude spectrum.library associated tags since they are already included in the spectrum.tags object
-      if(tag.getSpectrum == null && tag.getCompound == null) {
+      if (tag.getSpectrum == null && tag.getCompound == null) {
         logger.debug(s"Don't count library tags as count as duplicates")
       } else {
         if (tagsCounter.contains(tag.getText)) {
@@ -54,6 +47,18 @@ class TagStatisticsService extends LazyLogging{
         }
       }
     }
+    (tagsCounter, tagsRuleBase)
+  }
+  /**
+   * Collect a list of unique tags with their respective counts
+   *
+   * @return
+   * */
+  @Transactional
+  def updateTagStatistics(): Unit = {
+    statisticsTagRepository.deleteAll()
+
+    val (tagsCounter, tagsRuleBase) = updateTagStatisticsHelper()
 
     tagsCounter.foreach { case (key, value) =>
       val newStatisticTag = new StatisticsTag(key, tagsRuleBase(key), value, if (libraryRepository.existsByTag_Text(key)) "library" else null)
@@ -66,13 +71,11 @@ class TagStatisticsService extends LazyLogging{
      *
      * @return
      * */
-    @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     def getTagStatistics: Iterable[StatisticsTag] = statisticsTagRepository.findByOrderByCountDesc().asScala
 
     /**
      * Get all library tags in the tag statistics repository
      * */
-    @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     def getLibraryTagStatistics: Iterable[StatisticsTag] = statisticsTagRepository.findByCategoryOrderByCountDesc("library").asScala
 
     /**
@@ -80,6 +83,5 @@ class TagStatisticsService extends LazyLogging{
      *
      * @return
      * */
-    @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     def countTagStatistics: Long = statisticsTagRepository.count()
 }

@@ -57,34 +57,38 @@ class MetaDataStatisticsService extends LazyLogging{
     */
   def countMetaDataStatistics: Long = statisticsMetaDataRepository.count()
 
+  @Transactional(readOnly = true)
+  def updateMetaDataStatisticsHelper(): (Map[String, Map[String, Int]],Map[String, Int]) = {
+    val metaDataNameMap: Map[String, Map[String, Int]] = Map()
+    val metaDataCounterMap: Map[String, Int] = Map()
 
+    metaDataRepository.streamAllBy().toScala(Iterator).foreach { metaData =>
+
+      if (metaDataNameMap.contains(metaData.getName)) {
+        if (metaDataNameMap(metaData.getName).contains(metaData.getValue)) {
+          metaDataNameMap(metaData.getName)(metaData.getValue) += 1
+          metaDataCounterMap(metaData.getName) += 1
+        } else {
+          metaDataNameMap(metaData.getName)(metaData.getValue) = 1
+          metaDataCounterMap(metaData.getName) += 1
+        }
+      } else {
+        metaDataNameMap(metaData.getName) = Map(metaData.getValue -> 1)
+        metaDataCounterMap(metaData.getName) = 1
+      }
+    }
+    (metaDataNameMap, metaDataCounterMap)
+  }
   /**
     * Update the data in the metadata statistics repository
     *
     * @return
     */
-  @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  @Transactional
   def updateMetaDataStatistics(): Unit = {
     statisticsMetaDataRepository.deleteAll()
 
-    val metaDataNameMap: Map[String, Map[String, Int]] = Map()
-    val metaDataCounterMap: Map[String, Int] = Map()
-
-    metaDataRepository.streamAllBy().toScala(Iterator).foreach{ metaData =>
-
-      if(metaDataNameMap.contains(metaData.getName)) {
-        if(metaDataNameMap(metaData.getName).contains(metaData.getValue)) {
-          metaDataNameMap(metaData.getName)(metaData.getValue) += 1
-          metaDataCounterMap(metaData.getName)+=1
-        } else {
-          metaDataNameMap(metaData.getName)(metaData.getValue) = 1
-          metaDataCounterMap(metaData.getName) += 1
-        }
-      } else{
-        metaDataNameMap(metaData.getName) = Map(metaData.getValue -> 1)
-        metaDataCounterMap(metaData.getName) = 1
-      }
-    }
+    val (metaDataNameMap, metaDataCounterMap) = updateMetaDataStatisticsHelper()
     metaDataNameMap.foreach{ case(key, value) =>
       val metaDataValueList: List[MetaDataValueCount] = value.toList.map{case(value, count) =>
         new MetaDataValueCount(value, count)
