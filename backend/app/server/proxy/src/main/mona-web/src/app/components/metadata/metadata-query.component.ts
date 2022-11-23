@@ -36,15 +36,11 @@ export class MetadataQueryComponent {
      * Add selected metadata value to the current query
      */
     addToQuery() {
-      console.log(this.compound);
-      console.log(this.metaData);
-      console.log(this.classification);
         if (typeof this.compound !== 'undefined') {
             this.spectraQueryBuilderService.addCompoundMetaDataToQuery(this.metaData.name, this.metaData.value, undefined);
         } else if (typeof this.classification !== 'undefined') {
             this.spectraQueryBuilderService.addClassificationToQuery(this.metaData.name, this.metaData.value, undefined);
         } else {
-          console.log("adding stuff")
             this.spectraQueryBuilderService.addMetaDataToQuery(this.metaData.name, this.metaData.value, undefined);
         }
 
