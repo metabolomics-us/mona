@@ -31,7 +31,6 @@ class MetaDataStatisticsService extends LazyLogging{
     *
     * @return
     */
-  @Transactional
   def getMetaDataStatistics: Iterable[StatisticsMetaData] = statisticsMetaDataRepository.findAll().asScala
 
   /**
@@ -39,7 +38,6 @@ class MetaDataStatisticsService extends LazyLogging{
     *
     * @return
     */
-  @Transactional
   def getMetaDataStatistics(metaDataName: String): StatisticsMetaData = statisticsMetaDataRepository.findByName(metaDataName)
 
   /**
@@ -57,10 +55,10 @@ class MetaDataStatisticsService extends LazyLogging{
     */
   def countMetaDataStatistics: Long = statisticsMetaDataRepository.count()
 
-  @Transactional(readOnly = true)
   def updateMetaDataStatisticsHelper(): (Map[String, Map[String, Int]],Map[String, Int]) = {
     val metaDataNameMap: Map[String, Map[String, Int]] = Map()
     val metaDataCounterMap: Map[String, Int] = Map()
+    var counter = 0
 
     metaDataRepository.streamAllBy().toScala(Iterator).foreach { metaData =>
 
@@ -76,6 +74,11 @@ class MetaDataStatisticsService extends LazyLogging{
         metaDataNameMap(metaData.getName) = Map(metaData.getValue -> 1)
         metaDataCounterMap(metaData.getName) = 1
       }
+      counter += 1
+
+      if (counter % 100000 == 0) {
+        logger.info(s"\tCompleted MetaData Object #${counter}")
+      }
     }
     (metaDataNameMap, metaDataCounterMap)
   }
@@ -84,8 +87,8 @@ class MetaDataStatisticsService extends LazyLogging{
     *
     * @return
     */
-  @Transactional
-  def updateMetaDataStatistics(): Unit = {
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  def updateMetaDataStatistics(): String = {
     statisticsMetaDataRepository.deleteAll()
 
     val (metaDataNameMap, metaDataCounterMap) = updateMetaDataStatisticsHelper()
@@ -95,5 +98,7 @@ class MetaDataStatisticsService extends LazyLogging{
       }
       statisticsMetaDataRepository.save(new StatisticsMetaData(key, metaDataCounterMap(key), metaDataValueList.asJava))
     }
+
+    "MetaData Statistics Updated"
   }
 }

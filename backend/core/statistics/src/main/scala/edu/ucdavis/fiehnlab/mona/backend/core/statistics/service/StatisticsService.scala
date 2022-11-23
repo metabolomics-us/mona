@@ -56,7 +56,6 @@ class StatisticsService extends LazyLogging {
   @Autowired
   private val compoundRepository: CompoundRepository = null
 
-  @Transactional(readOnly = true)
   def generateCompoundCount(): Long = {
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
     compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
@@ -69,7 +68,6 @@ class StatisticsService extends LazyLogging {
     inchiKeys.distinct.length
   }
 
-  @Transactional(readOnly = true)
   def generateMetaDataCount(): Long = {
     val metaDataCounterMap: Map[String, Int] = Map()
     metaDataRepository.streamAllBy().toScala(Iterator).foreach{ metaData =>
@@ -80,7 +78,6 @@ class StatisticsService extends LazyLogging {
     metaDataCounterMap.size.toLong
   }
 
-  @Transactional(readOnly = true)
   def generateTagCount(): Long = {
     val tagsCounter: Map[String, Int] = Map()
     tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
@@ -95,7 +92,6 @@ class StatisticsService extends LazyLogging {
     tagsCounter.size.toLong
   }
 
-  @Transactional(readOnly = true)
   def generateSubmitterCount(): Long = {
     val submitterCounter: Map[String, Integer] = Map()
     spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
@@ -110,8 +106,8 @@ class StatisticsService extends LazyLogging {
     *
     * @return
     **/
-  @Transactional
-  def updateGlobalStatistics(): StatisticsGlobal = {
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  def updateGlobalStatistics(): String = {
     globalStatisticsRepository.deleteAll()
     // Spectrum count
     val spectrumCount: Long = spectrumPersistenceService.count()
@@ -125,13 +121,14 @@ class StatisticsService extends LazyLogging {
     // Save global statistics
     globalStatisticsRepository.save(new StatisticsGlobal(new Date, spectrumCount, compoundCount, metaDataCount,
       metaDataValueCount, tagCount, tagValueCount, submitterCount))
+
+    "Global Statistics Updated"
   }
 
   /**
    *
    * @return
    * */
-  @Transactional
   def getGlobalStatistics: StatisticsGlobal =
     globalStatisticsRepository.findAll()
       .asScala.headOption.getOrElse(new StatisticsGlobal(new Date, 0, 0, 0, 0, 0, 0, 0))
@@ -142,12 +139,18 @@ class StatisticsService extends LazyLogging {
    * */
   @Async
   @Scheduled(cron = "0 0 0 * * *")
-  @Transactional
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def updateStatistics(): Unit = {
-    metaDataStatisticsService.updateMetaDataStatistics()
-    tagStatisticsService.updateTagStatistics()
-    submitterStatisticsService.updateSubmitterStatistics()
-    compoundClassStatisticsService.updateCompoundClassStatistics()
-    updateGlobalStatistics()
+    val metaDataResult = metaDataStatisticsService.updateMetaDataStatistics()
+    logger.info(s"${metaDataResult}")
+    val tagResult = tagStatisticsService.updateTagStatistics()
+    logger.info(s"${tagResult}")
+    val submitterResult = submitterStatisticsService.updateSubmitterStatistics()
+    logger.info(s"${submitterResult}")
+    val compoundClassResult = compoundClassStatisticsService.updateCompoundClassStatistics()
+    logger.info(s"${compoundClassResult}")
+    val globalResult = updateGlobalStatistics()
+    logger.info(s"${globalResult}")
+    logger.info(s"Statistics Update is Completed!")
   }
 }

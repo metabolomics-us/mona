@@ -64,9 +64,9 @@ export class SpectraDownloadComponent {
                 });
             } else {
                 const query = this.spectraQueryBuilderService.getQuery();
-                query.format = 'msp';
+                const payload = {query, "format": "msp"}
 
-                this.submitQueryExportRequest(query);
+                this.submitQueryExportRequest(payload);
              }
     }
 
@@ -81,9 +81,9 @@ export class SpectraDownloadComponent {
             });
         } else {
             const query = this.spectraQueryBuilderService.getQuery();
-            query.format = 'json';
+            const payload = {query, "format": "json"};
 
-            this.submitQueryExportRequest(query);
+            this.submitQueryExportRequest(payload);
         }
     }
 

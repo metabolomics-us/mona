@@ -30,10 +30,10 @@ class TagStatisticsService extends LazyLogging{
   @Autowired
   private val libraryRepository: LibraryRepository = null
 
-  @Transactional(readOnly = true)
   def updateTagStatisticsHelper(): (Map[String, Int], Map[String, Boolean]) = {
     val tagsCounter: Map[String, Int] = Map()
     val tagsRuleBase: Map[String, Boolean] = Map()
+    var counter = 0
     tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
       //Exclude spectrum.library associated tags since they are already included in the spectrum.tags object
       if (tag.getSpectrum == null && tag.getCompound == null) {
@@ -46,6 +46,11 @@ class TagStatisticsService extends LazyLogging{
           tagsRuleBase(tag.getText) = tag.getRuleBased
         }
       }
+      counter += 1
+
+      if (counter % 100000 == 0) {
+        logger.info(s"\tCompleted Tag Object #${counter}")
+      }
     }
     (tagsCounter, tagsRuleBase)
   }
@@ -54,8 +59,8 @@ class TagStatisticsService extends LazyLogging{
    *
    * @return
    * */
-  @Transactional
-  def updateTagStatistics(): Unit = {
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  def updateTagStatistics(): String = {
     statisticsTagRepository.deleteAll()
 
     val (tagsCounter, tagsRuleBase) = updateTagStatisticsHelper()
@@ -64,6 +69,7 @@ class TagStatisticsService extends LazyLogging{
       val newStatisticTag = new StatisticsTag(key, tagsRuleBase(key), value, if (libraryRepository.existsByTag_Text(key)) "library" else null)
       statisticsTagRepository.save(newStatisticTag)
     }
+    "Tag Statistics Completed"
   }
 
     /**

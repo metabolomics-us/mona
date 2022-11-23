@@ -6,6 +6,8 @@ import {SpectraQueryBuilderService} from '../../services/query/spectra-query-bui
 import {NGXLogger} from 'ngx-logger';
 import {Component, Input} from '@angular/core';
 import {faSearch} from '@fortawesome/free-solid-svg-icons';
+import {Compound} from "../../mocks/compound.model";
+import {Metadata} from "../../mocks/metadata.model";
 
 @Component({
     selector: 'metadata-query',
@@ -13,9 +15,9 @@ import {faSearch} from '@fortawesome/free-solid-svg-icons';
 })
 export class MetadataQueryComponent {
 
-    @Input() compound;
-    @Input() metaData;
-    @Input() classification;
+    @Input() compound: Boolean;
+    @Input() metaData: Metadata;
+    @Input() classification: Boolean;
     faSearch = faSearch;
 
     constructor( public spectraQueryBuilderService: SpectraQueryBuilderService,
@@ -34,11 +36,15 @@ export class MetadataQueryComponent {
      * Add selected metadata value to the current query
      */
     addToQuery() {
+      console.log(this.compound);
+      console.log(this.metaData);
+      console.log(this.classification);
         if (typeof this.compound !== 'undefined') {
             this.spectraQueryBuilderService.addCompoundMetaDataToQuery(this.metaData.name, this.metaData.value, undefined);
         } else if (typeof this.classification !== 'undefined') {
             this.spectraQueryBuilderService.addClassificationToQuery(this.metaData.name, this.metaData.value, undefined);
         } else {
+          console.log("adding stuff")
             this.spectraQueryBuilderService.addMetaDataToQuery(this.metaData.name, this.metaData.value, undefined);
         }
 

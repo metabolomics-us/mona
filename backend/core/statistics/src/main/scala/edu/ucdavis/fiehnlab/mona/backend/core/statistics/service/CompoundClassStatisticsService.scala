@@ -46,13 +46,14 @@ class CompoundClassStatisticsService extends LazyLogging{
     */
   def countCompoundClassStatistics: Long = statisticsCompoundClassesRepository.count()
 
-  @Transactional(readOnly = true)
   def updateCompoundClassStatisticsHelper(): Map[String, Map[String,ArrayBuffer[String]]] = {
     val finalMap: Map[String, Map[String, ArrayBuffer[String]]] = Map()
+    val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
+    val compoundClasses: Map[String, String] = Map()
+    val compoundClassString: ArrayBuffer[String] = ArrayBuffer()
+    var counter = 0
     compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
-      val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
-      val compoundClasses: Map[String, String] = Map()
-      val compoundClassString: ArrayBuffer[String] = ArrayBuffer()
+
       compound.getMetaData.asScala.foreach { metadata =>
         if (metadata.getName == "InChIKey") {
           inchiKeys.append(metadata.getValue.substring(0, 14))
@@ -91,8 +92,15 @@ class CompoundClassStatisticsService extends LazyLogging{
             }
           }
         }
-
       }
+      counter += 1
+
+      if (counter % 1000 == 0) {
+        logger.info(s"\tCompleted Compound Object #${counter}")
+      }
+      inchiKeys.clearAndShrink()
+      compoundClasses.clear()
+      compoundClassString.clearAndShrink()
     }
     finalMap
   }
@@ -101,8 +109,8 @@ class CompoundClassStatisticsService extends LazyLogging{
     *
     * @return
     */
-  @Transactional
-  def updateCompoundClassStatistics(): Unit = {
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  def updateCompoundClassStatistics(): String = {
     val finalMap = updateCompoundClassStatisticsHelper()
     finalMap.foreach { case (key, value) =>
       val spectraCount = finalMap(key)("spectra").distinct.length
@@ -110,6 +118,7 @@ class CompoundClassStatisticsService extends LazyLogging{
       val statsCompoundClass = new StatisticsCompoundClasses(key,spectraCount,compoundsCount)
       statisticsCompoundClassesRepository.save(statsCompoundClass)
     }
+    "Compound Class Statistics Completed"
   }
 }
 

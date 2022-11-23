@@ -151,99 +151,99 @@ export class SpectraQueryBuilderService {
      * @returns string metadata query
      */
     buildMetaDataQuery(name, value, collection, tolerance, partialQuery) {
-        // Handle array of values
-        if (Array.isArray(value)) {
-            const subqueries = value.map((x) => {
-                return this.buildMetaDataQuery(name, x, collection, tolerance, partialQuery);
-            });
+      // Handle array of values
+      if (Array.isArray(value)) {
+        const subqueries = value.map((x) => {
+          return this.buildMetaDataQuery(name, x, collection, tolerance, partialQuery);
+        });
 
-            return subqueries.join(' or ');
-        }
+        return '(' + subqueries.join(' or ') + ')';
+      }
 
-        // Handle individual values
-        else {
-            if (typeof tolerance !== 'undefined') {
-                const leftBoundary = parseFloat(value) - tolerance;
-                const rightBoundary = parseFloat(value) + tolerance;
+      // Handle individual values
+      else {
+        if (typeof tolerance !== 'undefined') {
+          const leftBoundary = parseFloat(value) - tolerance;
+          const rightBoundary = parseFloat(value) + tolerance;
 
-                return collection + '==\"' + name + '\" and metadataValue>=' + leftBoundary + ' and metadataValue<=' + rightBoundary;
-            } else if (typeof partialQuery !== 'undefined') {
-                return collection + '==\"' + name + '\" and metadataValue=like=\"%' + value + '%\"';
-            } else {
-              return collection + '==\"' + name + '\" and metadataValue==\"' + value + '\"';
-            }
-        }
-    }
-
-    addMetaDataToQuery(name, value, partialQuery) {
-        this.query.push(this.buildMetaDataQuery(name, value, 'metadataName', undefined, partialQuery));
-    }
-
-    addNumericalMetaDataToQuery(name, value, tolerance) {
-        this.query.push(this.buildMetaDataQuery(name, value, 'metadataName', tolerance, undefined));
-    }
-
-    addCompoundMetaDataToQuery(name, value, partialQuery) {
-        this.query.push(this.buildMetaDataQuery(name, value, 'metadataName', undefined, partialQuery));
-    }
-
-    addNumericalCompoundMetaDataToQuery(name, value, tolerance) {
-        this.query.push(this.buildMetaDataQuery(name, value, 'metadataName', tolerance, undefined));
-    }
-
-    addClassificationToQuery(name, value, partialQuery) {
-        this.query.push(this.buildMetaDataQuery(name, value, 'metadataCategory', undefined, partialQuery));
-    }
-
-    addGeneralClassificationToQuery(value) {
-        this.query.push('metadataCategory==\"classification\" and metadataValue==\"'+value+'\"');
-    }
-
-    addNameToQuery(name) {
-        this.query.push('metadataName==\"compound_name\" and metadataValue=like=\"' + name + '"\'');
-    }
-
-    buildTagQuery(value, collection, queryType) {
-        // Handle array of values
-        if (Array.isArray(value)) {
-            const subqueries = value.map((x) => {
-                return this.buildTagQuery(x, collection, queryType);
-            });
-
-            return subqueries.join(' or ');
-        }
-
-        // Handle individual values
-        else {
-          if (typeof queryType !== 'undefined' && queryType === 'match') {
-            return 'text=like=\"%' + value + '%\"';
-          } else if (typeof queryType !== 'undefined' && queryType === 'ne') {
-            return 'text!=\"' + value + '\"';
-          } else {
-            return 'text==\"' + value + '\"';
-          }
-        }
-    }
-
-    addTagToQuery(query, queryType) {
-        this.query.push(this.buildTagQuery(query, 'tags', queryType));
-    }
-
-    addCompoundTagToQuery(query, queryType) {
-        this.query.push(this.buildTagQuery(query, 'compound.tags', queryType));
-    }
-
-    addSplashToQuery(query) {
-        if (/^(splash[0-9]{2}-[a-z0-9]{4}-[0-9]{10}-[a-z0-9]{20})$/.test(query)) {
-            this.query.push('splash==\"' + query + '\"');
-        } else if (/^splash[0-9]{2}/.test(query)) {
-            this.query.push('splash=like=\"%' + query + '%\"');
+          return collection + '.name:\'' + name + '\' and ' + collection + '.value>:' + leftBoundary + ' and ' + collection +'.value <:' + rightBoundary + '\'';
+        } else if (typeof partialQuery !== 'undefined') {
+          return collection + '.name:\'' + name + '\' and ' + collection + '.value~\'*' + value + '*\'';
         } else {
-            this.query.push('splash=like=\"%' + query + '%\"');
+          return collection + '.name:\'' + name + '\' and ' + collection + '.value:\'' + value + '\'';
         }
+      }
     }
 
-    addUserToQuery(username) {
-        this.query.push('emailAddress==\"' + username + '\"');
+  addMetaDataToQuery(name, value, partialQuery) {
+    this.query.push(this.buildMetaDataQuery(name, value, 'metaData', undefined, partialQuery));
+  }
+
+  addNumericalMetaDataToQuery(name, value, tolerance) {
+    this.query.push(this.buildMetaDataQuery(name, value, 'metaData', tolerance, undefined));
+  }
+
+  addCompoundMetaDataToQuery(name, value, partialQuery) {
+    this.query.push(this.buildMetaDataQuery(name, value, 'compound.metaData', undefined, partialQuery));
+  }
+
+  addNumericalCompoundMetaDataToQuery(name, value, tolerance) {
+    this.query.push(this.buildMetaDataQuery(name, value, 'compound.metaData', tolerance, undefined));
+  }
+
+  addClassificationToQuery(name, value, partialQuery) {
+    this.query.push(this.buildMetaDataQuery(name, value, 'compound.classification', undefined, partialQuery));
+  }
+
+  addGeneralClassificationToQuery(value) {
+    this.query.push('compound.classification.value~\'*' + value + '*\'');
+  }
+
+  addNameToQuery(name) {
+    this.query.push('compound.names.name~\'' + name + '\'');
+  }
+
+  buildTagQuery(value, collection, queryType) {
+    // Handle array of values
+    if (Array.isArray(value)) {
+      const subqueries = value.map((x) => {
+        return this.buildTagQuery(x, collection, queryType);
+      });
+
+      return '(' + subqueries.join(' or ') + ')';
     }
+
+    // Handle individual values
+    else {
+      if (typeof queryType !== 'undefined' && queryType === 'match') {
+        return collection + '.text~\'*' + value + '*\'';
+      } else if (typeof queryType !== 'undefined' && queryType === 'ne') {
+        return collection + '.text!\'' + value + '\'';
+      } else {
+        return collection + '.text:\'' + value + '\'';
+      }
+    }
+  }
+
+  addTagToQuery(query, queryType) {
+    this.query.push(this.buildTagQuery(query, 'tags', queryType));
+  }
+
+  addCompoundTagToQuery(query, queryType) {
+    this.query.push(this.buildTagQuery(query, 'compound.tags', queryType));
+  }
+
+  addSplashToQuery(query) {
+    if (/^(splash[0-9]{2}-[a-z0-9]{4}-[0-9]{10}-[a-z0-9]{20})$/.test(query)) {
+      this.query.push('splash.splash:\'' + query + '\'');
+    } else if (/^splash[0-9]{2}/.test(query)) {
+      this.query.push('splash.splash~\'*' + query + '*\'');
+    } else {
+      this.query.push('splash.splash~\'*' + query + '*\'');
+    }
+  }
+
+  addUserToQuery(username) {
+    this.query.push('submitter.emailAddress:\'' + username + '\'');
+  }
 }

@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmitter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.views.SpectrumSubmitterStatistics
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsSubmitterRepository
@@ -15,18 +16,18 @@ import scala.jdk.StreamConverters.StreamHasToScala
 
 @Service
 @Profile(Array("mona.persistence"))
-class SubmitterStatisticsService {
+class SubmitterStatisticsService extends LazyLogging{
   @Autowired
   val statisticsSubmitterRepository: StatisticsSubmitterRepository = null
 
   @Autowired
   val spectraSubmittersRepository: SpectrumSubmitterRepository = null
 
-  @Transactional(readOnly = true)
   def updateSubmitterStatisticsHelper(): (Map[String, SpectrumSubmitterStatistics], Map[String, Integer], Map[String, ListBuffer[Double]]) = {
     val submitterObjects: Map[String, SpectrumSubmitterStatistics] = Map()
     val submitterCounter: Map[String, Integer] = Map()
     val submitterScores: Map[String, ListBuffer[Double]] = Map()
+    var counter = 0
 
     spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
       if (submitterObjects.contains(submitter.getEmailAddress)) {
@@ -37,12 +38,17 @@ class SubmitterStatisticsService {
         submitterCounter(submitter.getEmailAddress) = 1
         submitterScores(submitter.getEmailAddress) = ListBuffer[Double](submitter.getScore)
       }
+      counter += 1
+
+      if (counter % 500 == 0) {
+        logger.info(s"\tCompleted Submitter Object #${counter}")
+      }
     }
     (submitterObjects, submitterCounter, submitterScores)
   }
 
-  @Transactional
-  def updateSubmitterStatistics(): Unit = {
+  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  def updateSubmitterStatistics(): String = {
     statisticsSubmitterRepository.deleteAll()
     val (submitterObjects, submitterCounter, submitterScores) = updateSubmitterStatisticsHelper()
 
@@ -51,6 +57,7 @@ class SubmitterStatisticsService {
       val entry = new StatisticsSubmitter(value.getEmailAddress, value.getFirstName, value.getLastName, value.getInstitution, submitterCounter(key), averagedScore)
       statisticsSubmitterRepository.save(entry)
     }
+    "Submitter Statistics Completed"
   }
   /**
    * Get all data in the submitter statistics repository
