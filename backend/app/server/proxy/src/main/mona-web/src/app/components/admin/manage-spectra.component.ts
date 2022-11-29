@@ -146,6 +146,24 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     }
   }
 
+  refreshSimilarity() {
+    if (this.auth.isAdmin()) {
+      this.adminService.refreshSimilarity(this.auth.getCurrentUser().accessToken).subscribe((res) => {
+        this.toaster.pop({
+          type: 'success',
+          title: 'Similarity Service Being Updated!',
+          body: 'Similarity Service is being repopulated. Please allow up to an hour for this operation to complete.'
+        });
+      }, (error) => {
+        this.toaster.pop({
+          type: 'error',
+          title: 'There was a problem requesting similarity refresh.',
+          body: `${error.message}`
+        });
+      });
+    }
+  }
+
   updatePredefinedQueries() {
     if (this.auth.isAdmin()) {
       this.adminService.updatePredefinedDownloads(this.auth.getCurrentUser().accessToken).subscribe(() => {

@@ -24,6 +24,17 @@ export class AdminService {
     return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/statistics/update`, null, config);
   }
 
+  refreshSimilarity(token: any): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+      responseType: 'text' as 'json'
+    };
+    return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/similarity/refresh`, null, config);
+  }
+
   // Re-generates static downloads
   updateStaticDownloads(token: any): Observable<any> {
     const config = {

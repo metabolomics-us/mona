@@ -31,7 +31,7 @@ export class SubmitterQueryComponent {
      * Add selected submitter to the current query
      */
     addToQuery() {
-        this.spectraQueryBuilderService.addUserToQuery(this.submitter.id);
+        this.spectraQueryBuilderService.addUserToQuery(this.submitter.emailAddress);
         this.spectraQueryBuilderService.executeQuery(undefined);
     }
 
@@ -40,7 +40,7 @@ export class SubmitterQueryComponent {
      */
     curateSpectra() {
         this.spectraQueryBuilderService.prepareQuery();
-        this.spectraQueryBuilderService.addUserToQuery(this.submitter.id);
+        this.spectraQueryBuilderService.addUserToQuery(this.submitter.emailAddress);
 
         const query = this.spectraQueryBuilderService.getRSQLQuery();
         // TODO Add curation functionality

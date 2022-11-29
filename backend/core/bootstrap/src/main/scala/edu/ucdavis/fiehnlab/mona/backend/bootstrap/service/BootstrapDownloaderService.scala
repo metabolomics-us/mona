@@ -107,11 +107,11 @@ class BootstrapDownloaderService extends LazyLogging {
     )
     saveQuery(
       "LC-MS Spectra - LC-MS/MS Spectra - LC-MS/MS Positive Mode",
-      "tags.text:'LC-MS' and metaData.name in ('ms level','ionization mode') and metaData.value in ('MS2','positive')"
+      "tags.text:'LC-MS' and exists(metaData.name:'ms level' and metaData.value:'MS2') and exists(metaData.name:'ionization mode' and metaData.value:'positive')"
     )
     saveQuery(
       "LC-MS Spectra - LC-MS/MS Spectra - LC-MS/MS Negative Mode",
-      "tags.text:'LC-MS' and metaData.name in ('ms level','ionization mode') and metaData.value in ('MS2','negative')"
+      "tags.text:'LC-MS' and exists(metaData.name:'ms level' and metaData.value:'MS2') and exists(metaData.name:'ionization mode' and metaData.value:'negative')"
     )
   }
 }

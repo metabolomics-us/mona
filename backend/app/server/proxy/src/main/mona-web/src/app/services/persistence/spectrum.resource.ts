@@ -14,7 +14,7 @@ export class Spectrum {
 	constructor(public http: HttpClient) {
 	}
 
-	private cleanParameters(data: any): HttpParams {
+  cleanParameters(data: any): HttpParams {
 		// Filter our undefined values and place the others in HttpParams value
 		let params = new HttpParams({encoder: new CustomURLEncoder()});
 		// Ternary case, we use a truthy check on data[k] to see if the value is not undefined, if so add to HttpParams

@@ -36,12 +36,10 @@ export class SpectraBrowserComponent implements OnInit{
     editQuery;
     startTime;
     query;
-    textQuery;
     duration;
     inchikeyParam;
     splashParam;
     queryParam;
-    textParam;
     sizeParam;
     pageParam;
     tableParam;
@@ -120,7 +118,6 @@ export class SpectraBrowserComponent implements OnInit{
           this.inchikeyParam = params.inchikey || undefined;
           this.splashParam = params.splash || undefined;
           this.queryParam = params.query || undefined;
-          this.textParam = params.text || undefined;
           this.sizeParam = params.size || undefined;
           this.pageParam = parseInt(params.page, 10);
           this.tableParam = params.table || undefined;
@@ -183,10 +180,9 @@ export class SpectraBrowserComponent implements OnInit{
           }
 
           // Handle general queries
-          if (typeof this.queryParam !== 'undefined' || typeof this.textParam !== 'undefined') {
-            this.logger.info('Accepting RSQL query from URL: "' + this.queryParam + '", and text search: "' + this.textParam + '"');
+          if (typeof this.queryParam !== 'undefined') {
+            this.logger.info('Accepting RSQL query from URL: "' + this.queryParam + '"');
             this.query = this.queryParam;
-            this.textQuery = this.textParam;
           }
 
           // Handle page number
@@ -393,8 +389,7 @@ export class SpectraBrowserComponent implements OnInit{
      */
     calculateResultCount() {
         this.spectrum.searchSpectraCount({
-            query: this.query,
-            text: this.textQuery
+            query: this.query
         }).pipe(first()).subscribe((res: any) => {
             this.pagination.totalSize = res.count;
         });
@@ -442,7 +437,7 @@ export class SpectraBrowserComponent implements OnInit{
         if (this.initial && !this.sizeParam) {
           this.hideSplash();
           this.pagination.loading = false;
-        } else if (this.query === undefined && this.textQuery === undefined) {
+        } else if (this.query === undefined) {
             this.logger.info('submitting empty query');
             this.spectrum.searchSpectra({
                 size: this.pagination.itemsPerPage,
@@ -454,7 +449,6 @@ export class SpectraBrowserComponent implements OnInit{
             this.spectrum.searchSpectra({
                 endpoint: 'search',
                 query: this.query,
-                text: this.textQuery,
                 page: currentPage,
                 size: this.pagination.itemsPerPage
             }).pipe(first()).subscribe(this.searchSuccess, this.searchError);

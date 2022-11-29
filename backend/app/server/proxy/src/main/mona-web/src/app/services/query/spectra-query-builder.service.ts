@@ -12,7 +12,6 @@ import {Injectable} from '@angular/core';
 export class SpectraQueryBuilderService {
     query;
     queryString;
-    textSearch;
     similarityQuery;
 
     constructor(public router: Router, public logger: NGXLogger) {
@@ -25,11 +24,6 @@ export class SpectraQueryBuilderService {
          * Stored RSQL query string, only used when the query is set from outside this query builder
          */
         this.queryString = '';
-
-        /**
-         * Stored text search
-         */
-        this.textSearch = '';
 
         /**
          * Stored similarity query
@@ -55,22 +49,24 @@ export class SpectraQueryBuilderService {
         this.queryString = queryString;
     }
 
-    getTextSearch() {
-        return this.textSearch;
-    }
-
-    setTextSearch(textSearch) {
-        this.textSearch = textSearch;
-    }
-
-    prepareQuery() {
+    prepareQuery(): void {
         this.logger.debug('Resetting query');
 
         this.query = [];
         this.queryString = '';
-        this.textSearch = '';
     }
 
+    constructFinalString(): String {
+      let finalString = '';
+      this.query.forEach((x, index) => {
+        if(index < this.query.length - 1) {
+          finalString+=`exists(${x}) and `
+        } else {
+          finalString+=`exists(${x})`
+        }
+      });
+      return finalString;
+    }
     /**
      * Generate RSQL query from the query components.  Uses queryString as a base
      * if provided so that a user can start with a predefined or user-specified query
@@ -78,9 +74,10 @@ export class SpectraQueryBuilderService {
      */
     getRSQLQuery() {
         if (this.queryString === '') {
-            return this.query.join(' and ');
+          return this.constructFinalString();
         } else {
-            return this.query.concat([this.queryString]).join(' and ');
+          this.query.concat([this.queryString]);
+          return this.constructFinalString();
         }
     }
 
@@ -96,13 +93,12 @@ export class SpectraQueryBuilderService {
     executeQuery(replace = false) {
         const query = this.getRSQLQuery();
 
-        if (query !== '' || this.textSearch !== '') {
-            this.logger.info('Executing RSQL query: "' + query + '", and text search: "' + this.textSearch + '"');
+        if (query !== '') {
+            this.logger.info('Executing RSQL query: "' + query + '"');
             this.router.navigate(['/spectra/browse'],
                 {queryParams:
                         {
-                            query,
-                            text: this.textSearch
+                            query
                         }
                 }).then((res) => {
                     this.logger.info('Navigated to /spectra/browse');
@@ -196,7 +192,7 @@ export class SpectraQueryBuilderService {
   }
 
   addGeneralClassificationToQuery(value) {
-    this.query.push('compound.classification.value~\'*' + value + '*\'');
+    this.query.push('compound.classification.value:\'' + value + '\'');
   }
 
   addNameToQuery(name) {
@@ -243,7 +239,11 @@ export class SpectraQueryBuilderService {
     }
   }
 
-  addUserToQuery(username) {
-    this.query.push('submitter.emailAddress:\'' + username + '\'');
+  addUserToQuery(username): void {
+      this.query.push('submitter.emailAddress:\'' + username + '\'');
+  }
+
+  addGenericSearch(query): void {
+      this.query.push(`metaData.name:\'${query}\' or metaData.value:\'${query}\' or compound.names.name:\'${query}\' or compound.metaData.name:\'${query}\' or compound.metaData.value:\'${query}\'`)
   }
 }

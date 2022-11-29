@@ -7,5 +7,8 @@ import {Component} from '@angular/core';
   templateUrl: '../../views/documentation/uploadLibrary.html'
 })
 export class DocumentationUploadLibraryComponent {
-  constructor() {}
+  batchTagList = []
+  constructor() {
+    this.batchTagList = [{ruleBased: false, text: 'In-Silico'}];
+  }
 }

@@ -46,12 +46,9 @@
                     </form>
                   </div>
 
-                  Full text search query:
-                  <pre class="input-group-text">{{textQuery}}</pre>
-
                   <div>
                     Example cURL command to download all spectral JSON records matching the generated RSQL query:
-                    <pre class="input-group-text">{{{query: query, text: textQuery} | curlPipe}}</pre>
+                    <pre class="input-group-text">{{{query: query} | curlPipe}}</pre>
                   </div>
 
                   <div>To download as an MSP file, add the header: <code>Accept: text/msp</code>.</div>
