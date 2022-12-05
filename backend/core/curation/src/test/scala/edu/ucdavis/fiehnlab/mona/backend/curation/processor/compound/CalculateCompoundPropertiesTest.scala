@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Names, Spectrum, Tag}
 
 import java.io.InputStreamReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao._
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
@@ -70,9 +70,9 @@ class CalculateCompoundPropertiesTest extends AnyWordSpec with LazyLogging{
     }
 
     "ensure that identifiers aren't duplicated when computed version matches the provided" in {
-      val compound: CompoundDAO = new CompoundDAO(null, Buffer[TagDAO]().asJava, "", Buffer[Names]().asJava, "", false, "UYHMVWFYYZIVOP-RUAQSNJLSA-N", Buffer[MetaDataDAO]().asJava, null)
+      val compound: Compound = new Compound(null, Buffer[Tag]().asJava, "", Buffer[Names]().asJava, "", false, "UYHMVWFYYZIVOP-RUAQSNJLSA-N", Buffer[MetaData]().asJava, null)
         //Compound("", "UYHMVWFYYZIVOP-RUAQSNJLSA-N", Array.empty[MetaData], "", Array.empty[Names], Array.empty[Tags], computed = false, null)
-      val spectrum: Spectrum = new Spectrum(ArrayBuffer[CompoundDAO](compound).asJava, "test", Buffer[MetaDataDAO]().asJava, null, null, null, null, null, null, null, null, null, null)
+      val spectrum: Spectrum = new Spectrum(ArrayBuffer[Compound](compound).asJava, "test", Buffer[MetaData]().asJava, null, null, null, null, null, null, null, null, null, null)
         //Spectrum(Array(compound), "test", null, null, null, Array.empty[MetaData], null, null, null, null, null, null, null, null)
 
       val result: Spectrum = calculateCompoundProperties.process(spectrum)

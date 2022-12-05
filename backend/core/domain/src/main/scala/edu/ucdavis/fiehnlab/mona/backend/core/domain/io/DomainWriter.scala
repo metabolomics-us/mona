@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Spectrum}
 
 import java.io.{OutputStream, OutputStreamWriter, PrintWriter, Writer}
 import scala.jdk.CollectionConverters._
@@ -35,7 +35,7 @@ trait DomainWriter {
     * Gets all miscellaneous metadata for comments fields
     */
   def getAdditionalMetaData(spectrum: Spectrum, excludedMetaData: Array[String] = Array()): Array[(String, Any)] = {
-    val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
+    val compound: Compound = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
     val metadata = (compound.getMetaData.asScala ++ spectrum.getMetaData.asScala)
       .filter(x => !excludedMetaData.contains(x.getName.toLowerCase))

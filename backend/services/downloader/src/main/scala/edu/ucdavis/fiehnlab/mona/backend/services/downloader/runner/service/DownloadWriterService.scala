@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.service
 
 import java.lang.Iterable
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer._
@@ -30,7 +30,7 @@ class DownloadWriterService extends LazyLogging {
     */
   @Transactional
   private def executeQuery(query: String): Iterable[Spectrum] = {
-    new DynamicIterable[Spectrum, String](query, 250) {
+    new DynamicIterable[Spectrum, String](query, 100) {
 
       /**
         * Loads more data from the server for the given query
@@ -90,6 +90,8 @@ class DownloadWriterService extends LazyLogging {
       if (count % 1000 == 0)
         logger.info(s"$label: Exported $count/$total")
     }
+
+
 
     // Close each downloader and compress if requested
     downloaders.foreach(_.closeExport())

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Names, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Names, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
@@ -26,7 +26,7 @@ class FetchCTSCompoundData extends ItemProcessor[Spectrum, Spectrum] with LazyLo
   protected val restOperations: RestOperations = null
 
   override def process(spectrum: Spectrum): Spectrum = {
-    val updatedCompound: Buffer[CompoundDAO] = spectrum.getCompound.asScala.map(fetchCompoundData)
+    val updatedCompound: Buffer[Compound] = spectrum.getCompound.asScala.map(fetchCompoundData)
 
     // Assembled spectrum with updated compounds
     spectrum.setCompound(updatedCompound.asJava)
@@ -41,7 +41,7 @@ class FetchCTSCompoundData extends ItemProcessor[Spectrum, Spectrum] with LazyLo
     * @param compound
     * @return
     */
-  def fetchCompoundData(compound: CompoundDAO): CompoundDAO = {
+  def fetchCompoundData(compound: Compound): Compound = {
     if (ENABLED) {
       val requestURL: String = URL + compound.getInchiKey
 
@@ -58,24 +58,24 @@ class FetchCTSCompoundData extends ItemProcessor[Spectrum, Spectrum] with LazyLo
         val names: Array[Names] = result.synonyms.map(x => new Names(true, x.name, 0.0, "CTS"))
 
         // ArrayBuffer for metadata
-        val metaData: ArrayBuffer[MetaDataDAO] = ArrayBuffer()
+        val metaData: ArrayBuffer[MetaData] = ArrayBuffer()
 
         // Process compound properties
 
-        metaData += new MetaDataDAO(null,CommonMetaData.MOLECULAR_FORMULA, result.formula, false, "compound properties", true, null)
-        metaData += new MetaDataDAO(null , CommonMetaData.MOLECULAR_WEIGHT, result.molweight.toString, false, "compound properties", true, null)
-        metaData += new MetaDataDAO(null, CommonMetaData.TOTAL_EXACT_MASS, result.exactmass.toString, false, "compound properties", true, null)
+        metaData += new MetaData(null,CommonMetaData.MOLECULAR_FORMULA, result.formula, false, "compound properties", true, null)
+        metaData += new MetaData(null , CommonMetaData.MOLECULAR_WEIGHT, result.molweight.toString, false, "compound properties", true, null)
+        metaData += new MetaData(null, CommonMetaData.TOTAL_EXACT_MASS, result.exactmass.toString, false, "compound properties", true, null)
 
         // Process external ids
         result.externalIds.foreach { x =>
-          metaData += new MetaDataDAO(x.url, x.name, x.value, false, "external ids", true, null)
+          metaData += new MetaData(x.url, x.name, x.value, false, "external ids", true, null)
         }
 
         val newNames: java.util.List[Names] = compound.getNames
         newNames.addAll(names.toList.asJava)
         compound.setNames(newNames)
 
-        val newMetadata: java.util.List[MetaDataDAO] = compound.getMetaData
+        val newMetadata: java.util.List[MetaData] = compound.getMetaData
         newMetadata.addAll(metaData.asJava)
         compound.setMetaData(newMetadata)
 

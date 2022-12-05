@@ -41,6 +41,7 @@ class BootstrapDownloaderService extends LazyLogging {
     */
   def createPredefinedQueries(): Unit = {
 
+    predefinedQueryRepo.deleteAll()
     // Create library exports
     createLibraryQueries()
 

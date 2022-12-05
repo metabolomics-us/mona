@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Score, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Score, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
-import scala.collection.mutable.{Buffer}
+import scala.collection.mutable.Buffer
 import scala.jdk.CollectionConverters._
 /**
   * Created by sajjan on 4/16/16.
@@ -20,7 +20,7 @@ class NormalizeMSLevelValue extends ItemProcessor[Spectrum, Spectrum] with LazyL
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val updatedMetaData: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala.map(normalizeMSLevelData(_, spectrum.getId)).filter(_ != null)
+    val updatedMetaData: Buffer[MetaData] = spectrum.getMetaData.asScala.map(normalizeMSLevelData(_, spectrum.getId)).filter(_ != null)
 
     val updatedScore: Score =
       if (updatedMetaData.exists(x => x.getName.toLowerCase == CommonMetaData.MS_LEVEL.toLowerCase && x.getValue.toString.matches("^MS[1-9]$"))) {
@@ -40,7 +40,7 @@ class NormalizeMSLevelValue extends ItemProcessor[Spectrum, Spectrum] with LazyL
     * @param metaData
     * @return
     */
-  def normalizeMSLevelData(metaData: MetaDataDAO, id: String): MetaDataDAO = {
+  def normalizeMSLevelData(metaData: MetaData, id: String): MetaData = {
     if (metaData.getName == CommonMetaData.MS_LEVEL) {
       val value: String = metaData.getValue.toString.trim
 

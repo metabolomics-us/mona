@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao._
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Impacts, MetaData, Names, Score, Spectrum, Tag}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
+
 import scala.collection.mutable.Buffer
 import scala.jdk.CollectionConverters._
 
@@ -22,7 +23,7 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
   override def process(spectrum: Spectrum): Spectrum = {
     logger.info(s"${spectrum.getId}: Filtering computed data")
 
-    val filteredCompound: Buffer[CompoundDAO] =
+    val filteredCompound: Buffer[Compound] =
       if (spectrum.getCompound != null) {
         spectrum.getCompound.asScala.map { compound =>
           compound.setMetaData(filterMetaData(compound.getMetaData.asScala).asJava)
@@ -31,14 +32,14 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
           compound
         }
       } else {
-        Buffer[CompoundDAO]()
+        Buffer[Compound]()
       }
 
-    val filteredMetaData: Buffer[MetaDataDAO] = filterMetaData(spectrum.getMetaData.asScala)
-    val filteredTags: Buffer[TagDAO] = filterTags(spectrum.getTags.asScala)
+    val filteredMetaData: Buffer[MetaData] = filterMetaData(spectrum.getMetaData.asScala)
+    val filteredTags: Buffer[Tag] = filterTags(spectrum.getTags.asScala)
 
-    logger.info(s"${spectrum.getId}: Filtered metadata from ${Option(spectrum.getMetaData.asScala).getOrElse(Buffer[MetaDataDAO]()).length} -> ${filteredMetaData.length}")
-    logger.info(s"${spectrum.getId}: Filtered tags from ${Option(spectrum.getTags.asScala).getOrElse(Buffer[TagDAO]()).length} -> ${filteredTags.length}")
+    logger.info(s"${spectrum.getId}: Filtered metadata from ${Option(spectrum.getMetaData.asScala).getOrElse(Buffer[MetaData]()).length} -> ${filteredMetaData.length}")
+    logger.info(s"${spectrum.getId}: Filtered tags from ${Option(spectrum.getTags.asScala).getOrElse(Buffer[Tag]()).length} -> ${filteredTags.length}")
 
     // Assembled filtered spectrum
     spectrum.setCompound(filteredCompound.asJava)
@@ -55,11 +56,11 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     * @param metaData
     * @return
     */
-  def filterMetaData(metaData: Buffer[MetaDataDAO]): Buffer[MetaDataDAO] = {
+  def filterMetaData(metaData: Buffer[MetaData]): Buffer[MetaData] = {
     if (metaData != null) {
       metaData.filter(!_.getComputed)
     } else {
-      Buffer[MetaDataDAO]()
+      Buffer[MetaData]()
     }
   }
 
@@ -83,11 +84,11 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     * @param tags
     * @return
     */
-  def filterTags(tags: Buffer[TagDAO]): Buffer[TagDAO] = {
+  def filterTags(tags: Buffer[Tag]): Buffer[Tag] = {
     if (tags != null) {
       tags.filter(!_.getRuleBased)
     } else {
-      Buffer[TagDAO]()
+      Buffer[Tag]()
     }
   }
 }

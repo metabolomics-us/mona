@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumSubmitter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Spectrum, SpectrumSubmitter}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import edu.ucdavis.fiehnlab.mona.core.similarity.config.SimilarityConfig
@@ -62,7 +61,7 @@ class SimilaritySearchServiceTest extends AnyWordSpec with Matchers with LazyLog
         postSpectrumResultRepository.deleteAll()
 
         (correctMatches ++ incorrectMatches).foreach { x =>
-          val spectrum: Spectrum = new Spectrum(Array(new CompoundDAO()).toList.asJava, x.id, Array().toList.asJava, null, null, x.spectrum, null, null, null, null, new SpectrumSubmitter(), null, null)
+          val spectrum: Spectrum = new Spectrum(Array(new Compound()).toList.asJava, x.id, Array().toList.asJava, null, null, x.spectrum, null, null, null, null, new SpectrumSubmitter(), null, null)
           postSpectrumResultRepository.save(spectrum)
         }
       }

@@ -4,7 +4,7 @@ import java.io.InputStreamReader
 import java.util.Date
 import java.util.concurrent.CountDownLatch
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusCounterConfiguration, MonaNotificationBusCounterConfiguration}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.wordspec.AnyWordSpec

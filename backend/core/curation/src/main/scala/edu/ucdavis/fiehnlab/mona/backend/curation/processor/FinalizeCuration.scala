@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{Score, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Score, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
 import scala.jdk.CollectionConverters._

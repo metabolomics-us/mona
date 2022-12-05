@@ -1,7 +1,6 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
+package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
@@ -14,7 +13,7 @@ import java.util.*;
 @Entity
 @Table(name = "compound")
 @Profile({"mona.persistence"})
-public class CompoundDAO implements Serializable {
+public class Compound implements Serializable {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "compound_count")
@@ -32,7 +31,7 @@ public class CompoundDAO implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "compound_id")
     @Column(name = "tags")
-    private List<TagDAO> tags;
+    private List<Tag> tags;
 
     @Column(name = "inchi")
     private String inchi;
@@ -40,7 +39,6 @@ public class CompoundDAO implements Serializable {
     @Column(name = "names")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "compound_id")
-    @BatchSize(size = 50)
     private List<Names> names;
 
     @Column(name = "molFile")
@@ -56,19 +54,17 @@ public class CompoundDAO implements Serializable {
     @Column(name = "metaData")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "compound_metadata_id")
-    @BatchSize(size = 50)
-    private List<MetaDataDAO> metaData;
+    private List<MetaData> metaData;
 
     @Column(name = "classification")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "compound_classification_id")
-    @BatchSize(size = 50)
-    private List<MetaDataDAO> classification = new ArrayList<>();
+    private List<MetaData> classification = new ArrayList<>();
 
-    public CompoundDAO() {
+    public Compound() {
     }
 
-    public CompoundDAO(String kind, List<TagDAO> tags, String inchi, List<Names> names, String molFile, Boolean computed, String inchiKey, List<MetaDataDAO> metaData, List<MetaDataDAO> classification) {
+    public Compound(String kind, List<Tag> tags, String inchi, List<Names> names, String molFile, Boolean computed, String inchiKey, List<MetaData> metaData, List<MetaData> classification) {
         this.kind = kind;
         this.tags = tags;
         this.inchi = inchi;
@@ -90,7 +86,7 @@ public class CompoundDAO implements Serializable {
         this.kind = kind;
     }
 
-    public void setTags(List<TagDAO> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 
@@ -114,11 +110,11 @@ public class CompoundDAO implements Serializable {
         this.inchiKey = inchiKey;
     }
 
-    public void setMetaData(List<MetaDataDAO> metaData) {
+    public void setMetaData(List<MetaData> metaData) {
         this.metaData = metaData;
     }
 
-    public void setClassification(List<MetaDataDAO> classification) {
+    public void setClassification(List<MetaData> classification) {
         this.classification = classification;
     }
 
@@ -126,7 +122,7 @@ public class CompoundDAO implements Serializable {
         return kind;
     }
 
-    public List<TagDAO> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
@@ -150,11 +146,11 @@ public class CompoundDAO implements Serializable {
         return inchiKey;
     }
 
-    public List<MetaDataDAO> getMetaData() {
+    public List<MetaData> getMetaData() {
         return metaData;
     }
 
-    public List<MetaDataDAO> getClassification() {
+    public List<MetaData> getClassification() {
         return classification;
     }
 
@@ -170,7 +166,7 @@ public class CompoundDAO implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CompoundDAO that = (CompoundDAO) o;
+        Compound that = (Compound) o;
         return Objects.equals(id, that.id) && Objects.equals(spectrum, that.spectrum) && Objects.equals(kind, that.kind) && Objects.equals(tags, that.tags) && Objects.equals(inchi, that.inchi) && Objects.equals(names, that.names) && Objects.equals(molFile, that.molFile) && Objects.equals(computed, that.computed) && Objects.equals(inchiKey, that.inchiKey) && Objects.equals(metaData, that.metaData) && Objects.equals(classification, that.classification);
     }
 

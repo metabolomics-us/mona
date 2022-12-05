@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.core.similarity.index
 import java.io.InputStreamReader
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 import org.scalatest.matchers.should.Matchers

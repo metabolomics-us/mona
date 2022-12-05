@@ -3,8 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmitter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.views.SpectrumSubmitterStatistics
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsSubmitterRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.SpectrumSubmitterRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumSubmitterRepository, StatisticsSubmitterRepository}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service

@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
+package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
@@ -12,7 +12,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "library")
 @Profile({"mona.persistence"})
-public class LibraryDAO implements Serializable {
+public class Library implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "library_id")
     @SequenceGenerator(name = "library_id", initialValue = 1, allocationSize = 50)
@@ -32,12 +32,12 @@ public class LibraryDAO implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "tag_id")
-    private TagDAO tag;
+    private Tag tag;
 
-    public LibraryDAO() {
+    public Library() {
     }
 
-    public LibraryDAO(String description, String link, String library, TagDAO tag) {
+    public Library(String description, String link, String library, Tag tag) {
         this.description = description;
         this.link = link;
         this.library = library;
@@ -84,11 +84,11 @@ public class LibraryDAO implements Serializable {
         this.library = library;
     }
 
-    public TagDAO getTag() {
+    public Tag getTag() {
         return tag;
     }
 
-    public void setTag(TagDAO tag) {
+    public void setTag(Tag tag) {
         this.tag = tag;
     }
 
@@ -97,7 +97,7 @@ public class LibraryDAO implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LibraryDAO that = (LibraryDAO) o;
+        Library that = (Library) o;
         return Objects.equals(id, that.id) && Objects.equals(spectrum, that.spectrum) && Objects.equals(description, that.description) && Objects.equals(link, that.link) && Objects.equals(library, that.library) && Objects.equals(tag, that.tag);
     }
 

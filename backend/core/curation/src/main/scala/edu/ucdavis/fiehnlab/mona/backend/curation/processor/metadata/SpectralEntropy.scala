@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 
@@ -9,7 +9,7 @@ import scala.math._
 import scala.util.control.Breaks._
 import org.springframework.batch.item.ItemProcessor
 import scala.jdk.CollectionConverters._
-import scala.collection.mutable.{Buffer}
+import scala.collection.mutable.Buffer
 @Step(description = "this step will calculate entropy for a given spectrum and update the metadata")
 class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
@@ -31,9 +31,9 @@ class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging
     logger.info(s"Calculated Spectral Entropy is: ${entropy_a}")
     logger.info(s"Calculated Normalized Entropy is: ${normalized_entropy_a}")
 
-    val updatedMetaData: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala :+
-      new MetaDataDAO(null, CommonMetaData.SPECTRAL_ENTROPY, entropy_a.toString, false, "computed", true, null) :+
-      new MetaDataDAO(null, CommonMetaData.NORMALIZED_ENTROPY, normalized_entropy_a.toString, false, "computed", true, null)
+    val updatedMetaData: Buffer[MetaData] = spectrum.getMetaData.asScala :+
+      new MetaData(null, CommonMetaData.SPECTRAL_ENTROPY, entropy_a.toString, false, "computed", true, null) :+
+      new MetaData(null, CommonMetaData.NORMALIZED_ENTROPY, normalized_entropy_a.toString, false, "computed", true, null)
 
     spectrum.setMetaData(updatedMetaData.asJava)
     spectrum

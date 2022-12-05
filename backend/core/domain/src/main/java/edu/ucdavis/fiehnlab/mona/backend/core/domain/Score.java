@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
+package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;

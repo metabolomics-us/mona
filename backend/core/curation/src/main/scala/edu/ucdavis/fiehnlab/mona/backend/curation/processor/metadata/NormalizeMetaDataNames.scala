@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.MetaDataSynonyms
 import org.springframework.batch.item.ItemProcessor
@@ -37,7 +37,7 @@ class NormalizeMetaDataNames extends ItemProcessor[Spectrum, Spectrum] {
     * @param metaData
     * @return
     */
-  def renameMetaData(metaData: Buffer[MetaDataDAO]): Buffer[MetaDataDAO] = {
+  def renameMetaData(metaData: Buffer[MetaData]): Buffer[MetaData] = {
     metaData.map(x =>
       if (SYNONYMS.contains(x.getName.toLowerCase)) {
         x.setName(SYNONYMS(x.getName.toLowerCase))

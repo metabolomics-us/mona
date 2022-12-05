@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.types
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 
 /**
   * Created by sajjan on 12/28/16.

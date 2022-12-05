@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
-
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import java.util
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter

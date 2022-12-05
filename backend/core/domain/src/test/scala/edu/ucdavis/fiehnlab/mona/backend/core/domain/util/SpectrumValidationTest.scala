@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.util
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec

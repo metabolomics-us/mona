@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsCompoundClassesRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{CompoundRepository, StatisticsCompoundClassesRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsCompoundClasses
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.CompoundRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -82,13 +81,13 @@ class CompoundClassStatisticsService extends LazyLogging{
         for (i <- 0 until compoundClassString.length) {
           val combinedString = compoundClassString.slice(0, i + 1).mkString("|")
           if (!finalMap.contains(combinedString)) {
-            finalMap(combinedString) = Map("spectra" -> ArrayBuffer[String](compound.getSpectrum.getId), "compounds" -> inchiKeys)
+            finalMap(combinedString) = Map("spectra" -> ArrayBuffer[String](compound.getSpectrum.getId), "compounds" -> (ArrayBuffer[String]() ++= inchiKeys))
           } else {
             if (finalMap(combinedString).contains("spectra")) {
               finalMap(combinedString)("spectra").append(compound.getSpectrum.getId)
             }
             if (finalMap(combinedString).contains("compounds")) {
-              finalMap(combinedString)("compounds") ++= (inchiKeys)
+              finalMap(combinedString)("compounds") ++= inchiKeys
             }
           }
         }

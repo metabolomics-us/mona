@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.chemspider
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,7 +24,7 @@ class FetchChemSpiderCompoundData extends ItemProcessor[Spectrum, Spectrum] with
 
 
   override def process(spectrum: Spectrum): Spectrum = {
-    val updatedCompound: Buffer[CompoundDAO] = spectrum.getCompound.asScala.map(compound => fetchCompoundData(compound, spectrum.getId))
+    val updatedCompound: Buffer[Compound] = spectrum.getCompound.asScala.map(compound => fetchCompoundData(compound, spectrum.getId))
 
     // Assembled spectrum with updated compounds
     spectrum.setCompound(updatedCompound.asJava)
@@ -37,7 +37,7 @@ class FetchChemSpiderCompoundData extends ItemProcessor[Spectrum, Spectrum] with
    * @param compound
    * @return
    */
-  def fetchCompoundData(compound: CompoundDAO, id: String): CompoundDAO = {
+  def fetchCompoundData(compound: Compound, id: String): Compound = {
     compound
   }
 

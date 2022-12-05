@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.config
 import java.io.{BufferedInputStream, File, FileInputStream, FileNotFoundException}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{Workflow, WorkflowBuilder}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.adduct.AdductPrediction

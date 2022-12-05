@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.validation
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
@@ -25,7 +25,7 @@ class MassAccuracyValidation extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val massAccuracyMetaData: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala.filter(x => x.getName == CommonMetaData.MASS_ACCURACY && x.getComputed)
+    val massAccuracyMetaData: Buffer[MetaData] = spectrum.getMetaData.asScala.filter(x => x.getName == CommonMetaData.MASS_ACCURACY && x.getComputed)
 
     if (massAccuracyMetaData.isEmpty) {
       logger.debug(s"${spectrum.getId}: Mass accuracy not defined for specturm")

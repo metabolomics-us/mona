@@ -4,9 +4,8 @@ import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{Spectrum, SubmitterDAO}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SubmitterRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import org.scalatest.concurrent.Eventually
@@ -65,9 +64,9 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
       }
 
       "create a test submitter" in {
-        submitterRepository.save(new SubmitterDAO( "test", "test", "test", "test"))
-        submitterRepository.save(new SubmitterDAO("test2", "", "", ""))
-        submitterRepository.save(new SubmitterDAO("ntho@chem.uoa.gr", "", "", ""))
+        submitterRepository.save(new Submitter( "test", "test", "test", "test"))
+        submitterRepository.save(new Submitter("test2", "", "", ""))
+        submitterRepository.save(new Submitter("ntho@chem.uoa.gr", "", "", ""))
         assert(submitterRepository.count() == 3)
       }
 

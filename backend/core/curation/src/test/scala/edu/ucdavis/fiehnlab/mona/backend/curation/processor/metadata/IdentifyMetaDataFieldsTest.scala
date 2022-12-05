@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Tag}
 import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{Spectrum, TagDAO}
 import org.scalatest.wordspec.AnyWordSpec
 import scala.jdk.CollectionConverters._
 /**
@@ -22,7 +22,7 @@ class IdentifyMetaDataFieldsTest extends AnyWordSpec {
       "score the presence of metadata" in {
         exampleRecords.foreach { spectrum: Spectrum =>
           // Add LC-MS tag since these spectra haven't been curated
-          spectrum.setTags((spectrum.getTags.asScala :+ new TagDAO("LC-MS", false)).asJava)
+          spectrum.setTags((spectrum.getTags.asScala :+ new Tag("LC-MS", false)).asJava)
           val processedSpectrum = processor.process(spectrum)
 
           assert(processedSpectrum.getScore.getImpacts.asScala.exists(_.getReason.toLowerCase.contains("instrument information")))

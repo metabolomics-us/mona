@@ -298,7 +298,7 @@ export class UploadLibraryService{
             library: undefined,
             tags: [],
             metaData: [],
-            compound: undefined,
+            compound: [],
             comments: [],
             submitter: ''
         };
@@ -353,10 +353,10 @@ export class UploadLibraryService{
       };
 
       const arrayBufferToString = async (arrayBuffer) => {
-        // Start with 2MB by default
-        const chunkSize = 2 * 1024 * 1024;
-        // Buffer only 200 spectrum at a time
-        const bufferSize = 200;
+        // Start with 3MB by default
+        const chunkSize = 3 * 1024 * 1024;
+        // Buffer only 150 spectrum at a time
+        const bufferSize = 150;
         const decoder = new TextDecoder();
         // offset is where we begin our starting slice index
         let offset = 0;
@@ -378,7 +378,11 @@ export class UploadLibraryService{
           // Every loop we match the next regex value in the slice to grab a spectrum
           // With the /g tag on the regex it will match the entire slice, so everytime
           // we execute .exec() it will return a matched block until blocks is null
-          // or we hit our poolSize limit.
+          // or, we hit our poolSize limit (would rather hit the poolSize limit
+          // because the regex is very finicky and will typically not match the
+          // entire ion set if it gets cut off). For future dev, if you realize
+          // that the number of uploaded spectra doesn't match the file, then make
+          // the buffer smaller or increment the chunkSize (try buffer first).
           while (( blocks = regex.exec(decodedText)) !== null ) {
             // Push full match stored in blocks[0] and file name into our promise buffer
             promiseBuffer.push([blocks[0]]);
@@ -393,7 +397,7 @@ export class UploadLibraryService{
               break;
             }
           }
-          // Now that we broke out, we need to move our offset so we take a new chunk from
+          // Now that we broke out, we need to move our offset so, we take a new chunk from
           // the buffer where we last left off in the regex. In order to get identical sizing
           // to the array buffer, we throw a substring of the decodedText into a blob and then
           // call the .size() function to get an appropriate size of our smaller slice.

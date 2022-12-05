@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -95,7 +94,7 @@ public class SpectrumSubmitter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SpectrumSubmitter that = (SpectrumSubmitter) o;
-        return id.equals(that.id) && spectrum.equals(that.spectrum) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(institution, that.institution);
+        return Objects.equals(id, that.id) && Objects.equals(spectrum, that.spectrum) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(institution, that.institution);
     }
 
     @Override

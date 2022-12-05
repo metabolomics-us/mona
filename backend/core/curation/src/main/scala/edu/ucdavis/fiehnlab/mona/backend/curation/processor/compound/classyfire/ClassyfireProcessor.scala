@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire
 
 import java.net.InetAddress
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CompoundProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
@@ -51,7 +51,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
       val compounds = spectrum.getCompound.asScala.map(compound =>
         if (compound.getClassification == null) {
-          compound.setClassification(Buffer[MetaDataDAO]().asJava)
+          compound.setClassification(Buffer[MetaData]().asJava)
           classify(compound, spectrum.getId)
         } else {
           classify(compound, spectrum.getId)
@@ -71,9 +71,9 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     * @param compound
     * @return
     */
-  def classify(compound: CompoundDAO, id: String): CompoundDAO = {
+  def classify(compound: Compound, id: String): Compound = {
     // Look for a ClassyFire query id
-    val classyfireQueryId: Buffer[MetaDataDAO] = compound.getClassification.asScala.filter(_.getName == "ClassyFire Query ID")
+    val classyfireQueryId: Buffer[MetaData] = compound.getClassification.asScala.filter(_.getName == "ClassyFire Query ID")
 
     // Find provided or calculated InChIKey
     val inchiKey: String =
@@ -158,47 +158,47 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     * @param classification
     * @return
     */
-  def processClassification(compound: CompoundDAO, id: String, classification: ClassyfireResult, url: String): CompoundDAO = {
+  def processClassification(compound: Compound, id: String, classification: ClassyfireResult, url: String): Compound = {
 
-    val buffer: ArrayBuffer[MetaDataDAO] = ArrayBuffer()
+    val buffer: ArrayBuffer[MetaData] = ArrayBuffer()
 
     if (classification.kingdom != null) {
-      val metaData = new MetaDataDAO(null, "kingdom", classification.kingdom.name, false, "classification", true, null)
+      val metaData = new MetaData(null, "kingdom", classification.kingdom.name, false, "classification", true, null)
       buffer += metaData
     }
 
     if (classification.superclass != null) {
-      val metaData = new MetaDataDAO(null, "superclass", classification.superclass.name, false, "classification", true, null)
+      val metaData = new MetaData(null, "superclass", classification.superclass.name, false, "classification", true, null)
       buffer += metaData
     }
 
     if (classification.`class` != null) {
-      val metaData = new MetaDataDAO(null, "class", classification.`class`.name, false, "classification", true, null)
+      val metaData = new MetaData(null, "class", classification.`class`.name, false, "classification", true, null)
       buffer += metaData
     }
 
     if (classification.subclass != null) {
-      val metaData = new MetaDataDAO(null, "subclass", classification.subclass.name, false, "classification", true, null)
+      val metaData = new MetaData(null, "subclass", classification.subclass.name, false, "classification", true, null)
       buffer += metaData
     }
 
     if (classification.intermediate_nodes != null) {
       var level = 1
       classification.intermediate_nodes.foreach { parent =>
-        val metaData = new MetaDataDAO(null, s"direct parent level $level", parent.name, false, "classification", true, null)
+        val metaData = new MetaData(null, s"direct parent level $level", parent.name, false, "classification", true, null)
         buffer += metaData
         level = level + 1
       }
     }
 
     if (classification.direct_parent != null && classification.direct_parent.name != null) {
-      val metaData = new MetaDataDAO(null, "direct parent", classification.direct_parent.name, false, "classification", true, null)
+      val metaData = new MetaData(null, "direct parent", classification.direct_parent.name, false, "classification", true, null)
       buffer += metaData
     }
 
     if (classification.alternative_parents != null) {
       classification.alternative_parents.foreach { parent =>
-        val metaData = new MetaDataDAO(null, "alternative parent", parent.name, false, "classification", true, null)
+        val metaData = new MetaData(null, "alternative parent", parent.name, false, "classification", true, null)
         buffer += metaData
       }
     }
@@ -232,13 +232,13 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     *
     * @param compound
     */
-  def scheduleClassification(compound: CompoundDAO, id: String): CompoundDAO = {
+  def scheduleClassification(compound: Compound, id: String): Compound = {
 
     logger.info(s"$id: Scheduling compound classification from structure")
 
     // Submit InChI or SMILES if available, sorted
-    val inchikey: Buffer[MetaDataDAO] = compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.INCHI_CODE && x.getComputed)
-    val smiles: mutable.Buffer[MetaDataDAO] = compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.SMILES && x.getComputed)
+    val inchikey: Buffer[MetaData] = compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.INCHI_CODE && x.getComputed)
+    val smiles: mutable.Buffer[MetaData] = compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.SMILES && x.getComputed)
 
     val structure: String =
       if (inchikey.nonEmpty) inchikey.head.getValue.toString
@@ -254,7 +254,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
         if (result.getStatusCode == HttpStatus.OK) {
           logger.info(s"$id: Scheduled with query id ${result.getBody.id}")
-          compound.setClassification(ArrayBuffer[MetaDataDAO](new MetaDataDAO(null, "ClassyFire Query ID", result.getBody.id.toString, true, "none", false, null)).asJava)
+          compound.setClassification(ArrayBuffer[MetaData](new MetaData(null, "ClassyFire Query ID", result.getBody.id.toString, true, "none", false, null)).asJava)
           compound
         } else {
           logger.info(s"$id: Received status code ${result.getStatusCode} for $structure")

@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
+package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
@@ -12,7 +12,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "tags")
 @Profile({"mona.persistence"})
-public class TagDAO implements Serializable {
+public class Tag implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tag_id")
     @SequenceGenerator(name = "tag_id", initialValue = 1, allocationSize = 50)
@@ -27,21 +27,21 @@ public class TagDAO implements Serializable {
     @ManyToOne()
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private CompoundDAO compound;
+    private Compound compound;
 
     @OneToOne()
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private LibraryDAO library;
+    private Library library;
 
     private String text;
 
     private Boolean ruleBased;
 
-    public TagDAO() {
+    public Tag() {
     }
 
-    public TagDAO(String text, Boolean ruleBased) {
+    public Tag(String text, Boolean ruleBased) {
         this.text = text;
         this.ruleBased = ruleBased;
     }
@@ -64,14 +64,14 @@ public class TagDAO implements Serializable {
 
     public Spectrum getSpectrum() { return spectrum; }
 
-    public CompoundDAO getCompound() { return compound;}
+    public Compound getCompound() { return compound;}
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TagDAO tagDAO = (TagDAO) o;
-        return id.equals(tagDAO.id) && spectrum.equals(tagDAO.spectrum) && compound.equals(tagDAO.compound) && library.equals(tagDAO.library) && Objects.equals(text, tagDAO.text) && Objects.equals(ruleBased, tagDAO.ruleBased);
+        Tag tag = (Tag) o;
+        return id.equals(tag.id) && spectrum.equals(tag.spectrum) && compound.equals(tag.compound) && library.equals(tag.library) && Objects.equals(text, tag.text) && Objects.equals(ruleBased, tag.ruleBased);
     }
 
     @Override

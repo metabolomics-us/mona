@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import java.nio.file.{Files, Path}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.QueryExport
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
 
 import scala.jdk.CollectionConverters._
 
@@ -70,12 +70,12 @@ class IdentifierTableDownloader(export: QueryExport, downloadDir: Path, compress
     // Get compound and structures
     if (spectrum.getCompound != null && spectrum.getCompound.asScala.nonEmpty) {
       // Add InChIKey
-      val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
+      val compound: Compound = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
       if (compound.getInchiKey != null && compound.getInchiKey.nonEmpty) {
         sb.append(compound.getInchiKey).append(',')
       } else {
-        val metaData: Option[MetaDataDAO] = compound.getMetaData.asScala.find(_.getName == "InChIKey")
+        val metaData: Option[MetaData] = compound.getMetaData.asScala.find(_.getName == "InChIKey")
 
         if (metaData.isDefined) {
           sb.append(metaData.get.getValue).append(',')
@@ -83,7 +83,7 @@ class IdentifierTableDownloader(export: QueryExport, downloadDir: Path, compress
       }
 
       // Add SMILES
-      val metaData: Option[MetaDataDAO] = compound.getMetaData.asScala.find(_.getName.toLowerCase == "smiles")
+      val metaData: Option[MetaData] = compound.getMetaData.asScala.find(_.getName.toLowerCase == "smiles")
 
       if (metaData.isDefined) {
         sb.append(metaData.get.getValue)

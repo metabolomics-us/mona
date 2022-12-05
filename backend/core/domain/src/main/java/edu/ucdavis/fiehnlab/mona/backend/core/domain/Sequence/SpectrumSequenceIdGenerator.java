@@ -1,6 +1,6 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Sequence;
+package edu.ucdavis.fiehnlab.mona.backend.core.domain.Sequence;
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -10,7 +10,6 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.LongType;
 import org.hibernate.type.Type;
 
-import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.Properties;
 

@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.writer;
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum;
 import org.springframework.batch.item.ItemWriter;
 
 import java.util.List;

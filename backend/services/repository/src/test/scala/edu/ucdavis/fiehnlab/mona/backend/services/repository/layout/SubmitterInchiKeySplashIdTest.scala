@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.services.repository.layout
 import java.io.{File, InputStreamReader}
 import java.nio.file.Paths
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.test.context.ActiveProfiles

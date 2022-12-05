@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, Impacts, MetaDataDAO}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Impacts, MetaData}
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,7 +31,7 @@ class CompoundProcessor extends LazyLogging {
   val inchikeyProcessor: CompoundInChIKeyProcessor = null
 
 
-  def process(compound: CompoundDAO, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
 
     val molProcessorResult =
       try {
@@ -87,7 +87,7 @@ class CompoundProcessor extends LazyLogging {
     }
   }
 
-  def process(compound: CompoundDAO, id: String): (String, IAtomContainer) = process(compound, id, null)
+  def process(compound: Compound, id: String): (String, IAtomContainer) = process(compound, id, null)
 }
 
 @Component
@@ -96,14 +96,14 @@ trait AbstractCompoundProcessor extends LazyLogging {
   @Autowired
   val compoundConversion: CompoundConversion = null
 
-  def process(compound: CompoundDAO, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer)
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer)
 }
 
 
 @Component
 class CompoundMOLProcessor extends AbstractCompoundProcessor {
 
-  def process(compound: CompoundDAO, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
     if (compound.getMolFile != null && !compound.getMolFile.isEmpty) {
       logger.info(s"$id: Parsing MOL definition")
 
@@ -125,8 +125,8 @@ class CompoundMOLProcessor extends AbstractCompoundProcessor {
 @Component
 class CompoundInChIProcessor extends AbstractCompoundProcessor {
 
-  def process(compound: CompoundDAO, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
-    val inchiMetaData: Option[MetaDataDAO] = compound.getMetaData.asScala.find(_.getName.toLowerCase == CommonMetaData.INCHI_CODE.toLowerCase)
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
+    val inchiMetaData: Option[MetaData] = compound.getMetaData.asScala.find(_.getName.toLowerCase == CommonMetaData.INCHI_CODE.toLowerCase)
 
     val inchi: String =
       if (compound.getInchi != null && !compound.getInchi.isEmpty)
@@ -164,8 +164,8 @@ class CompoundInChIProcessor extends AbstractCompoundProcessor {
 @Component
 class CompoundSMILESProcessor extends AbstractCompoundProcessor with LazyLogging {
 
-  def process(compound: CompoundDAO, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
-    val smiles: Option[MetaDataDAO] = compound.getMetaData.asScala.find(_.getName.toLowerCase == CommonMetaData.SMILES.toLowerCase)
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
+    val smiles: Option[MetaData] = compound.getMetaData.asScala.find(_.getName.toLowerCase == CommonMetaData.SMILES.toLowerCase)
 
     // Parse SMILES
     if (smiles.isDefined && !smiles.get.getValue.toString.isEmpty) {
@@ -201,7 +201,7 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
   @Autowired
   protected val restOperations: RestOperations = null
 
-  def process(compound: CompoundDAO, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
     val inchikey: String =
       if (compound.getInchiKey != null)
         compound.getInchiKey

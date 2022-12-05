@@ -1,9 +1,7 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
+package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumSubmitter;
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Sequence.SpectrumSequenceIdGenerator;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Sequence.SpectrumSequenceIdGenerator;
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.validators.NullOrNotBlank;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.context.annotation.Profile;
@@ -25,7 +23,7 @@ public class Spectrum implements Serializable {
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_id")
-    private List<CompoundDAO> compound;
+    private List<Compound> compound;
 
     @Column(name = "id")
     @Size(min = 1)
@@ -34,7 +32,7 @@ public class Spectrum implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spectrum_seq")
     @GenericGenerator(
             name = "spectrum_seq",
-            strategy = "edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Sequence.SpectrumSequenceIdGenerator",
+            strategy = "edu.ucdavis.fiehnlab.mona.backend.core.domain.Sequence.SpectrumSequenceIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = SpectrumSequenceIdGenerator.INCREMENT_PARAM, value = "250"),
                     @org.hibernate.annotations.Parameter(name = SpectrumSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "MoNA_"),
@@ -46,18 +44,16 @@ public class Spectrum implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_metadata_id")
     @Column(name = "metaData")
-    @BatchSize(size = 50)
-    private List<MetaDataDAO> metaData;
+    private List<MetaData> metaData;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_annotation_id")
     @Column(name = "annotations")
-    @BatchSize(size = 50)
-    private List<MetaDataDAO> annotations = new ArrayList<>();
+    private List<MetaData> annotations = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "score_id")
-    private Score score = new Score(Arrays.asList(new Impacts(0.0,"")), 0.0,0.0,0.0);
+    private Score score;
 
     @Column(name = "spectrum")
     @NotEmpty
@@ -83,16 +79,16 @@ public class Spectrum implements Serializable {
     @Column(name = "tags")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_id")
-    private List<TagDAO> tags;
+    private List<Tag> tags;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "library_id")
-    private LibraryDAO library;
+    private Library library;
 
     public Spectrum() {
     }
 
-    public Spectrum(List<CompoundDAO> compound, String id, List<MetaDataDAO> metaData, List<MetaDataDAO> annotations, Score score, String spectrum, String lastUpdated, String dateCreated, String lastCurated, Splash splash, SpectrumSubmitter submitter, List<TagDAO> tags, LibraryDAO library) {
+    public Spectrum(List<Compound> compound, String id, List<MetaData> metaData, List<MetaData> annotations, Score score, String spectrum, String lastUpdated, String dateCreated, String lastCurated, Splash splash, SpectrumSubmitter submitter, List<Tag> tags, Library library) {
         this.compound = compound;
         this.id = id;
         this.metaData = metaData;
@@ -125,7 +121,7 @@ public class Spectrum implements Serializable {
     }
 
 
-    public List<CompoundDAO> getCompound() {
+    public List<Compound> getCompound() {
         return compound;
     }
 
@@ -133,7 +129,7 @@ public class Spectrum implements Serializable {
         return id;
     }
 
-    public List<MetaDataDAO> getMetaData() {
+    public List<MetaData> getMetaData() {
         return metaData;
     }
 
@@ -153,11 +149,11 @@ public class Spectrum implements Serializable {
         return submitter;
     }
 
-    public List<TagDAO> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public LibraryDAO getLibrary() {
+    public Library getLibrary() {
         return library;
     }
 
@@ -167,9 +163,9 @@ public class Spectrum implements Serializable {
 
     public String getLastCurated() { return lastCurated; }
 
-    public List<MetaDataDAO> getAnnotations() { return annotations; }
+    public List<MetaData> getAnnotations() { return annotations; }
 
-    public void setCompound(List<CompoundDAO> compound) {
+    public void setCompound(List<Compound> compound) {
         this.compound = compound;
     }
 
@@ -177,11 +173,11 @@ public class Spectrum implements Serializable {
         this.id = id;
     }
 
-    public void setMetaData(List<MetaDataDAO> metaData) {
+    public void setMetaData(List<MetaData> metaData) {
         this.metaData = metaData;
     }
 
-    public void setAnnotations(List<MetaDataDAO> annotations) {
+    public void setAnnotations(List<MetaData> annotations) {
         this.annotations = annotations;
     }
 
@@ -213,11 +209,11 @@ public class Spectrum implements Serializable {
         this.submitter = submitter;
     }
 
-    public void setTags(List<TagDAO> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 
-    public void setLibrary(LibraryDAO library) {
+    public void setLibrary(Library library) {
         this.library = library;
     }
 

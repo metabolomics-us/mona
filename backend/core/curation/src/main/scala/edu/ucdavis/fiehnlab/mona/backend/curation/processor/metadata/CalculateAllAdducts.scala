@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{Spectrum, CompoundDAO, MetaDataDAO}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical.AdductBuilder
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
@@ -54,10 +54,10 @@ class CalculateAllAdducts extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         val biologicalCompound = spectrum.getCompound.get(biologicalIndex)
         val adductMap = AdductBuilder.LCMS_POSITIVE_ADDUCTS ++ AdductBuilder.LCMS_NEGATIVE_ADDUCTS
 
-        val updatedMetadata: ArrayBuffer[MetaDataDAO] = new ArrayBuffer[MetaDataDAO]()
+        val updatedMetadata: ArrayBuffer[MetaData] = new ArrayBuffer[MetaData]()
         biologicalCompound.getMetaData.asScala.foreach(x => updatedMetadata.append(x))
 
-        val updatedCompoundSet: ArrayBuffer[CompoundDAO] = new ArrayBuffer[CompoundDAO]()
+        val updatedCompoundSet: ArrayBuffer[Compound] = new ArrayBuffer[Compound]()
         spectrum.getCompound.asScala.foreach(x => updatedCompoundSet.append(x))
 
         if (theoreticalMass < 0) {
@@ -66,7 +66,7 @@ class CalculateAllAdducts extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         } else {
           adductMap.foreach {
             case (x, f) => updatedMetadata.append(
-              new MetaDataDAO(null, x, f(theoreticalMass).toString, true, "theoretical adduct", true, null)
+              new MetaData(null, x, f(theoreticalMass).toString, true, "theoretical adduct", true, null)
             )
           }
           biologicalCompound.setMetaData(updatedMetadata.asJava)

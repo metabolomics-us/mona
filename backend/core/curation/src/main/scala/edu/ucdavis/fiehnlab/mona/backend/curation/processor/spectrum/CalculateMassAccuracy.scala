@@ -1,12 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical.AdductBuilder
 import org.springframework.batch.item.ItemProcessor
-import scala.collection.mutable.{Buffer}
+import scala.collection.mutable.Buffer
 import scala.jdk.CollectionConverters._
 
 /**
@@ -23,7 +23,7 @@ class CalculateMassAccuracy extends ItemProcessor[Spectrum, Spectrum] with LazyL
     */
   override def process(spectrum: Spectrum): Spectrum = {
     // Get computed total exact mass from the biological compound if it exists
-    val biologicalCompound: CompoundDAO=
+    val biologicalCompound: Compound=
       if (spectrum.getCompound.asScala.exists(_.getKind == "biological")) {
         spectrum.getCompound.asScala.find(_.getKind == "biological").head
       } else if (spectrum.getCompound.asScala.nonEmpty) {
@@ -100,9 +100,9 @@ class CalculateMassAccuracy extends ItemProcessor[Spectrum, Spectrum] with LazyL
 
         logger.info(s"${spectrum.getId}: Calculated mass accuracy $massAccuracy and mass error $massError Da")
 
-        val updatedMetaData: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala :+
-          new MetaDataDAO(null, CommonMetaData.MASS_ACCURACY, massAccuracy.toString, false, "mass spectrometry", true, "ppm") :+
-          new MetaDataDAO(null, CommonMetaData.MASS_ERROR, massError.toString, false, "mass spectrometry", true, "Da")
+        val updatedMetaData: Buffer[MetaData] = spectrum.getMetaData.asScala :+
+          new MetaData(null, CommonMetaData.MASS_ACCURACY, massAccuracy.toString, false, "mass spectrometry", true, "ppm") :+
+          new MetaData(null, CommonMetaData.MASS_ERROR, massError.toString, false, "mass spectrometry", true, "Da")
 
         spectrum.setMetaData(updatedMetaData.asJava)
         spectrum

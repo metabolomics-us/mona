@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{Impacts, MetaDataDAO, Spectrum, TagDAO}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Impacts, MetaData, Spectrum, Tag}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CommonTags, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
@@ -54,7 +54,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val tags: Buffer[TagDAO] = spectrum.getTags.asScala.filter(x => Array(CommonTags.GCMS_SPECTRUM, CommonTags.LCMS_SPECTRUM, CommonTags.CEMS_SPECTRUM).contains(x.getText))
+    val tags: Buffer[Tag] = spectrum.getTags.asScala.filter(x => Array(CommonTags.GCMS_SPECTRUM, CommonTags.LCMS_SPECTRUM, CommonTags.CEMS_SPECTRUM).contains(x.getText))
 
     if (tags.length == 1) {
       logger.info(s"${spectrum.getId}: Spectrum already has identified chromatography: ${tags(0).getText}")
@@ -103,11 +103,11 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
         logger.info(s"${spectrum.getId}: Identified as GC/MS")
 
         // Add GCMS tag and metadata
-        val updatedTags: Buffer[TagDAO] =
+        val updatedTags: Buffer[Tag] =
           if (spectrum.getTags.asScala.exists(_.getText == CommonTags.GCMS_SPECTRUM))
             spectrum.getTags.asScala
           else
-            spectrum.getTags.asScala :+ new TagDAO(CommonTags.GCMS_SPECTRUM, true)
+            spectrum.getTags.asScala :+ new Tag(CommonTags.GCMS_SPECTRUM, true)
 
         spectrum.setTags(updatedTags.asJava)
 
@@ -120,11 +120,11 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
         logger.info(s"${spectrum.getId}: Identified as LC/MS")
 
         // Add LCMS tag
-        val updatedTags: Buffer[TagDAO] =
+        val updatedTags: Buffer[Tag] =
           if (spectrum.getTags.asScala.exists(_.getText == CommonTags.LCMS_SPECTRUM))
             spectrum.getTags.asScala
           else
-            spectrum.getTags.asScala :+ new TagDAO(CommonTags.LCMS_SPECTRUM, true)
+            spectrum.getTags.asScala :+ new Tag(CommonTags.LCMS_SPECTRUM, true)
 
         spectrum.setTags(updatedTags.asJava)
         spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Chromatography identified as LC-MS"))
@@ -135,11 +135,11 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
         logger.info(s"${spectrum.getId}: Identified as CE/MS")
 
         // Add CEMS tag
-        val updatedTags: Buffer[TagDAO] =
+        val updatedTags: Buffer[Tag] =
           if (spectrum.getTags.asScala.exists(_.getText == CommonTags.CEMS_SPECTRUM))
             spectrum.getTags.asScala
           else
-            spectrum.getTags.asScala :+ new TagDAO(CommonTags.CEMS_SPECTRUM, true)
+            spectrum.getTags.asScala :+ new Tag(CommonTags.CEMS_SPECTRUM, true)
 
         spectrum.setTags(updatedTags.asJava)
         spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Chromatography identified as CD-MS"))
@@ -160,7 +160,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @param metaData
     * @return
     */
-  def validateMetaData(metaData: MetaDataDAO, criteria: Map[String, Array[String]], id: String): Boolean = {
+  def validateMetaData(metaData: MetaData, criteria: Map[String, Array[String]], id: String): Boolean = {
     criteria.exists {
       case (name: String, terms: Array[String]) =>
         // Check that the metadata name matches the name criterion

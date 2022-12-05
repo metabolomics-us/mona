@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 
 import java.io.InputStreamReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.scalatest.wordspec.AnyWordSpec
@@ -27,7 +27,7 @@ class NormalizePrecursorValuesTest extends AnyWordSpec with LazyLogging{
     "given a spectra" must {
       "remove invalid precursor type ''" in {
         val inputSpectrum = new Spectrum(spectrum)
-        inputSpectrum.setMetaData((metaData.asScala :+ new MetaDataDAO("", CommonMetaData.PRECURSOR_TYPE, "", false, "", false, "")).asJava)
+        inputSpectrum.setMetaData((metaData.asScala :+ new MetaData("", CommonMetaData.PRECURSOR_TYPE, "", false, "", false, "")).asJava)
         val copySpectrum = new Spectrum(inputSpectrum)
         val processedSpectrum = processor.process(inputSpectrum)
         assert(processedSpectrum.getMetaData.size() == (copySpectrum.getMetaData.size() - 1))
@@ -35,7 +35,7 @@ class NormalizePrecursorValuesTest extends AnyWordSpec with LazyLogging{
 
      "remove invalid precursor type 'MS/MS'" in {
         val inputSpectrum = new Spectrum(spectrum)
-        inputSpectrum.setMetaData((metaData.asScala :+ new MetaDataDAO("", CommonMetaData.PRECURSOR_TYPE, "MS/MS", false, "", false, "")).asJava)
+        inputSpectrum.setMetaData((metaData.asScala :+ new MetaData("", CommonMetaData.PRECURSOR_TYPE, "MS/MS", false, "", false, "")).asJava)
         val copySpectrum = new Spectrum(inputSpectrum)
         val processedSpectrum = processor.process(inputSpectrum)
 
@@ -44,7 +44,7 @@ class NormalizePrecursorValuesTest extends AnyWordSpec with LazyLogging{
 
       "not remove valid precursor type" in {
         val inputSpectrum = new Spectrum(spectrum)
-        inputSpectrum.setMetaData((metaData.asScala :+ new MetaDataDAO("", CommonMetaData.PRECURSOR_TYPE, "[M+H]+", false, "", false, "")).asJava)
+        inputSpectrum.setMetaData((metaData.asScala :+ new MetaData("", CommonMetaData.PRECURSOR_TYPE, "[M+H]+", false, "", false, "")).asJava)
         val copySpectrum = new Spectrum(inputSpectrum)
         val processedSpectrum = processor.process(inputSpectrum)
 
@@ -54,8 +54,8 @@ class NormalizePrecursorValuesTest extends AnyWordSpec with LazyLogging{
       "handle MS^n precursor information" in {
         val inputSpectrum = new Spectrum(spectrum)
         inputSpectrum.setMetaData((metaData.asScala.filter(x => x.getName.toLowerCase != CommonMetaData.PRECURSOR_MASS.toLowerCase && x.getName.toLowerCase != CommonMetaData.PRECURSOR_TYPE.toLowerCase)
-        :+ new MetaDataDAO("", CommonMetaData.PRECURSOR_TYPE, "[M+CH3COO]-/[M-CH3]-", false, "", false, "")
-        :+ new MetaDataDAO("", CommonMetaData.PRECURSOR_MASS, "842.59/768.15", false, "", false, "")).asJava
+        :+ new MetaData("", CommonMetaData.PRECURSOR_TYPE, "[M+CH3COO]-/[M-CH3]-", false, "", false, "")
+        :+ new MetaData("", CommonMetaData.PRECURSOR_MASS, "842.59/768.15", false, "", false, "")).asJava
         )
         val copySpectrum = new Spectrum(inputSpectrum)
 

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
@@ -28,12 +28,12 @@ class NormalizePrecursorValues extends ItemProcessor[Spectrum, Spectrum] with La
   override def process(spectrum: Spectrum): Spectrum = {
 
     // All metadata not related to precursors
-    val metaData: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala
+    val metaData: Buffer[MetaData] = spectrum.getMetaData.asScala
       .filter(x => x.getName.toLowerCase != CommonMetaData.PRECURSOR_MASS.toLowerCase && x.getName.toLowerCase != CommonMetaData.PRECURSOR_TYPE.toLowerCase)
 
 
-    val precursorMzMatch: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala.filter(_.getName.toLowerCase == CommonMetaData.PRECURSOR_MASS.toLowerCase)
-    val precursorTypeMatch: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala
+    val precursorMzMatch: Buffer[MetaData] = spectrum.getMetaData.asScala.filter(_.getName.toLowerCase == CommonMetaData.PRECURSOR_MASS.toLowerCase)
+    val precursorTypeMatch: Buffer[MetaData] = spectrum.getMetaData.asScala
       .filter(_.getName.toLowerCase == CommonMetaData.PRECURSOR_TYPE.toLowerCase)
       .filter(x => !INVALID_PRECURSOR_TYPES.contains(x.getValue.toString.trim))
 
@@ -41,18 +41,18 @@ class NormalizePrecursorValues extends ItemProcessor[Spectrum, Spectrum] with La
     if (precursorMzMatch.nonEmpty && precursorMzMatch.exists(_.getValue.toString.contains('/'))) {
       // If any precursor value has a / in it, multiple MS levels must be represented
       // Duplicate precursor values and replace primary values with the last (parent) value
-      val updatedMetaData: ArrayBuffer[MetaDataDAO] = new ArrayBuffer[MetaDataDAO]()
+      val updatedMetaData: ArrayBuffer[MetaData] = new ArrayBuffer[MetaData]()
       var invalidPrecursorMz: Boolean = false
 
       precursorMzMatch.foreach {
         x =>
-          val meta = new MetaDataDAO(x)
+          val meta = new MetaData(x)
           meta.setName("original " + CommonMetaData.PRECURSOR_MASS)
           updatedMetaData.append(meta)
       }
       precursorTypeMatch.foreach {
         x =>
-          val meta = new MetaDataDAO(x)
+          val meta = new MetaData(x)
           meta.setName("original " + CommonMetaData.PRECURSOR_TYPE)
 
           updatedMetaData.append(meta)
@@ -64,11 +64,11 @@ class NormalizePrecursorValues extends ItemProcessor[Spectrum, Spectrum] with La
 
         parseDouble(mzString) match {
           case Some(mz) =>
-            val meta = new MetaDataDAO(x)
+            val meta = new MetaData(x)
             meta.setValue(mz.toString)
             updatedMetaData.append(meta)
           case None =>
-            val meta = new MetaDataDAO(x)
+            val meta = new MetaData(x)
             meta.setValue(mzString)
             updatedMetaData.append(meta)
             invalidPrecursorMz = true
@@ -76,7 +76,7 @@ class NormalizePrecursorValues extends ItemProcessor[Spectrum, Spectrum] with La
       }
 
       precursorTypeMatch.foreach { x =>
-        val meta = new MetaDataDAO(x)
+        val meta = new MetaData(x)
         meta.setValue(meta.getValue.split('/').last)
         updatedMetaData.append(meta)
       }

@@ -3,15 +3,14 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.CompoundDAO
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{CompoundRepository, SpectrumRepository}
 
 import scala.jdk.StreamConverters.StreamHasToScala
 import org.springframework.transaction.support.TransactionTemplate
@@ -62,7 +61,7 @@ class CompoundRepositoryTest extends AnyWordSpec with Matchers with LazyLogging{
          x => compoundRepository.streamAllBy().toScala(Iterator).next()
       }
       logger.info(s"${c.getId}")
-      c shouldBe an[CompoundDAO]
+      c shouldBe an[Compound]
     }
   }
 

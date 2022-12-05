@@ -1,10 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.repository.layout
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Spectrum}
 
 import java.io.File
 import java.util.{Calendar, Locale}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CurationUtilities
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
@@ -102,7 +102,7 @@ class SubmitterInchiKeySplashId(val baseDir: File) extends FileLayout {
     val submitterDir = new File(baseDir, institution)
 
 
-    var compound: CompoundDAO = CurationUtilities.getFirstBiologicalCompound(spectrum)
+    var compound: Compound = CurationUtilities.getFirstBiologicalCompound(spectrum)
 
     if (compound == null) {
       compound = spectrum.getCompound.asScala.head

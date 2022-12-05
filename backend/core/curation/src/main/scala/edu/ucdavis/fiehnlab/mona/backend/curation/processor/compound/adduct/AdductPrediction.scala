@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.adduct
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, CompoundDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical.AdductBuilder
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
@@ -24,7 +24,7 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
     */
   override def process(spectrum: Spectrum): Spectrum = {
     // Get computed total exact mass from the biological compound if it exists
-    val biologicalCompound: CompoundDAO =
+    val biologicalCompound: Compound =
       if (spectrum.getCompound.asScala.exists(_.getKind == "biological")) {
         spectrum.getCompound.asScala.find(_.getKind == "biological").head
       } else if (spectrum.getCompound.asScala.nonEmpty) {
@@ -105,7 +105,7 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
         logger.info(s"${spectrum.getId}: Predicting precursor m/z = $predictedPrecursorMass given theoretical mass = $theoreticalMass and adduct = $adductMatch")
 
         val addedList = spectrum.getMetaData
-        addedList.add(new MetaDataDAO(null, CommonMetaData.PRECURSOR_MASS, predictedPrecursorMass.toString, false, "mass spectrometry", true, null))
+        addedList.add(new MetaData(null, CommonMetaData.PRECURSOR_MASS, predictedPrecursorMass.toString, false, "mass spectrometry", true, null))
         spectrum.setMetaData(addedList)
         for (meta <- spectrum.getCompound.asScala.head.getMetaData.asScala) {
           logger.info(s"MetaName: ${meta.getName} and computed: ${meta.getComputed}")
@@ -131,7 +131,7 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
           logger.info(s"${spectrum.getId}: Predicting precursor type = $predictedAdduct given theoretical mass = $theoreticalMass, precursor m/z = $precursorMass and delta = $dist")
 
           val addedList = spectrum.getMetaData
-          addedList.add(new MetaDataDAO(null, CommonMetaData.PRECURSOR_TYPE, predictedAdduct, false, "mass spectrometry", true, null))
+          addedList.add(new MetaData(null, CommonMetaData.PRECURSOR_TYPE, predictedAdduct, false, "mass spectrometry", true, null))
           spectrum.setMetaData(addedList)
           spectrum
         } else {

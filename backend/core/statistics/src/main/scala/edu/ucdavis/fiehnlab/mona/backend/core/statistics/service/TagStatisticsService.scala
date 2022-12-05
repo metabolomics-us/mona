@@ -1,9 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsTagRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.TagsRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.views.LibraryRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{LibraryRepository, StatisticsTagRepository, TagsRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsTag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.validation
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.springframework.batch.item.ItemProcessor
@@ -26,7 +26,7 @@ class ColumnValidation extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val metaData: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala.filter(_.getName == CommonMetaData.COLUMN)
+    val metaData: Buffer[MetaData] = spectrum.getMetaData.asScala.filter(_.getName == CommonMetaData.COLUMN)
 
     if (metaData.isEmpty) {
       logger.info(s"${spectrum.getId}: No column found")

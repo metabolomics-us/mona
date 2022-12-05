@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.domain.dao;
+package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
@@ -13,7 +13,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "metadata")
 @Profile({"mona.persistence"})
-public class MetaDataDAO implements Serializable {
+public class MetaData implements Serializable {
 
     @Id
     @JsonIgnore
@@ -34,12 +34,12 @@ public class MetaDataDAO implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private CompoundDAO compoundMetadata;
+    private Compound compoundMetadata;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private CompoundDAO compoundClassification;
+    private Compound compoundClassification;
 
     @Type(type = "org.hibernate.type.TextType")
     @Column(name = "url")
@@ -59,10 +59,10 @@ public class MetaDataDAO implements Serializable {
     @Column(name = "unit")
     private String unit;
 
-    public MetaDataDAO() {
+    public MetaData() {
     }
 
-    public MetaDataDAO(String url, String name, String value, Boolean hidden, String category, Boolean computed) {
+    public MetaData(String url, String name, String value, Boolean hidden, String category, Boolean computed) {
         this.url = url;
         this.name = name;
         this.value = value;
@@ -72,7 +72,7 @@ public class MetaDataDAO implements Serializable {
         this.unit = "";
     }
 
-    public MetaDataDAO(String url, String name, String value, Boolean hidden, String category, Boolean computed, String unit) {
+    public MetaData(String url, String name, String value, Boolean hidden, String category, Boolean computed, String unit) {
         this.url = url;
         this.name = name;
         this.value = value;
@@ -82,7 +82,7 @@ public class MetaDataDAO implements Serializable {
         this.unit = unit;
     }
 
-    public MetaDataDAO(String name, String value, Boolean hidden, String category, Boolean computed) {
+    public MetaData(String name, String value, Boolean hidden, String category, Boolean computed) {
         this.url = "";
         this.name = name;
         this.value = value;
@@ -92,7 +92,7 @@ public class MetaDataDAO implements Serializable {
         this.unit = "";
     }
 
-    public MetaDataDAO(MetaDataDAO meta) {
+    public MetaData(MetaData meta) {
         this.url = meta.getUrl();
         this.name = meta.getName();
         this.value = meta.getValue();
@@ -182,19 +182,19 @@ public class MetaDataDAO implements Serializable {
         this.spectrumAnnotation = spectrumAnnotation;
     }
 
-    public CompoundDAO getCompoundMetadata() {
+    public Compound getCompoundMetadata() {
         return compoundMetadata;
     }
 
-    public void setCompoundMetadata(CompoundDAO compoundMetadata) {
+    public void setCompoundMetadata(Compound compoundMetadata) {
         this.compoundMetadata = compoundMetadata;
     }
 
-    public CompoundDAO getCompoundClassification() {
+    public Compound getCompoundClassification() {
         return compoundClassification;
     }
 
-    public void setCompoundClassification(CompoundDAO compoundClassification) {
+    public void setCompoundClassification(Compound compoundClassification) {
         this.compoundClassification = compoundClassification;
     }
 
@@ -202,7 +202,7 @@ public class MetaDataDAO implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MetaDataDAO that = (MetaDataDAO) o;
+        MetaData that = (MetaData) o;
         return id.equals(that.id) && Objects.equals(spectrumMetadata, that.spectrumMetadata) && Objects.equals(spectrumAnnotation, that.spectrumAnnotation) && Objects.equals(compoundMetadata, that.compoundMetadata) && Objects.equals(compoundClassification, that.compoundClassification) && Objects.equals(url, that.url) && Objects.equals(name, that.name) && Objects.equals(value, that.value) && Objects.equals(hidden, that.hidden) && Objects.equals(category, that.category) && Objects.equals(computed, that.computed) && Objects.equals(unit, that.unit);
     }
 

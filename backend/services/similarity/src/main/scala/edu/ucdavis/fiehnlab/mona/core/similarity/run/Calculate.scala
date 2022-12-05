@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.run
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData}
 import edu.ucdavis.fiehnlab.mona.core.similarity.index.Index
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{ComputationalResult, SimpleSpectrum}

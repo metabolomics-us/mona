@@ -6,8 +6,8 @@ import de.erichseifert.gral.io.plots.DrawableWriterFactory
 import de.erichseifert.gral.plots.BarPlot.BarRenderer
 import de.erichseifert.gral.plots.XYPlot.XYPlotArea2D
 import de.erichseifert.gral.plots.{BarPlot, Plot, XYPlot}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 
 import java.awt.{BasicStroke, Color, Font}
 import java.io.{ByteArrayOutputStream, Writer}

@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
@@ -21,11 +21,11 @@ class SpectralEntropyTest extends AnyWordSpec with Matchers {
         newRecord.setMetaData(exampleRecord.getMetaData.asScala.filter(!_.getComputed).asJava)
         val processedSpectrum = processor.process(newRecord)
 
-        val spectral_entropy: Option[MetaDataDAO] = processedSpectrum.getMetaData.asScala.find(_.getName == CommonMetaData.SPECTRAL_ENTROPY)
+        val spectral_entropy: Option[MetaData] = processedSpectrum.getMetaData.asScala.find(_.getName == CommonMetaData.SPECTRAL_ENTROPY)
         spectral_entropy.isDefined shouldBe true
         spectral_entropy.get.getValue.toString.toDouble shouldBe 1.1944 +- 1.0e-4
 
-        val normalized_entropy: Option[MetaDataDAO] = processedSpectrum.getMetaData.asScala.find(_.getName == CommonMetaData.NORMALIZED_ENTROPY)
+        val normalized_entropy: Option[MetaData] = processedSpectrum.getMetaData.asScala.find(_.getName == CommonMetaData.NORMALIZED_ENTROPY)
         normalized_entropy.isDefined shouldBe true
         normalized_entropy.get.getValue.toString.toDouble shouldBe 0.8616 +- 1.0e-4
       }

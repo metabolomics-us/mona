@@ -2,15 +2,15 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.listener.AkkaEventScheduler
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import, Profile}
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.springframework.stereotype.Component
 import org.springframework.boot.context.properties.ConfigurationProperties
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.EventScheduler
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.{SpectrumPersistenceService}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.synchronization.CountListener
 
 @EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.domain"))

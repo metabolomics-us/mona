@@ -2,9 +2,9 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 
 import java.io.InputStreamReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import org.scalatest.wordspec.AnyWordSpec

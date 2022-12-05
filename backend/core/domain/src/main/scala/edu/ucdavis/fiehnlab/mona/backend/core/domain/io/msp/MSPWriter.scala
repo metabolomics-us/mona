@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 
 import java.io.{PrintWriter, Writer}
@@ -21,7 +21,7 @@ class MSPWriter extends DomainWriter {
     * @return
     */
   def buildNames(spectrum: Spectrum, synonyms: Boolean, writer: PrintWriter): Unit = {
-    val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
+    val compound: Compound = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
     if (compound != null && compound.getNames.asScala.nonEmpty) {
       // TODO Re-enable sorting by score when implemented
@@ -48,7 +48,7 @@ class MSPWriter extends DomainWriter {
     * @return
     */
   def buildCompoundMetaData(spectrum: Spectrum, name: String, fieldName: String, writer: PrintWriter, transform: String => String = identity): Unit = {
-    val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
+    val compound: Compound = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
     if (compound != null) {
       buildMetaData(compound.getMetaData.asScala.toArray, name, fieldName, writer, transform)
@@ -64,8 +64,8 @@ class MSPWriter extends DomainWriter {
     * @param writer
     * @return
     */
-  def buildMetaData(metaData: Array[MetaDataDAO], name: String, fieldName: String, writer: PrintWriter, transform: String => String = identity): Unit = {
-    val metaDataValue: Option[MetaDataDAO] = metaData.find(_.getName == fieldName)
+  def buildMetaData(metaData: Array[MetaData], name: String, fieldName: String, writer: PrintWriter, transform: String => String = identity): Unit = {
+    val metaDataValue: Option[MetaData] = metaData.find(_.getName == fieldName)
 
     // Write a value only if the metadata field is defined
     if (metaDataValue.isDefined) {
@@ -80,7 +80,7 @@ class MSPWriter extends DomainWriter {
     * @param writer
     */
   def buildCompoundInchiKey(spectrum: Spectrum, writer: PrintWriter): Unit = {
-    val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
+    val compound: Compound = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
     if (compound != null) {
       if (compound.getInchiKey != null && compound.getInchiKey.nonEmpty) {
@@ -88,7 +88,7 @@ class MSPWriter extends DomainWriter {
       }
 
       else {
-        val metaData: Option[MetaDataDAO] = compound.getMetaData.asScala.find(_.getName == "InChIKey")
+        val metaData: Option[MetaData] = compound.getMetaData.asScala.find(_.getName == "InChIKey")
 
         if (metaData.isDefined) {
           writer.println(s"InChIKey: ${metaData.get.getValue}")

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
@@ -27,8 +27,8 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
     */
   override def process(spectrum: Spectrum): Spectrum = {
 
-    val metaData: Buffer[MetaDataDAO] = spectrum.getMetaData.asScala
-    val matches: Buffer[MetaDataDAO] = metaData.filter(_.getName.toLowerCase == CommonMetaData.IONIZATION_MODE.toLowerCase)
+    val metaData: Buffer[MetaData] = spectrum.getMetaData.asScala
+    val matches: Buffer[MetaData] = metaData.filter(_.getName.toLowerCase == CommonMetaData.IONIZATION_MODE.toLowerCase)
 
     // Look at existing ionization mode values
     if (matches.nonEmpty) {
@@ -40,7 +40,7 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
 
       // Otherwise, if we have one match, normalize the data
       else if (matches.length == 1) {
-        val updatedMetaData: Buffer[MetaDataDAO] = metaData.filter(_.getName != CommonMetaData.IONIZATION_MODE)
+        val updatedMetaData: Buffer[MetaData] = metaData.filter(_.getName != CommonMetaData.IONIZATION_MODE)
 
         val value: String = matches.head.getValue.toString.toLowerCase.trim
 
@@ -79,8 +79,8 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
 
     // Update incorrectly named ionization mode values
     else {
-      val updatedMetaData: ArrayBuffer[MetaDataDAO] = new ArrayBuffer[MetaDataDAO]()
-      val possibleIonModeData: ArrayBuffer[MetaDataDAO] = new ArrayBuffer[MetaDataDAO]()
+      val updatedMetaData: ArrayBuffer[MetaData] = new ArrayBuffer[MetaData]()
+      val possibleIonModeData: ArrayBuffer[MetaData] = new ArrayBuffer[MetaData]()
 
       var foundPositive = 0
       var foundNegative = 0

@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.{CompoundDAO, MetaDataDAO, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 
 import java.io.{PrintWriter, Writer}
 import scala.jdk.CollectionConverters._
@@ -30,7 +30,7 @@ class SDFWriter extends DomainWriter{
     * @param compound
     * @param writer
     */
-  private def buildMOL(compound: CompoundDAO, writer: PrintWriter): Unit = {
+  private def buildMOL(compound: Compound, writer: PrintWriter): Unit = {
     if (compound != null && compound.getMolFile != null && compound.getMolFile != "") {
       writer.println(compound.getMolFile.split("M  END").head.replaceAll("\\s+$", ""))
     } else {
@@ -53,7 +53,7 @@ class SDFWriter extends DomainWriter{
     * @param synonyms
     * @param writer
     */
-  private def buildNames(compound: CompoundDAO, synonyms: Boolean, writer: PrintWriter): Unit = {
+  private def buildNames(compound: Compound, synonyms: Boolean, writer: PrintWriter): Unit = {
     if (compound != null && compound.getNames.asScala.nonEmpty) {
       printMetaData("NAME", compound.getNames.asScala.head.getName, writer)
 
@@ -71,8 +71,8 @@ class SDFWriter extends DomainWriter{
     * @param writer
     * @return
     */
-  def buildMetaData(metaData: Array[MetaDataDAO], name: String, fieldName: String, writer: PrintWriter, transform: String => String = identity): Unit = {
-    val metaDataValue: Option[MetaDataDAO] = metaData.find(_.getName == fieldName)
+  def buildMetaData(metaData: Array[MetaData], name: String, fieldName: String, writer: PrintWriter, transform: String => String = identity): Unit = {
+    val metaDataValue: Option[MetaData] = metaData.find(_.getName == fieldName)
 
     // Write a value only if the metadata field is defined
     if (metaDataValue.isDefined) {
@@ -86,7 +86,7 @@ class SDFWriter extends DomainWriter{
     * @param compound
     * @param writer
     */
-  def buildCompoundInchiKey(compound: CompoundDAO, writer: PrintWriter): Unit = {
+  def buildCompoundInchiKey(compound: Compound, writer: PrintWriter): Unit = {
 
     if (compound.getInchiKey != null && compound.getInchiKey.nonEmpty) {
       printMetaData("INCHIKEY", compound.getInchiKey, writer)
@@ -144,7 +144,7 @@ class SDFWriter extends DomainWriter{
   def write(spectrum: Spectrum, writer: Writer): Unit = {
     val p = getPrintWriter(writer)
 
-    val compound: CompoundDAO = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
+    val compound: Compound = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
     // MOL data, name and synonyms
     buildMOL(compound, p)

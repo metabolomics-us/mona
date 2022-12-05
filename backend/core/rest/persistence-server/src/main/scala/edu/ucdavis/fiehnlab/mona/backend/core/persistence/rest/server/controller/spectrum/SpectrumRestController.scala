@@ -9,12 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
-import org.springframework.web.bind.annotation.{RequestMapping, _}
+import org.springframework.web.bind.annotation._
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumSubmitter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, SpectrumSubmitter, Submitter}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.SubmitterDAO
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.dao.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository
 import org.springframework.context.annotation.Profile
 
@@ -194,7 +192,7 @@ class SpectrumRestController extends LazyLogging {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    val existingSubmitter: SubmitterDAO = submitterRepository.findTopByEmailAddress(loginInfo.emailAddress)
+    val existingSubmitter: Submitter = submitterRepository.findTopByEmailAddress(loginInfo.emailAddress)
 
     // Admins can save anything
     if (loginInfo.roles.contains("ADMIN")) {
@@ -304,7 +302,7 @@ class SpectrumRestController extends LazyLogging {
   def doPut(id: String, spectrum: Spectrum): Future[ResponseEntity[Spectrum]] = {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
-    val existingSubmitter: SubmitterDAO = submitterRepository.findTopByEmailAddress(loginInfo.emailAddress)
+    val existingSubmitter: Submitter = submitterRepository.findTopByEmailAddress(loginInfo.emailAddress)
 
     // Admins can save anything
     if (loginInfo.roles.contains("ADMIN")) {
