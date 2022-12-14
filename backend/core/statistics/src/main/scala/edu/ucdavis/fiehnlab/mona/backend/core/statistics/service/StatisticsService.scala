@@ -55,6 +55,7 @@ class StatisticsService extends LazyLogging {
   @Autowired
   private val compoundRepository: CompoundRepository = null
 
+  @Transactional()
   def generateCompoundCount(): Long = {
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
     compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
@@ -67,6 +68,7 @@ class StatisticsService extends LazyLogging {
     inchiKeys.distinct.length
   }
 
+  @Transactional()
   def generateMetaDataCount(): Long = {
     val metaDataCounterMap: Map[String, Int] = Map()
     metaDataRepository.streamAllBy().toScala(Iterator).foreach{ metaData =>
@@ -77,6 +79,7 @@ class StatisticsService extends LazyLogging {
     metaDataCounterMap.size.toLong
   }
 
+  @Transactional()
   def generateTagCount(): Long = {
     val tagsCounter: Map[String, Int] = Map()
     tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
@@ -91,6 +94,7 @@ class StatisticsService extends LazyLogging {
     tagsCounter.size.toLong
   }
 
+  @Transactional()
   def generateSubmitterCount(): Long = {
     val submitterCounter: Map[String, Integer] = Map()
     spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
@@ -105,7 +109,7 @@ class StatisticsService extends LazyLogging {
     *
     * @return
     **/
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  @Transactional()
   def updateGlobalStatistics(): String = {
     globalStatisticsRepository.deleteAll()
     // Spectrum count
@@ -138,7 +142,7 @@ class StatisticsService extends LazyLogging {
    * */
   @Async
   @Scheduled(cron = "0 0 0 * * *")
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  @Transactional()
   def updateStatistics(): Unit = {
     val metaDataResult = metaDataStatisticsService.updateMetaDataStatistics()
     logger.info(s"${metaDataResult}")

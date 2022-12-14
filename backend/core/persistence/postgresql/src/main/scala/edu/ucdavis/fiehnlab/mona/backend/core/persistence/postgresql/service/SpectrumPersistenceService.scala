@@ -86,7 +86,7 @@ class SpectrumPersistenceService extends LazyLogging {
   @CacheEvict(value = Array("spectra"))
   @Transactional
   final def update(spectrum: Spectrum): Unit = {
-    spectrum.setLastUpdated(new Date().toString)
+    spectrum.setLastUpdated(new Date())
     val result = spectrumResultRepository.save(spectrum)
 
     fireUpdateEvent(result)

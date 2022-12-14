@@ -41,7 +41,7 @@ class FinalizeCuration extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
         null
       }
 
-    spectrum.setLastCurated(new Date().toString)
+    spectrum.setLastCurated(new Date())
     spectrum.setScore(score)
     spectrum
   }

@@ -69,4 +69,65 @@
       </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col">
+      <hr/>
+      <div class="row justify-content-center">
+        <h3>Change User Password</h3>
+      </div>
+      <hr/>
+      <div class="row justify-content-center">
+        <div class="col mb-1">
+          <form #passwordChangeForm="ngForm" id = "passwordChangeForm" class="form-horizontal" novalidate role="form">
+            <div class="form-group row" [ngClass]="{ 'has-error' : !email.valid && !email.pristine}">
+              <label for="email" class="col-sm-3 col-form-label">Email Address:</label>
+              <div class="col-sm-6">
+                <input type="email" class="form-control" placeholder="Please enter email address" id="email"
+                       name="email" [(ngModel)]="newPassword.emailAddress"
+                       #email = "ngModel" required/>
+                <p *ngIf="!email.valid && !email.pristine" class="help-block">
+                  Please enter a valid email.</p>
+              </div>
+              <div class="col-sm-3">
+                <button type="button" (click)="validateUser()">Validate Email</button>
+              </div>
+            </div>
+
+            <div class="form-group row" [ngClass]="{ 'has-error' : !password.valid && !password.pristine}">
+              <label for="password" class="col-sm-3 col-form-label">Password:</label>
+              <div class="col-sm-9">
+                <input  class="form-control" placeholder="Please enter your password" id="password"
+                        name="password" type="password" [(ngModel)]="newPassword.password"
+                        #password = "ngModel" required [hidden]="hidePasswords"/>
+
+                <p *ngIf="!password.valid && !password.pristine" class="help-block">
+                  Please enter a valid password</p>
+              </div>
+            </div>
+
+            <div class="form-group row" [ngClass]="{ 'has-error' : (!passwordMatch.valid &&
+              !passwordMatch.pristine) || newPassword.password != newPassword.passwordMatch}">
+              <label for="passwordMatch" class="col-sm-3 col-form-label">Re-enter Password:</label>
+              <div class="col-sm-9">
+                <input  class="form-control" type="password"  placeholder="Please re-enter your password" id="passwordMatch"
+                        name="passwordMatch" [(ngModel)]="newPassword.passwordMatch"
+                        #passwordMatch = "ngModel"  [hidden]="hidePasswords" required/>
+
+                <p *ngIf="(!passwordMatch.valid && !passwordMatch.pristine) ||
+                newPassword.password != newPassword.passwordMatch" class="help-block">Passwords do not match!</p>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <button class="btn btn-primary"
+                (click)="submitPasswordChange()"
+                [disabled]="!passwordChangeForm.valid">
+                Change Password
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

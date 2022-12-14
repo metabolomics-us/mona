@@ -13,7 +13,7 @@ services:
   postgresql:
     image: postgres:13.4
     hostname: postgresql
-    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c max_connections=300
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c config_file=/etc/postgresql.conf
     expose:
       - 5432
     ports:
@@ -21,9 +21,9 @@ services:
     environment:
       - POSTGRES_USER=${MONA_USER}
       - POSTGRES_PASSWORD=${MONA_PASS}
-      - "ES_JAVA_OPTS=-Xmx10g"
     volumes:
       - postgresql-data:/data
+      - ./postgresql-dev.conf:/etc/postgresql.conf
 
   postgresql-hero:
     image: ankane/pghero
@@ -58,7 +58,7 @@ services:
       - postgresql
     entrypoint: bash -c "./wait-for-it.sh postgresql:5432 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.server.git.username=$GIT_USER -Dspring.cloud.config.server.git.password=$GIT_PASS -Dspring.profiles.active=docker -jar *.jar"
     environment:
-      - JAVA_OPTS='-Xmx2g -XX:+UseParallelGC'
+      - JAVA_OPTS='-Xmx3g -XX:+UseParallelGC'
       - GIT_USER=${GIT_USER}
       - GIT_PASS=${GIT_PASS}
 
@@ -87,7 +87,7 @@ services:
     image: public.ecr.aws/fiehnlab/mona-bootstrap:test
     depends_on:
       - config-server
-    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 #
 #  # Webhook support to notify external apis
   webhooks:
@@ -96,7 +96,7 @@ services:
       - "4444:4444"
     depends_on:
       - config-server
-    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 #
 #  # Scheduler for curation jobs
   curationScheduler:
@@ -105,7 +105,8 @@ services:
       - "5555:5555"
     depends_on:
       - config-server
-    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+      - webhooks
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 #
 #  # Serves the content of MoNA as a repository
   repository:
@@ -114,7 +115,8 @@ services:
       - "8888:8888"
     depends_on:
       - config-server
-    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+      - webhooks
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - repository-data:/data
     logging:
@@ -132,12 +134,12 @@ services:
     depends_on:
       - repository
       - discovery
-    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx10g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx12g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 
   # Main authentication service
   auth:
     image: public.ecr.aws/fiehnlab/mona-auth-server:test
-    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx3g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 
   # MoNA similarity service
   similarity:
@@ -147,7 +149,7 @@ services:
     depends_on:
       - repository
       - discovery
-    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx16g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
 
 
   #
@@ -158,7 +160,7 @@ services:
   proxy:
     image: public.ecr.aws/fiehnlab/mona-proxy:test
     ports:
-      - "80:8080"
+      - "8080:8080"
     depends_on:
       - repository
     environment:
@@ -173,7 +175,7 @@ services:
     depends_on:
       - persistence
       - repository
-    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx10g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - downloader-data:/data
     logging:
@@ -186,4 +188,4 @@ services:
     depends_on:
       - persistence
       - repository
-    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx10g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"

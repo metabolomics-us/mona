@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
 import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
@@ -18,8 +19,7 @@ public class MetaDataValueCount implements Serializable {
     @SequenceGenerator(name = "metadata_value_count", initialValue = 1, allocationSize = 50)
     private Long id;
 
-    @Column(columnDefinition = "varchar(4096)",length = 4096)
-    @Size(max = 4096)
+    @Type(type = "org.hibernate.type.TextType")
     private String value;
 
     private Integer count;

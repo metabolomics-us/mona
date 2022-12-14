@@ -225,7 +225,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
           return;
         }
 
-        this.spectrumService.searchSimilarSpectra({spectrum: this.spectrum, minSimilarity: 0.5}).pipe(first()).subscribe(
+        this.spectrumService.searchSimilarSpectra({spectrum: this.spectrum.spectrum, minSimilarity: 0.5}).pipe(first()).subscribe(
             (res: any) => {
                 const data = res;
                 this.similarSpectra = data.filter((x) => x.id !== this.spectrum.id);

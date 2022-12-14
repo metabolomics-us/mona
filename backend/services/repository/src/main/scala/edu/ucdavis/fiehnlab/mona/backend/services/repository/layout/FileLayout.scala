@@ -65,10 +65,7 @@ class YearMonthDayInchiKeyLayout(val baseDir: File) extends FileLayout with Lazy
     */
   override def layout(spectrum: Spectrum): File = {
     val calendar = Calendar.getInstance()
-    val formatter: SimpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
-    logger.info(s"${spectrum.getLastUpdated}")
-    calendar.setTime(formatter.parse(spectrum.getLastUpdated))
-    logger.info(s"${formatter.parse(spectrum.getLastUpdated)}")
+    calendar.setTime(spectrum.getLastUpdated)
 
     val year = new File(baseDir, calendar.get(Calendar.YEAR).toString)
     val yearMonth = new File(year, calendar.get(Calendar.MONTH).toString)

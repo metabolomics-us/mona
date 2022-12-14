@@ -34,6 +34,7 @@ public class Compound implements Serializable {
     private List<Tag> tags;
 
     @Column(name = "inchi")
+    @Type(type = "org.hibernate.type.TextType")
     private String inchi;
 
     @Column(name = "names")
@@ -49,6 +50,7 @@ public class Compound implements Serializable {
     private Boolean computed;
 
     @Column(name = "inchiKey")
+    @Type(type = "org.hibernate.type.TextType")
     private String inchiKey;
 
     @Column(name = "metaData")

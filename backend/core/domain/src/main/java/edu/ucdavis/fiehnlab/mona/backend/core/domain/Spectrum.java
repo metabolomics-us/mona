@@ -61,11 +61,14 @@ public class Spectrum implements Serializable {
     @Type(type = "org.hibernate.type.TextType")
     private String spectrum;
 
-    private String lastUpdated = new Date().toString();
+    @Temporal(TemporalType.DATE)
+    private Date lastUpdated = new Date();
 
-    private String dateCreated = new Date().toString();
+    @Temporal(TemporalType.DATE)
+    private Date dateCreated = new Date();
 
-    private String lastCurated = "";
+    @Temporal(TemporalType.DATE)
+    private Date lastCurated = null;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "splash_id")
@@ -88,7 +91,7 @@ public class Spectrum implements Serializable {
     public Spectrum() {
     }
 
-    public Spectrum(List<Compound> compound, String id, List<MetaData> metaData, List<MetaData> annotations, Score score, String spectrum, String lastUpdated, String dateCreated, String lastCurated, Splash splash, SpectrumSubmitter submitter, List<Tag> tags, Library library) {
+    public Spectrum(List<Compound> compound, String id, List<MetaData> metaData, List<MetaData> annotations, Score score, String spectrum, Date lastUpdated, Date dateCreated, Date lastCurated, Splash splash, SpectrumSubmitter submitter, List<Tag> tags, Library library) {
         this.compound = compound;
         this.id = id;
         this.metaData = metaData;
@@ -157,11 +160,11 @@ public class Spectrum implements Serializable {
         return library;
     }
 
-    public String getLastUpdated() { return lastUpdated; }
+    public Date getLastUpdated() { return lastUpdated; }
 
-    public String getDateCreated() { return dateCreated; }
+    public Date getDateCreated() { return dateCreated; }
 
-    public String getLastCurated() { return lastCurated; }
+    public Date getLastCurated() { return lastCurated; }
 
     public List<MetaData> getAnnotations() { return annotations; }
 
@@ -189,15 +192,15 @@ public class Spectrum implements Serializable {
         this.spectrum = spectrum;
     }
 
-    public void setLastUpdated(String lastUpdated) {
+    public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
-    public void setDateCreated(String dateCreated) {
+    public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public void setLastCurated(String lastCurated) {
+    public void setLastCurated(Date lastCurated) {
         this.lastCurated = lastCurated;
     }
 

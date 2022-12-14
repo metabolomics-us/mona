@@ -302,7 +302,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	  return new Promise((resolve, reject) => {
       this.uploadLibraryService.processData(data, (spectrum) => {
         if (spectrum === null) {
-          resolve(true);
+          reject(true);
         } else {
           if (this.showLibraryForm) {
             spectrum.id = `${this.libraryPrefix}${String(this.libraryIDNum).padStart(6, '0')}`;
@@ -354,78 +354,83 @@ export class AdvancedUploaderComponent implements OnInit{
   batchProcess(data, origin): Promise<any> {
     return new Promise((resolve, reject) => {
       this.uploadLibraryService.processData(data, (spectrum) => {
-        if (this.showLibraryForm) {
-          spectrum.id = `${this.libraryPrefix}${String(this.libraryIDNum).padStart(6, '0')}`;
-          this.libraryIDNum += 1;
-          if (this.library.link === null) {
-            this.library.link = 'http://massbank.us';
-          }
-          spectrum.library = this.library;
-          spectrum.tags = []
-          if (this.batchTagList.length > 0) {
-            for(const tag of this.batchTagList) {
-              spectrum.tags.push({ruleBased: false, text: tag.text})
+        if (typeof spectrum !== 'undefined' && spectrum !== null) {
+          if (this.showLibraryForm) {
+            spectrum.id = `${this.libraryPrefix}${String(this.libraryIDNum).padStart(6, '0')}`;
+            this.libraryIDNum += 1;
+            if (this.library.link === null) {
+              this.library.link = 'http://massbank.us';
             }
-          }
-          spectrum.tags.push(this.library.tag);
-          if (this.library.submitter.emailAddress !== null) {
-            this.library.submitter.id = this.library.submitter.emailAddress;
-            spectrum.submitter = this.library.submitter;
-          }
-        }
-        this.asyncService.addToPool(async () => {
-          // Create list of ions
-          spectrum.basePeak = 0;
-          spectrum.ions = spectrum.spectrum.split(' ').map((x) => {
-            x = x.split(':');
-            let annotation = '';
-
-            for (let y = 0; y < spectrum.meta.length; y++) {
-              if (spectrum.meta[y].category === 'annotation' && spectrum.meta[y].value === y[0]) {
-                annotation = spectrum.meta[y].name;
+            spectrum.library = this.library;
+            spectrum.tags = []
+            if (this.batchTagList.length > 0) {
+              for(const tag of this.batchTagList) {
+                spectrum.tags.push({ruleBased: false, text: tag.text})
               }
             }
+            spectrum.tags.push(this.library.tag);
+            if (this.library.submitter.emailAddress !== null) {
+              this.library.submitter.id = this.library.submitter.emailAddress;
+              spectrum.submitter = this.library.submitter;
+            }
+          }
+          this.asyncService.addToPool(async () => {
+            // Create list of ions
+            spectrum.basePeak = 0;
+            spectrum.ions = spectrum.spectrum.split(' ').map((x) => {
+              x = x.split(':');
+              let annotation = '';
 
-            const intensity = parseFloat(x[1]);
+              for (let y = 0; y < spectrum.meta.length; y++) {
+                if (spectrum.meta[y].category === 'annotation' && spectrum.meta[y].value === y[0]) {
+                  annotation = spectrum.meta[y].name;
+                }
+              }
 
-            if (intensity > spectrum.basePeak) {
-              spectrum.basePeak = intensity;
+              const intensity = parseFloat(x[1]);
+
+              if (intensity > spectrum.basePeak) {
+                spectrum.basePeak = intensity;
+              }
+
+              return {
+                ion: parseFloat(x[0]),
+                intensity,
+                annotation,
+                selected: true
+              };
+            });
+
+            // Get structure from InChIKey if no InChI is provided
+            if (typeof spectrum.inchiKey !== 'undefined' && typeof spectrum.inchi === 'undefined') {
+              this.ctsService.convertInchiKeyToMol(spectrum.inchiKey, (molecule) => {
+                if (molecule !== null) {
+                  spectrum.molFile = molecule;
+                }
+              }, undefined);
             }
 
-            return {
-              ion: parseFloat(x[0]),
-              intensity,
-              annotation,
-              selected: true
-            };
-          });
+            // Remove annotations and origin from metadata
+            spectrum.hiddenMetadata = spectrum.meta.filter((metadata) => {
+              return metadata.name === 'origin' || (typeof metadata.category !== 'undefined' && metadata.category === 'annotation');
+            });
 
-          // Get structure from InChIKey if no InChI is provided
-          if (typeof spectrum.inchiKey !== 'undefined' && typeof spectrum.inchi === 'undefined') {
-            this.ctsService.convertInchiKeyToMol(spectrum.inchiKey, (molecule) => {
-              if (molecule !== null) {
-                spectrum.molFile = molecule;
-              }
-            }, undefined);
-          }
+            spectrum.meta = spectrum.meta.filter((metadata) => {
+              return metadata.name !== 'origin' && (typeof metadata.category === 'undefined' || metadata.category !== 'annotation');
+            });
 
-          // Remove annotations and origin from metadata
-          spectrum.hiddenMetadata = spectrum.meta.filter((metadata) => {
-            return metadata.name === 'origin' || (typeof metadata.category !== 'undefined' && metadata.category === 'annotation');
-          });
-
-          spectrum.meta = spectrum.meta.filter((metadata) => {
-            return metadata.name !== 'origin' && (typeof metadata.category === 'undefined' || metadata.category !== 'annotation');
-          });
-
-          // Add an empty metadata field if none exist
-          if (spectrum.meta.length === 0) {
-            spectrum.meta.push({name: '', value: ''});
-          }
-          await this.addSpectra.emit(spectrum);
+            // Add an empty metadata field if none exist
+            if (spectrum.meta.length === 0) {
+              spectrum.meta.push({name: '', value: ''});
+            }
+            await this.addSpectra.emit(spectrum);
+            resolve(true);
+          }, undefined);
           resolve(true);
-        }, undefined);
-        resolve(true);
+        } else {
+          reject();
+        }
+
       }, origin);
     });
   }
@@ -445,10 +450,21 @@ export class AdvancedUploaderComponent implements OnInit{
            }
            // Execute batch of promises at once but await so that the batch finishes first before moving to new batch
            // otherwise we may overload the browser and crash it. May experiment with this.
-           await Promise.all(promiseBuffer.map(p => p.catch(() => undefined)));
+           await Promise.all(promiseBuffer.map(p => p.catch((reason) => {
+             return Promise.reject(reason);
+           })));
            // Reset our array so we can go again.
            promiseBuffer = [];
-         }).then();
+         }).then().catch((reason) => {
+           this.router.navigate(['/upload/advanced']).then();
+           setTimeout(() => {
+             this.toaster.pop({
+               type: 'error',
+               title: 'Error Occurred While Parsing File',
+               body: reason
+             });
+           }, 500);
+         });
          }
        }, 1000);
    });
@@ -470,7 +486,7 @@ export class AdvancedUploaderComponent implements OnInit{
       for (let y = 0; y < this.files.length; y++) {
         totalSize += this.files[y].size;
       }
-      // If the file is larger then 10MB then use straight through processing
+      // If the file is larger than 10MB then use straight through processing
       if (totalSize > 10 * 1024 * 1024) {
         const modalRef = this.modalService.open(AdvancedUploadModalComponent);
         modalRef.result.then((res) => {
@@ -488,9 +504,19 @@ export class AdvancedUploaderComponent implements OnInit{
               for (const item of data) {
                 promiseBuffer.push(this.batchProcess(item, origin));
               }
-              await Promise.all(promiseBuffer.map(p => p.catch(() => undefined)));
+              await Promise.all(promiseBuffer.map(p => p.catch((reason) => {
+                return Promise.reject(reason);
+              })));
               promiseBuffer = [];
-            });
+            }).catch((reason) => {
+            setTimeout(() => {
+              this.toaster.pop({
+                type: 'error',
+                title: 'Error Occurred While Parsing File',
+                body: reason
+              });
+            }, 500);
+          });
         }
       }
     }

@@ -72,7 +72,7 @@ export class SpectraQueryBuilderService {
      * if provided so that a user can start with a predefined or user-specified query
      * and add additional search terms to it.
      */
-    getRSQLQuery() {
+    getFilter() {
         if (this.queryString === '') {
           return this.constructFinalString();
         } else {
@@ -91,7 +91,7 @@ export class SpectraQueryBuilderService {
     }
 
     executeQuery(replace = false) {
-        const query = this.getRSQLQuery();
+        const query = this.getFilter();
 
         if (query !== '') {
             this.logger.info('Executing RSQL query: "' + query + '"');

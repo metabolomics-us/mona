@@ -24,7 +24,7 @@ class FinalizeCurationTest extends AnyWordSpec with LazyLogging{
       val processedSpectrum = processor.process(new Spectrum(spectrumGiven))
 
       "add lastCurated field to spectrum" in {
-        assert(spectrumGiven.getLastCurated == "")
+        assert(spectrumGiven.getLastCurated == null)
         assert(processedSpectrum.getLastCurated != null)
       }
     }

@@ -181,7 +181,7 @@ export class SpectraBrowserComponent implements OnInit{
 
           // Handle general queries
           if (typeof this.queryParam !== 'undefined') {
-            this.logger.info('Accepting RSQL query from URL: "' + this.queryParam + '"');
+            this.logger.info('Accepting filter from URL: "' + this.queryParam + '"');
             this.query = this.queryParam;
           }
 

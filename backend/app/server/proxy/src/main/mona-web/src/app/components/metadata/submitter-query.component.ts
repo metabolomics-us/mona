@@ -42,9 +42,7 @@ export class SubmitterQueryComponent {
         this.spectraQueryBuilderService.prepareQuery();
         this.spectraQueryBuilderService.addUserToQuery(this.submitter.emailAddress);
 
-        const query = this.spectraQueryBuilderService.getRSQLQuery();
-        // TODO Add curation functionality
-        // Spectrum.curateSpectraByQuery(query, function(data) {});
+        const query = this.spectraQueryBuilderService.getFilter();
     }
 
     isAdmin() {

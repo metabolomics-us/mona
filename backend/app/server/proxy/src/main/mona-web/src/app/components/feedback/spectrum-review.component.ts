@@ -42,7 +42,7 @@ export class SpectrumReviewComponent implements OnInit{
       if (!this.hasSubmitted) {
         this.authenticationService.currentUser.subscribe((data: any) => {
           const payload = {
-            id: this.spectrum.id,
+            monaId: this.spectrum.id,
             emailAddress: data.emailAddress,
             name: 'spectrum_quality',
             value

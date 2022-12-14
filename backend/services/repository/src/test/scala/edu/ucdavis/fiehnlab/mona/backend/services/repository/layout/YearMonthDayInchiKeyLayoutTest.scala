@@ -28,7 +28,7 @@ class YearMonthDayInchiKeyLayoutTest extends AnyWordSpec with LazyLogging {
       logger.info(spectrum.getCompound.get(0).getInchiKey)
       logger.info(s"result: ${result}")
 
-      assert(result.getPath.equalsIgnoreCase(Paths.get(s"/2022/8/29/${spectrum.getCompound.get(0).getInchiKey}").toFile.getPath))
+      assert(result.getPath.equalsIgnoreCase(Paths.get(s"/2022/1/9/${spectrum.getCompound.get(0).getInchiKey}").toFile.getPath))
     }
   }
 }

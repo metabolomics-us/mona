@@ -134,7 +134,7 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
         assert(result.getScore != null)
         assert(result.getScore.getImpacts.asScala.nonEmpty)
 
-        assert(exampleRecords.head.getLastCurated == "")
+        assert(exampleRecords.head.getLastCurated == null)
         assert(result.getLastCurated != null)
       }
     }
