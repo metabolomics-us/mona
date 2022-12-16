@@ -79,7 +79,4 @@
 - proxy service: 8080 (entry point)
 
 ### ports for in-memory node:
-- embedded mongo db: 27017
-- mona rest client: 8080
-- elasticsearch client: 9200
-- elasticsearch web: 9300
+- postgresql db : 5432

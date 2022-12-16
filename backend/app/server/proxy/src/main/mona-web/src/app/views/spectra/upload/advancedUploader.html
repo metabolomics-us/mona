@@ -125,7 +125,9 @@
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label"><strong>Additional Tags</strong></label>
+                      <label class="col-sm-7 col-form-label flex-nowrap">
+                        <strong>Additional Tags:</strong> Press Enter or Tab after typing to create tab
+                      </label>
                     </div>
                     <hr/>
                     <div class="row">
@@ -134,7 +136,8 @@
                                    [identifyBy]="'text'"
                                    [displayBy]="'text'"
                                    [trimTags]="false"
-                                   [maxItems]="3">
+                                   [maxItems]="3"
+                                   [separatorKeyCodes]="[9]">
                           <tag-input-dropdown [autocompleteItems]="tags"></tag-input-dropdown>
                         </tag-input>
                       </div>

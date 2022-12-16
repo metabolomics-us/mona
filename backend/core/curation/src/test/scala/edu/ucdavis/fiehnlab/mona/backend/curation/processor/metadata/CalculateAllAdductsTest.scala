@@ -21,7 +21,7 @@ class CalculateAllAdductsTest extends AnyWordSpec with Matchers with LazyLogging
       "correctly calculate adduct list" in {
         val processedSpectrum = processor.process(exampleRecord)
         logger.info(s"${processedSpectrum.getCompound.get(0).getMetaData.asScala.filter(x => x.getCategory == "theoretical adduct")}")
-        assert(processedSpectrum.getCompound.get(0).getMetaData.asScala.filter(x => x.getCategory == "theoretical adduct").length == 16)
+        assert(processedSpectrum.getCompound.get(0).getMetaData.asScala.filter(x => x.getCategory == "theoretical adduct").length == 17)
       }
 
       "spot check calculations" in {

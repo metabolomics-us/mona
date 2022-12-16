@@ -39,8 +39,8 @@ export class MainComponent implements OnInit, OnDestroy{
         this.showcaseSpectraIds.forEach((id) => {
             this.spectrum.get(
                 id).pipe(first()).subscribe(
-                (data: SpectrumModel[]) => {
-                  data.forEach((x:SpectrumModel) => this.showcaseSpectra.push(x));
+                (data: SpectrumModel) => {
+                  this.showcaseSpectra.push(data);
                 },
                 (error) => {
                     this.logger.error('Failed to obtain spectrum ' + id);
