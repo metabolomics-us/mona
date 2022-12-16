@@ -23,8 +23,8 @@ export class Spectrum {
 		return params;
 	}
 
-	get(id: string): Observable<SpectrumModel[]> {
-		return this.http.get<SpectrumModel[]>(`${environment.REST_BACKEND_SERVER}/rest/spectra/${id}`);
+	get(id: string): Observable<SpectrumModel> {
+		return this.http.get<SpectrumModel>(`${environment.REST_BACKEND_SERVER}/rest/spectra/${id}`);
 	}
 
 	update(data: any): Observable<any> {

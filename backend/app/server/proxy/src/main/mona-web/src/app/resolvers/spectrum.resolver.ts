@@ -10,10 +10,10 @@ import {SpectrumModel} from "../mocks/spectrum.model";
 @Injectable({
   providedIn: 'root'
 })
-export class SpectrumResolver implements Resolve<Observable<SpectrumModel[]>> {
+export class SpectrumResolver implements Resolve<Observable<SpectrumModel>> {
   constructor(private spectrumCache: SpectrumCacheService, private spectrumService: Spectrum, private logger: NGXLogger) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<SpectrumModel[]> {
+  resolve(route: ActivatedRouteSnapshot): Observable<SpectrumModel> {
     const id = route.params.id;
     if (!this.spectrumCache.hasSpectrum() || this.spectrumCache.getSpectrum().id !== id) {
       this.logger.debug('Attempting to fetch spectrum');
