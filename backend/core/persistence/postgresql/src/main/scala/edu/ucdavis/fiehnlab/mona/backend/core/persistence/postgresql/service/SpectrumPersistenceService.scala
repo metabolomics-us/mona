@@ -84,7 +84,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @CacheEvict(value = Array("spectra"))
-  @Transactional
   final def update(spectrum: Spectrum): Unit = {
     spectrum.setLastUpdated(new Date())
     val result = spectrumResultRepository.save(spectrum)
@@ -100,7 +99,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @CacheEvict(value = Array("spectra"))
-  @Transactional
   final def save[S <: Spectrum](entity: S): S = {
     val result = spectrumResultRepository.save(entity)
     fireAddEvent(result)
@@ -121,7 +119,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @CacheEvict(value = Array("spectra"))
-  @Transactional
   final def delete(spectrum: Spectrum): Unit = {
     spectrumResultRepository.delete(spectrum)
     spectrumResultRepository.flush()
@@ -135,7 +132,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
-  @Transactional
   def findByMonaId(id: String): Spectrum = spectrumResultRepository.findById(id).orElse(null)
 
   /**
@@ -143,7 +139,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param request
    * @return
    */
-  @Transactional
   private def findDataForQuery(query: String, request: Pageable): Page[Spectrum] = {
     logger.debug(s"executing query: \n$query\n")
     val spec: Specification[Spectrum] = new FilterSpecificationDistinct[Spectrum](query)
@@ -151,7 +146,6 @@ class SpectrumPersistenceService extends LazyLogging {
     rez
   }
 
-  @Transactional
   private def findDataForEmptyQuery(request: Pageable): Page[Spectrum] = {
     logger.debug(s"executing empty query to findAll")
     spectrumResultRepository.findAll(request)
@@ -162,7 +156,6 @@ class SpectrumPersistenceService extends LazyLogging {
    *
    * @return
    */
-  @Transactional
   def findAll(): lang.Iterable[Spectrum] = {
     new DynamicIterable[Spectrum, String]("", fetchSize) {
 
@@ -189,7 +182,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param query
    * @return
    */
-  @Transactional
   @Cacheable(value = Array("spectra"))
   def findAll(query: String): lang.Iterable[Spectrum] = {
 
@@ -213,7 +205,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param pageable
    * @return
    */
-  @Transactional
   def findAll(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, pageable)
 
   /**
@@ -222,7 +213,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
-  @Transactional
   def count(): Long = spectrumResultRepository.count()
 
   /**
@@ -231,7 +221,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
-  @Transactional
   def count(query: String): Long = {
     val spec: Specification[Spectrum] = new FilterSpecificationDistinct[Spectrum](query)
     val count: Long = spectrumResultRepository.count(spec)
@@ -244,7 +233,6 @@ class SpectrumPersistenceService extends LazyLogging {
   }
 
   @CacheEvict(value = Array("spectra"), allEntries = true)
-  @Transactional
   def deleteSpectraByQuery(query: String): Unit = {
     val spec: Specification[Spectrum] = new FilterSpecificationDistinct[Spectrum](query)
     spectrumResultRepository.findAll(spec).asScala.foreach(delete)
@@ -253,7 +241,6 @@ class SpectrumPersistenceService extends LazyLogging {
   /**
    * delete all objects in the system
    */
-  @Transactional
   @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteAll(): Unit = spectrumResultRepository.findAll().asScala.foreach(delete)
 
@@ -264,7 +251,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
-  @Transactional
   def findAll(ids: java.util.List[String]): java.util.List[Spectrum] = spectrumResultRepository.findAllByIdIn(ids)
 
   /**
@@ -274,7 +260,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @return
    */
   @Cacheable(value = Array("spectra"))
-  @Transactional
   def existsById(id: String): Boolean = spectrumResultRepository.existsById(id)
 
   /**
@@ -283,7 +268,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param sort
    * @return
    */
-  @Transactional
   def findAll(sort: Sort): List[Spectrum] = spectrumResultRepository.findAll(sort)
 
   /**
@@ -292,12 +276,10 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param pageable
    * @return
    */
-  @Transactional
   def findAll(pageable: Pageable): Page[Spectrum] = spectrumResultRepository.findAll(pageable)
 
 
   @CacheEvict(value = Array("spectra"))
-  @Transactional
   def deleteById(id: String): Unit = spectrumResultRepository.deleteById(id)
 
   @CacheEvict(value = Array("spectra"), allEntries = true)

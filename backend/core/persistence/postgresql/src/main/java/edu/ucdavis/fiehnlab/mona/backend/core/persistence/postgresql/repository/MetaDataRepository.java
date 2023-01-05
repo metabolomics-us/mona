@@ -20,7 +20,7 @@ public interface MetaDataRepository extends JpaRepository<MetaData, Long> {
 //    List<MetaDataDAO> findBySpectrumMetadataId(String spectrum_metadata_id);
 
     @QueryHints(value = {
-            @QueryHint(name = HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name =HINT_FETCH_SIZE, value = "1"),
             @QueryHint(name = HINT_CACHEABLE, value = "false"),
             @QueryHint(name = READ_ONLY, value = "true")
     })

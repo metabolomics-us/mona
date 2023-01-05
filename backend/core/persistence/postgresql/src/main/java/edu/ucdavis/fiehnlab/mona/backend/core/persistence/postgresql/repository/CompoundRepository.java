@@ -20,7 +20,7 @@ public interface CompoundRepository extends JpaRepository<Compound, String>{
 //    public List<CompoundDAO> findBySpectrumId(String spectrumId);
 
     @QueryHints(value = {
-            @QueryHint(name = HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name =HINT_FETCH_SIZE, value = "1"),
             @QueryHint(name = HINT_CACHEABLE, value = "false"),
             @QueryHint(name = READ_ONLY, value = "true")
     })

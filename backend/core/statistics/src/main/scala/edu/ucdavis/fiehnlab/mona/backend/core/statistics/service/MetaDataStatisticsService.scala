@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
 
 import scala.collection.mutable.Map
 import scala.jdk.CollectionConverters._
@@ -24,6 +25,9 @@ class MetaDataStatisticsService extends LazyLogging{
 
   @Autowired
   private val metaDataRepository: MetaDataRepository = null
+
+  @Autowired
+  private val entityManager: EntityManager = null
 
   /**
     * Get all data in the metadata statistics repository
@@ -78,6 +82,7 @@ class MetaDataStatisticsService extends LazyLogging{
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted MetaData Object #${counter}")
       }
+      entityManager.detach(metaData)
     }
     (metaDataNameMap, metaDataCounterMap)
   }
@@ -86,7 +91,7 @@ class MetaDataStatisticsService extends LazyLogging{
     *
     * @return
     */
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  @Transactional()
   def updateMetaDataStatistics(): String = {
     statisticsMetaDataRepository.deleteAll()
 

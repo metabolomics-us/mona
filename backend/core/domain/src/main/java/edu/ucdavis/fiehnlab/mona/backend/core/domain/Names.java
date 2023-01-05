@@ -89,7 +89,7 @@ public class Names implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Names names = (Names) o;
-        return id.equals(names.id) && compound.equals(names.compound) && Objects.equals(computed, names.computed) && Objects.equals(name, names.name) && Objects.equals(score, names.score) && Objects.equals(source, names.source);
+        return Objects.equals(id, names.id) && Objects.equals(compound, names.compound) && Objects.equals(computed, names.computed) && Objects.equals(name, names.name) && Objects.equals(score, names.score) && Objects.equals(source, names.source);
     }
 
     @Override

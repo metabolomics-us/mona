@@ -13,6 +13,7 @@ services:
   postgresql:
     image: postgres:13.4
     hostname: postgresql
+    restart: always
     command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c config_file=/etc/postgresql.conf
     expose:
       - 5432
@@ -22,8 +23,11 @@ services:
       - POSTGRES_USER=${MONA_USER}
       - POSTGRES_PASSWORD=${MONA_PASS}
     volumes:
-      - postgresql-data:/data
+      - postgresql-data:/var/lib/postgresql/data
       - ./postgresql-dev.conf:/etc/postgresql.conf
+    logging:
+      options:
+        max-size: "100M"
 
   postgresql-hero:
     image: ankane/pghero
@@ -61,6 +65,9 @@ services:
       - JAVA_OPTS='-Xmx3g -XX:+UseParallelGC'
       - GIT_USER=${GIT_USER}
       - GIT_PASS=${GIT_PASS}
+    logging:
+      options:
+        max-size: "100M"
 
   config-server:
     image: public.ecr.aws/fiehnlab/mona-config:test
@@ -88,6 +95,9 @@ services:
     depends_on:
       - config-server
     entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 #
 #  # Webhook support to notify external apis
   webhooks:
@@ -97,6 +107,9 @@ services:
     depends_on:
       - config-server
     entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 #
 #  # Scheduler for curation jobs
   curationScheduler:
@@ -107,6 +120,9 @@ services:
       - config-server
       - webhooks
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 #
 #  # Serves the content of MoNA as a repository
   repository:
@@ -134,12 +150,18 @@ services:
     depends_on:
       - repository
       - discovery
-    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx12g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx14g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
   # Main authentication service
   auth:
     image: public.ecr.aws/fiehnlab/mona-auth-server:test
     entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx3g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
   # MoNA similarity service
   similarity:
@@ -149,7 +171,10 @@ services:
     depends_on:
       - repository
       - discovery
-    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx16g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx30g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
 
   #
@@ -166,6 +191,9 @@ services:
     environment:
       - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
     entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xss4m -Xmx4g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
   # Download service for scheduling and running download jobs
   downloader:
@@ -189,3 +217,6 @@ services:
       - persistence
       - repository
     entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx10g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"

@@ -29,7 +29,6 @@ class JWTTokenService extends TokenService with LazyLogging{
     * @param user
     * @return
     */
-  @Transactional
   override def generateToken(user: Users, timeOfLife: Int = 24 * 7): String = {
 
     val issueDate = new Date()

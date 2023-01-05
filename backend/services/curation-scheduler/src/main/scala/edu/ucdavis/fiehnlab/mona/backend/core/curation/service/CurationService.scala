@@ -36,7 +36,6 @@ class CurationService {
     *
     * @param spectrum
     */
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def scheduleSpectrum(spectrum: Spectrum): Unit = {
     rabbitTemplate.convertAndSend(queueName, spectrum)
     notifications.sendEvent(Event(Notification(CurationScheduled(spectrum), getClass.getName)))
@@ -47,7 +46,6 @@ class CurationService {
     * @param spectrum
     * @return
     */
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def curateSpectrum(spectrum: Spectrum): Spectrum = curationWorkflow.process(spectrum)
 }
 

@@ -26,7 +26,6 @@ class SimilaritySearchService extends LazyLogging {
     * @param request
     * @return
     */
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def search(request: SimilaritySearchRequest, size: Int): Array[SearchResult] = {
     val spectrum: SimpleSpectrum =
     if (request.removePrecursorIon == false && request.precursorMZ == 0.0) {
@@ -69,7 +68,6 @@ class SimilaritySearchService extends LazyLogging {
     * @param request
     * @return
     */
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
   def peakSearch(request: PeakSearchRequest, size: Int): Array[SearchResult] = {
     val searchTolerance: Double = if (request.tolerance > 0) request.tolerance else 1
 

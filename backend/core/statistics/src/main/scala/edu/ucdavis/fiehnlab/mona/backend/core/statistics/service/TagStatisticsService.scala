@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
 
 import scala.collection.mutable.Map
 import scala.jdk.CollectionConverters._
@@ -27,6 +28,9 @@ class TagStatisticsService extends LazyLogging{
 
   @Autowired
   private val libraryRepository: LibraryRepository = null
+
+  @Autowired
+  private val entityManager: EntityManager = null
 
   def updateTagStatisticsHelper(): (Map[String, Int], Map[String, Boolean]) = {
     val tagsCounter: Map[String, Int] = Map()
@@ -49,6 +53,7 @@ class TagStatisticsService extends LazyLogging{
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted Tag Object #${counter}")
       }
+      entityManager.detach(tag)
     }
     (tagsCounter, tagsRuleBase)
   }
@@ -57,7 +62,7 @@ class TagStatisticsService extends LazyLogging{
    *
    * @return
    * */
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  @Transactional()
   def updateTagStatistics(): String = {
     statisticsTagRepository.deleteAll()
 

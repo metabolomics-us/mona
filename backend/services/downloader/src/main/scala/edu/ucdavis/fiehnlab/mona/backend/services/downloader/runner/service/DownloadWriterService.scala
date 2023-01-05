@@ -28,7 +28,6 @@ class DownloadWriterService extends LazyLogging {
     *
     * @param query
     */
-  @Transactional
   private def executeQuery(query: String): Iterable[Spectrum] = {
     new DynamicIterable[Spectrum, String](query, 100) {
 
@@ -66,7 +65,6 @@ class DownloadWriterService extends LazyLogging {
     * @param downloaders
     * @return
     */
-  @Transactional
   def exportQuery(query: String, label: String, downloaders: Array[SpectrumDownloader]): Long = {
 
     var count: Long = 0

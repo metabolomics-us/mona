@@ -26,7 +26,7 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
   @Value("${mona.similarity.autopopulate:true}")
   private val autoPopulate: Boolean = true
 
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  @Transactional()
   override def onApplicationEvent(e: ApplicationReadyEvent): Unit = {
     if (autoPopulate) {
       logger.info("Starting auto-population of indices")

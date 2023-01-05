@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.{Async, Scheduled}
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
 
 import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.jdk.CollectionConverters._
@@ -55,6 +56,9 @@ class StatisticsService extends LazyLogging {
   @Autowired
   private val compoundRepository: CompoundRepository = null
 
+  @Autowired
+  private val entityManager: EntityManager = null
+
   @Transactional()
   def generateCompoundCount(): Long = {
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
@@ -64,6 +68,7 @@ class StatisticsService extends LazyLogging {
           inchiKeys.append(metadata.getValue.substring(0, 14))
         }
       }
+      entityManager.detach(compound)
     }
     inchiKeys.distinct.length
   }
@@ -75,6 +80,7 @@ class StatisticsService extends LazyLogging {
       if(!metaDataCounterMap.contains(metaData.getName)) {
         metaDataCounterMap(metaData.getName) = 1
       }
+      entityManager.detach(metaData)
     }
     metaDataCounterMap.size.toLong
   }
@@ -90,6 +96,7 @@ class StatisticsService extends LazyLogging {
           tagsCounter(tag.getText) = 1
         }
       }
+      entityManager.detach(tag)
     }
     tagsCounter.size.toLong
   }
@@ -101,6 +108,7 @@ class StatisticsService extends LazyLogging {
       if (!submitterCounter.contains(submitter.getEmailAddress)) {
         submitterCounter(submitter.getEmailAddress) = 1
       }
+      entityManager.detach(submitter)
     }
     submitterCounter.size.toLong
   }
@@ -146,12 +154,12 @@ class StatisticsService extends LazyLogging {
   def updateStatistics(): Unit = {
     val metaDataResult = metaDataStatisticsService.updateMetaDataStatistics()
     logger.info(s"${metaDataResult}")
-    val tagResult = tagStatisticsService.updateTagStatistics()
-    logger.info(s"${tagResult}")
     val submitterResult = submitterStatisticsService.updateSubmitterStatistics()
     logger.info(s"${submitterResult}")
     val compoundClassResult = compoundClassStatisticsService.updateCompoundClassStatistics()
     logger.info(s"${compoundClassResult}")
+    val tagResult = tagStatisticsService.updateTagStatistics()
+    logger.info(s"${tagResult}")
     val globalResult = updateGlobalStatistics()
     logger.info(s"${globalResult}")
     logger.info(s"Statistics Update is Completed!")

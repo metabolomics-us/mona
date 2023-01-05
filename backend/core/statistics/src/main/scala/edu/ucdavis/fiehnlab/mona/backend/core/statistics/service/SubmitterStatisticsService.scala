@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
 
 import scala.collection.mutable.{ListBuffer, Map}
 import scala.jdk.CollectionConverters._
@@ -21,6 +22,9 @@ class SubmitterStatisticsService extends LazyLogging{
 
   @Autowired
   val spectraSubmittersRepository: SpectrumSubmitterRepository = null
+
+  @Autowired
+  private val entityManager: EntityManager = null
 
   def updateSubmitterStatisticsHelper(): (Map[String, SpectrumSubmitterStatistics], Map[String, Integer], Map[String, ListBuffer[Double]]) = {
     val submitterObjects: Map[String, SpectrumSubmitterStatistics] = Map()
@@ -39,14 +43,15 @@ class SubmitterStatisticsService extends LazyLogging{
       }
       counter += 1
 
-      if (counter % 500 == 0) {
+      if (counter % 100000 == 0) {
         logger.info(s"\tCompleted Submitter Object #${counter}")
       }
+      entityManager.detach(submitter)
     }
     (submitterObjects, submitterCounter, submitterScores)
   }
 
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  @Transactional()
   def updateSubmitterStatistics(): String = {
     statisticsSubmitterRepository.deleteAll()
     val (submitterObjects, submitterCounter, submitterScores) = updateSubmitterStatisticsHelper()

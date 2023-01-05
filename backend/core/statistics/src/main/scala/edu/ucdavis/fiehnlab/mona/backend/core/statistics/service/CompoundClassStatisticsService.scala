@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
+import javax.persistence.EntityManager
 
 /**
   * Created by sajjan on 9/27/16.
@@ -20,6 +21,9 @@ import scala.jdk.StreamConverters.StreamHasToScala
 class CompoundClassStatisticsService extends LazyLogging{
   @Autowired
   private val compoundRepository: CompoundRepository = null
+
+  @Autowired
+  private val entityManager: EntityManager = null
 
   @Autowired
   private val statisticsCompoundClassesRepository: StatisticsCompoundClassesRepository = null
@@ -94,12 +98,13 @@ class CompoundClassStatisticsService extends LazyLogging{
       }
       counter += 1
 
-      if (counter % 1000 == 0) {
+      if (counter % 100000 == 0) {
         logger.info(s"\tCompleted Compound Object #${counter}")
       }
       inchiKeys.clearAndShrink()
       compoundClasses.clear()
       compoundClassString.clearAndShrink()
+      entityManager.detach(compound)
     }
     finalMap
   }
@@ -108,7 +113,7 @@ class CompoundClassStatisticsService extends LazyLogging{
     *
     * @return
     */
-  @Transactional(propagation =  org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+  @Transactional()
   def updateCompoundClassStatistics(): String = {
     val finalMap = updateCompoundClassStatisticsHelper()
     finalMap.foreach { case (key, value) =>

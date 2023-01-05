@@ -27,7 +27,7 @@ public interface SpectrumRepository extends  JpaRepository<Spectrum, String>, Jp
     boolean existsById(String id);
 
     @QueryHints(value = {
-            @QueryHint(name = HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name =HINT_FETCH_SIZE, value = "1"),
             @QueryHint(name = HINT_CACHEABLE, value = "false"),
             @QueryHint(name = READ_ONLY, value = "true")
     })

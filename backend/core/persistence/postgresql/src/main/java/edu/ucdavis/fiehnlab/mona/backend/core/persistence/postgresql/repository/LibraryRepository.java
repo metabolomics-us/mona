@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 @Profile({"mona.persistence"})
 public interface LibraryRepository extends JpaRepository<Library, Long> {
     @QueryHints(value = {
-            @QueryHint(name = HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name =HINT_FETCH_SIZE, value = "1"),
             @QueryHint(name = HINT_CACHEABLE, value = "false"),
             @QueryHint(name = READ_ONLY, value = "true")
     })

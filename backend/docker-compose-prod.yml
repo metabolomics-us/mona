@@ -22,7 +22,7 @@ services:
       - POSTGRES_USER=${MONA_USER}
       - POSTGRES_PASSWORD=${MONA_PASS}
     volumes:
-      - postgresql-data:/data
+      - postgresql-data:/var/lib/postgresql/data
       - ./postgresql-uat.conf:/etc/postgresql.conf
     logging:
       options:

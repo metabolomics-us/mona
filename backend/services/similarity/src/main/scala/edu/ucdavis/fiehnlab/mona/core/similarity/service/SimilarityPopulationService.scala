@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+import javax.persistence.EntityManager
 import scala.collection.mutable
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
@@ -24,7 +25,9 @@ class SimilarityPopulationService extends LazyLogging {
   @Autowired
   val spectrumRepository: SpectrumRepository = null
 
-  @Transactional()
+  @Autowired
+  private val entityManager: EntityManager = null
+
   private def addToIndex(spectrum: Spectrum, indexName: String, indexType: IndexType): Int = {
     val precursorMZ: Option[MetaData] = spectrum.getMetaData.asScala.find(_.getName == CommonMetaData.PRECURSOR_MASS)
     val tags: mutable.Buffer[String] = spectrum.getTags.asScala.map(_.getText)
@@ -67,6 +70,7 @@ class SimilarityPopulationService extends LazyLogging {
       } else {
         logger.debug(s"\tIndexed spectrum #$counter with id ${spectrum.getId}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
       }
+      entityManager.detach(spectrum)
     }
     logger.info(s"\tFinished indexing $counter spectrum, index size = ${indexUtils.getIndexSize}")
   }
