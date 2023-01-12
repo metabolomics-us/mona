@@ -40,6 +40,11 @@ public class StatisticsMetaData implements Serializable{
         this.metaDataValueCount = metaDataValueCount;
     }
 
+    public StatisticsMetaData(String name, Integer count) {
+        this.name = name;
+        this.count = count;
+    }
+
     public String getName() {
         return name;
     }
@@ -75,14 +80,5 @@ public class StatisticsMetaData implements Serializable{
     @Override
     public int hashCode() {
         return Objects.hash(id, name, count, metaDataValueCount);
-    }
-
-    public interface StatisticsMetaDataSummary{
-        //@Value annotations needed because of a bug with projections and JPA in 2.6.3, is fixed in 2.7(potentially 2.6.4)
-        //can remove the annotations when updated https://github.com/spring-projects/spring-data-jpa/issues/2408
-        @Value("#{target.Name}")
-        String getName();
-        @Value("#{target.Count}")
-        Integer getCount();
     }
 }

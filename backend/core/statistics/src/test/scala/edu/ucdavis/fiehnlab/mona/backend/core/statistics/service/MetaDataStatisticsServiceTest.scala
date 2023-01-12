@@ -64,7 +64,7 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec with LazyLogging{
       }
 
       "get metadata names from repository" in {
-        val result: Array[StatisticsMetaData.StatisticsMetaDataSummary] = metaDataStatisticsService.getMetaDataNames
+        val result: Array[StatisticsMetaData] = metaDataStatisticsService.getMetaDataNames
         assert(result.length == 240)
         assert(result.forall(_.getCount > 0))
       }

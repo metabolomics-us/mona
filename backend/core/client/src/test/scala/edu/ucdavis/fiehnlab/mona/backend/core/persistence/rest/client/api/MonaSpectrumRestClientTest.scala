@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData.StatisticsMetaDataSummary
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

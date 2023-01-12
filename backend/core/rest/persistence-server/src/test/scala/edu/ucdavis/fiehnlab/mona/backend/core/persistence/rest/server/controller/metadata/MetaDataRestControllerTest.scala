@@ -10,7 +10,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationC
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData.StatisticsMetaDataSummary
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}

@@ -98,7 +98,6 @@ export class SpectraBrowserComponent implements OnInit{
 
         // Table view parameters
         table: false,
-        tableColumnOptions: ['ID', 'Name', 'Structure', 'Mass Spectrum', 'Accurate Mass'],
         tableColumnSelected: ['ID', 'Name', 'Structure', 'Mass Spectrum', 'Accurate Mass']
       };
       this.itemsPerPageSelectionSubject = new BehaviorSubject<string>(this.pagination.itemsPerPageSelection);
@@ -129,18 +128,7 @@ export class SpectraBrowserComponent implements OnInit{
     }
 
   loadData() {
-        // Get unique metadata values for dropdown
-        this.metadata.metaDataNames().pipe(first()).subscribe(
-          (res: any) => {
-            res.sort((a, b) => {
-              return parseInt(b.count, 10) - parseInt(a.count, 10);
-            }).filter((x) => {
-              return x.name !== 'Last Auto-Curation';
-            }).map((x) => {
-              this.pagination.tableColumnOptions.push(x.name);
-            });
-          }
-        );
+        this.logger.debug('Load Data has been triggered')
 
         // Handle similarity search
         if (this.location.path().split('?')[0] === '/spectra/similaritySearch') {

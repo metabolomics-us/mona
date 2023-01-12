@@ -13,6 +13,10 @@ services:
   postgresql:
     image: postgres:13.4
     hostname: postgresql
+    #THIS MUST BE ADDED AT SERVICE LEVEL
+    shm_size: 40gb
+    stop_grace_period: 5m
+    restart: always
     command: postgres -c config_file=/etc/postgresql.conf
     expose:
       - 5432

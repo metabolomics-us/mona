@@ -47,8 +47,8 @@ class MetaDataStatisticsService extends LazyLogging{
     * Get a list of unique metadata names from the metadata statistics repository
     *
     */
- def getMetaDataNames: Array[StatisticsMetaData.StatisticsMetaDataSummary] = {
-    statisticsMetaDataRepository.findBy().asScala.toArray
+ def getMetaDataNames: Array[StatisticsMetaData] = {
+    statisticsMetaDataRepository.findByProjection().asScala.toArray
   }
 
   /**

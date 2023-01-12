@@ -30,11 +30,11 @@ class MetaDataRestController {
     */
   @RequestMapping(path = Array("/names"), method = Array(RequestMethod.GET))
   @Async
-  def listMetaDataName(@RequestParam(value = "search", required = false) partialMetaDataName: String): Future[Array[StatisticsMetaData.StatisticsMetaDataSummary]] = {
+  def listMetaDataName(@RequestParam(value = "search", required = false) partialMetaDataName: String): Future[Array[StatisticsMetaData]] = {
     if (partialMetaDataName == null || partialMetaDataName.isEmpty) {
-      new AsyncResult[Array[StatisticsMetaData.StatisticsMetaDataSummary]](metaDataStatisticsService.getMetaDataNames)
+      new AsyncResult[Array[StatisticsMetaData]](metaDataStatisticsService.getMetaDataNames)
     } else {
-      new AsyncResult[Array[StatisticsMetaData.StatisticsMetaDataSummary]](
+      new AsyncResult[Array[StatisticsMetaData]](
         metaDataStatisticsService
           .getMetaDataNames.filter(_.getName.toLowerCase.contains(partialMetaDataName.toLowerCase)))
     }
