@@ -202,8 +202,8 @@ public class MetaData implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MetaData that = (MetaData) o;
-        return id.equals(that.id) && Objects.equals(spectrumMetadata, that.spectrumMetadata) && Objects.equals(spectrumAnnotation, that.spectrumAnnotation) && Objects.equals(compoundMetadata, that.compoundMetadata) && Objects.equals(compoundClassification, that.compoundClassification) && Objects.equals(url, that.url) && Objects.equals(name, that.name) && Objects.equals(value, that.value) && Objects.equals(hidden, that.hidden) && Objects.equals(category, that.category) && Objects.equals(computed, that.computed) && Objects.equals(unit, that.unit);
+        MetaData metaData = (MetaData) o;
+        return Objects.equals(id, metaData.id) && Objects.equals(spectrumMetadata, metaData.spectrumMetadata) && Objects.equals(spectrumAnnotation, metaData.spectrumAnnotation) && Objects.equals(compoundMetadata, metaData.compoundMetadata) && Objects.equals(compoundClassification, metaData.compoundClassification) && Objects.equals(url, metaData.url) && Objects.equals(name, metaData.name) && Objects.equals(value, metaData.value) && Objects.equals(hidden, metaData.hidden) && Objects.equals(category, metaData.category) && Objects.equals(computed, metaData.computed) && Objects.equals(unit, metaData.unit);
     }
 
     @Override

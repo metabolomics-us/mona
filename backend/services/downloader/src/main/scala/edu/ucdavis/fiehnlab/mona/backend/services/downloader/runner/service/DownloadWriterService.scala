@@ -12,6 +12,8 @@ import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+import javax.persistence.EntityManager
+
 /**
   * Created by sajjan on 6/10/16.
   */
@@ -22,15 +24,17 @@ class DownloadWriterService extends LazyLogging {
   @Autowired
   val spectrumPersistenceService: SpectrumPersistenceService = null
 
+  @Autowired
+  private val entityManager: EntityManager = null
+
 
   /**
     * Return the results of a given query as a paginated iterator
     *
     * @param query
     */
-  @Transactional
   private def executeQuery(query: String): Iterable[Spectrum] = {
-    new DynamicIterable[Spectrum, String](query, 100) {
+    new DynamicIterable[Spectrum, String](query, 1000) {
 
       /**
         * Loads more data from the server for the given query
@@ -87,8 +91,10 @@ class DownloadWriterService extends LazyLogging {
       downloaders.foreach(_.write(spectrum))
       count += 1
 
-      if (count % 1000 == 0)
+      if (count % 1000 == 0) {
         logger.info(s"$label: Exported $count/$total")
+      }
+      entityManager.detach(spectrum)
     }
 
 

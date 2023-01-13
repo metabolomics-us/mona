@@ -25,7 +25,7 @@ import scala.jdk.CollectionConverters._
   */
 abstract class GenericRESTController[T] {
 
-  var fetchSize: Int = 50
+  var fetchSize: Int = 10
 
   /**
     * Utilized repository
