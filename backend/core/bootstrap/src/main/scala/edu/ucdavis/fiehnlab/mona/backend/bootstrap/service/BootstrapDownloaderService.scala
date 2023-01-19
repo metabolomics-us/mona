@@ -40,8 +40,6 @@ class BootstrapDownloaderService extends LazyLogging {
     * @return
     */
   def createPredefinedQueries(): Unit = {
-
-    predefinedQueryRepo.deleteAll()
     // Create library exports
     createLibraryQueries()
 
@@ -89,7 +87,7 @@ class BootstrapDownloaderService extends LazyLogging {
 
     // Create export for all spectra
     saveQuery("All Spectra", "All Spectra", "")
-    saveQuery("All Spectra - Experimental Spectra", "Experimental Spectra", "tags.text!'In-Silico'")
+    saveQuery("All Spectra - Experimental Spectra", "Experimental Spectra", "not(exists(tags.text in ('In-Silico')))")
     saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", "tags.text:'In-Silico'")
 
     saveQuery(

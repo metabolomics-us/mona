@@ -169,17 +169,17 @@ services:
         max-size: "100M"
 
   # MoNA similarity service
-  similarity:
-    image: public.ecr.aws/fiehnlab/mona-similarity:test
-    ports:
-      - "9999:9999"
-    depends_on:
-      - repository
-      - discovery
-    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx30g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
-    logging:
-      options:
-        max-size: "100M"
+#  similarity:
+#    image: public.ecr.aws/fiehnlab/mona-similarity:test
+#    ports:
+#      - "9999:9999"
+#    depends_on:
+#      - repository
+#      - discovery
+#    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx30g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+#    logging:
+#      options:
+#        max-size: "100M"
 
   #
   # Proxy and additional standalone services

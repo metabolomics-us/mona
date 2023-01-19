@@ -10,6 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.services.repository.layout.FileLayout
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.transport.RefSpec
 import org.springframework.beans.factory.annotation.Autowired
+import javax.persistence.EntityManager
 
 /**
   * Created by wohlg_000 on 5/18/2016.

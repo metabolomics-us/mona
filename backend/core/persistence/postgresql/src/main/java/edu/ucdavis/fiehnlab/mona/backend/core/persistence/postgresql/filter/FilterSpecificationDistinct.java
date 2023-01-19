@@ -20,7 +20,6 @@ public class FilterSpecificationDistinct<T> extends FilterSpecification<T> {
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-        query.distinct(true);
         Predicate predicate = null;
         Map<String, Join<?, ?>> j = this.getJoins() != null ? this.getJoins() : new HashMap();
         if (this.getInput() != null) {

@@ -117,7 +117,6 @@ class StatisticsService extends LazyLogging {
     *
     * @return
     **/
-  @Transactional()
   def updateGlobalStatistics(): String = {
     globalStatisticsRepository.deleteAll()
     // Spectrum count
@@ -150,7 +149,6 @@ class StatisticsService extends LazyLogging {
    * */
   @Async
   @Scheduled(cron = "0 0 0 * * *")
-  @Transactional()
   def updateStatistics(): Unit = {
     val metaDataResult = metaDataStatisticsService.updateMetaDataStatistics()
     logger.info(s"${metaDataResult}")

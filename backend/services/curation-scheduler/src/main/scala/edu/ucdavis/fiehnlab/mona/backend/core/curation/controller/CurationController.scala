@@ -14,6 +14,7 @@ import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation._
+import javax.persistence.EntityManager
 
 
 /**
@@ -30,6 +31,9 @@ class CurationController extends LazyLogging {
   @Autowired
   val curationService: CurationService = null
 
+  @Autowired
+  val entityManager: EntityManager = null
+
   /**
     * schedules the spectra with the specified id for curation
     *
@@ -45,7 +49,6 @@ class CurationController extends LazyLogging {
       new AsyncResult[ResponseEntity[CurationJobScheduled]](new ResponseEntity(HttpStatus.NOT_FOUND))
     } else {
       curationService.scheduleSpectrum(spectrum)
-
       new AsyncResult[ResponseEntity[CurationJobScheduled]](
         new ResponseEntity[CurationJobScheduled](CurationJobScheduled(1), HttpStatus.OK)
       )
@@ -61,7 +64,7 @@ class CurationController extends LazyLogging {
   @Async
   def curateByQuery(@RequestParam(required = false, name = "query") query: String): Future[ResponseEntity[CurationJobScheduled]] = {
 
-    val it = new DynamicIterable[Spectrum, String](query, 100) {
+    val it = new DynamicIterable[Spectrum, String](query, 1000) {
       /**
         * Loads more data from the server for the given query
         */
@@ -84,6 +87,7 @@ class CurationController extends LazyLogging {
       if (count % 10000 == 0) {
         logger.info(s"Scheduled $count spectra...")
       }
+      entityManager.detach(spectrum)
     }
 
     logger.info(s"Finished scheduling $count spectra")
