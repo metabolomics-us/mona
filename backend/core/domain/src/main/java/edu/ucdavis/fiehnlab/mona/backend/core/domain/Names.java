@@ -23,7 +23,7 @@ public class Names implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Compound compound;
+    private Compound compoundNames;
 
     private Boolean computed;
 
@@ -89,11 +89,11 @@ public class Names implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Names names = (Names) o;
-        return Objects.equals(id, names.id) && Objects.equals(compound, names.compound) && Objects.equals(computed, names.computed) && Objects.equals(name, names.name) && Objects.equals(score, names.score) && Objects.equals(source, names.source);
+        return Objects.equals(id, names.id) && Objects.equals(compoundNames, names.compoundNames) && Objects.equals(computed, names.computed) && Objects.equals(name, names.name) && Objects.equals(score, names.score) && Objects.equals(source, names.source);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, compound, computed, name, score, source);
+        return Objects.hash(id, compoundNames, computed, name, score, source);
     }
 }

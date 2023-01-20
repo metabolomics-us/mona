@@ -22,17 +22,17 @@ public class Tag implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Spectrum spectrum;
+    private Spectrum spectrumTags;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Compound compound;
+    private Compound compoundTags;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Library library;
+    @JsonIgnore
+    private Library libraryTag;
 
     private String text;
 
@@ -46,26 +46,26 @@ public class Tag implements Serializable {
         this.ruleBased = ruleBased;
     }
 
-    public Tag(Long id, Spectrum spectrum, Compound compound, Library library, String text, Boolean ruleBased) {
+    public Tag(Long id, Spectrum spectrumTags, Compound compoundTags, Library libraryTag, String text, Boolean ruleBased) {
         this.id = id;
-        this.spectrum = spectrum;
-        this.compound = compound;
-        this.library = library;
+        this.spectrumTags = spectrumTags;
+        this.compoundTags = compoundTags;
+        this.libraryTag = libraryTag;
         this.text = text;
         this.ruleBased = ruleBased;
     }
 
-    public Tag(Spectrum spectrum, Compound compound, Library library, String text, Boolean ruleBased) {
-        this.spectrum = spectrum;
-        this.compound = compound;
-        this.library = library;
+    public Tag(Spectrum spectrumTags, Compound compoundTags, Library libraryTag, String text, Boolean ruleBased) {
+        this.spectrumTags = spectrumTags;
+        this.compoundTags = compoundTags;
+        this.libraryTag = libraryTag;
         this.text = text;
         this.ruleBased = ruleBased;
     }
 
-    public Tag(Spectrum spectrum, Compound compound, String text, Boolean ruleBased) {
-        this.spectrum = spectrum;
-        this.compound = compound;
+    public Tag(Spectrum spectrumTags, Compound compoundTags, String text, Boolean ruleBased) {
+        this.spectrumTags = spectrumTags;
+        this.compoundTags = compoundTags;
         this.text = text;
         this.ruleBased = ruleBased;
     }
@@ -86,22 +86,34 @@ public class Tag implements Serializable {
         this.ruleBased = ruleBased;
     }
 
-    public Spectrum getSpectrum() { return spectrum; }
+    public Spectrum getSpectrumTags() { return spectrumTags; }
 
-    public Compound getCompound() { return compound;}
+    public Compound getCompoundTags() { return compoundTags;}
 
-    public Library getLibrary() { return library; }
+    public Library getLibraryTag() { return libraryTag; }
+
+    public void setSpectrumTags(Spectrum spectrumTags) {
+        this.spectrumTags = spectrumTags;
+    }
+
+    public void setCompoundTags(Compound compoundTags) {
+        this.compoundTags = compoundTags;
+    }
+
+    public void setLibraryTag(Library libraryTag) {
+        this.libraryTag = libraryTag;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tag tag = (Tag) o;
-        return Objects.equals(id, tag.id) && Objects.equals(spectrum, tag.spectrum) && Objects.equals(compound, tag.compound) && Objects.equals(library, tag.library) && Objects.equals(text, tag.text) && Objects.equals(ruleBased, tag.ruleBased);
+        return Objects.equals(id, tag.id) && Objects.equals(spectrumTags, tag.spectrumTags) && Objects.equals(compoundTags, tag.compoundTags) && Objects.equals(libraryTag, tag.libraryTag) && Objects.equals(text, tag.text) && Objects.equals(ruleBased, tag.ruleBased);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrum, compound, library, text, ruleBased);
+        return Objects.hash(id, spectrumTags, compoundTags, libraryTag, text, ruleBased);
     }
 }

@@ -23,14 +23,13 @@ public class Compound implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Spectrum spectrum;
+    private Spectrum spectrumCompound;
 
     @Column(name = "kind")
     private String kind;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "compound_id")
-    @Column(name = "tags")
+    @JoinColumn(name = "compound_tags_id")
     private List<Tag> tags;
 
     @Column(name = "inchi")
@@ -39,7 +38,7 @@ public class Compound implements Serializable {
 
     @Column(name = "names")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "compound_id")
+    @JoinColumn(name = "compound_names_id")
     private List<Names> names;
 
     @Column(name = "molFile")
@@ -78,12 +77,6 @@ public class Compound implements Serializable {
         this.classification = classification;
     }
 
-    public Spectrum getSpectrum() {
-        return spectrum;
-    }
-
-    public void setSpectrum(Spectrum spectrum) { this.spectrum = spectrum; }
-
     public void setKind(String kind) {
         this.kind = kind;
     }
@@ -94,6 +87,14 @@ public class Compound implements Serializable {
 
     public void setInchi(String inchi) {
         this.inchi = inchi;
+    }
+
+    public Spectrum getSpectrumCompound() {
+        return spectrumCompound;
+    }
+
+    public void setSpectrumCompound(Spectrum spectrumCompound) {
+        this.spectrumCompound = spectrumCompound;
     }
 
     public void setNames(List<Names> names) {
@@ -168,12 +169,12 @@ public class Compound implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Compound that = (Compound) o;
-        return Objects.equals(id, that.id) && Objects.equals(spectrum, that.spectrum) && Objects.equals(kind, that.kind) && Objects.equals(tags, that.tags) && Objects.equals(inchi, that.inchi) && Objects.equals(names, that.names) && Objects.equals(molFile, that.molFile) && Objects.equals(computed, that.computed) && Objects.equals(inchiKey, that.inchiKey) && Objects.equals(metaData, that.metaData) && Objects.equals(classification, that.classification);
+        Compound compound = (Compound) o;
+        return Objects.equals(id, compound.id) && Objects.equals(spectrumCompound, compound.spectrumCompound) && Objects.equals(kind, compound.kind) && Objects.equals(tags, compound.tags) && Objects.equals(inchi, compound.inchi) && Objects.equals(names, compound.names) && Objects.equals(molFile, compound.molFile) && Objects.equals(computed, compound.computed) && Objects.equals(inchiKey, compound.inchiKey) && Objects.equals(metaData, compound.metaData) && Objects.equals(classification, compound.classification);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrum, kind, tags, inchi, names, molFile, computed, inchiKey, metaData, classification);
+        return Objects.hash(id, spectrumCompound, kind, tags, inchi, names, molFile, computed, inchiKey, metaData, classification);
     }
 }

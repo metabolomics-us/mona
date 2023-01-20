@@ -89,7 +89,6 @@ class SpectrumPersistenceService extends LazyLogging {
     val result = spectrumResultRepository.save(spectrum)
 
     fireUpdateEvent(result)
-//    result
   }
 
   /**

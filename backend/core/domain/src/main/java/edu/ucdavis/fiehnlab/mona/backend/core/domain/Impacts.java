@@ -22,7 +22,7 @@ public class Impacts implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Score score;
+    private Score scoreImpacts;
     private Double value;
     private String reason;
 
@@ -40,14 +40,6 @@ public class Impacts implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Score getScore() {
-        return score;
-    }
-
-    public void setScore(Score score) {
-        this.score = score;
     }
 
     public void setValue(Double value) {
@@ -69,11 +61,11 @@ public class Impacts implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Impacts impacts = (Impacts) o;
-        return id.equals(impacts.id) && score.equals(impacts.score) && Objects.equals(value, impacts.value) && Objects.equals(reason, impacts.reason);
+        return Objects.equals(id, impacts.id) && Objects.equals(scoreImpacts, impacts.scoreImpacts) && Objects.equals(value, impacts.value) && Objects.equals(reason, impacts.reason);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, score, value, reason);
+        return Objects.hash(id, scoreImpacts, value, reason);
     }
 }
