@@ -85,10 +85,10 @@ class CompoundClassStatisticsService extends LazyLogging{
         for (i <- 0 until compoundClassString.length) {
           val combinedString = compoundClassString.slice(0, i + 1).mkString("|")
           if (!finalMap.contains(combinedString)) {
-            finalMap(combinedString) = Map("spectra" -> ArrayBuffer[String](compound.getSpectrumCompound.getId), "compounds" -> (ArrayBuffer[String]() ++= inchiKeys))
+            finalMap(combinedString) = Map("spectra" -> ArrayBuffer[String](compound.getSpectrum.getId), "compounds" -> (ArrayBuffer[String]() ++= inchiKeys))
           } else {
             if (finalMap(combinedString).contains("spectra")) {
-              finalMap(combinedString)("spectra").append(compound.getSpectrumCompound.getId)
+              finalMap(combinedString)("spectra").append(compound.getSpectrum.getId)
             }
             if (finalMap(combinedString).contains("compounds")) {
               finalMap(combinedString)("compounds") ++= inchiKeys

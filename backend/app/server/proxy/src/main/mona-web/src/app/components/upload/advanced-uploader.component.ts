@@ -427,7 +427,10 @@ export class AdvancedUploaderComponent implements OnInit{
             resolve(true);
           }, undefined);
           resolve(true);
+        } else {
+          reject();
         }
+
       }, origin);
     });
   }

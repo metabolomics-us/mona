@@ -21,13 +21,13 @@ public class Score implements Serializable {
     @JsonIgnore
     private Long id;
 
-    @OneToOne(mappedBy = "score", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "score")
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Spectrum spectrumScore;
+    private Spectrum spectrum;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "score_impacts_id")
+    @JoinColumn(name = "score_id")
     private List<Impacts> impacts;
     private Double score;
     private Double relativeScore;
@@ -80,11 +80,11 @@ public class Score implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Score score1 = (Score) o;
-        return Objects.equals(id, score1.id) && Objects.equals(spectrumScore, score1.spectrumScore) && Objects.equals(impacts, score1.impacts) && Objects.equals(score, score1.score) && Objects.equals(relativeScore, score1.relativeScore) && Objects.equals(scaledScore, score1.scaledScore);
+        return id.equals(score1.id) && spectrum.equals(score1.spectrum) && Objects.equals(impacts, score1.impacts) && Objects.equals(score, score1.score) && Objects.equals(relativeScore, score1.relativeScore) && Objects.equals(scaledScore, score1.scaledScore);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrumScore, impacts, score, relativeScore, scaledScore);
+        return Objects.hash(id, spectrum, impacts, score, relativeScore, scaledScore);
     }
 }

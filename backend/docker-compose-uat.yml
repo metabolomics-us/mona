@@ -122,7 +122,7 @@ services:
     depends_on:
       - config-server
       - webhooks
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx10g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
         max-size: "100M"
@@ -135,7 +135,7 @@ services:
     depends_on:
       - config-server
       - webhooks
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx16g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - repository-data:/data
     logging:
@@ -169,17 +169,17 @@ services:
         max-size: "100M"
 
   # MoNA similarity service
-  similarity:
-    image: public.ecr.aws/fiehnlab/mona-similarity:test
-    ports:
-      - "9999:9999"
-    depends_on:
-      - repository
-      - discovery
-    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx20g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
-    logging:
-      options:
-        max-size: "100M"
+#  similarity:
+#    image: public.ecr.aws/fiehnlab/mona-similarity:test
+#    ports:
+#      - "9999:9999"
+#    depends_on:
+#      - repository
+#      - discovery
+#    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx30g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+#    logging:
+#      options:
+#        max-size: "100M"
 
   #
   # Proxy and additional standalone services
@@ -207,7 +207,7 @@ services:
     depends_on:
       - persistence
       - repository
-    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx12g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh repository:8888 -t 3600 --strict -- java -Xmx10g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - downloader-data:/data
     logging:

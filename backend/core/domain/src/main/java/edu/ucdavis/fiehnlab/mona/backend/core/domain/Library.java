@@ -6,22 +6,23 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "library")
 @Profile({"mona.persistence"})
-public class Library {
+public class Library implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "library_id")
     @SequenceGenerator(name = "library_id", initialValue = 1, allocationSize = 50)
     @JsonIgnore
     private Long id;
 
-    @OneToOne(mappedBy = "library", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "library")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Spectrum spectrumLibrary;
+    private Spectrum spectrum;
 
     private String description;
 
@@ -30,7 +31,7 @@ public class Library {
     private String library;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "library_tag_id")
+    @JoinColumn(name = "tag_id")
     private Tag tag;
 
     public Library() {
@@ -51,12 +52,12 @@ public class Library {
         this.id = id;
     }
 
-    public Spectrum getSpectrumLibrary() {
-        return spectrumLibrary;
+    public Spectrum getSpectrum() {
+        return spectrum;
     }
 
-    public void setSpectrumLibrary(Spectrum spectrumLibrary) {
-        this.spectrumLibrary = spectrumLibrary;
+    public void setSpectrum(Spectrum spectrum) {
+        this.spectrum = spectrum;
     }
 
     public String getDescription() {
@@ -91,16 +92,17 @@ public class Library {
         this.tag = tag;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Library library1 = (Library) o;
-        return Objects.equals(id, library1.id) && Objects.equals(spectrumLibrary, library1.spectrumLibrary) && Objects.equals(description, library1.description) && Objects.equals(link, library1.link) && Objects.equals(library, library1.library) && Objects.equals(tag, library1.tag);
+        Library that = (Library) o;
+        return Objects.equals(id, that.id) && Objects.equals(spectrum, that.spectrum) && Objects.equals(description, that.description) && Objects.equals(link, that.link) && Objects.equals(library, that.library) && Objects.equals(tag, that.tag);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrumLibrary, description, link, library, tag);
+        return Objects.hash(id, spectrum, description, link, library, tag);
     }
 }

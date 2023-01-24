@@ -22,7 +22,7 @@ public class Spectrum implements Serializable {
     @NotEmpty
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "spectrum_compound_id")
+    @JoinColumn(name = "spectrum_id")
     private List<Compound> compound;
 
     @Column(name = "id")
@@ -52,7 +52,7 @@ public class Spectrum implements Serializable {
     private List<MetaData> annotations = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "spectrum_score_id")
+    @JoinColumn(name = "score_id")
     private Score score;
 
     @Column(name = "spectrum")
@@ -71,21 +71,21 @@ public class Spectrum implements Serializable {
     private Date lastCurated = null;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "spectrum_splash_id")
+    @JoinColumn(name = "splash_id")
     private Splash splash;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "spectrum_submitter_id")
+    @JoinColumn(name = "submitter_id")
     @NotNull
     private SpectrumSubmitter submitter;
 
     @Column(name = "tags")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "spectrum_tags_id")
+    @JoinColumn(name = "spectrum_id")
     private List<Tag> tags;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "spectrum_library_id")
+    @JoinColumn(name = "library_id")
     private Library library;
 
     public Spectrum() {

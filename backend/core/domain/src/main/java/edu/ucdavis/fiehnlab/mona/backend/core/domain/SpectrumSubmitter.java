@@ -18,10 +18,10 @@ public class SpectrumSubmitter {
     @JsonIgnore
     private Long id;
 
-    @OneToOne(mappedBy = "submitter", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "submitter")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Spectrum spectrumSubmitter;
+    private Spectrum spectrum;
 
     private String emailAddress;
 
@@ -39,6 +39,14 @@ public class SpectrumSubmitter {
         this.firstName = firstName;
         this.institution = institution;
         this.emailAddress = emailAddress;
+    }
+
+    public Spectrum getSpectrum() {
+        return spectrum;
+    }
+
+    public void setSpectrum(Spectrum spectrum) {
+        this.spectrum = spectrum;
     }
 
     public Long getId() {
@@ -86,12 +94,12 @@ public class SpectrumSubmitter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SpectrumSubmitter that = (SpectrumSubmitter) o;
-        return Objects.equals(id, that.id) && Objects.equals(spectrumSubmitter, that.spectrumSubmitter) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(institution, that.institution);
+        return Objects.equals(id, that.id) && Objects.equals(spectrum, that.spectrum) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(institution, that.institution);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrumSubmitter, emailAddress, firstName, lastName, institution);
+        return Objects.hash(id, spectrum, emailAddress, firstName, lastName, institution);
     }
 
     @Override

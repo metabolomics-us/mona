@@ -19,10 +19,10 @@ public class Splash implements Serializable {
     @JsonIgnore
     private Long id;
 
-    @OneToOne(mappedBy = "splash", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "splash")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Spectrum spectrumSplash;
+    private Spectrum spectrum;
 
     private String block1;
     private String block2;
@@ -47,6 +47,14 @@ public class Splash implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Spectrum getSpectrum() {
+        return spectrum;
+    }
+
+    public void setSpectrum(Spectrum spectrum) {
+        this.spectrum = spectrum;
     }
 
     public String getBlock1() {
@@ -94,11 +102,11 @@ public class Splash implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Splash splash1 = (Splash) o;
-        return Objects.equals(id, splash1.id) && Objects.equals(spectrumSplash, splash1.spectrumSplash) && Objects.equals(block1, splash1.block1) && Objects.equals(block2, splash1.block2) && Objects.equals(block3, splash1.block3) && Objects.equals(block4, splash1.block4) && Objects.equals(splash, splash1.splash);
+        return id.equals(splash1.id) && spectrum.equals(splash1.spectrum) && Objects.equals(block1, splash1.block1) && Objects.equals(block2, splash1.block2) && Objects.equals(block3, splash1.block3) && Objects.equals(block4, splash1.block4) && Objects.equals(splash, splash1.splash);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrumSplash, block1, block2, block3, block4, splash);
+        return Objects.hash(id, spectrum, block1, block2, block3, block4, splash);
     }
 }

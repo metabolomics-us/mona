@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.{Async, Scheduled}
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.{Propagation, Transactional}
-
+import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
+
 import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
@@ -59,6 +59,7 @@ class StatisticsService extends LazyLogging {
   @Autowired
   private val entityManager: EntityManager = null
 
+  @Transactional()
   def generateCompoundCount(): Long = {
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
     compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
@@ -72,6 +73,7 @@ class StatisticsService extends LazyLogging {
     inchiKeys.distinct.length
   }
 
+  @Transactional()
   def generateMetaDataCount(): Long = {
     val metaDataCounterMap: Map[String, Int] = Map()
     metaDataRepository.streamAllBy().toScala(Iterator).foreach{ metaData =>
@@ -83,10 +85,11 @@ class StatisticsService extends LazyLogging {
     metaDataCounterMap.size.toLong
   }
 
+  @Transactional()
   def generateTagCount(): Long = {
     val tagsCounter: Map[String, Int] = Map()
     tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
-      if(tag.getSpectrumTags == null && tag.getCompoundTags == null) {
+      if(tag.getSpectrum == null && tag.getCompound == null) {
         logger.debug(s"Exclude Library Tag Duplicates")
       } else {
         if (!tagsCounter.contains(tag.getText)) {
@@ -98,6 +101,7 @@ class StatisticsService extends LazyLogging {
     tagsCounter.size.toLong
   }
 
+  @Transactional()
   def generateSubmitterCount(): Long = {
     val submitterCounter: Map[String, Integer] = Map()
     spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
@@ -117,10 +121,10 @@ class StatisticsService extends LazyLogging {
     globalStatisticsRepository.deleteAll()
     // Spectrum count
     val spectrumCount: Long = spectrumPersistenceService.count()
-    val metaDataValueCount: Long = metaDataRepository.count()
-    val tagValueCount: Long = tagsRepository.count()
-    val metaDataCount: Long = generateMetaDataCount()
     val compoundCount: Long = generateCompoundCount()
+    val metaDataValueCount: Long = metaDataRepository.count()
+    val metaDataCount: Long = generateMetaDataCount()
+    val tagValueCount: Long = tagsRepository.count()
     val tagCount: Long = generateTagCount()
     val submitterCount: Long = generateSubmitterCount()
 
@@ -145,7 +149,6 @@ class StatisticsService extends LazyLogging {
    * */
   @Async
   @Scheduled(cron = "0 0 0 * * *")
-  @Transactional
   def updateStatistics(): Unit = {
     val metaDataResult = metaDataStatisticsService.updateMetaDataStatistics()
     logger.info(s"${metaDataResult}")

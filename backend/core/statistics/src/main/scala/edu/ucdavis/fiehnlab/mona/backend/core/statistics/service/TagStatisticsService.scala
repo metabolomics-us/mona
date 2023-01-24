@@ -32,16 +32,14 @@ class TagStatisticsService extends LazyLogging{
   @Autowired
   private val entityManager: EntityManager = null
 
-  def updateTagStatisticsHelper(): (Map[String, Int], Map[String, Boolean], Map[String, Boolean]) = {
+  def updateTagStatisticsHelper(): (Map[String, Int], Map[String, Boolean]) = {
     val tagsCounter: Map[String, Int] = Map()
     val tagsRuleBase: Map[String, Boolean] = Map()
-    val tagsLibrary: Map[String, Boolean] = Map()
     var counter = 0
     tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
       //Exclude spectrum.library associated tags since they are already included in the spectrum.tags object
-      if (tag.getSpectrumTags == null && tag.getCompoundTags == null) {
+      if (tag.getSpectrum == null && tag.getCompound == null) {
         logger.debug(s"Don't count library tags as count as duplicates")
-        tagsLibrary(tag.getText) = true
       } else {
         if (tagsCounter.contains(tag.getText)) {
           tagsCounter(tag.getText) += 1
@@ -49,7 +47,6 @@ class TagStatisticsService extends LazyLogging{
           tagsCounter(tag.getText) = 1
           tagsRuleBase(tag.getText) = tag.getRuleBased
         }
-        tagsLibrary(tag.getText) = false
       }
       counter += 1
 
@@ -58,22 +55,21 @@ class TagStatisticsService extends LazyLogging{
       }
       entityManager.detach(tag)
     }
-    (tagsCounter, tagsRuleBase, tagsLibrary)
+    (tagsCounter, tagsRuleBase)
   }
   /**
    * Collect a list of unique tags with their respective counts
    *
    * @return
    * */
-
-  @Transactional
+  @Transactional()
   def updateTagStatistics(): String = {
     statisticsTagRepository.deleteAll()
 
-    val (tagsCounter, tagsRuleBase, tagsLibrary) = updateTagStatisticsHelper()
+    val (tagsCounter, tagsRuleBase) = updateTagStatisticsHelper()
 
     tagsCounter.foreach { case (key, value) =>
-      val newStatisticTag = new StatisticsTag(key, tagsRuleBase(key), value, if (tagsLibrary(key)) "library" else null)
+      val newStatisticTag = new StatisticsTag(key, tagsRuleBase(key), value, if (libraryRepository.existsByTag_Text(key)) "library" else null)
       statisticsTagRepository.save(newStatisticTag)
     }
     "Tag Statistics Completed"
