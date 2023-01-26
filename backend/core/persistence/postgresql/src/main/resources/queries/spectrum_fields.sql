@@ -24,10 +24,5 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS spectrum_splash_index ON spectrum (splas
 CREATE INDEX CONCURRENTLY IF NOT EXISTS spectrum_submitter_index ON spectrum (submitter_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS metadata_value_count_index on metadata_value_count (statistics_metadata_id, statistics_metadata_name);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS tag_spectrum_index on tags (spectrum_id);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS tag_text_index on tags (text);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS library_tag_index on library (tag_id);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS library_name_index on library (library);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS statistics_metadata_name_index on statistics_metadata(name);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS metadata_name_index ON metadata(name);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS metadata_value_index ON metadata(value);
 create index concurrently if not exists spectrum_submitter_email_address_index on spectrum_submitters (email_address);

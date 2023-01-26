@@ -30,18 +30,13 @@ public class Library implements Serializable {
 
     private String library;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
-
     public Library() {
     }
 
-    public Library(String description, String link, String library, Tag tag) {
+    public Library(String description, String link, String library) {
         this.description = description;
         this.link = link;
         this.library = library;
-        this.tag = tag;
     }
 
     public Long getId() {
@@ -84,25 +79,16 @@ public class Library implements Serializable {
         this.library = library;
     }
 
-    public Tag getTag() {
-        return tag;
-    }
-
-    public void setTag(Tag tag) {
-        this.tag = tag;
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Library that = (Library) o;
-        return Objects.equals(id, that.id) && Objects.equals(spectrum, that.spectrum) && Objects.equals(description, that.description) && Objects.equals(link, that.link) && Objects.equals(library, that.library) && Objects.equals(tag, that.tag);
+        Library library1 = (Library) o;
+        return Objects.equals(id, library1.id) && Objects.equals(spectrum, library1.spectrum) && Objects.equals(description, library1.description) && Objects.equals(link, library1.link) && Objects.equals(library, library1.library);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrum, description, link, library, tag);
+        return Objects.hash(id, spectrum, description, link, library);
     }
 }

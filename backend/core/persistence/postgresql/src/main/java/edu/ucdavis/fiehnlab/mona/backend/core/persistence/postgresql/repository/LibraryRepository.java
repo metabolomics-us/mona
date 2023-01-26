@@ -25,6 +25,6 @@ public interface LibraryRepository extends JpaRepository<Library, Long> {
     @Query("select l from Library l")
     Stream<Library> streamAllBy();
 
-    Boolean existsByTag_Text(String text);
+    Boolean existsByLibrary(String library);
 
 }

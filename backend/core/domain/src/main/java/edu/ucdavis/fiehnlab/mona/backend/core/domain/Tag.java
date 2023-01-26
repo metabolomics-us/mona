@@ -29,11 +29,6 @@ public class Tag implements Serializable {
     @JsonIgnore
     private Compound compound;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Library library;
-
     private String text;
 
     private Boolean ruleBased;
@@ -42,30 +37,6 @@ public class Tag implements Serializable {
     }
 
     public Tag(String text, Boolean ruleBased) {
-        this.text = text;
-        this.ruleBased = ruleBased;
-    }
-
-    public Tag(Long id, Spectrum spectrum, Compound compound, Library library, String text, Boolean ruleBased) {
-        this.id = id;
-        this.spectrum = spectrum;
-        this.compound = compound;
-        this.library = library;
-        this.text = text;
-        this.ruleBased = ruleBased;
-    }
-
-    public Tag(Spectrum spectrum, Compound compound, Library library, String text, Boolean ruleBased) {
-        this.spectrum = spectrum;
-        this.compound = compound;
-        this.library = library;
-        this.text = text;
-        this.ruleBased = ruleBased;
-    }
-
-    public Tag(Spectrum spectrum, Compound compound, String text, Boolean ruleBased) {
-        this.spectrum = spectrum;
-        this.compound = compound;
         this.text = text;
         this.ruleBased = ruleBased;
     }
@@ -90,18 +61,17 @@ public class Tag implements Serializable {
 
     public Compound getCompound() { return compound;}
 
-    public Library getLibrary() { return library; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tag tag = (Tag) o;
-        return Objects.equals(id, tag.id) && Objects.equals(spectrum, tag.spectrum) && Objects.equals(compound, tag.compound) && Objects.equals(library, tag.library) && Objects.equals(text, tag.text) && Objects.equals(ruleBased, tag.ruleBased);
+        return Objects.equals(id, tag.id) && Objects.equals(spectrum, tag.spectrum) && Objects.equals(compound, tag.compound) && Objects.equals(text, tag.text) && Objects.equals(ruleBased, tag.ruleBased);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrum, compound, library, text, ruleBased);
+        return Objects.hash(id, spectrum, compound, text, ruleBased);
     }
 }

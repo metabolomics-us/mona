@@ -69,7 +69,7 @@ class TagStatisticsService extends LazyLogging{
     val (tagsCounter, tagsRuleBase) = updateTagStatisticsHelper()
 
     tagsCounter.foreach { case (key, value) =>
-      val newStatisticTag = new StatisticsTag(key, tagsRuleBase(key), value, if (libraryRepository.existsByTag_Text(key)) "library" else null)
+      val newStatisticTag = new StatisticsTag(key, tagsRuleBase(key), value, if (libraryRepository.existsByLibrary(key)) "library" else null)
       statisticsTagRepository.save(newStatisticTag)
     }
     "Tag Statistics Completed"

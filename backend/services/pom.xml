@@ -18,7 +18,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>repository</module>
         <module>curation-scheduler</module>
         <module>curation-runner</module>
         <module>downloader</module>

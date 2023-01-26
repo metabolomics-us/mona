@@ -13,6 +13,5 @@ docker push public.ecr.aws/fiehnlab/mona-discovery:test
 docker push public.ecr.aws/fiehnlab/mona-download-scheduler:test
 docker push public.ecr.aws/fiehnlab/mona-persistence-server:test
 docker push public.ecr.aws/fiehnlab/mona-proxy:test
-docker push public.ecr.aws/fiehnlab/mona-repository:test
 docker push public.ecr.aws/fiehnlab/mona-similarity:test
 docker push public.ecr.aws/fiehnlab/mona-webhooks-server:test
