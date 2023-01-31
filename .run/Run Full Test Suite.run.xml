@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Full Test Suite" type="CompoundRunConfigurationType">
+    <toRun name="Start Test Server" type="docker-deploy" />
+    <toRun name="MoNA Run Test Suite" type="MavenRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>

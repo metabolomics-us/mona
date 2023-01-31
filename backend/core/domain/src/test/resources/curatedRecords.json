@@ -855,10 +855,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100601",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -1717,10 +1714,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100701",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -2655,10 +2649,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100801",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -3390,10 +3381,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100802",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -4132,10 +4120,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100803",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -4909,10 +4894,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100804",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -5700,10 +5682,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100805",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -6351,10 +6330,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100806",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -7120,10 +7096,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100902",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -7931,10 +7904,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100903",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -8784,10 +8754,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100904",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -9602,10 +9569,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU100905",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -10560,10 +10524,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101001",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -11225,10 +11186,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101101",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -11904,10 +11862,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101102",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -12562,10 +12517,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101103",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -13199,10 +13151,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101104",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -13821,10 +13770,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101201",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -14701,10 +14647,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101302",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -15421,10 +15364,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101501",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -16239,10 +16179,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101502",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -16994,10 +16931,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101503",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -17721,10 +17655,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101504",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -18413,10 +18344,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101505",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -19274,10 +19202,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101601",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -20038,10 +19963,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101702",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -21060,10 +20982,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101801",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -21872,10 +21791,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101802",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -22705,10 +22621,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101803",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -23475,10 +23388,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101804",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -24189,10 +24099,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101805",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -24917,10 +24824,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101806",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -25603,10 +25507,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101851",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -26282,10 +26183,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101852",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -26961,10 +26859,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101853",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -27842,10 +27737,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU101902",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -28712,10 +28604,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102001",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -29307,10 +29196,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102202",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -30106,10 +29992,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102301",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -30806,10 +30689,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102401",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -31783,10 +31663,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102501",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -32761,10 +32638,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102603",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -33723,10 +33597,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102701",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -34692,10 +34563,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102704",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -35738,10 +35606,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102705",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -36751,10 +36616,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102801",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -37708,10 +37570,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102802",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -38742,10 +38601,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102803",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -40063,10 +39919,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102804",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     },
     {
@@ -41734,10 +41587,7 @@
         "library": {
             "description": "MassBank High Quality Mass Spectral Database",
             "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=AU102805",
-            "tag": {
-                "ruleBased": false,
-                "text": "massbank"
-            }
+            "library": "massbank"
         }
     }
 ]

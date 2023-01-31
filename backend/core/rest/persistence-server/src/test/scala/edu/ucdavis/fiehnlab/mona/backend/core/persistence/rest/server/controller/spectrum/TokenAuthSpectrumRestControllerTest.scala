@@ -1,11 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
 import java.io.{InputStreamReader, StringWriter}
-
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{MonaMapper, JSONDomainReader}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import org.scalatest.concurrent.Eventually
@@ -20,6 +19,10 @@ import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractGenericRESTControllerTest
+import org.hibernate.Hibernate
+import org.scalatest.BeforeAndAfterEach
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -32,7 +35,7 @@ import java.util.Collections
   */
 @SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
-class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum, String]("/spectra") with Eventually {
+class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum, String]("/spectra") with Eventually with BeforeAndAfterEach{
 
   @LocalServerPort
   private val port: String = null
@@ -46,6 +49,21 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
   val monaMapper: ObjectMapper = {
     MonaMapper.create
   }
+
+  @Autowired
+  private val transactionManager: PlatformTransactionManager = null
+
+  private var transactionTemplate: TransactionTemplate = null
+
+  new TestContextManager(this.getClass).prepareTestInstance(this)
+
+  protected override def beforeEach() = (
+    transactionTemplate = new TransactionTemplate(transactionManager)
+    )
+
+  protected override def afterEach() = (
+    transactionTemplate = null
+    )
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -133,7 +151,12 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to reset the repository" in {
-        spectrumRepository.deleteAll()
+        transactionTemplate.execute{ x =>
+          spectrumRepository.deleteAll()
+          Hibernate.initialize()
+          x
+        }
+
 
         eventually(timeout(10 seconds)) {
           assert(spectrumRepository.count() == 0)

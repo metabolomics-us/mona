@@ -8,7 +8,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSp
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
+import org.hibernate.Hibernate
 import org.junit.runner.RunWith
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 
 import scala.jdk.CollectionConverters._
 import scala.concurrent.duration._
@@ -27,7 +31,7 @@ import scala.language.postfixOps
   */
 @SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 @ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
-class RestRepositoryWriterTest extends AnyWordSpec with Eventually {
+class RestRepositoryWriterTest extends AnyWordSpec with Eventually with BeforeAndAfterEach{
 
   @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
@@ -38,6 +42,21 @@ class RestRepositoryWriterTest extends AnyWordSpec with Eventually {
   @Autowired
   val spectrumPersistenceService: SpectrumPersistenceService = null
 
+  @Autowired
+  private val transactionManager: PlatformTransactionManager = null
+
+  private var transactionTemplate: TransactionTemplate = null
+
+  new TestContextManager(this.getClass).prepareTestInstance(this)
+
+  protected override def beforeEach() = (
+    transactionTemplate = new TransactionTemplate(transactionManager)
+    )
+
+  protected override def afterEach() = (
+    transactionTemplate = null
+    )
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a writer " when {
@@ -45,7 +64,11 @@ class RestRepositoryWriterTest extends AnyWordSpec with Eventually {
 
     "given a list of spectra" should {
       "clear data first" in {
-        spectrumPersistenceService.deleteAll()
+        transactionTemplate.execute{ x =>
+          spectrumPersistenceService.deleteAll()
+          Hibernate.initialize()
+          x
+        }
 
         eventually(timeout(100 seconds)) {
           assert(spectrumPersistenceService.count() == 0)

@@ -26,3 +26,6 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS metadata_value_count_index on metadata_v
 CREATE INDEX CONCURRENTLY IF NOT EXISTS tag_spectrum_index on tags (spectrum_id);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS statistics_metadata_name_index on statistics_metadata(name);
 create index concurrently if not exists spectrum_submitter_email_address_index on spectrum_submitters (email_address);
+create index concurrently if not exists metadata_name_idx on metadata(name);
+create index concurrently if not exists tags_compound_id_idx on tags(compound_id);
+create index concurrently if not exists library_library_idx on library(library);

@@ -79,6 +79,8 @@ export class SpectraBrowserComponent implements OnInit{
        */
       this.spectra = [];
 
+      this.sizeParam = 10;
+
       this.initial = true;
       /**
        * loads more spectra into the given view
@@ -117,7 +119,7 @@ export class SpectraBrowserComponent implements OnInit{
           this.inchikeyParam = params.inchikey || undefined;
           this.splashParam = params.splash || undefined;
           this.queryParam = params.query || undefined;
-          this.sizeParam = params.size || undefined;
+          this.sizeParam = params.size || 10;
           this.pageParam = parseInt(params.page, 10);
           this.tableParam = params.table || undefined;
           this.loadData();
@@ -182,9 +184,13 @@ export class SpectraBrowserComponent implements OnInit{
           }
 
           // Handle page size
-          if ((typeof this.sizeParam !== 'undefined') && (parseInt(this.sizeParam, 10) !== this.pagination.itemsPerPage)) {
+          if (parseInt(this.sizeParam, 10) === this.pagination.itemsPerPage) {
+            //just pass
+          }
+          else if ((typeof this.sizeParam !== 'undefined') && (parseInt(this.sizeParam, 10) !== this.pagination.itemsPerPage)) {
             this.setPageSize(this.sizeParam);
-          } else {
+          }
+          else {
             const itemsPerPage = this.cookie.get('spectraBrowser-pagination-itemsPerPage');
             if ((typeof itemsPerPage !== 'undefined') && (parseInt(itemsPerPage, 10) !== this.pagination.itemsPerPage)) {
               this.setPageSize(itemsPerPage);
@@ -293,7 +299,7 @@ export class SpectraBrowserComponent implements OnInit{
         this.itemsPerPageSelectionSubject.subscribe(
             (x) => {
                 const size = parseInt(this.pagination.itemsPerPageSelection, 10);
-                if (!Number.isNaN(size)) {
+                if (!Number.isNaN(size) && (parseInt(this.sizeParam, 10) !== this.pagination.itemsPerPage)) {
                     this.logger.info('Updating search to use page size to ' + size);
                     this.router.navigate([], {queryParams:
                         {size: size.toString()}, queryParamsHandling: 'merge', skipLocationChange: false, replaceUrl: true}).then();
@@ -343,8 +349,12 @@ export class SpectraBrowserComponent implements OnInit{
      * Submits our query to the server
      */
     submitQuery() {
+      if(!this.spectrumCache.hasCurrentCount(this.query)) {
         this.calculateResultCount();
-        this.loadSpectra();
+      } else {
+        this.pagination.totalSize = this.spectrumCache.getCurrentCount(this.query);
+      }
+      this.loadSpectra();
     }
 
     /**
@@ -380,6 +390,7 @@ export class SpectraBrowserComponent implements OnInit{
             query: this.query
         }).pipe(first()).subscribe((res: any) => {
             this.pagination.totalSize = res.count;
+            this.spectrumCache.setCurrentCount(this.query, res.count);
         });
     }
 
@@ -419,7 +430,7 @@ export class SpectraBrowserComponent implements OnInit{
 
         this.logger.info('Submitted query (page ' + currentPage + '): ' + this.query);
 
-        // Log query with google analytics
+        // Log query with Google Analytics
         this.$gaProvider.event('query', 'execute', this.query, currentPage);
 
         if (this.initial && !this.sizeParam) {

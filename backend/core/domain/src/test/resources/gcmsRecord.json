@@ -146,9 +146,6 @@
   "library": {
     "description": "MassBank High Quality Mass Spectral Database",
     "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=KZ000113",
-    "tag": {
-      "ruleBased": false,
-      "text": "massbank"
-    }
+    "library": "massbank"
   }
 }

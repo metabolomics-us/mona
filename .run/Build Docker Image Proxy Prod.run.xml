@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Deploy Proxy Prod" type="MavenRunConfiguration" factoryName="Maven">
+  <configuration default="false" name="Build Docker Image Proxy Prod" type="MavenRunConfiguration" factoryName="Maven">
     <MavenSettings>
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings" />
@@ -11,19 +11,15 @@
           <option name="goals">
             <list>
               <option value="clean" />
-              <option value="deploy" />
-              <option value="-Denvironment=prod" />
+              <option value="install" />
+              <option value="-Dng.env=prod" />
             </list>
           </option>
-          <option name="pomFileName" value="pom.xml" />
+          <option name="pomFileName" />
           <option name="profilesMap">
             <map>
               <entry key="nexus" value="true" />
-              <entry key="test-jar" value="false" />
-              <entry key="doc-jar" value="false" />
               <entry key="scala" value="true" />
-              <entry key="source-jar" value="false" />
-              <entry key="docker-proxy" value="false" />
               <entry key="scala-test" value="false" />
               <entry key="docker" value="true" />
             </map>
