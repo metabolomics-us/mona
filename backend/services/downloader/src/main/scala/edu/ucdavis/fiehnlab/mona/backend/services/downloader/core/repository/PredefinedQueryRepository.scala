@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository
 trait PredefinedQueryRepository extends JpaRepository[PredefinedQuery, String] {
 
   def findByQuery(query: String): Array[PredefinedQuery]
+
+  def existsByLabel(label: String): Boolean
 }

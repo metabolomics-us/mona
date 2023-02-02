@@ -25,7 +25,7 @@ class BootstrapDownloaderService extends LazyLogging {
     * @return
     */
   def saveQuery(label: String, description: String, query: String): Unit = {
-    if (!predefinedQueryRepo.existsById(label)) {
+    if (!predefinedQueryRepo.existsByLabel(label)) {
       logger.info(s"Saving predefined query: $label")
       predefinedQueryRepo.save(new PredefinedQuery(label, description, query, 0, null, null, null))
     }
@@ -94,8 +94,6 @@ class BootstrapDownloaderService extends LazyLogging {
       "GC-MS Spectra",
       "tags.text:'GC-MS'"
     )
-
-
     saveQuery(
       "LC-MS Spectra",
       "tags.text:'LC-MS'"
@@ -111,6 +109,18 @@ class BootstrapDownloaderService extends LazyLogging {
     saveQuery(
       "LC-MS Spectra - LC-MS/MS Spectra - LC-MS/MS Negative Mode",
       "tags.text:'LC-MS' and exists(metaData.name:'ms level' and metaData.value:'MS2') and exists(metaData.name:'ionization mode' and metaData.value:'negative')"
+    )
+    saveQuery(
+      "LC-MS Spectra - LC-MS/MS Spectra - All LC-MS/MS QTOF",
+      "metaData.name:'instrument type' and metaData.value in ('LC-ESI-QTOF','Q-TOF','LC-APCI-QTOF','LC-Q-TOF/MS','LC-QTOF','ESI-QTOF','QTOF','SYNAPT QTOF, Waters')"
+    )
+    saveQuery(
+      "LC-MS Spectra - LC-MS/MS Spectra - All LC-MS/MS Agilent QTOF",
+      "exists(metaData.name:'instrument type' and metaData.value in ('LC-ESI-QTOF','Q-TOF','LC-APCI-QTOF','LC-Q-TOF/MS','LC-QTOF','ESI-QTOF','QTOF','SYNAPT QTOF, Waters')) and exists(metaData.name:'instrument' and metaData.value~'%Agilent%')"
+    )
+    saveQuery(
+      "LC-MS Spectra - LC-MS/MS Spectra - All LC-MS/MS Orbitrap",
+      "metaData.name:'instrument type' and metaData.value in ('ESI-QFT','LC-ESI-QFT','LC-ESI-ITFT','LC-ESI-Orbitrap','LC-ESI-QIT','LC-ESI-QEHF','LC-ESI-Q-Orbitrap','APCI-ITFT','ESI-ITFT','LC-APCI-ITFT','Q Exactive HF','Q Exactive Focus Hybrid Quadrupole Orbitrap Mass Spectrometer (Thermo Fisher Scientific)','Orbitrap')"
     )
   }
 }

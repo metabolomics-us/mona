@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain;
 
+import org.hibernate.annotations.Type;
 import org.springframework.context.annotation.Profile;
 
 import javax.persistence.*;
@@ -11,10 +12,13 @@ import java.util.Objects;
 @Profile({"mona.persistence.downloader"})
 public class PredefinedQuery implements Serializable {
     @Id
+    @Type(type = "org.hibernate.type.TextType")
     private String label;
 
+    @Type(type = "org.hibernate.type.TextType")
     private String description;
 
+    @Type(type = "org.hibernate.type.TextType")
     private String query;
 
     private Long queryCount;

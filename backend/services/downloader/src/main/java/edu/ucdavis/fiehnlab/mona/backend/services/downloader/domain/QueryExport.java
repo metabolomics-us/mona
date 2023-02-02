@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain;
 
+import org.hibernate.annotations.Type;
 import org.springframework.context.annotation.Profile;
 
 import javax.persistence.Entity;
@@ -16,10 +17,13 @@ public class QueryExport implements Serializable {
     @Id
     private String id;
 
+    @Type(type = "org.hibernate.type.TextType")
     private String label;
 
+    @Type(type = "org.hibernate.type.TextType")
     private String query;
 
+    @Type(type = "org.hibernate.type.TextType")
     private String format;
 
     private String emailAddress;
@@ -30,8 +34,10 @@ public class QueryExport implements Serializable {
 
     private Long size;
 
+    @Type(type = "org.hibernate.type.TextType")
     private String queryFile;
 
+    @Type(type = "org.hibernate.type.TextType")
     private String exportFile;
 
     public String getId() {

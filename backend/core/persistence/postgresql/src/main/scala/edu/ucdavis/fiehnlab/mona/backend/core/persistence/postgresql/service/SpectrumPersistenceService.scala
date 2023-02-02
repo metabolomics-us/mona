@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service
 
 import java.lang
 import java.util.{Date, List}
-import javax.persistence.EntityManager
 import scala.jdk.CollectionConverters._
 
 @Service
