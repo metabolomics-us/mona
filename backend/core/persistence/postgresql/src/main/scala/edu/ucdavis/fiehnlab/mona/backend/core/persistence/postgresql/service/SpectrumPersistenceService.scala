@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventSchedule
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.Autowired
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.filter.FilterSpecificationDistinct
+import com.turkraft.springfilter.boot.FilterSpecification
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, Pageable, Sort}
@@ -140,7 +140,7 @@ class SpectrumPersistenceService extends LazyLogging {
    */
   private def findDataForQuery(query: String, request: Pageable): Page[Spectrum] = {
     logger.debug(s"executing query: \n$query\n")
-    val spec: Specification[Spectrum] = new FilterSpecificationDistinct[Spectrum](query)
+    val spec: Specification[Spectrum] = new FilterSpecification[Spectrum](query)
     val rez: Page[Spectrum] = spectrumResultRepository.findAll(spec, request)
     rez
   }
@@ -221,7 +221,7 @@ class SpectrumPersistenceService extends LazyLogging {
    */
   @Cacheable(value = Array("spectra"))
   def count(query: String): Long = {
-    val spec: Specification[Spectrum] = new FilterSpecificationDistinct[Spectrum](query)
+    val spec: Specification[Spectrum] = new FilterSpecification[Spectrum](query)
     val count: Long = spectrumResultRepository.count(spec)
     count
   }
@@ -233,7 +233,7 @@ class SpectrumPersistenceService extends LazyLogging {
 
   @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteSpectraByQuery(query: String): Unit = {
-    val spec: Specification[Spectrum] = new FilterSpecificationDistinct[Spectrum](query)
+    val spec: Specification[Spectrum] = new FilterSpecification[Spectrum](query)
     spectrumResultRepository.findAll(spec).asScala.foreach(delete)
   }
 

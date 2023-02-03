@@ -1,8 +1,8 @@
 version: "3"
 
 volumes:
-  postgresql-data:
-  downloader-data:
+  postgresql-data-test:
+  downloader-data-test:
 
 services:
   #
@@ -25,7 +25,7 @@ services:
       - POSTGRES_USER=${MONA_USER}
       - POSTGRES_PASSWORD=${MONA_PASS}
     volumes:
-      - postgresql-data:/var/lib/postgresql/data
+      - postgresql-data-test:/var/lib/postgresql/data
       - ./postgresql-uat.conf:/etc/postgresql.conf
     logging:
       options:
@@ -153,17 +153,17 @@ services:
         max-size: "100M"
 
   # MoNA similarity service
-#  similarity:
-#    image: public.ecr.aws/fiehnlab/mona-similarity:test
-#    ports:
-#      - "9999:9999"
-#    depends_on:
-#      - webhooks
-#      - discovery
-#    entrypoint: bash -c "./wait-for-it.sh webhooks:8888 -t 3600 --strict -- java -Xmx30g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
-#    logging:
-#      options:
-#        max-size: "100M"
+  similarity:
+    image: public.ecr.aws/fiehnlab/mona-similarity:test
+    ports:
+      - "9999:9999"
+    depends_on:
+      - webhooks
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx20g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
 
   #
   # Proxy and additional standalone services
@@ -176,8 +176,6 @@ services:
       - "8080:8080"
     depends_on:
       - webhooks
-    environment:
-      - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xss4m -Xmx4g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
@@ -193,7 +191,7 @@ services:
       - webhooks
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx10g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
-      - downloader-data:/data
+      - downloader-data-test:/data
     logging:
       options:
         max-size: "100M"
