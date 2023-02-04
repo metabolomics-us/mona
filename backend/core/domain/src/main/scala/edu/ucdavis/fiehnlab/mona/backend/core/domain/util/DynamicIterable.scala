@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.util
 
 import java.util
-
 import com.typesafe.scalalogging.LazyLogging
-import org.springframework.data.domain.{Page, PageRequest, Pageable}
+import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 
 /**
   * Created by wohlgemuth on 3/18/16.

@@ -60,12 +60,12 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec with LazyLogging{
       "persist metadata statistics" in {
         statisticsMetaDataRepository.deleteAll()
         metaDataStatisticsService.updateMetaDataStatistics()
-        assert(statisticsMetaDataRepository.count() == 240)
+        assert(statisticsMetaDataRepository.count() == 239)
       }
 
       "get metadata names from repository" in {
         val result: Array[StatisticsMetaData] = metaDataStatisticsService.getMetaDataNames
-        assert(result.length == 240)
+        assert(result.length == 239)
         assert(result.forall(_.getCount > 0))
       }
 

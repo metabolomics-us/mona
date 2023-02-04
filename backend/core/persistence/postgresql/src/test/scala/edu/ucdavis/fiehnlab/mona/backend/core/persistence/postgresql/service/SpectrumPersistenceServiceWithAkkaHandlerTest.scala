@@ -15,7 +15,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.domain.{Page, PageRequest}
+import org.springframework.data.domain.{Page, PageRequest, Sort}
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
@@ -178,7 +178,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
             Hibernate.initialize(r)
             r
           }
-          assert(result == 1)
+          assert(result == 3)
         }
 
         "query data with the query metaData.name:'ion mode' and metaData.value:'negative'" in {
@@ -198,7 +198,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
           }
           logger.info(s"# of pages ${result.getTotalPages}")
           assert(result.getContent.size() == 10)
-          assert(result.getContent.get(0).getId == "3471394")
+          assert(result.getContent.get(0).getId == "3711650")
         }
 
         "query data with pagination page 2" in {
@@ -209,7 +209,7 @@ class SpectrumPersistenceServiceWithAkkaHandlerTest extends AnyWordSpec with Laz
           }
           logger.info(s"# of pages ${result.getTotalPages}")
           assert(result.getContent.size() == 10)
-          assert(result.getContent.get(0).getId == "3475854")
+          assert(result.getContent.get(0).getId == "3483578")
         }
 
         "update data" in {

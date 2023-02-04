@@ -32,7 +32,7 @@ class JSONDomainReaderTest extends AnyWordSpec {
       }
 
       "its compounds inchi key should be also equal the exspectations" in {
-        assert(spectrum.getCompound.get(1).getInchiKey == "QASFUMOKHFSJGL-LAFRSMQTSA-N")
+        assert(spectrum.getCompound.get(0).getInchiKey == "QASFUMOKHFSJGL-LAFRSMQTSA-N")
       }
 
       "it should be possible to access it's metatadata" in {
@@ -77,10 +77,10 @@ class JSONDomainReaderTest extends AnyWordSpec {
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json"))
 
 
-    "it should cause no erros" should {
+    "it should cause no errors" should {
       val result: Array[Spectrum] = reader.read(input)
 
-      "it's lenght of reqd objects should fit the expsectations" in {
+      "it's length of red objects should fit the expectations" in {
         assert(result.length == 59)
       }
     }

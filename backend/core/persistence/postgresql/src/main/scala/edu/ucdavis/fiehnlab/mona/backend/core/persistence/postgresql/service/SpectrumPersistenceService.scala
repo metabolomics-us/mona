@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import com.turkraft.springfilter.boot.FilterSpecification
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation.Profile
-import org.springframework.data.domain.{Page, Pageable, Sort}
+import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 
@@ -141,13 +141,13 @@ class SpectrumPersistenceService extends LazyLogging {
   private def findDataForQuery(query: String, request: Pageable): Page[Spectrum] = {
     logger.debug(s"executing query: \n$query\n")
     val spec: Specification[Spectrum] = new FilterSpecification[Spectrum](query)
-    val rez: Page[Spectrum] = spectrumResultRepository.findAll(spec, request)
+    val rez: Page[Spectrum] = spectrumResultRepository.findAll(spec, PageRequest.of(request.getPageNumber, request.getPageSize, Sort.by("id").descending()))
     rez
   }
 
   private def findDataForEmptyQuery(request: Pageable): Page[Spectrum] = {
     logger.debug(s"executing empty query to findAll")
-    spectrumResultRepository.findAll(request)
+    spectrumResultRepository.findAll(PageRequest.of(request.getPageNumber, request.getPageSize, Sort.by("id").descending()))
   }
 
   /**

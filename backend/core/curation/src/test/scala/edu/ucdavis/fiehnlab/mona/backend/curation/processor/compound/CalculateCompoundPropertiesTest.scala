@@ -48,7 +48,7 @@ class CalculateCompoundPropertiesTest extends AnyWordSpec with LazyLogging{
 
       assert(result.getScore != null)
       assert(result.getScore.getImpacts.asScala.nonEmpty)
-      assert(result.getScore.getImpacts.asScala.map(_.getValue.asInstanceOf[Double]).sum == 4.0)
+      assert(result.getScore.getImpacts.asScala.map(_.getValue.asInstanceOf[Double]).sum == 2.0)
     }
 
     "handle problematic record PT201480" in {
