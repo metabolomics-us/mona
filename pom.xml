@@ -572,6 +572,7 @@
                 <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
                 <docker.expose>8080</docker.expose>
                 <docker.jvm>-Xmx2048m</docker.jvm>
+                <docker.tag>test</docker.tag>
             </properties>
 
             <build>
@@ -638,7 +639,7 @@
 
                             <imageTags>
                                 <imageTag>${project.version}</imageTag>
-                                <imageTag>test</imageTag>
+                                <imageTag>${docker.tag}</imageTag>
                             </imageTags>
 
                             <runs>
@@ -672,7 +673,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <imageName>${docker.registry}/${docker.imageName}:test</imageName>
+                                    <imageName>${docker.registry}/${docker.imageName}:${docker.tag}</imageName>
                                 </configuration>
                             </execution>
 

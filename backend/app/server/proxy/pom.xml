@@ -22,7 +22,7 @@
 
     <properties>
         <docker.expose>8080</docker.expose>
-        <ng.env>prod</ng.env>
+        <ng.env>staging</ng.env>
     </properties>
 
     <dependencies>
