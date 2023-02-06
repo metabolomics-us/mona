@@ -189,11 +189,11 @@ export class SpectraQueryBuilderService {
 
   addClassificationToQuery(name, value, partialQuery) {
     this.query.push(this.buildMetaDataQuery(name, value, 'compound.classification', undefined, partialQuery));
-    this.query.push('compound.classification.name:\'alternative parent\' and compound.classification.value!\'' + value + '\'')
+
   }
 
   addGeneralClassificationToQuery(value) {
-    this.query.push('compound.classification.value:\'' + value + '\'');
+    this.query.push('compound.classification.value:\'' + value + '\'' + ' and compound.classification.name!\'direct parent\' and compound.classification.name!\'alternative parent\'');
   }
 
   addNameToQuery(name) {

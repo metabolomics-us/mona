@@ -1,8 +1,8 @@
 version: "3"
 
 volumes:
-  postgresql-data-test:
-  downloader-data-test:
+  postgresql-data:
+  downloader-data:
 
 services:
   #
@@ -25,7 +25,7 @@ services:
       - POSTGRES_USER=${MONA_USER}
       - POSTGRES_PASSWORD=${MONA_PASS}
     volumes:
-      - postgresql-data-test:/var/lib/postgresql/data
+      - postgresql-data:/var/lib/postgresql/data
       - ./postgresql-uat.conf:/etc/postgresql.conf
     logging:
       options:
@@ -191,7 +191,7 @@ services:
       - webhooks
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx10g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
-      - downloader-data-test:/data
+      - downloader-data:/data
     logging:
       options:
         max-size: "100M"

@@ -1,13 +1,14 @@
 <div class="card">
     <div class="card-header">
-        <div class="card-title" *ngIf="spectrum">
+        <div class="card-title">
             <span class="float-left mr-2" *ngIf="(auth.isAdmin() && auth.isLoggedIn()) || (sameSubmitter())"><input type="checkbox" id="massDeleteToggle" [checked]="deletionMark.selected" (change)="massDeleteToggle($event)"> Mark for Deletion </span>
-            <span class="float-left"><a style="cursor: pointer" [routerLink]="[viewSpectrum()]">{{spectrum.compound[0].names[0].name}}</a></span>
+            <span *ngIf="spectrum.compound[0].names.length > 0" class="float-left"><a style="cursor: pointer" [routerLink]="[viewSpectrum()]">{{spectrum.compound[0].names[0].name}}</a></span>
+            <span *ngIf="spectrum.compound[0].names.length === 0" class="float-left"><a style="cursor: pointer" [routerLink]="[viewSpectrum()]">{{spectrum.id}}</a></span>
             <span class="float-right">Score: <ngb-rating *ngIf="spectrum.score" [(rate)]="spectrum.score.score" [max]="5" [readonly]="true"></ngb-rating></span>
         </div>
     </div>
 
-    <div class="card-body" *nfIf="spectrum">
+    <div class="card-body">
         <div class="card-group">
             <div class="col-lg-6 col-md-7 col-sm-6">
                 <div class="card-columns" *ngIf="spectrum.similarity">

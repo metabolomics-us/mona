@@ -139,7 +139,7 @@ export class AdvancedUploaderComponent implements OnInit{
 		);
 		this.toasterOptions = new ToasterConfig({
       positionClass: 'toast-top-center',
-      timeout: 5000,
+      timeout: 0,
       showCloseButton: true,
       mouseoverTimerStop: true
     });
