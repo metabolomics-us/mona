@@ -8,6 +8,7 @@ import {FeedbackCacheService} from '../../services/feedback/feedback-cache.servi
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 import {MassDeletionService} from '../../services/persistence/mass-deletion.service';
 import {AuthenticationService} from '../../services/authentication.service';
+import {SpectrumModel} from "../../mocks/spectrum.model";
 
 @Component({
     selector: 'display-spectra-panel',
@@ -15,7 +16,7 @@ import {AuthenticationService} from '../../services/authentication.service';
 })
 
 export class SpectraPanelComponent implements OnInit{
-    @Input() spectrum;
+    @Input() spectrum: SpectrumModel;
     currentFeedback;
     IMPORTANT_METADATA;
     importantMetadata;
@@ -49,7 +50,7 @@ export class SpectraPanelComponent implements OnInit{
         }
 
         if (typeof this.spectrum.score === 'undefined') {
-          this.spectrum.score = {score: 0};
+          this.spectrum.score = {score: 0, relativeScore: 0, scaledScore: 0, impacts: []};
         }
 
         this.spectrum.metaData.forEach((metaData, index) => {
@@ -100,7 +101,7 @@ export class SpectraPanelComponent implements OnInit{
 
     sameSubmitter(): boolean {
       if (this.auth.isLoggedIn()) {
-        if (this.auth.getCurrentUser().emailAddress === this.spectrum.submitter.id) {
+        if (this.auth.getCurrentUser().emailAddress === this.spectrum.submitter.emailAddress) {
           return true;
         }
       }

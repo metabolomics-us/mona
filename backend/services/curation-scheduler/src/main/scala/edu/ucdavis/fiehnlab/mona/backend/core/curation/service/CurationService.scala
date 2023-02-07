@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation.service
 
 import java.util.Date
-
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -10,6 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 /**
   * Created by wohlg on 4/12/2016.

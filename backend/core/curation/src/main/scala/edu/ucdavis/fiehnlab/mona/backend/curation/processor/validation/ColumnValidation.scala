@@ -7,6 +7,8 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.springframework.batch.item.ItemProcessor
 
 import scala.util.matching.Regex
+import scala.jdk.CollectionConverters._
+import scala.collection.mutable.Buffer
 
 /**
   * Created by sajjan on 4/16/16.
@@ -24,17 +26,17 @@ class ColumnValidation extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val metaData: Array[MetaData] = spectrum.metaData.filter(_.name == CommonMetaData.COLUMN)
+    val metaData: Buffer[MetaData] = spectrum.getMetaData.asScala.filter(_.getName == CommonMetaData.COLUMN)
 
     if (metaData.isEmpty) {
-      logger.info(s"${spectrum.id}: No column found")
+      logger.info(s"${spectrum.getId}: No column found")
     } else {
       metaData.foreach { x =>
-        val diameterAndLengthDefined: Boolean = DIAMETER_AND_LENGTH_REGEX.findFirstIn(x.value.toString).isDefined
-        val onlyLengthDefined: Boolean = LENGTH_REGEX.findFirstIn(x.value.toString).isDefined
+        val diameterAndLengthDefined: Boolean = DIAMETER_AND_LENGTH_REGEX.findFirstIn(x.getValue.toString).isDefined
+        val onlyLengthDefined: Boolean = LENGTH_REGEX.findFirstIn(x.getValue.toString).isDefined
 
         if (!diameterAndLengthDefined && !onlyLengthDefined) {
-          logger.warn(s"${spectrum.id}: Length and Diameter not specified")
+          logger.warn(s"${spectrum.getId}: Length and Diameter not specified")
         }
       }
     }

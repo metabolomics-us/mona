@@ -24,6 +24,17 @@ export class AdminService {
     return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/statistics/update`, null, config);
   }
 
+  refreshSimilarity(token: any): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+      responseType: 'text' as 'json'
+    };
+    return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/similarity/refresh`, null, config);
+  }
+
   // Re-generates static downloads
   updateStaticDownloads(token: any): Observable<any> {
     const config = {
@@ -55,5 +66,26 @@ export class AdminService {
       responseType: 'text' as 'json'
     };
     return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/curation`, config);
+  }
+
+
+  fetchUser(token: any, emailAddress: string): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    };
+    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/users/${emailAddress}`, config);
+  }
+
+  submitPasswordChange(token: any, user: any) {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    };
+    return this.http.put(`${environment.REST_BACKEND_SERVER}/rest/users/${user.emailAddress}`, user, config)
   }
 }

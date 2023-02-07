@@ -7,12 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import org.springframework.amqp.core.AnonymousQueue.Base64UrlNamingStrategy
+import org.springframework.amqp.core.Base64UrlNamingStrategy
 import org.springframework.amqp.core._
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
-import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 
 import scala.reflect._
@@ -28,9 +27,6 @@ abstract class EventBusListener[T: ClassTag](val eventBus: EventBus[T]) extends 
 
   @Autowired
   private val connectionFactory: ConnectionFactory = null
-
-  @Autowired
-  private val messageConverter: MessageConverter = null
 
   @Autowired
   private val rabbitAdmin: RabbitAdmin = null
@@ -62,12 +58,10 @@ abstract class EventBusListener[T: ClassTag](val eventBus: EventBus[T]) extends 
     rabbitAdmin.afterPropertiesSet()
 
     logger.info(s"connecting to queue: ${queue.getName}")
-    val container = new SimpleMessageListenerContainer()
-    container.setConnectionFactory(connectionFactory)
+    val container = new SimpleMessageListenerContainer(connectionFactory)
     container.setQueues(queue)
     container.setMessageListener(this)
-    container.setRabbitAdmin(rabbitAdmin)
-    container.setMessageConverter(messageConverter)
+    container.setAmqpAdmin(rabbitAdmin)
     container.setExclusive(exclusive)
 
     logger.info("starting container")

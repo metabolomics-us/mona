@@ -1,0 +1,21 @@
+spring:
+  config:
+    import: optional:configserver:${SPRING_CONFIG_URI:http://localhost:1111}
+  application:
+    name: curation-service
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  profiles:
+    active: default
+    include:
+      - mona.persistence
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+server:
+  port: 5555
+
+info:
+  component: MoNA Curation Service

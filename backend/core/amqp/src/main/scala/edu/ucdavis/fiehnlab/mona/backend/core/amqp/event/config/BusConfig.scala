@@ -19,6 +19,9 @@ import org.springframework.context.annotation.{Bean, Configuration, Import, Prim
 class BusConfig extends LazyLogging {
 
   @Bean
+  val connectionFactory: ConnectionFactory = null
+
+  @Bean
   def rabbitAdmin(connectionFactory: ConnectionFactory): RabbitAdmin = {
     new RabbitAdmin(connectionFactory)
   }

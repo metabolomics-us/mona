@@ -1,12 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 
 /**
@@ -22,10 +21,10 @@ class EmbeddedRestServerConfig extends LazyLogging {
     * @return
     */
   @Bean
-  def loginService: LoginService = new MongoLoginService
+  def loginService: LoginService = new PostgresLoginService
 
 }
 
-@SpringBootApplication(exclude = Array(classOf[MongoAutoConfiguration]))
-@Import(Array(classOf[MongoConfig], classOf[StatisticsRepositoryConfig]))
+@SpringBootApplication(scanBasePackageClasses = Array())
+@Import(Array(classOf[PostgresqlConfiguration], classOf[StatisticsRepositoryConfig]))
 class TestConfig

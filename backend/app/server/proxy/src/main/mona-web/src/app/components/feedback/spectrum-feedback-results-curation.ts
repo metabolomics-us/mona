@@ -4,6 +4,7 @@ import {Feedback} from '../../services/persistence/feedback.resource';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
 import {first} from 'rxjs/operators';
 import {Router} from '@angular/router';
+import {SpectrumModel} from "../../mocks/spectrum.model";
 
 @Component({
   selector: 'spectrum-feedback-results-curation',
@@ -11,7 +12,7 @@ import {Router} from '@angular/router';
 })
 
 export class SpectrumFeedbackResultsCurationComponent implements OnInit, OnChanges {
-  @Input() spectrum;
+  @Input() spectrum: SpectrumModel;
   currentFeedback;
   curatedFeedback;
   communityFeedback;

@@ -4,11 +4,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller.LoginControll
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configuration.{WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
   */
 @Order(2)
 @Configuration
+@EnableAutoConfiguration
 @ComponentScan(basePackageClasses = Array(classOf[LoginController], classOf[DomainConfig]))
 class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -28,6 +30,13 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
     *
     * @param http
     */
+
+  /**
+   * this method configures authorized access to the system
+   * and protects the urls with the specified methods and credentials
+   *
+   * @param http
+   */
   override final def configure(http: HttpSecurity): Unit = {
     restSecurityService.prepare(http)
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -50,14 +59,15 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   /**
-    * ignore post requests to the auth url
-    *
-    * @param web
-    */
+   * ignore post requests to the auth url
+   *
+   * @param web
+   */
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
       .antMatchers(HttpMethod.POST, "/rest/auth/login")
       .antMatchers(HttpMethod.POST, "/rest/users/**")
       .antMatchers(HttpMethod.GET, "/*")
   }
+
 }

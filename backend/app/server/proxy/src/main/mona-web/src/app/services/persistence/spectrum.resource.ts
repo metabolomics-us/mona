@@ -2,28 +2,29 @@
  * Created by wohlgemuth on 6/11/14.
  */
 
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpParams, HttpParameterCodec} from '@angular/common/http';
 import { map, first } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
+import {SpectrumModel} from "../../mocks/spectrum.model";
 
 @Injectable()
 export class Spectrum {
 	constructor(public http: HttpClient) {
 	}
 
-	private cleanParameters(data: any): HttpParams {
+  cleanParameters(data: any): HttpParams {
 		// Filter our undefined values and place the others in HttpParams value
-		let params = new HttpParams();
+		let params = new HttpParams({encoder: new CustomURLEncoder()});
 		// Ternary case, we use a truthy check on data[k] to see if the value is not undefined, if so add to HttpParams
 		Object.keys(data).forEach(k => {data[k] ? params = params.set(k, data[k]) : {}; });
 
 		return params;
 	}
 
-	get(id: string): Observable<any> {
-		return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/${id}`);
+	get(id: string): Observable<SpectrumModel> {
+		return this.http.get<SpectrumModel>(`${environment.REST_BACKEND_SERVER}/rest/spectra/${id}`);
 	}
 
 	update(data: any): Observable<any> {
@@ -42,7 +43,7 @@ export class Spectrum {
 
 	searchSpectraCount(data: any): Observable<any> {
 		const params = this.cleanParameters(data);
-		return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/search/${params.get('endpoint')}`, { params })
+		return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/search/count`, { params })
 			// TransformResponse no longer available, so pipe the map function to our observable and change the data before shipping to a promise
 			.pipe(map((res) => {
 				return {count: res};
@@ -50,21 +51,21 @@ export class Spectrum {
 	}
 
 	searchSimilarSpectra(data: any): Observable<any> {
-		const config = {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		};
-		return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/similarity/search`, data, config)
-			.pipe(first(), map((res: any) => {
-				 let result;
-				 result = res.map((spectrum) => {
-					spectrum.hit.similarity = spectrum.score;
-					return spectrum.hit;
-				  });
-				 return result;
-			}));
-	}
+    const config = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/similarity/search`, data, config)
+      .pipe(first(), map((res: any) => {
+        let result;
+        result = res.map((spectrum) => {
+          spectrum.hit.similarity = spectrum.score;
+          return spectrum.hit;
+        });
+        return result;
+      }));
+  }
 
 	batchSave(token: string): Observable<any> {
 		const config = {
@@ -119,5 +120,23 @@ export class Spectrum {
       responseType: 'text' as 'json'
     };
     return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/spectra`, config);
+  }
+}
+
+class CustomURLEncoder implements HttpParameterCodec {
+  encodeKey(key: string): string {
+    return encodeURIComponent(key);
+  }
+
+  encodeValue(value: string): string {
+    return encodeURIComponent(value);
+  }
+
+  decodeKey(key: string): string {
+    return decodeURIComponent(key);
+  }
+
+  decodeValue(value: string): string {
+    return decodeURIComponent(value);
   }
 }

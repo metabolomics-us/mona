@@ -63,17 +63,6 @@ class EventBus[T: ClassTag](val busName: String = "mona-event-bus") extends Lazy
     * @param event
     */
   def sendEvent(event: Event[T]): Unit = {
-    /*
-    logger.trace(s"sending event to bus ${event}")
-
-    val stream = new ByteArrayOutputStream()
-    objectMapper.writeValue(stream,event)
-
-    val message = new Message(stream.toByteArray, new MessageProperties)
-
-    rabbitTemplate.send(busName,"",message)
-    */
-
     logger.debug(s"sending event to bus: ${event.content.getClass.getSimpleName}")
     rabbitTemplate.convertAndSend(busName, "", event)
     logger.debug("event sent!")

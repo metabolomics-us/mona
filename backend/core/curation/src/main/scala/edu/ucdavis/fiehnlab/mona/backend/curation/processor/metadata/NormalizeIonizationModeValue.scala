@@ -6,7 +6,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ArrayBuffer, Buffer}
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 4/16/16.
@@ -26,53 +27,53 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
     */
   override def process(spectrum: Spectrum): Spectrum = {
 
-    val metaData: Array[MetaData] = spectrum.metaData
-    val matches: Array[MetaData] = metaData.filter(_.name.toLowerCase == CommonMetaData.IONIZATION_MODE.toLowerCase)
+    val metaData: Buffer[MetaData] = spectrum.getMetaData.asScala
+    val matches: Buffer[MetaData] = metaData.filter(_.getName.toLowerCase == CommonMetaData.IONIZATION_MODE.toLowerCase)
 
     // Look at existing ionization mode values
     if (matches.nonEmpty) {
       // If data is normalized, we're done
-      if (matches.exists(x => x.value == "positive" || x.value == "negative")) {
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, 1, "Ionization mode/type provided"))
+      if (matches.exists(x => x.getValue == "positive" || x.getValue == "negative")) {
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Ionization mode/type provided"))
+        spectrum
       }
 
       // Otherwise, if we have one match, normalize the data
       else if (matches.length == 1) {
-        val updatedMetaData: Array[MetaData] = metaData.filter(_.name != CommonMetaData.IONIZATION_MODE)
+        val updatedMetaData: Buffer[MetaData] = metaData.filter(_.getName != CommonMetaData.IONIZATION_MODE)
 
-        val value: String = matches.head.value.toString.toLowerCase.trim
+        val value: String = matches.head.getValue.toString.toLowerCase.trim
 
         if (POSITIVE_TERMS.contains(value)) {
-          logger.info(s"${spectrum.id}: Identified ionization type 'value' as positive mode")
+          logger.info(s"${spectrum.getId}: Identified ionization type 'value' as positive mode")
 
-          spectrum.copy(
-            metaData = updatedMetaData :+ matches.head.copy(value = "positive"),
-            score = CurationUtilities.addImpact(spectrum.score, 1, "Ionization mode/type provided")
-          )
+          matches.head.setValue("positive")
+          spectrum.setMetaData((updatedMetaData :+ matches.head).asJava)
+          spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Ionization mode/type provided"))
+          spectrum
         }
 
         else if (NEGATIVE_TERMS.contains(value)) {
-          logger.info(s"${spectrum.id}: Identified ionization type 'value' as negative mode")
+          logger.info(s"${spectrum.getId}: Identified ionization type 'value' as negative mode")
 
-          spectrum.copy(
-            metaData = updatedMetaData :+ matches.head.copy(value = "negative"),
-            score = CurationUtilities.addImpact(spectrum.score, 1, "Ionization mode/type provided")
-          )
+          matches.head.setValue("negative")
+          spectrum.setMetaData((updatedMetaData :+ matches.head).asJava)
+          spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Ionization mode/type provided"))
+          spectrum
         }
 
         else {
-          logger.warn(s"${spectrum.id}: Ionization type value 'value' was unidentifiable - keeping metadata value")
+          logger.warn(s"${spectrum.getId}: Ionization type value 'value' was unidentifiable - keeping metadata value")
 
-          spectrum.copy(
-            metaData = updatedMetaData :+ matches.head,
-            score = CurationUtilities.addImpact(spectrum.score, -1, "Ionization mode/type unidentifiable")
-          )
+          spectrum.setMetaData((updatedMetaData :+ matches.head).asJava)
+          spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, "Ionization mode/type unidentifiable"))
+          spectrum
         }
       } else {
-        matches.foreach { x => logger.warn(s"\t${x.name} = ${x.value}") }
-        logger.warn(s"${spectrum.id}: Multiple ionization mode matches!")
-
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Multiple ionization mode/types identified"))
+        matches.foreach { x => logger.warn(s"\t${x.getName} = ${x.getValue}") }
+        logger.warn(s"${spectrum.getId}: Multiple ionization mode matches!")
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, "Multiple ionization mode/types identified"))
+        spectrum
       }
     }
 
@@ -85,20 +86,24 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
       var foundNegative = 0
 
       metaData.foreach { x =>
-        val value: String = x.value.toString.toLowerCase.trim
+        val value: String = x.getValue.toString.toLowerCase.trim
 
         if (POSITIVE_TERMS.contains(value)) {
-          logger.info(s"${spectrum.id}: Possible positive mode metadata value found: ${x.name} = ${x.value}")
+          logger.info(s"${spectrum.getId}: Possible positive mode metadata value found: ${x.getName} = ${x.getValue}")
 
           foundPositive += 1
-          possibleIonModeData.append(x.copy(name = CommonMetaData.IONIZATION_MODE, value = "positive"))
+          x.setName(CommonMetaData.IONIZATION_MODE)
+          x.setValue("positive")
+          possibleIonModeData.append(x)
         }
 
         else if (NEGATIVE_TERMS.contains(value)) {
-          logger.info(s"${spectrum.id}: Possible negative mode metadata value found: ${x.name} = ${x.value}")
+          logger.info(s"${spectrum.getId}: Possible negative mode metadata value found: ${x.getName} = ${x.getValue}")
 
           foundNegative += 1
-          possibleIonModeData.append(x.copy(name = CommonMetaData.IONIZATION_MODE, value = "negative"))
+          x.setName(CommonMetaData.IONIZATION_MODE)
+          x.setValue("negative")
+          possibleIonModeData.append(x)
         }
 
         else {
@@ -107,23 +112,22 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
       }
 
       if (foundPositive + foundNegative == 0) {
-        logger.info(s"${spectrum.id}: Unable to identify ionization mode")
+        logger.info(s"${spectrum.getId}: Unable to identify ionization mode")
 
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Ionization mode/type unidentifiable"))
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, "Ionization mode/type unidentifiable"))
+        spectrum
       } else if (foundPositive + foundNegative == 1) {
-        logger.info(s"${spectrum.id}: Identified ionization mode as " + (if (foundPositive > 0) "positive" else "negative"))
+        logger.info(s"${spectrum.getId}: Identified ionization mode as " + (if (foundPositive > 0) "positive" else "negative"))
 
-        spectrum.copy(
-          metaData = (updatedMetaData :+ possibleIonModeData.head).toArray,
-          score = CurationUtilities.addImpact(spectrum.score, 1, "Ionization mode/type provided")
-        )
+        spectrum.setMetaData((updatedMetaData :+ possibleIonModeData.head).asJava)
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Ionization mode/type provided"))
+        spectrum
       } else {
-        logger.warn(s"${spectrum.id}: Multiple ionization mode matches!")
+        logger.warn(s"${spectrum.getId}: Multiple ionization mode matches!")
 
-        spectrum.copy(
-          metaData = (updatedMetaData ++ possibleIonModeData).toArray,
-          score = CurationUtilities.addImpact(spectrum.score, -1, "Multiple ionization mode/types identified")
-        )
+        spectrum.setMetaData((updatedMetaData ++ possibleIonModeData).asJava)
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, "Multiple ionization mode/types identified"))
+        spectrum
       }
     }
   }

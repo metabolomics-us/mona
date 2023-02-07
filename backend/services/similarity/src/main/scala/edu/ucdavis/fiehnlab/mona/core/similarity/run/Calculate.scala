@@ -5,6 +5,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData}
 import edu.ucdavis.fiehnlab.mona.core.similarity.index.Index
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{ComputationalResult, SimpleSpectrum}
+import scala.jdk.CollectionConverters._
+import scala.collection.mutable.Buffer
 
 /**
   * provides us with simple standardized ways to calculated spectra against each other and ensure that
@@ -36,6 +38,7 @@ trait Calculate extends LazyLogging {
   def calculateAbsolute(unknownPrecursorMZ: Double, referencePrecursorMZ: Double): Double = {
     Math.abs(unknownPrecursorMZ - referencePrecursorMZ)
   }
+
 
   def findAdductMatch(unknownPrecursorMz: Double, precursorToleranceDa: Double, theoreticalAdducts: Array[Double]): Boolean = {
     if(theoreticalAdducts.length == 0) {

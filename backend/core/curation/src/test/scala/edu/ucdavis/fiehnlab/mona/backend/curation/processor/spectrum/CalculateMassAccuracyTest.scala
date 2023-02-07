@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import scala.jdk.CollectionConverters._
 
 
 /**
@@ -23,15 +24,16 @@ class CalculateMassAccuracyTest extends AnyWordSpec with Matchers {
 
     "given a spectra" must {
       "correctly calculate the mass accuracy" in {
-        val processedSpectrum = processor.process(exampleRecord.copy(metaData = exampleRecord.metaData.filter(!_.computed)))
+        exampleRecord.setMetaData(exampleRecord.getMetaData.asScala.filter(!_.getComputed).asJava)
+        val processedSpectrum = processor.process(exampleRecord)
 
-        val massAccuracy: Option[MetaData] = processedSpectrum.metaData.find(_.name == CommonMetaData.MASS_ACCURACY)
+        val massAccuracy: Option[MetaData] = processedSpectrum.getMetaData.asScala.find(_.getName == CommonMetaData.MASS_ACCURACY)
         massAccuracy.isDefined shouldBe true
-        massAccuracy.get.value.toString.toDouble shouldBe 52.63049236000388 +- 1.0e-4
+        massAccuracy.get.getValue.toDouble shouldBe 52.63049236000388 +- 1.0e-4
 
-        val massError: Option[MetaData] = processedSpectrum.metaData.find(_.name == CommonMetaData.MASS_ERROR)
+        val massError: Option[MetaData] = processedSpectrum.getMetaData.asScala.find(_.getName == CommonMetaData.MASS_ERROR)
         massError.isDefined shouldBe true
-        massError.get.value.toString.toDouble shouldBe -0.021 +- 1.0e-2
+        massError.get.getValue.toDouble shouldBe -0.021 +- 1.0e-2
       }
     }
   }

@@ -2,12 +2,10 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -15,8 +13,8 @@ import scala.language.postfixOps
 /**
   * Created by wohlg_000 on 3/8/2016.
   */
-@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class MonaSpectrumRestClientTest extends AbstractRestClientTest {
 
   @Autowired

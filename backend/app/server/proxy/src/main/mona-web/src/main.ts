@@ -73,7 +73,6 @@ import {SpectraDownloadComponent} from './app/components/spectra/spectra-downloa
 import {SpectraLibraryComponent} from './app/components/spectra/spectra-library.component';
 import {SpectraPanelComponent} from './app/components/spectra/spectra-panel.component';
 import {SpectraCountForUserComponent} from './app/components/submitter/spectra-count-for-user.component';
-import {SpectraScoreForUserComponent} from './app/components/submitter/spectra-score-for-user.component';
 import {SpectraTopScoresForUsersComponent} from './app/components/submitter/spectra-top-scores-for-users.component';
 import {SubmitterFormComponent} from './app/components/submitter/submitter-form.component';
 import {AuthenticationComponent} from './app/components/authentication/authentication.component';
@@ -227,7 +226,6 @@ const cookieConfig: NgcCookieConsentConfig = {
         SpectraLibraryComponent,
         SpectraPanelComponent,
         SpectraCountForUserComponent,
-        SpectraScoreForUserComponent,
         SpectraTopScoresForUsersComponent,
         SubmitterFormComponent,
         AuthenticationComponent,

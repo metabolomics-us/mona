@@ -1,15 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{SpectrumFeedback, Submitter}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.{ISubmitterMongoRepository, SpectrumFeedbackMongoRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumFeedbackRepository, SubmitterRepository}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
-import org.springframework.data.repository.PagingAndSortingRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{SpectrumFeedback, SpectrumFeedbackId}
+import org.springframework.context.annotation.Profile
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
+import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
 
@@ -25,10 +25,11 @@ import scala.jdk.CollectionConverters._
 @CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/feedback"))
+@Profile(Array("mona.persistence"))
 class SpectrumFeedbackRestController extends LazyLogging{
 
   @Autowired
-  val commentRepository: SpectrumFeedbackMongoRepository = null
+  val commentRepository: SpectrumFeedbackRepository = null
 
   @Autowired
   val httpServletRequest: HttpServletRequest = null
@@ -37,7 +38,7 @@ class SpectrumFeedbackRestController extends LazyLogging{
   val loginService: LoginService = null
 
   @Autowired
-  val submitterMongoRepository: ISubmitterMongoRepository = null
+  val submitterMongoRepository: SubmitterRepository = null
 
   /**
    * Returns the specified submitter
@@ -50,13 +51,13 @@ class SpectrumFeedbackRestController extends LazyLogging{
   @RequestMapping(path = Array("/{monaID}"), method = Array(RequestMethod.GET), produces = Array("application/json"))
   @Async
   @ResponseBody
-  def searchByMonaID(@PathVariable("monaID") id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[java.lang.Iterable[SpectrumFeedback]]] = {
+  def searchByMonaID(@PathVariable("monaID") id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[Iterable[SpectrumFeedback]]] = {
     if (id != null) {
-      new AsyncResult[ResponseEntity[java.lang.Iterable[SpectrumFeedback]]](
-        new ResponseEntity(commentRepository.findByMonaID(id), HttpStatus.OK)
+      new AsyncResult[ResponseEntity[Iterable[SpectrumFeedback]]](
+        new ResponseEntity(commentRepository.findByMonaId(id).asScala, HttpStatus.OK)
       )
     } else {
-      new AsyncResult[ResponseEntity[java.lang.Iterable[SpectrumFeedback]]](new ResponseEntity(HttpStatus.BAD_REQUEST))
+      new AsyncResult[ResponseEntity[Iterable[SpectrumFeedback]]](new ResponseEntity(HttpStatus.BAD_REQUEST))
     }
   }
 
@@ -65,7 +66,7 @@ class SpectrumFeedbackRestController extends LazyLogging{
     *
     * @return
     */
-  def getRepository: PagingAndSortingRepository[SpectrumFeedback, String] = commentRepository
+  def getRepository: JpaRepository[SpectrumFeedback, SpectrumFeedbackId] = commentRepository
 
   @RequestMapping(path = Array(""), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp", "text/sdf", "image/png"))
   @Async
@@ -78,9 +79,9 @@ class SpectrumFeedbackRestController extends LazyLogging{
     val data: Iterable[SpectrumFeedback] = {
       if (size != null) {
         if (page != null) {
-          getRepository.findAll(new PageRequest(page, size, Sort.Direction.ASC, "id")).getContent.asScala
+          getRepository.findAll(PageRequest.of(page, size, Sort.Direction.ASC, "id")).getContent.asScala
         } else {
-          getRepository.findAll(new PageRequest(0, size, Sort.Direction.ASC, "id")).getContent.asScala
+          getRepository.findAll(PageRequest.of(0, size, Sort.Direction.ASC, "id")).getContent.asScala
         }
       } else {
         new DynamicIterable[SpectrumFeedback, String]("", 50) {
@@ -124,9 +125,11 @@ class SpectrumFeedbackRestController extends LazyLogging{
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.DELETE))
   @ResponseBody
-  final def delete(@PathVariable("id") id: String): Unit = doDelete(id)
+  final def delete(@PathVariable("id") id: Long): Unit = {
+    doDelete(id)
+  }
 
-  def doDelete(id: String): Unit = getRepository.delete(id)
+  def doDelete(id: Long): Unit = commentRepository.deleteById(id)
 
 
   /**

@@ -18,6 +18,10 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
   faMinusSquare = faMinusSquare;
   faUser = faUser;
   libraryTags;
+  formErrors;
+  hidePasswords;
+  newPassword;
+  currentUser;
   librarySubscription: Subscription;
   deleteSubscription: Subscription;
   toasterOptions: ToasterConfig;
@@ -33,9 +37,16 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       showCloseButton: true,
       mouseoverTimerStop: true
     });
+    this.newPassword = {
+      emailAddress: '',
+      password: '',
+      passwordMatch: ''
+    };
+    this.currentUser = {};
     this.deleteSubscription = null;
     this.libraryTags = [];
     this.removeIDs = null;
+    this.hidePasswords = true;
     this.librarySubscription = this.tagService.query().subscribe(
       (tags: any) => {
         if (tags.length > 0) {
@@ -87,7 +98,7 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       }
 
       this.deleteSubscription = this.spectrum.batchDelete({
-        query: this.spectraQueryBuilderService.getRSQLQuery()
+        query: this.spectraQueryBuilderService.getFilter()
       }, this.auth.getCurrentUser().accessToken)
         .subscribe(() => {
           this.toaster.pop({
@@ -146,6 +157,24 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     }
   }
 
+  refreshSimilarity() {
+    if (this.auth.isAdmin()) {
+      this.adminService.refreshSimilarity(this.auth.getCurrentUser().accessToken).subscribe((res) => {
+        this.toaster.pop({
+          type: 'success',
+          title: 'Similarity Service Being Updated!',
+          body: 'Similarity Service is being repopulated. Please allow up to an hour for this operation to complete.'
+        });
+      }, (error) => {
+        this.toaster.pop({
+          type: 'error',
+          title: 'There was a problem requesting similarity refresh.',
+          body: `${error.message}`
+        });
+      });
+    }
+  }
+
   updatePredefinedQueries() {
     if (this.auth.isAdmin()) {
       this.adminService.updatePredefinedDownloads(this.auth.getCurrentUser().accessToken).subscribe(() => {
@@ -195,6 +224,46 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
           type: 'error',
           title: 'There was a problem scheduling data for curation.',
           body: `${error.message}`
+        });
+      });
+    }
+  }
+
+  validateUser() {
+    if (this.auth.isAdmin()) {
+      this.adminService.fetchUser(this.auth.getCurrentUser().accessToken, this.newPassword.emailAddress).subscribe((x) => {
+        this.hidePasswords = false;
+        this.currentUser = x;
+        this.toaster.pop({
+          type: 'success',
+          title: 'Successfully Validated Email Address',
+          body: 'This email address is assigned to a current user'
+        });
+      }, (error) => {
+        this.hidePasswords = true;
+        this.toaster.pop({
+          type: 'error',
+          title: 'User Email Address Not Found',
+          body: 'This user does not seem to exist'
+        });
+      })
+    }
+  }
+
+  submitPasswordChange() {
+    if (this.auth.isAdmin()) {
+      this.currentUser.password = this.newPassword.password;
+      this.adminService.submitPasswordChange(this.auth.getCurrentUser().accessToken, this.currentUser).subscribe(() => {
+        this.toaster.pop({
+          type: 'success',
+          title: 'Password Successfully Reset',
+          body: 'Please try logging in with the new password!'
+        });
+      }, (error) => {
+        this.toaster.pop({
+          type: 'error',
+          title: 'Unable to reset Password',
+          body: 'Please try submitting again or check server logs to see why rejected'
         });
       });
     }

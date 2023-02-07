@@ -19,6 +19,8 @@ import {Observable} from 'rxjs';
 import {faCloudUploadAlt, faSpinner, faExclamationTriangle, faUser,
         faMinusSquare, faPlusSquare, faArrowLeft, faArrowRight, faSignInAlt} from '@fortawesome/free-solid-svg-icons';
 import {Router} from '@angular/router';
+import {SpectrumModel} from "../../mocks/spectrum.model";
+import {Metadata} from "../../mocks/metadata.model";
 
 @Component({
     selector: 'basic-uploader',

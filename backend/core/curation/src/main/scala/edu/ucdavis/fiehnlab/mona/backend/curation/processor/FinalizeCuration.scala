@@ -1,11 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
 import java.util.Date
-
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Score, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Score, Spectrum, Tag}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
+
+import scala.jdk.CollectionConverters._
+import scala.collection.mutable.Buffer
 
 /**
   * Created by sajjan on 2/14/17.
@@ -20,24 +22,36 @@ class FinalizeCuration extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    logger.info(s"${spectrum.id}: Finalizing curation")
+    logger.info(s"${spectrum.getId}: Finalizing curation")
 
     // Update score object with scaled score if possible, otherwise score is null
     val score: Score =
-      if (spectrum.score.impacts.nonEmpty) {
-        val rawScore: Double = spectrum.score.impacts.map(_.value).sum
-        val totalScore: Double = spectrum.score.impacts.map(_.value.abs).sum
+      if (spectrum.getScore.getImpacts.asScala.nonEmpty) {
+        val rawScore: Double = spectrum.getScore.getImpacts.asScala.map(_.getValue.toDouble).sum
+        val totalScore: Double = spectrum.getScore.getImpacts.asScala.map(_.getValue.toDouble.abs).sum
 
         if (totalScore == 0) {
           // Give a median score if no impacts are given
-          spectrum.score.copy(score = 2.5)
+          spectrum.getScore.setScore(2.5)
+          spectrum.getScore
         } else {
-          spectrum.score.copy(score = 2.5 * (1 + rawScore / totalScore))
+          spectrum.getScore.setScore(2.5 * (1 + rawScore / totalScore))
+          spectrum.getScore
         }
       } else {
         null
       }
 
-    spectrum.copy(lastCurated = new Date, score = score)
+    // Add In-Silico Tag to LipidBlast 2022 spectra
+    val updatedTags: Buffer[Tag] =
+      if (spectrum.getTags.asScala.exists(_.getText == "LipidBlast 2022"))
+        spectrum.getTags.asScala :+ new Tag("In-Silico", false)
+      else
+        spectrum.getTags.asScala
+
+    spectrum.setTags(updatedTags.asJava)
+    spectrum.setLastCurated(new Date())
+    spectrum.setScore(score)
+    spectrum
   }
 }

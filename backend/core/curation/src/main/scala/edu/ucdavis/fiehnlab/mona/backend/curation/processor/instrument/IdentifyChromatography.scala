@@ -1,10 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Impact, MetaData, Spectrum, Tags}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Impacts, MetaData, Spectrum, Tag}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CommonTags, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
+
+import scala.collection.mutable.Buffer
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 3/16/16.
@@ -51,95 +54,102 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val tags: Array[Tags] = spectrum.tags.filter(x => Array(CommonTags.GCMS_SPECTRUM, CommonTags.LCMS_SPECTRUM, CommonTags.CEMS_SPECTRUM).contains(x.text))
+    val tags: Buffer[Tag] = spectrum.getTags.asScala.filter(x => Array(CommonTags.GCMS_SPECTRUM, CommonTags.LCMS_SPECTRUM, CommonTags.CEMS_SPECTRUM).contains(x.getText))
 
     if (tags.length == 1) {
-      logger.info(s"${spectrum.id}: Spectrum already has identified chromatography: ${tags(0).text}")
+      logger.info(s"${spectrum.getId}: Spectrum already has identified chromatography: ${tags(0).getText}")
 
 
-      spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, s"Chromatography identified as ${tags(0).text}"))
+      spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, s"Chromatography identified as ${tags(0).getText}"))
+      spectrum
     }
 
     else if (tags.length > 1) {
-      logger.warn(s"${spectrum.id}: Spectrum has multiple chromatography tags!")
+      logger.warn(s"${spectrum.getId}: Spectrum has multiple chromatography tags!")
 
-      spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, s"Chromatography identified with multiple tags: ${tags.map(_.text).mkString(", ")}"))
+      spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, s"Chromatography identified with multiple tags: ${tags.map(_.getText).mkString(", ")}"))
+      spectrum
     }
 
     else {
-      val isGCMS = spectrum.metaData.exists(validateMetaData(_, GCMS_METADATA_CRITERIA, spectrum.id))
-      val isLCMS = spectrum.metaData.exists(validateMetaData(_, LCMS_METADATA_CRITERIA, spectrum.id))
-      val isCEMS = spectrum.metaData.exists(validateMetaData(_, CEMS_METADATA_CRITERIA, spectrum.id))
+      val isGCMS = spectrum.getMetaData.asScala.exists(validateMetaData(_, GCMS_METADATA_CRITERIA, spectrum.getId))
+      val isLCMS = spectrum.getMetaData.asScala.exists(validateMetaData(_, LCMS_METADATA_CRITERIA, spectrum.getId))
+      val isCEMS = spectrum.getMetaData.asScala.exists(validateMetaData(_, CEMS_METADATA_CRITERIA, spectrum.getId))
 
 
       if (isGCMS && isLCMS) {
-        logger.warn(s"${spectrum.id}: Identified as both GC/MS and LC/MS!")
-        spectrum.copy(score = spectrum.score.copy(impacts = spectrum.score.impacts :+ Impact(-1, "Identified as both GC/MS and LC/MS")))
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Chromatography identified as both GC/MS and LE/MS"))
+        logger.warn(s"${spectrum.getId}: Identified as both GC/MS and LC/MS!")
+        val score = spectrum.getScore
+        val impacts = score.getImpacts
+        impacts.add(new Impacts(-1, "Identified as both GC/MS and LC/MS"))
+        score.setImpacts(impacts)
+        spectrum.setScore(CurationUtilities.addImpact(score, -1, "Chromatography identified as both GC/MS and LE/MS"))
+        spectrum
       }
 
       else if (isGCMS && isCEMS) {
-        logger.warn(s"${spectrum.id}: Identified as both GC/MS and CE/MS!")
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Chromatography identified as both GC/MS and CE/MS"))
+        logger.warn(s"${spectrum.getId}: Identified as both GC/MS and CE/MS!")
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, "Chromatography identified as both GC/MS and CE/MS"))
+        spectrum
       }
 
       else if (isLCMS && isCEMS) {
-        logger.warn(s"${spectrum.id}: Identified as both LC/MS and CE/MS!")
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Chromatography identified as both LC/MS and CE/MS"))
+        logger.warn(s"${spectrum.getId}: Identified as both LC/MS and CE/MS!")
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, "Chromatography identified as both LC/MS and CE/MS"))
+        spectrum
       }
 
       else if (isGCMS) {
-        logger.info(s"${spectrum.id}: Identified as GC/MS")
+        logger.info(s"${spectrum.getId}: Identified as GC/MS")
 
         // Add GCMS tag and metadata
-        val updatedTags: Array[Tags] =
-          if (spectrum.tags.exists(_.text == CommonTags.GCMS_SPECTRUM))
-            spectrum.tags
+        val updatedTags: Buffer[Tag] =
+          if (spectrum.getTags.asScala.exists(_.getText == CommonTags.GCMS_SPECTRUM))
+            spectrum.getTags.asScala
           else
-            spectrum.tags :+ Tags(ruleBased = true, CommonTags.GCMS_SPECTRUM)
+            spectrum.getTags.asScala :+ new Tag(CommonTags.GCMS_SPECTRUM, true)
 
-        spectrum.copy(
-          tags = updatedTags,
-          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as GC-MS")
-        )
+        spectrum.setTags(updatedTags.asJava)
+
+        val score = CurationUtilities.addImpact(spectrum.getScore, 1, "Chromatography identified as GC-MS")
+        spectrum.setScore(score)
+        spectrum
       }
 
       else if (isLCMS) {
-        logger.info(s"${spectrum.id}: Identified as LC/MS")
+        logger.info(s"${spectrum.getId}: Identified as LC/MS")
 
         // Add LCMS tag
-        val updatedTags: Array[Tags] =
-          if (spectrum.tags.exists(_.text == CommonTags.LCMS_SPECTRUM))
-            spectrum.tags
+        val updatedTags: Buffer[Tag] =
+          if (spectrum.getTags.asScala.exists(_.getText == CommonTags.LCMS_SPECTRUM))
+            spectrum.getTags.asScala
           else
-            spectrum.tags :+ Tags(ruleBased = true, CommonTags.LCMS_SPECTRUM)
+            spectrum.getTags.asScala :+ new Tag(CommonTags.LCMS_SPECTRUM, true)
 
-        spectrum.copy(
-          tags = updatedTags,
-          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as LC-MS")
-        )
+        spectrum.setTags(updatedTags.asJava)
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Chromatography identified as LC-MS"))
+        spectrum
       }
 
       else if (isCEMS) {
-        logger.info(s"${spectrum.id}: Identified as CE/MS")
+        logger.info(s"${spectrum.getId}: Identified as CE/MS")
 
         // Add CEMS tag
-        val updatedTags: Array[Tags] =
-          if (spectrum.tags.exists(_.text == CommonTags.CEMS_SPECTRUM))
-            spectrum.tags
+        val updatedTags: Buffer[Tag] =
+          if (spectrum.getTags.asScala.exists(_.getText == CommonTags.CEMS_SPECTRUM))
+            spectrum.getTags.asScala
           else
-            spectrum.tags :+ Tags(ruleBased = true, CommonTags.CEMS_SPECTRUM)
+            spectrum.getTags.asScala :+ new Tag(CommonTags.CEMS_SPECTRUM, true)
 
-        spectrum.copy(
-          tags = updatedTags,
-          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as CD-MS")
-
-        )
+        spectrum.setTags(updatedTags.asJava)
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Chromatography identified as CD-MS"))
+        spectrum
       }
 
       else {
-        logger.warn(s"${spectrum.id}: Unidentifiable chromatography")
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Unidentifiable chromatography"))
+        logger.warn(s"${spectrum.getId}: Unidentifiable chromatography")
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, "Unidentifiable chromatography"))
+        spectrum
       }
     }
   }
@@ -154,23 +164,23 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     criteria.exists {
       case (name: String, terms: Array[String]) =>
         // Check that the metadata name matches the name criterion
-        if (name == "*" || metaData.name.toLowerCase == name.toLowerCase) {
-          logger.debug(s"$id: MetaData name ${metaData.name} matches criterion $name")
+        if (name == "*" || metaData.getName.toLowerCase == name.toLowerCase) {
+          logger.debug(s"$id: MetaData name ${metaData.getName} matches criterion $name")
 
           // Check that the metadata value matches the value criteria
           terms.exists(term =>
-            if (metaData.value.toString.toLowerCase == term.toLowerCase) {
-              logger.info(s"$id: MetaData value ${metaData.value} matches value criterion $term")
+            if (metaData.getValue.toString.toLowerCase == term.toLowerCase) {
+              logger.info(s"$id: MetaData value ${metaData.getValue} matches value criterion $term")
               true
             }
 
-            else if (metaData.unit != null && metaData.unit.toLowerCase == term.toLowerCase) {
-              logger.info(s"$id: MetaData value ${metaData.value} matches unit criterion $term")
+            else if (metaData.getUnit != null && metaData.getUnit.toLowerCase == term.toLowerCase) {
+              logger.info(s"$id: MetaData value ${metaData.getValue} matches unit criterion $term")
               true
             }
 
-            else if (metaData.value.toString.toLowerCase.matches(term)) {
-              logger.info(s"$id: MetaData value ${metaData.value} matches regex criterion $term")
+            else if (metaData.getValue.toString.toLowerCase.matches(term)) {
+              logger.info(s"$id: MetaData value ${metaData.getValue} matches regex criterion $term")
               true
             }
 

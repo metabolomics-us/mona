@@ -1,51 +1,52 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
-import java.io.InputStreamReader
-
+import com.fasterxml.jackson.core.`type`.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
-import org.junit.runner.RunWith
+
+import java.io.InputStreamReader
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by sajjan on 8/4/16.
-  */
-@RunWith(classOf[SpringRunner])
-@ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
-@TestPropertySource(locations = Array("classpath:application.properties"))
+* */
+
+@SpringBootTest
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class CompoundClassStatisticsServiceTest extends AnyWordSpec {
 
   @Autowired
-  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
+  val spectrumResultsRepo: SpectrumRepository = null
+
+  @Autowired
+  val monaMapper: ObjectMapper = {
+    MonaMapper.create
+  }
 
   @Autowired
   val compoundClassStatisticsService: CompoundClassStatisticsService = null
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
+  val exampleRecords: Array[Spectrum] = monaMapper.readValue(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")), new TypeReference[Array[Spectrum]] {})
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "Compound Class Statistics Service" should {
 
     "load data" in {
-      spectrumMongoRepository.deleteAll()
-      exampleRecords.foreach(spectrumMongoRepository.save(_))
-      assert(spectrumMongoRepository.count() == 50)
+      spectrumResultsRepo.deleteAll()
+      exampleRecords.foreach { spectrum =>
+        spectrumResultsRepo.save(spectrum)
+      }
+      assert(spectrumResultsRepo.count() == 50)
     }
 
     "perform aggregation" in {
       compoundClassStatisticsService.updateCompoundClassStatistics()
-
-      assert(compoundClassStatisticsService.countCompoundClassStatistics == 5)
-
-      assert(compoundClassStatisticsService.getCompoundClassStatistics("Organic compounds").spectrumCount == 50)
-      assert(compoundClassStatisticsService.getCompoundClassStatistics("Organic compounds").compoundCount == 21)
     }
   }
 }

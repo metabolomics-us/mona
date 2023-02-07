@@ -30,6 +30,7 @@ class RestClientConfig extends LazyLogging {
 
   @Bean(name = Array[String]("monaRestServer"))
   def monaRestServer(@Value("${mona.rest.server.host:localhost}") monaServerHost: String, @Value("${mona.rest.server.port:8080}") monaServerPort: Int): String = {
+    logger.info(s"The rest server is http://$monaServerHost:$monaServerPort")
     s"http://$monaServerHost:$monaServerPort"
   }
 

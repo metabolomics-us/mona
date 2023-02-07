@@ -3,20 +3,17 @@ package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus
 import java.io.InputStreamReader
 import java.util.Date
 import java.util.concurrent.CountDownLatch
-
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusCounterConfiguration, MonaNotificationBusCounterConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -25,8 +22,8 @@ import scala.reflect.ClassTag
 /**
   * Created by wohlg on 4/6/2016.
   */
-@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[StringTestConfig], classOf[MonaNotificationBusCounterConfiguration], classOf[MonaEventBusCounterConfiguration]))
+@ActiveProfiles(Array("test"))
 class EventBusListenerTest extends AnyWordSpec with Eventually {
 
   @Autowired

@@ -1,48 +1,64 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.controller
 
 import java.io.InputStreamReader
-
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import edu.ucdavis.fiehnlab.mona.core.similarity.SimilarityService
-import edu.ucdavis.fiehnlab.mona.core.similarity.service.SimilarityStartupService
+import edu.ucdavis.fiehnlab.mona.core.similarity.service.{SimilarityPopulationService, SimilarityStartupService}
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.AlgorithmTypes.AlgorithmType
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{IndexType, PeakSearchRequest, SearchResult, SimilaritySearchRequest}
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
+import org.hibernate.Hibernate
 import org.junit.runner.RunWith
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.test.context.TestContextManager
+import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 
 /**
   * Created by sajjan on 5/26/16.
   */
-@RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[SimilarityService]), webEnvironment = WebEnvironment.DEFINED_PORT)
-class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLogging {
+@SpringBootTest(classes = Array(classOf[SimilarityService]), webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
+class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLogging with BeforeAndAfterEach{
 
   @LocalServerPort
   private val port = 0
 
   @Autowired
-  val mongoRepository: ISpectrumMongoRepositoryCustom = null
+  val postSpectrumResultRepository: SpectrumRepository = null
 
   @Autowired
-  val similarityStartupService: SimilarityStartupService = null
+  val similarityPopulationService: SimilarityPopulationService = null
 
   @Autowired
   val indexUtils: IndexUtils = null
 
+  @Autowired
+  private val transactionManager: PlatformTransactionManager = null
+
+  private var transactionTemplate: TransactionTemplate = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
+
+  protected override def beforeEach() = (
+    transactionTemplate = new TransactionTemplate(transactionManager)
+    )
+
+  protected override def afterEach() = (
+    transactionTemplate = null
+    )
 
   "SimilarityControllerTest" should {
     RestAssured.baseURI = s"http://localhost:$port/rest/similarity"
@@ -51,14 +67,29 @@ class SimilarityControllerTest extends AnyWordSpec with Matchers with LazyLoggin
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "load some data" in {
-      mongoRepository.deleteAll()
-      exampleRecords.foreach(mongoRepository.save(_))
+      transactionTemplate.execute{ x =>
+        postSpectrumResultRepository.deleteAll()
+        Hibernate.initialize()
+        x
+      }
 
-      assert(mongoRepository.count() == 59)
+      transactionTemplate.execute{ x =>
+        exampleRecords.foreach(y => postSpectrumResultRepository.save(y))
+        Hibernate.initialize()
+        x
+      }
+
+      val count = transactionTemplate.execute{ x =>
+        val z = postSpectrumResultRepository.count()
+        Hibernate.initialize(z)
+        z
+      }
+
+      assert(count == 59)
     }
 
     "populate the indices" in {
-      similarityStartupService.populateIndices()
+      similarityPopulationService.populateIndices()
       assert(indexUtils.getIndexSize == 59)
       assert(indexUtils.getIndexSize("default", IndexType.PEAK) == 170)
     }

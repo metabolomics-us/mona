@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum
 
-import java.io.InputStreamReader
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -23,7 +22,7 @@ class CalculateSplashTest extends AnyWordSpec {
       val processedSpectrum = processor.process(spectrumGiven)
 
       "correctly calculate the SPLASH" in {
-        assert(processedSpectrum.splash.splash == "splash10-0bt9-0910000000-9c8c58860a0fadd33800")
+        assert(processedSpectrum.getSplash.getSplash == "splash10-0bt9-0910000000-9c8c58860a0fadd33800")
       }
     }
   }

@@ -22,9 +22,9 @@ class JSONFileSpectraReaderTest extends AnyWordSpec with LazyLogging {
       var counter = 0
       while (spectra != null) {
         counter = counter + 1
-        assert(spectra.id != null)
-        assert(spectra.spectrum != null)
-        assert(spectra.compound != null)
+        assert(spectra.getId != null)
+        assert(spectra.getSpectrum != null)
+        assert(spectra.getCompound != null)
         spectra = reader.read()
 
       }

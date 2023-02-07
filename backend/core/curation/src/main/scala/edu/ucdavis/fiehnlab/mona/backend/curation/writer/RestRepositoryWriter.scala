@@ -42,15 +42,15 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
   override def write(spectrum: Spectrum): Unit = {
 
     try {
-      if (spectrum.id == null) {
+      if (spectrum.getId == null) {
         logger.debug("adding spectra to server")
         monaSpectrumRestClient.add(spectrum)
       } else {
-        logger.debug(s"updating spectra on server ${spectrum.id}")
+        logger.debug(s"updating spectra on server ${spectrum.getId}")
 
         try {
-          val s = monaSpectrumRestClient.get(spectrum.id)
-          monaSpectrumRestClient.updateAsync(spectrum, spectrum.id)
+          val s = monaSpectrumRestClient.get(spectrum.getId)
+          monaSpectrumRestClient.updateAsync(spectrum, spectrum.getId)
         } catch {
           case e: HttpClientErrorException =>
             if (e.getMessage.contains("404")) {

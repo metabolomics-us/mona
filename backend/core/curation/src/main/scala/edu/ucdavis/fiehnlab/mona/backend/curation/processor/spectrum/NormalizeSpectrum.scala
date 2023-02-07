@@ -22,7 +22,7 @@ class NormalizeSpectrum extends ItemProcessor[Spectrum, Spectrum] with LazyLoggi
     */
   override def process(spectrum: Spectrum): Spectrum = {
     // Split the ions into m/z-intensity pairs
-    val ions: Array[Array[String]] = spectrum.spectrum.split(' ').map(_.split(':'))
+    val ions: Array[Array[String]] = spectrum.getSpectrum.split(' ').map(_.split(':'))
 
     // Determine the maximum intensity
     val maxIntensity: Double = ions.map(_ (1).toDouble).max
@@ -32,9 +32,8 @@ class NormalizeSpectrum extends ItemProcessor[Spectrum, Spectrum] with LazyLoggi
       val relativeSpectrum: String = ions.map(x => "%s:%1.6f".format(x(0), x(1).toDouble / maxIntensity * INTENSITY_SCALE)).mkString(" ")
 
       // Replace the spectrum with the relative spectrum
-      spectrum.copy(
-        spectrum = relativeSpectrum
-      )
+      spectrum.setSpectrum(relativeSpectrum)
+      spectrum
     }
 
     else {

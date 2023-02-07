@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.config
 
 import java.io.{BufferedInputStream, File, FileInputStream, FileNotFoundException}
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -12,9 +11,9 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata._
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateMassAccuracy, CalculateSplash, NormalizeSpectrum, SpectrumIonCountScoringRule}
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.validation.{ColumnValidation, MassAccuracyValidation}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.validation.MassAccuracyValidation
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.{FinalizeCuration, RemoveComputedData}
-import edu.ucdavis.fiehnlab.mona.backend.curation.reader.{JSONFileSpectraReader, JSONLegacyFileSpectraReader}
+import edu.ucdavis.fiehnlab.mona.backend.curation.reader.JSONFileSpectraReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.amqp.core._
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -156,27 +155,6 @@ class CurationConfig extends LazyLogging {
     }
 
     val reader = new JSONFileSpectraReader()
-
-    if (new File(file).exists()) {
-      logger.debug("a file was provided")
-      reader.stream = new BufferedInputStream(new FileInputStream(file))
-    } else {
-      logger.warn(s"provided file $file did not exist, trying to load from classpath")
-      reader.stream = getClass.getResourceAsStream(file)
-    }
-
-    reader
-  }
-
-  @Bean
-  @StepScope
-  def jsonLegacyFileReader(@Value("#{jobParameters[pathToFile]}") file: String): ItemReader[Spectrum] = {
-
-    if (file == null) {
-      throw new FileNotFoundException("you need to provide a file name, but instead the parameter was null!")
-    }
-
-    val reader = new JSONLegacyFileSpectraReader()
 
     if (new File(file).exists()) {
       logger.debug("a file was provided")
