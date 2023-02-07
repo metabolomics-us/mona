@@ -4,20 +4,18 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.builder.MultiPartSpecBuilder
 import com.jayway.restassured.specification.MultiPartSpecification
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.StaticDownload
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.StaticDownload
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.StaticDownloadService
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
-@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class StaticDownloadControllerTest extends AbstractSpringControllerTest {
 
   @LocalServerPort
@@ -51,13 +49,13 @@ class StaticDownloadControllerTest extends AbstractSpringControllerTest {
         .build()
 
       val result = authenticate().contentType("multipart/form-data").multiPart(file).when().post("/static").`then`().statusCode(200).extract().body().as(classOf[StaticDownload])
-      assert(result == StaticDownload("monaRecord.json", null, null))
+      assert(result == new StaticDownload("monaRecord.json", null, null))
     }
 
     "there should be one static download available" in {
       val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get("/static").`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
       assert(result.length == 1)
-      assert(result.last == StaticDownload("monaRecord.json", null, null))
+      assert(result.last == new StaticDownload("monaRecord.json", null, null))
     }
 
     "download a file without a category" in {
@@ -71,13 +69,13 @@ class StaticDownloadControllerTest extends AbstractSpringControllerTest {
         .build()
 
       val result = authenticate().contentType("multipart/form-data").multiPart(file).multiPart("category", "test").when().post("/static").`then`().statusCode(200).extract().body().as(classOf[StaticDownload])
-      assert(result == StaticDownload("gcmsRecord.json", "test", null))
+      assert(result == new StaticDownload("gcmsRecord.json", "test", null))
     }
 
     "there should be two static downloads available" in {
       val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get("/static").`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
       assert(result.length == 2)
-      assert(result.contains(StaticDownload("gcmsRecord.json", "test", null)))
+      assert(result.contains(new StaticDownload("gcmsRecord.json", "test", null)))
     }
 
     "download a file with a category" in {

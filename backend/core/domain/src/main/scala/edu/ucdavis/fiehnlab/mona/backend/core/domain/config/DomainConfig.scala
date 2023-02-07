@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.config
 
 import javax.validation.{Validation, Validator}
-
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule

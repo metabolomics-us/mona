@@ -4,7 +4,6 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.config.WorkflowConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.listener.WorkflowListener
-import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
@@ -17,7 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner
 /**
   * Created by wohlgemuth on 3/14/16.
   */
-@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TestWorkflowConfig]))
 class WorkflowTest extends AnyWordSpec {
 

@@ -38,7 +38,8 @@ object AdductBuilder extends LazyLogging {
     "[M+Cl]-" -> { M: Double => M + 35.453 },
     "[2M+Cl]-" -> { M: Double => 2 * M + 35.453 },
     "[M+HAc-H]-" -> { M: Double => M + 59.04403 },
-    "[2M+HAc-H]-" -> { M: Double => 2 * M + 59.04403 }
+    "[2M+HAc-H]-" -> { M: Double => 2 * M + 59.04403 },
+    "[M-H20-H]-" -> {M: Double => M - 19.01839}
   )
 
 

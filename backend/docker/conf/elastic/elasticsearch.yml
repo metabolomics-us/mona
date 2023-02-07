@@ -1,5 +1,0 @@
-cluster:
-  name: mona-cluster
-
-node:
-  name: ${HOSTNAME}

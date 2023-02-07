@@ -1,8 +1,7 @@
 version: "3"
 
 volumes:
-  mongo-data:
-  repository-data:
+  postgresql-data:
   downloader-data:
 
 services:
@@ -10,38 +9,39 @@ services:
   # Databases & Messaging
   #
 
-  mongodb:
-    image: mongo:3.2.4
+  postgresql:
+    image: postgres:13.4
+    hostname: postgresql
+    restart: always
+    #THIS MUST BE ADDED AT SERVICE LEVEL
+    shm_size: 4gb
+    stop_grace_period: 5m
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c config_file=/etc/postgresql.conf
+    expose:
+      - 5432
     ports:
-      - "27017:27017"
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${MONA_USER}
+      - POSTGRES_PASSWORD=${MONA_PASS}
     volumes:
-      - mongo-data:/data/db
-    command: --wiredTigerCacheSizeGB 10
+      - postgresql-data:/var/lib/postgresql/data
+      - ./postgresql-dev.conf:/etc/postgresql.conf
     logging:
       options:
         max-size: "100M"
 
-  # Elasticsearch master and entrypoint
-  elasticsearch_master:
-    image: elasticsearch:2.4
-    command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Des.node.master=true, -Des.index.query.bool.max_clause_count=10240 ]
+  postgresql-hero:
+    image: ankane/pghero
     ports:
-      - "9200:9200"
-      - "9300:9300"
-    logging:
-      options:
-        max-size: "100M"
-
-  # Elasticsearch node, which may be scaled
-  elasticsearch_node:
-    image: elasticsearch:2.4
-    command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Des.index.query.bool.max_clause_count=10240 ]
-    logging:
-      options:
-        max-size: "100M"
+      - "8081:8080"
+    environment:
+      - DATABASE_URL=postgres://${MONA_USER}:${MONA_PASS}@postgresql:5432/mona
+    deploy:
+      mode: replicated
 
   rabbitmq:
-    image: rabbitmq:3.6-management
+    image: rabbitmq:3.10-management
     ports:
       - "15672:15672"
       - "5672:5672"
@@ -61,11 +61,25 @@ services:
     ports:
       - "8761:8761"
     depends_on:
-      - mongodb
-      - rabbitmq
-    entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.server.git.username=$GIT_USER -Dspring.cloud.config.server.git.password=$GIT_PASS -Dspring.profiles.active=docker -jar *.jar"
+      - postgresql
+    entrypoint: bash -c "./wait-for-it.sh postgresql:5432 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.server.git.username=$GIT_USER -Dspring.cloud.config.server.git.password=$GIT_PASS -Dspring.profiles.active=docker -jar *.jar"
     environment:
-      - JAVA_OPTS='-Xmx4g -XX:+UseParallelGC'
+      - JAVA_OPTS='-Xmx2g -XX:+UseParallelGC'
+      - GIT_USER=${GIT_USER}
+      - GIT_PASS=${GIT_PASS}
+    logging:
+      options:
+        max-size: "100M"
+
+  config-server:
+    image: public.ecr.aws/fiehnlab/mona-config:test
+    ports:
+      - "1111:1111"
+    depends_on:
+      - postgresql
+    entrypoint: bash -c "./wait-for-it.sh postgresql:5432 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker,prod -Dspring.cloud.config.server.git.username=$GIT_USER -Dspring.cloud.config.server.git.password=$GIT_PASS -jar *.jar"
+    environment:
+      - JAVA_OPTS='-Xmx2g -XX:+UseParallelGC'
       - GIT_USER=${GIT_USER}
       - GIT_PASS=${GIT_PASS}
     logging:
@@ -81,50 +95,36 @@ services:
   bootstrap:
     image: public.ecr.aws/fiehnlab/mona-bootstrap:test
     depends_on:
-      - discovery
-    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+      - config-server
+    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
         max-size: "100M"
-
-  # Webhook support to notify external apis
+#
+#  # Webhook support to notify external apis
   webhooks:
     image: public.ecr.aws/fiehnlab/mona-webhooks-server:test
     ports:
       - "4444:4444"
     depends_on:
-      - discovery
-    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+      - config-server
+    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
         max-size: "100M"
-
-  # Scheduler for curation jobs
+#
+#  # Scheduler for curation jobs
   curationScheduler:
     image: public.ecr.aws/fiehnlab/mona-curation-scheduler:test
     ports:
       - "5555:5555"
     depends_on:
-      - discovery
-    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+      - config-server
+      - webhooks
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
         max-size: "100M"
-
-  # Serves the content of MoNA as a repository
-  repository:
-    image: public.ecr.aws/fiehnlab/mona-repository:test
-    ports:
-      - "8888:8888"
-    depends_on:
-      - discovery
-    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
-    volumes:
-      - repository-data:/data
-    logging:
-      options:
-        max-size: "100M"
-
 
   #
   # Persistence server, which utilizes above services, and other dependent services
@@ -134,8 +134,9 @@ services:
   persistence:
     image: public.ecr.aws/fiehnlab/mona-persistence-server:test
     depends_on:
-      - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+      - webhooks
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
         max-size: "100M"
@@ -143,7 +144,7 @@ services:
   # Main authentication service
   auth:
     image: public.ecr.aws/fiehnlab/mona-auth-server:test
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
         max-size: "100M"
@@ -154,8 +155,9 @@ services:
     ports:
     - "9999:9999"
     depends_on:
-      - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+      - webhooks
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx3g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
         max-size: "100M"
@@ -169,12 +171,12 @@ services:
   proxy:
     image: public.ecr.aws/fiehnlab/mona-proxy:test
     ports:
-      - "80:8080"
+      - "8080:8080"
     depends_on:
-      - persistence
+      - webhooks
     environment:
       - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xss4m -Xmx4g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
         max-size: "100M"
@@ -186,7 +188,8 @@ services:
       - "7777:7777"
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx6g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+      - webhooks
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - downloader-data:/data
     logging:
@@ -198,7 +201,8 @@ services:
     image: public.ecr.aws/fiehnlab/mona-curation-runner:test
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+      - webhooks
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
         max-size: "100M"

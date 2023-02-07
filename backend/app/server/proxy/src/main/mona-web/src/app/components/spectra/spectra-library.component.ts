@@ -4,13 +4,15 @@
  */
 
 import {Component, Input, AfterViewInit, ElementRef} from '@angular/core';
+import {SpectrumModel} from "../../mocks/spectrum.model";
+import {Library} from "../../mocks/library.model";
 
 @Component({
     selector: 'display-library-reference',
     template: '<div #libraryBinder></div>'
 })
 export class SpectraLibraryComponent implements AfterViewInit {
-    @Input() spectrum;
+    @Input() spectrum: SpectrumModel;
     libraryString;
 
     constructor( public elementRef: ElementRef) {}
@@ -25,28 +27,28 @@ export class SpectraLibraryComponent implements AfterViewInit {
         // Base library string
         this.libraryString = 'Originally submitted to the ';
 
-        const library = this.spectrum.library;
+        const library: Library = this.spectrum.library;
 
         // Handle a provided library link
         if (typeof library.link !== 'undefined' && library.link !== '') {
             // Link to library but no identifier
-            if (typeof library.id === 'undefined') {
+            if (typeof library.library === 'undefined') {
                 this.libraryString += '<a href="' + library.link + '" target="_blank">' +
                     library.description + ' </a>';
             }
 
             // Link to library and identifier and link placeholder for identifier
-            else if (typeof library.id !== 'undefined' && library.link.indexOf('%s') > -1) {
-                const link = library.link.replace('%s', library.id);
+            else if (typeof library.library !== 'undefined' && library.link.indexOf('%s') > -1) {
+                const link = library.link.replace('%s', library.library);
 
                 this.libraryString += this.spectrum.library.description + ' as <a href="' + link + '" target="_blank">' +
-                    library.id + '</a>';
+                    library.library + '</a>';
             }
 
             // Link to library and identifier but no link placeholder for identifier
             else {
                 this.libraryString += '<a href="' + library.link + '" target="_blank">' + library.description +
-                    '</a> as ' + library.id;
+                    '</a> as ' + library.library;
             }
         }
 

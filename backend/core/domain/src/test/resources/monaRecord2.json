@@ -438,10 +438,6 @@
   "library": {
     "library": "EMBL-MCF",
     "description": "EMBL - Metabolomics Core Facility Spectral Library",
-    "link": "https://curatr.mcf.embl.de/MS2/spec57890/",
-    "tag": {
-      "ruleBased": false,
-      "text": "EMBL-MCF"
-    }
+    "link": "https://curatr.mcf.embl.de/MS2/spec57890/"
   }
 }

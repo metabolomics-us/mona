@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
-import java.nio.file.{Files, Path}
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExport
+import java.nio.file.{Files, Path}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.QueryExport
+
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 5/3/18.
@@ -58,34 +59,34 @@ class IdentifierTableDownloader(export: QueryExport, downloadDir: Path, compress
     */
   override def writeSpectrum(spectrum: Spectrum): Unit = {
     val sb: StringBuilder = new StringBuilder
-    sb.append(spectrum.id).append(',')
+    sb.append(spectrum.getId).append(',')
 
     // Add SPLASH
-    if (spectrum.splash != null) {
-      sb.append(spectrum.splash.splash)
+    if (spectrum.getSplash != null) {
+      sb.append(spectrum.getSplash.getSplash)
     }
     sb.append(',')
 
     // Get compound and structures
-    if (spectrum.compound != null && spectrum.compound.nonEmpty) {
+    if (spectrum.getCompound != null && spectrum.getCompound.asScala.nonEmpty) {
       // Add InChIKey
-      val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
+      val compound: Compound = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
-      if (compound.inchiKey != null && compound.inchiKey.nonEmpty) {
-        sb.append(compound.inchiKey).append(',')
+      if (compound.getInchiKey != null && compound.getInchiKey.nonEmpty) {
+        sb.append(compound.getInchiKey).append(',')
       } else {
-        val metaData: Option[MetaData] = compound.metaData.find(_.name == "InChIKey")
+        val metaData: Option[MetaData] = compound.getMetaData.asScala.find(_.getName == "InChIKey")
 
         if (metaData.isDefined) {
-          sb.append(metaData.get.value).append(',')
+          sb.append(metaData.get.getValue).append(',')
         }
       }
 
       // Add SMILES
-      val metaData: Option[MetaData] = compound.metaData.find(_.name.toLowerCase == "smiles")
+      val metaData: Option[MetaData] = compound.getMetaData.asScala.find(_.getName.toLowerCase == "smiles")
 
       if (metaData.isDefined) {
-        sb.append(metaData.get.value)
+        sb.append(metaData.get.getValue)
       }
     } else {
       sb.append(',')

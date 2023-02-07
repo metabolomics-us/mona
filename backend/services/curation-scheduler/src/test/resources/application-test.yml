@@ -1,0 +1,35 @@
+mona:
+  bus:
+    exclusive: true
+  security:
+    curation:
+      token: test
+
+eureka:
+  client:
+    enabled: false
+
+spring:
+  rabbitmq:
+    host: 127.0.0.1
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+  properties:
+    hibernate:
+      format_sql: false
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/mona-test
+    username: mona
+    password: asdf
+
+server:
+  port: 9999

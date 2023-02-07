@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Users
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 
 /**
@@ -23,5 +23,5 @@ trait TokenService {
     * @param user
     * @return
     */
-  def generateToken(user: User, timeOfLife: Int = 24 * 7): String
+  def generateToken(user: Users, timeOfLife: Int = 24 * 7): String
 }

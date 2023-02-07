@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginInfo, LoginResponse}
 
 /**
   * defines some way for us to login to a system
@@ -19,7 +19,7 @@ trait LoginService {
     *
     * @return
     */
-  def login(username: String, password: String): LoginResponse = login(LoginRequest(username, password))
+  def login(emailAddress: String, password: String): LoginResponse = login(LoginRequest(emailAddress, password))
 
   /**
     * generates publicly interesting info about the given token

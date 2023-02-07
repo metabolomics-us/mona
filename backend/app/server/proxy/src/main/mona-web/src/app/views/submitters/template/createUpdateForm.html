@@ -56,10 +56,11 @@
         <div class="col-sm-9">
             <input  class="form-control" placeholder="Please enter your password" id="password"
                    name="password" type="password" [(ngModel)]="registrationService.newSubmitter.password"
-                    #password = "ngModel" required/>
+                    #password = "ngModel" required
+                    pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,30})"/>
 
-            <p *ngIf="!password.valid && !password.pristine" class="help-block">
-                Please enter a valid password</p>
+            <p *ngIf="!password.valid && !password.pristine" class="text-danger">
+                Please enter a valid password! (See requirements above)</p>
         </div>
     </div>
 
@@ -72,7 +73,7 @@
                     #passwordMatch = "ngModel" required/>
 
             <p *ngIf="(!passwordMatch.valid && !passwordMatch.pristine) ||
-                registrationService.newSubmitter.password != registrationService.newSubmitter.passwordMatch" class="help-block">Passwords do not match!</p>
+                registrationService.newSubmitter.password != registrationService.newSubmitter.passwordMatch" class="text-danger">Passwords do not match!</p>
         </div>
     </div>
     <input type="hidden" #id = "ngModel" name="id" [(ngModel)]="registrationService.newSubmitter.id" value="{{registrationService.newSubmitter.id}}"/>

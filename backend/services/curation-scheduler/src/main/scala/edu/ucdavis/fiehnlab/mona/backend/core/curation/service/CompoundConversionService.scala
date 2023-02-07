@@ -4,6 +4,7 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CompoundCon
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 /**
   * Created by sajjan on 12/11/2017.

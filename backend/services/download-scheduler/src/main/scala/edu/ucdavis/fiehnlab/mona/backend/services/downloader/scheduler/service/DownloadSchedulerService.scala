@@ -1,18 +1,18 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service
 
 import java.util.{Date, UUID}
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.TagStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{PredefinedQuery, QueryExport}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsTagRepository
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryRepository, QueryExportRepository}
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ArrayBuffer
@@ -33,14 +33,13 @@ class DownloadSchedulerService extends LazyLogging {
   val predefinedQueueName: String = null
 
   @Autowired
-  val queryExportRepository: QueryExportMongoRepository = null
+  val queryExportRepository: QueryExportRepository = null
 
   @Autowired
-  val predefinedQueryRepository: PredefinedQueryMongoRepository = null
+  val predefinedQueryRepository: PredefinedQueryRepository = null
 
   @Autowired
-  @Qualifier("tagStatisticsMongoRepository")
-  private val tagStatisticsRepository: TagStatisticsMongoRepository = null
+  private val statisticsTagRepository: StatisticsTagRepository = null
 
   @Autowired
   val rabbitTemplate: RabbitTemplate = null
@@ -57,7 +56,7 @@ class DownloadSchedulerService extends LazyLogging {
     */
   def scheduleExport(query: String, format: String): QueryExport = {
     logger.info(s"Scheduling query $query as $format")
-    val download: QueryExport = QueryExport(UUID.randomUUID.toString, null, query, format, null, new Date, 0, 0, null, null)
+    val download: QueryExport = new QueryExport(UUID.randomUUID.toString, null, query, format, null, new Date, 0, 0, null, null)
 
     rabbitTemplate.convertAndSend(exportQueueName, download)
     notifications.sendEvent(Event(Notification(download, getClass.getName)))
@@ -73,7 +72,7 @@ class DownloadSchedulerService extends LazyLogging {
     */
   def scheduleExport(id: String): QueryExport = {
     logger.info(s"Looking up query: $id")
-    val download: QueryExport = queryExportRepository.findOne(id)
+    val download: QueryExport = queryExportRepository.findById(id).get()
 
     if (download != null) {
       logger.info(s"Rescheduling query: $id")
@@ -90,20 +89,20 @@ class DownloadSchedulerService extends LazyLogging {
   def generatePredefinedExports(): Array[PredefinedQuery] = {
 
     // Update the list of pre-generated downloads based on libraries present in the database
-    tagStatisticsRepository.findAll().asScala
-      .filter(_.category == "library")
+    statisticsTagRepository.findAll().asScala
+      .filter(_.getCategory == "library")
       .foreach { tag =>
-        val tagComponents: Array[String] = tag.text.split(" - ")
+        val tagComponents: Array[String] = tag.getText.split(" - ")
 
         // Create each level of the tag if it contains separators
         // For example, a library tag of "Test - A" would create libraries "Test" and "Test - A"
         (1 to tagComponents.length).foreach { i =>
           val tagLabel: String = tagComponents.slice(0, i).mkString(" - ")
 
-          if (predefinedQueryRepository.findByQuery(s"""tags.text=="$tagLabel"""").isEmpty) {
-            logger.info(s"Creating new predefined download for ${tag.text}: $tagLabel")
+          if (predefinedQueryRepository.findByQuery(s"tags.text:'$tagLabel'").isEmpty) {
+            logger.info(s"Creating new predefined download for ${tag.getText}: $tagLabel")
 
-            predefinedQueryRepository.save(PredefinedQuery(s"Libraries - $tagLabel", tagLabel, s"""tags.text=="$tagLabel"""", 0, null, null, null))
+            predefinedQueryRepository.save(new PredefinedQuery(s"Libraries - $tagLabel", tagLabel, s"tags.text:'$tagLabel'", 0, null, null, null))
           }
         }
       }
@@ -122,7 +121,7 @@ class DownloadSchedulerService extends LazyLogging {
   def generateStaticExports(): Array[QueryExport] = {
     // Hard-coded static exports for all spectra, export formats can be modified in the DownloaderService
     logger.info(s"Scheduling static export generation")
-    val download: QueryExport = QueryExport(UUID.randomUUID.toString, "All Spectra", "", "static", null, new Date, 0, 0, null, null)
+    val download: QueryExport = new QueryExport(UUID.randomUUID.toString, "All Spectra", "", "static", null, new Date, 0, 0, null, null)
 
     rabbitTemplate.convertAndSend(exportQueueName, download)
     notifications.sendEvent(Event(Notification(download, getClass.getName)))

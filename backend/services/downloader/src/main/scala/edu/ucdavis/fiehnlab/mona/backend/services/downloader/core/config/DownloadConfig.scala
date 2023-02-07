@@ -1,15 +1,21 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.config
 
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryRepository, QueryExportRepository}
 import org.springframework.amqp.core.Queue
-import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.domain.EntityScan
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import, Profile}
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 /**
   * Created by sajjan on 6/6/16.
   */
 @Configuration
-@EnableMongoRepositories(basePackageClasses = Array(classOf[QueryExportMongoRepository], classOf[PredefinedQueryMongoRepository]))
+@EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain"))
+@ComponentScan
+@Profile(Array("mona.persistence.downloader"))
+@EnableJpaRepositories(basePackageClasses = Array(classOf[QueryExportRepository], classOf[PredefinedQueryRepository]))
 class DownloadConfig {
 
   // Queue for individual query exports

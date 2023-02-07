@@ -1,10 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json
 
-import java.io.Writer
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
+
+import java.io.Writer
 
 /**
   * Created by wohlgemuth on 5/27/16.

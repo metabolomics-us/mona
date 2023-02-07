@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
     <artifactId>jwt</artifactId>
-    <version>1.6-SNAPSHOT</version>
+    <version>2.6.3-SNAPSHOT</version>
     <name>jwt</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
         <artifactId>auth</artifactId>
-        <version>1.6-SNAPSHOT</version>
+        <version>2.6.3-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -22,23 +22,23 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
 
         <dependency>
@@ -54,6 +54,7 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
             <artifactId>api</artifactId>
+            <version>2.6.3-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -62,14 +63,14 @@
             <version>0.5.1</version>
         </dependency>
 
-
-        <!-- test dependencies -->
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>mongo</artifactId>
-            <scope>test</scope>
+            <artifactId>postgresql</artifactId>
+            <version>2.6.3-SNAPSHOT</version>
         </dependency>
 
+
+        <!-- test dependencies -->
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -83,28 +84,8 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>rsql</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>mongo</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

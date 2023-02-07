@@ -54,8 +54,18 @@ export class AuthenticationModalComponent implements OnInit {
                     }, 1000);
                 }, (error => {
                     this.state = 'login';
-                    this.logger.debug(error);
-                    this.errors.push({status: error.status, name: error.name, error: error.error.error, message: error.error.message});
+                    if(typeof error === 'undefined' || error === null) {
+                      this.errors.push({status: 400, name: 'Unknown', error: 'Unknown', message: 'Unknown Error, Please Try Again'})
+                    } else {
+                      this.logger.debug(error);
+                      if (error.status === 401) {
+                        this.errors.push({status: error.status, name: error.name, error: error.statusText, message: 'Incorrect Email or Password. Try Again.'});
+                      } else {
+                        this.errors.push({status: error.status, name: error.name, error: error.statusText, message: error.message});
+                      }
+
+                    }
+
                 })
             );
         }

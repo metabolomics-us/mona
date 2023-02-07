@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest
 
 import java.net.{NetworkInterface, UnknownHostException}
-
 import com.typesafe.scalalogging.LazyLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient

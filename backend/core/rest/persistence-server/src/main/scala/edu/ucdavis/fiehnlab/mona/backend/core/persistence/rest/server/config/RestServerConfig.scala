@@ -1,29 +1,27 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
 import java.util
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config.PersistenceServiceConfig
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.http._
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configuration.{WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, PathMatchConfigurer, WebMvcConfigurerAdapter}
-
+import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, PathMatchConfigurer, WebMvcConfigurer}
 /**
   * this class configures all our controller and also prepares security measures for these mentioned controllers
   */
 @Configuration
-@Import(Array(classOf[PersistenceServiceConfig], classOf[SwaggerConfig], classOf[SerializationConfig]))
-@ComponentScan(basePackageClasses = Array(classOf[GenericRESTController[Spectrum]]))
+@Import(Array(classOf[PostgresqlConfiguration], classOf[SwaggerConfig], classOf[SerializationConfig]))
+@EnableAutoConfiguration
+@ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller"))
 @Order(1)
 class RestServerConfig extends WebSecurityConfigurerAdapter {
 
@@ -31,11 +29,11 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
   val restSecurityService: RestSecurityService = null
 
   /**
-    * this method configures authorized access to the system
-    * and protects the urls with the specified methods and credentials
-    *
-    * @param http
-    */
+   * this method configures authorized access to the system
+   * and protects the urls with the specified methods and credentials
+   *
+   * @param http
+   */
   override final def configure(http: HttpSecurity): Unit = {
     restSecurityService.prepare(http)
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -62,14 +60,15 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
 
       //update statistics need authentication
       .antMatchers(HttpMethod.POST, "/rest/statistics/update").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.POST, "/rest/spectra/refresh").hasAuthority("ADMIN")
   }
 
   /**
-    * this method configures, which parts of the system and which methods do not need
-    * any form of security in place and can be openly accessed
-    *
-    * @param web
-    */
+   * this method configures, which parts of the system and which methods do not need
+   * any form of security in place and can be openly accessed
+   *
+   * @param web
+   */
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
       //get is available for most endpoints
@@ -89,7 +88,7 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
 }
 
 @Configuration
-class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
+class SerializationConfig extends WebMvcConfigurer with LazyLogging {
 
   override def extendMessageConverters(converters: util.List[HttpMessageConverter[_]]): Unit = {
     converters.add(new MSPConverter())
@@ -106,7 +105,7 @@ class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
       favorParameter(true).
       parameterName("mediaType").
       ignoreAcceptHeader(false).
-      useJaf(false)
+      useRegisteredExtensionsOnly(true)
       .defaultContentType(MediaType.APPLICATION_JSON)
       .mediaType("msp", MediaType.valueOf("txt/msp"))
       .mediaType("sdf", MediaType.valueOf("txt/sdf"))

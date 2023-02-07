@@ -27,7 +27,7 @@ class RestRepositoryReader(@BeanProperty val query: String = "", @BeanProperty v
     *
     * @return
     */
-  override def read(): Spectrum = {
+  override def read(): Spectrum= {
 
     if (result == null) {
       logger.debug("connecting to rest server and fetch data")

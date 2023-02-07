@@ -21,6 +21,7 @@ import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
 import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
 import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
+import {SpectrumModel} from "../../mocks/spectrum.model";
 
 @Component({
     selector: 'spectrum-viewer',
@@ -28,8 +29,8 @@ import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
 })
 export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     @ViewChild('acc') accordion: NgbAccordion;
-    delayedspectrum;
-    spectrum;
+    delayedspectrum: SpectrumModel;
+    spectrum: SpectrumModel;
     score;
     massSpec;
     accordionStatus;
@@ -61,7 +62,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
 
     ngOnInit() {
       this.route.params.subscribe((data) => {
-        this.delayedspectrum = this.route.snapshot.data.spectrum;
+        this.delayedspectrum = this.route.snapshot.data.spectrumResult;
         this.feedbackCache.resolveFeedback(this.delayedspectrum.id).subscribe((res) => {
           this.currentFeedback = res;
         });
@@ -157,7 +158,6 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
 
       // Regular expression to extract ions
       this.ionRegex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
-
 
       // Parse spectrum string to generate ion list
       let match = this.ionRegex.exec(this.delayedspectrum.spectrum);

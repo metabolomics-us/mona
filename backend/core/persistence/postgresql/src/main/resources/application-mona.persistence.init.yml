@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: public
+
+  sql:
+    init:
+      mode: always
+      schema-locations:
+        - classpath:/queries/spectrum_fields.sql
+      continue-on-error: false

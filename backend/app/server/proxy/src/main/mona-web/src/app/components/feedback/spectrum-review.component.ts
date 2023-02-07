@@ -10,6 +10,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {faComments, faCheck} from '@fortawesome/free-solid-svg-icons';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
 import {Feedback} from '../../services/persistence/feedback.resource';
+import {SpectrumModel} from "../../mocks/spectrum.model";
 
 @Component({
     selector: 'spectrum-review',
@@ -17,7 +18,7 @@ import {Feedback} from '../../services/persistence/feedback.resource';
 })
 
 export class SpectrumReviewComponent implements OnInit{
-    @Input() spectrum;
+    @Input() spectrum: SpectrumModel;
     submitting;
     submitted;
     faComments = faComments;
@@ -41,8 +42,8 @@ export class SpectrumReviewComponent implements OnInit{
       if (!this.hasSubmitted) {
         this.authenticationService.currentUser.subscribe((data: any) => {
           const payload = {
-            monaID: this.spectrum.id,
-            userID: data.emailAddress,
+            monaId: this.spectrum.id,
+            emailAddress: data.emailAddress,
             name: 'spectrum_quality',
             value
           };
@@ -57,7 +58,7 @@ export class SpectrumReviewComponent implements OnInit{
         this.authenticationService.currentUser.subscribe((data: any) => {
           this.feedbackCache.resolveFeedback(this.spectrum.id).subscribe((res) => {
             for (const x of res) {
-              if (x.userID === data.emailAddress) {
+              if (x.emailAddress === data.emailAddress) {
                 existingSubmission = x;
               }
             }
@@ -79,7 +80,7 @@ export class SpectrumReviewComponent implements OnInit{
       this.authenticationService.currentUser.subscribe((data) => {
         this.feedbackCache.resolveFeedback(this.spectrum.id).subscribe((res: any) => {
           for (const x of res) {
-            if (x.userID === data.emailAddress) {
+            if (x.emailAddress === data.emailAddress) {
               this.hasSubmitted = true;
               this.existingFeedback = x;
             }

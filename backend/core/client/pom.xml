@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
     <artifactId>client</artifactId>
-    <version>1.6-SNAPSHOT</version>
+    <version>2.6.3-SNAPSHOT</version>
     <name>rest-client</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
         <artifactId>core</artifactId>
-        <version>1.6-SNAPSHOT</version>
+        <version>2.6.3-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -30,6 +30,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
         <dependency>
@@ -75,22 +80,8 @@
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>mongo</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>elastic</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>rsql</artifactId>
-            <type>test-jar</type>
+            <artifactId>postgresql</artifactId>
+            <version>2.6.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
@@ -104,12 +95,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
             <scope>test</scope>
         </dependency>
 

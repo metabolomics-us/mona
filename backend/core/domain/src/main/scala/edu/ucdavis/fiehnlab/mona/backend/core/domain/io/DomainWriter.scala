@@ -1,8 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io
 
-import java.io.{OutputStream, OutputStreamWriter, PrintWriter, Writer}
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Spectrum}
+
+import java.io.{OutputStream, OutputStreamWriter, PrintWriter, Writer}
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlgemuth on 5/27/16.
@@ -34,30 +35,29 @@ trait DomainWriter {
     * Gets all miscellaneous metadata for comments fields
     */
   def getAdditionalMetaData(spectrum: Spectrum, excludedMetaData: Array[String] = Array()): Array[(String, Any)] = {
-    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
+    val compound: Compound = spectrum.getCompound.asScala.find(_.getKind == "biological").getOrElse(spectrum.getCompound.asScala.head)
 
-    val metadata = (compound.metaData ++ spectrum.metaData)
-      .filter(x => !excludedMetaData.contains(x.name.toLowerCase))
-      .filter(x => x.value != null)
+    val metadata = (compound.getMetaData.asScala ++ spectrum.getMetaData.asScala)
+      .filter(x => !excludedMetaData.contains(x.getName.toLowerCase))
+      .filter(x => x.getValue != null)
       .map(x => {
-        if (x.computed) {
-          ("computed " + x.name, x.value.toString.replaceAll("\"", ""))
+        if (x.getComputed) {
+          ("computed " + x.getName, x.getValue.replaceAll("\"", ""))
         } else {
-          (x.name, x.value.toString.replaceAll("\"", ""))
+          (x.getName, x.getValue.replaceAll("\"", ""))
         }
       })
-      .toBuffer
 
-    if (spectrum.splash != null) {
-      metadata.append(("SPLASH", spectrum.splash.splash))
+    if (spectrum.getSplash != null) {
+      metadata.append(("SPLASH", spectrum.getSplash.getSplash))
     }
 
-    if (spectrum.submitter != null) {
-      metadata.append(("submitter", spectrum.submitter.toString))
+    if (spectrum.getSubmitter != null) {
+      metadata.append(("submitter", spectrum.getSubmitter.toString))
     }
 
-    if (spectrum.score != null && spectrum.score.score > 0) {
-      metadata.append(("MoNA Rating", spectrum.score.score.toString))
+    if (spectrum.getScore != null && spectrum.getScore.getScore > 0) {
+      metadata.append(("MoNA Rating", spectrum.getScore.getScore.toString))
     }
 
     metadata.toArray

@@ -10,7 +10,6 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import net.logstash.logback.encoder.org.apache.commons.lang.exception.ExceptionUtils
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
-import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.boot.SpringApplication
@@ -47,11 +46,10 @@ class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging {
   }
 
   @Bean
-  def container(connectionFactory: ConnectionFactory, listener: CurationListener, messageConverter: MessageConverter): SimpleMessageListenerContainer = {
+  def container(connectionFactory: ConnectionFactory, listener: CurationListener): SimpleMessageListenerContainer = {
     val container = new SimpleMessageListenerContainer()
     container.setConnectionFactory(connectionFactory)
     container.setMessageListener(listener)
-    container.setMessageConverter(messageConverter)
     container.setQueueNames(queueName)
     container
   }
@@ -71,14 +69,14 @@ class CurationListener(workflow: ItemProcessor[Spectrum, Spectrum], writer: Rest
 
   override def handleMessage(spectrum: Spectrum): Unit = {
     try {
-      logger.info(s"Received spectrum: ${spectrum.id}")
+      logger.info(s"Received spectrum: ${spectrum.getId}")
       val result: Spectrum = workflow.process(spectrum)
-      logger.info(s"Finished curating spectrum: ${spectrum.id}")
+      logger.info(s"Finished curating spectrum: ${spectrum.getId}")
       writer.write(result)
-      logger.info(s"Saved spectrum ${spectrum.id} to system")
+      logger.info(s"Saved spectrum ${spectrum.getId} to system")
     } catch {
       case e: Exception =>
-        logger.info(s"Exception occurred during curation of spectrum ${spectrum.id}, fail silently: ${e.getMessage}")
+        logger.info(s"Exception occurred during curation of spectrum ${spectrum.getId}, fail silently: ${e.getMessage}")
         logger.info(ExceptionUtils.getStackTrace(e))
     }
   }

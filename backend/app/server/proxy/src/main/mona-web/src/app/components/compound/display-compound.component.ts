@@ -8,16 +8,18 @@ import {ErrorHandleComponent} from './error-handle.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Component, Input, OnInit} from '@angular/core';
 import {faCloudDownloadAlt, faQuestionCircle, faExclamationTriangle, faFlask} from '@fortawesome/free-solid-svg-icons';
+import {Compound} from "../../mocks/compound.model";
+import {Metadata} from "../../mocks/metadata.model";
 
 @Component({
     selector: 'display-compound-info',
     templateUrl: '../../views/compounds/displayCompound.html'
 })
 export class DisplayCompoundComponent implements  OnInit{
-    @Input() compound;
+    @Input() compound: Compound;
     pictureId;
     chemId;
-    classifications;
+    classifications: Metadata[];
     showClassyFireInfo;
     metaData: any;
     faCloudDownloadAlt = faCloudDownloadAlt;
@@ -38,7 +40,7 @@ export class DisplayCompoundComponent implements  OnInit{
 
       if (this.compound.hasOwnProperty('classification')) {
         // Get high order classifications
-        let classes = ['kingdom', 'superclass', 'class', 'subclass']
+        let classes: Metadata[] = ['kingdom', 'superclass', 'class', 'subclass']
           .map((value) => {
             const filteredData = this.compound.classification.filter((x) => {
               return x.name === value;
@@ -49,7 +51,7 @@ export class DisplayCompoundComponent implements  OnInit{
           });
 
         // Get intermediate classifications
-        const intermediateParents = this.compound.classification
+        const intermediateParents: Metadata[] = this.compound.classification
           .filter((x) => {
             return x.name.indexOf('direct parent level') === 0;
           })
@@ -61,7 +63,7 @@ export class DisplayCompoundComponent implements  OnInit{
         classes = classes.concat(intermediateParents);
 
         // Get parent classes
-        const directParent = this.compound.classification.filter((x) => {
+        const directParent: Metadata[] = this.compound.classification.filter((x) => {
           return x.name === 'direct parent';
         });
 

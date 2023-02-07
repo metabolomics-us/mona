@@ -6,22 +6,20 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
     <artifactId>app</artifactId>
-    <version>1.6-SNAPSHOT</version>
+    <version>2.6.3-SNAPSHOT</version>
     <name>app</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona</groupId>
         <artifactId>backend</artifactId>
-        <version>1.6-SNAPSHOT</version>
+        <version>2.6.3-SNAPSHOT</version>
     </parent>
 
     <packaging>pom</packaging>
 
-    <description>All modules under this module, will be used to build standalone applications and will required docker to work.</description>
+    <description>All modules under this module, will be used to build standalone applications and will be required docker to work.</description>
 
     <modules>
         <module>server</module>
-        <module>clients</module>
-        <module>util</module>
     </modules>
 </project>

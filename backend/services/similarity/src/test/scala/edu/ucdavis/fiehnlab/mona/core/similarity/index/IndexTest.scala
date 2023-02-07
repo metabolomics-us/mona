@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.index
 
-import java.io.InputStreamReader
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 import org.scalatest.matchers.should.Matchers
@@ -21,7 +20,7 @@ abstract class IndexTest extends AnyWordSpec with Matchers {
     val records: Array[SimpleSpectrum] = JSONDomainReader
       .create[Array[Spectrum]]
       .read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-      .map(s => new SimpleSpectrum(s.id, s.spectrum))
+      .map(s => new SimpleSpectrum(s.getId, s.getSpectrum))
 
     "be populated with 59 spectra" in {
       // Populate the database

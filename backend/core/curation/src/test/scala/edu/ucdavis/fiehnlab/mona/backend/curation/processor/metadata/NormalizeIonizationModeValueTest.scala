@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
-import java.io.InputStreamReader
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.scalatest.wordspec.AnyWordSpec
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 4/05/16.
@@ -25,8 +25,8 @@ class NormalizeIonizationModeValueTest extends AnyWordSpec {
         exampleRecords.foreach { spectrum: Spectrum =>
           val processedSpectrum = processor.process(spectrum)
 
-          assert(processedSpectrum.metaData.exists(_.name == CommonMetaData.IONIZATION_MODE))
-          assert(processedSpectrum.score.impacts.exists(_.reason.toLowerCase.contains("ionization mode/type")))
+          assert(processedSpectrum.getMetaData.asScala.exists(_.getName == CommonMetaData.IONIZATION_MODE))
+          assert(processedSpectrum.getScore.getImpacts.asScala.exists(_.getReason.toLowerCase.contains("ionization mode/type")))
         }
       }
     }

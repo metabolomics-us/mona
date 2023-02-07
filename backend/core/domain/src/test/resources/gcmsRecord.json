@@ -43,7 +43,7 @@
     }
   ],
   "id": "KZ000113",
-  "lastUpdated": 1473715308124,
+  "lastUpdated": 1644401194505,
   "metaData": [
     {
       "category": "none",
@@ -132,7 +132,6 @@
   ],
   "spectrum": "82:574 83:66 84:4 91:1 92:6 93:20 94:97 95:29 96:14 97:32 98:1 106:3 107:11 108:77 109:999 110:142 111:23 112:1 117:3 120:6 121:6 122:27 123:12 124:14 125:1 129:1 132:3 133:2 134:2 135:9 136:81 137:115 138:44 139:4 140:1 147:1 148:1 149:11 150:21 151:6 152:9 161:1 163:3 164:7 165:82 166:16 167:1 179:2 192:1 193:188 194:919 195:94 196:8 197:1",
   "submitter": {
-    "id": "MassBank",
     "emailAddress": "admin@massbank.jp",
     "firstName": "MassBank",
     "institution": "MassBank Consortium",
@@ -147,9 +146,6 @@
   "library": {
     "description": "MassBank High Quality Mass Spectral Database",
     "link": "http://www.massbank.jp/jsp/FwdRecord.jsp?id=KZ000113",
-    "tag": {
-      "ruleBased": false,
-      "text": "massbank"
-    }
+    "library": "massbank"
   }
 }

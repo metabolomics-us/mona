@@ -25,6 +25,7 @@ class MultiThreadRunner extends Calculate {
           .seq
       }
       else if(!removePrecursorIon && checkAllAdducts)  {
+        logger.info(s"We are in the right place!")
         library.par
           .filter(!_.precursorMZ.isNaN)
           .filter(x => {findAdductMatch(unknown.precursorMZ, precursorToleranceDa, x.adducts)})

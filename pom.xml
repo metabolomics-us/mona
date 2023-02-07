@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.ucdavis.fiehnlab.mona</groupId>
     <artifactId>mona</artifactId>
-    <version>1.6-SNAPSHOT</version>
+    <version>2.6.3-SNAPSHOT</version>
     <name>mona</name>
 
     <packaging>pom</packaging>
@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.5.RELEASE</version>
+        <version>2.6.3</version>
         <relativePath/>
     </parent>
 
@@ -29,6 +29,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>javax.el</groupId>
+                <artifactId>javax.el-api</artifactId>
+                <version>3.0.0</version>
+            </dependency>
+
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -90,13 +96,13 @@
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.17</version>
+                <version>2.10.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Camden.SR7</version>
+                <version>2021.0.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -177,7 +183,7 @@
                         <plugin>
                             <groupId>net.alchim31.maven</groupId>
                             <artifactId>scala-maven-plugin</artifactId>
-                            <version>4.5.0</version>
+                            <version>4.6.1</version>
                         </plugin>
                     </plugins>
                 </pluginManagement>
@@ -204,7 +210,7 @@
                     <plugin>
                         <groupId>net.alchim31.maven</groupId>
                         <artifactId>scala-maven-plugin</artifactId>
-                        <version>4.5.3</version>
+                        <version>4.6.1</version>
                         <executions>
                             <execution>
                                 <id>scala-compile</id>
@@ -226,7 +232,7 @@
                             <scalaVersion>${scala.version}.${scala.minor.version}</scalaVersion>
                             <jvmArgs>
                                 <jvmArg>-Xms64m</jvmArg>
-                                <jvmArg>-Xmx1024m</jvmArg>
+                                <jvmArg>-Xmx2048m</jvmArg>
                             </jvmArgs>
                         </configuration>
                     </plugin>
@@ -422,7 +428,7 @@
                         <plugin>
                             <groupId>net.alchim31.maven</groupId>
                             <artifactId>scala-maven-plugin</artifactId>
-                            <version>4.5.3</version>
+                            <version>4.6.1</version>
                         </plugin>
                     </plugins>
                 </pluginManagement>
@@ -448,7 +454,7 @@
                     <plugin>
                         <groupId>net.alchim31.maven</groupId>
                         <artifactId>scala-maven-plugin</artifactId>
-                        <version>4.5.3</version>
+                        <version>4.6.1</version>
                         <executions>
                             <execution>
                                 <id>scala-compile</id>
@@ -483,7 +489,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>2.6</version>
+                        <version>3.2.2</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -566,6 +572,7 @@
                 <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
                 <docker.expose>8080</docker.expose>
                 <docker.jvm>-Xmx2048m</docker.jvm>
+                <docker.tag>test</docker.tag>
             </properties>
 
             <build>
@@ -573,7 +580,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
+                        <version>1.8</version>
                         <executions>
                             <execution>
                                 <phase>compile</phase>
@@ -596,6 +603,7 @@
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>repackage</id>
                                 <goals>
                                     <goal>repackage</goal>
                                 </goals>
@@ -631,7 +639,7 @@
 
                             <imageTags>
                                 <imageTag>${project.version}</imageTag>
-                                <imageTag>test</imageTag>
+                                <imageTag>${docker.tag}</imageTag>
                             </imageTags>
 
                             <runs>
@@ -665,7 +673,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <imageName>${docker.registry}/${docker.imageName}:test</imageName>
+                                    <imageName>${docker.registry}/${docker.imageName}:${docker.tag}</imageName>
                                 </configuration>
                             </execution>
 

@@ -1,0 +1,21 @@
+#basic configuration how to connect to the configuration server
+spring:
+  application:
+    name: proxy-service
+  config:
+    import:  optional:configserver:http://localhost:1111
+  servlet:
+    multipart:
+      max-file-size: 128MB
+      max-request-size: 128MB
+
+info:
+  component: MoNA Edge Server
+
+logging:
+  level:
+    ROOT: INFO
+
+#on which port do we run
+server:
+  port: 8080
