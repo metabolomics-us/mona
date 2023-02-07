@@ -7,6 +7,7 @@ spring:
         git:
           uri: https://github.com/metabolomics-us/mona-config
           clone-on-start: true
+        default-label: master
 
 server:
   port: 1111
