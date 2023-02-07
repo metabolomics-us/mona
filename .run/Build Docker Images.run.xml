@@ -8,7 +8,7 @@
     <toRun name="Build Docker Image Discovery" type="MavenRunConfiguration" />
     <toRun name="Build Docker Image Download Scheduler" type="MavenRunConfiguration" />
     <toRun name="Build Docker Image Persistence Server" type="MavenRunConfiguration" />
-    <toRun name="Build Docker Image Proxy Staging" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Proxy Prod" type="MavenRunConfiguration" />
     <toRun name="Build Docker Image Similarity" type="MavenRunConfiguration" />
     <toRun name="Build Docker Image Webhooks Server" type="MavenRunConfiguration" />
     <method v="2" />
