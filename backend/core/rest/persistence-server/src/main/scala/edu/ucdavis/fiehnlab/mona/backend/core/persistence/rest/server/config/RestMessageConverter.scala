@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
-import java.util
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import java.util
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.png.PNGWriter
@@ -10,7 +10,6 @@ import org.springframework.http.{HttpInputMessage, HttpOutputMessage, MediaType}
 import org.springframework.http.converter.AbstractHttpMessageConverter
 
 import scala.jdk.CollectionConverters._
-import scala.collection.mutable
 import scala.collection.AbstractIterable
 import scala.collection.mutable.AbstractBuffer
 
@@ -19,7 +18,7 @@ import scala.collection.mutable.AbstractBuffer
   */
 class RestMessageConverter(writer: DomainWriter, mimeType: String) extends AbstractHttpMessageConverter[Any](MediaType.valueOf(mimeType)) {
 
-  override def readInternal(clazz: Class[_ <: Any], inputMessage: HttpInputMessage): Spectrum = throw new RuntimeException("read is not supported!")
+  override def readInternal(clazz: Class[_ <: Any], inputMessage: HttpInputMessage): Spectrum= throw new RuntimeException("read is not supported!")
 
   override def canWrite(mediaType: MediaType): Boolean = {
     mediaType != null && mediaType.equals(MediaType.valueOf(mimeType))

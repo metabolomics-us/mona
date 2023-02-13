@@ -7,9 +7,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.{WebHookRepository, WebHookResultRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
-import org.bson.types.ObjectId
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.domain.{WebHook, WebHookResult}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.Async
@@ -64,21 +63,21 @@ class WebHookService extends LazyLogging {
     } else {
       hooks.map { hook: WebHook =>
 
-        val url = s"${hook.url}?id=$id&type=$eventType"
+        val url = s"${hook.getUrl}?id=$id&type=$eventType"
 
         logger.debug(s"triggering event: $url")
 
         try {
           restTemplate.getForObject(url, classOf[String])
 
-          val result = webHookResultRepository.save(WebHookResult(ObjectId.get().toHexString, hook.name, url))
+          val result = webHookResultRepository.save(new WebHookResult(hook.getName, url))
           notifications.sendEvent(Event(Notification(result, getClass.getName)))
 
           result
         } catch {
           case x: Throwable =>
             logger.debug(x.getMessage, x)
-            val result = webHookResultRepository.save(WebHookResult(ObjectId.get().toHexString, hook.name, url, success = false, x.getMessage))
+            val result = webHookResultRepository.save(new WebHookResult(hook.getName, url, false, x.getMessage))
             notifications.sendEvent(Event(Notification(result, getClass.getName)))
 
             result
@@ -123,10 +122,10 @@ class WebHookService extends LazyLogging {
             case e: HttpClientErrorException =>
               if (e.getMessage == "404 Not Found") {
                 //spectra does not exit, now we can delete it safely
-                val spectrum = spectrumPersistenceService.findOne(id)
+                val spectrum = spectrumPersistenceService.findByMonaId(id)
 
                 if (spectrum != null) {
-                  spectrumPersistenceService.delete(id)
+                  spectrumPersistenceService.deleteById(id)
                   new ResponseEntity[Any](HttpStatus.OK)
                 } else {
                   new ResponseEntity[Any](s"sorry this spectra ($id) did not exist on the local server", HttpStatus.NOT_FOUND)
@@ -158,13 +157,14 @@ class WebHookService extends LazyLogging {
     */
   @Async
   def pull(query: Option[String] = None): Unit = {
+    logger.info(s"Beginning query with ${query.get}")
     val count = monaSpectrumRestClient.count(query)
     logger.info(s"expected spectra to pull: $count")
     var counter = 0
 
     monaSpectrumRestClient.stream(query).foreach { spectrum: Spectrum =>
       counter = counter + 1
-      logger.info(s"spectrum: ${spectrum.id} - ${spectrum.splash}")
+      logger.info(s"spectrum: ${spectrum.getId} - ${spectrum.getSplash.getSplash}")
       spectrumPersistenceService.save(spectrum)
     }
 
@@ -180,7 +180,7 @@ class WebHookService extends LazyLogging {
   def push(query: Option[String] = None): Unit = {
     //should send it as job to the backend
     spectrumPersistenceService.findAll().asScala.foreach { spectrum =>
-      trigger(spectrum.id, Event.UPDATE)
+      trigger(spectrum.getId, Event.UPDATE)
     }
   }
 }

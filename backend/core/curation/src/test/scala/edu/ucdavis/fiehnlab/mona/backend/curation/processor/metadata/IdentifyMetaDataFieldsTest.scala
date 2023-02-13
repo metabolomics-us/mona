@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Tag}
 import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Tags}
 import org.scalatest.wordspec.AnyWordSpec
-
+import scala.jdk.CollectionConverters._
 /**
   * Created by sajjan on 4/05/16.
   */
@@ -22,14 +22,15 @@ class IdentifyMetaDataFieldsTest extends AnyWordSpec {
       "score the presence of metadata" in {
         exampleRecords.foreach { spectrum: Spectrum =>
           // Add LC-MS tag since these spectra haven't been curated
-          val processedSpectrum = processor.process(spectrum.copy(tags = spectrum.tags :+ Tags(ruleBased = false, "LC-MS")))
+          spectrum.setTags((spectrum.getTags.asScala :+ new Tag("LC-MS", false)).asJava)
+          val processedSpectrum = processor.process(spectrum)
 
-          assert(processedSpectrum.score.impacts.exists(_.reason.toLowerCase.contains("instrument information")))
-          assert(processedSpectrum.score.impacts.exists(_.reason.toLowerCase.contains("collision energy")))
-          assert(processedSpectrum.score.impacts.exists(_.reason.toLowerCase.contains("retention time/index")))
-          assert(processedSpectrum.score.impacts.exists(_.reason.toLowerCase.contains("column information")))
-          assert(processedSpectrum.score.impacts.exists(_.reason.toLowerCase.contains("precursor type")))
-          assert(processedSpectrum.score.impacts.exists(_.reason.toLowerCase.contains("precursor m/z")))
+          assert(processedSpectrum.getScore.getImpacts.asScala.exists(_.getReason.toLowerCase.contains("instrument information")))
+          assert(processedSpectrum.getScore.getImpacts.asScala.exists(_.getReason.toLowerCase.contains("collision energy")))
+          assert(processedSpectrum.getScore.getImpacts.asScala.exists(_.getReason.toLowerCase.contains("retention time/index")))
+          assert(processedSpectrum.getScore.getImpacts.asScala.exists(_.getReason.toLowerCase.contains("column information")))
+          assert(processedSpectrum.getScore.getImpacts.asScala.exists(_.getReason.toLowerCase.contains("precursor type")))
+          assert(processedSpectrum.getScore.getImpacts.asScala.exists(_.getReason.toLowerCase.contains("precursor m/z")))
         }
       }
     }

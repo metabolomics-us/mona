@@ -1,14 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service.RestLoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{ RestServerConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.context.annotation.{Bean, Import, Primary}
+import org.springframework.context.annotation.{Bean, Configuration, Import, Primary}
 
 /**
   * Created by wohlgemuth on 3/15/16.
@@ -23,5 +24,19 @@ class RestClientTestConfig {
     new RestLoginService("localhost", port)
 
   @Bean
-  def loginServiceDelegate: LoginService = new MongoLoginService
+  def loginServiceDelegate: LoginService = new PostgresLoginService
+}
+
+@Configuration
+@Import(Array(classOf[RestServerConfig]))
+class EmbeddedRestServerConfig extends LazyLogging {
+
+  /**
+   * the service which actually does the login for us
+   *
+   * @return
+   */
+  @Bean
+  def loginService: LoginService = new PostgresLoginService
+
 }

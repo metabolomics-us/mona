@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 
 import java.util
 import javax.annotation.PostConstruct
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
@@ -208,8 +207,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
       case _ =>
         s"$requestPath$utilizedPageSize$pageToLookAt"
     }
-    logger.debug(s"path to invoke: $pathToInvoke")
-    restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
+    restOperations.getForEntity(pathToInvoke, classTag[Array[T]].runtimeClass).getBody.asInstanceOf[Array[T]]
   }
 
   /**

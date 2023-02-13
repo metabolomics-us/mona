@@ -6,19 +6,18 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
     <artifactId>services</artifactId>
-    <version>1.6-SNAPSHOT</version>
+    <version>2.6.3-SNAPSHOT</version>
     <name>services</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona</groupId>
         <artifactId>backend</artifactId>
-        <version>1.6-SNAPSHOT</version>
+        <version>2.6.3-SNAPSHOT</version>
     </parent>
 
     <packaging>pom</packaging>
 
     <modules>
-        <module>repository</module>
         <module>curation-scheduler</module>
         <module>curation-runner</module>
         <module>downloader</module>

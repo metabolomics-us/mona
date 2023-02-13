@@ -4,6 +4,7 @@
  * This controller is handling the browsing of spectra
  */
 import {Spectrum} from '../../services/persistence/spectrum.resource';
+import {SpectrumModel} from "../../mocks/spectrum.model";
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Location} from '@angular/common';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
@@ -29,18 +30,16 @@ import {MassDeleteModalComponent} from './mass-delete-modal.component';
     templateUrl: '../../views/spectra/browse/spectra.html'
 })
 export class SpectraBrowserComponent implements OnInit{
-    spectra;
+    spectra: SpectrumModel[];
     pagination;
     searchSplash;
     editQuery;
     startTime;
     query;
-    textQuery;
     duration;
     inchikeyParam;
     splashParam;
     queryParam;
-    textParam;
     sizeParam;
     pageParam;
     tableParam;
@@ -80,6 +79,8 @@ export class SpectraBrowserComponent implements OnInit{
        */
       this.spectra = [];
 
+      this.sizeParam = 10;
+
       this.initial = true;
       /**
        * loads more spectra into the given view
@@ -99,7 +100,6 @@ export class SpectraBrowserComponent implements OnInit{
 
         // Table view parameters
         table: false,
-        tableColumnOptions: ['ID', 'Name', 'Structure', 'Mass Spectrum', 'Accurate Mass'],
         tableColumnSelected: ['ID', 'Name', 'Structure', 'Mass Spectrum', 'Accurate Mass']
       };
       this.itemsPerPageSelectionSubject = new BehaviorSubject<string>(this.pagination.itemsPerPageSelection);
@@ -119,8 +119,7 @@ export class SpectraBrowserComponent implements OnInit{
           this.inchikeyParam = params.inchikey || undefined;
           this.splashParam = params.splash || undefined;
           this.queryParam = params.query || undefined;
-          this.textParam = params.text || undefined;
-          this.sizeParam = params.size || undefined;
+          this.sizeParam = params.size || 10;
           this.pageParam = parseInt(params.page, 10);
           this.tableParam = params.table || undefined;
           this.loadData();
@@ -131,18 +130,7 @@ export class SpectraBrowserComponent implements OnInit{
     }
 
   loadData() {
-        // Get unique metadata values for dropdown
-        this.metadata.metaDataNames().pipe(first()).subscribe(
-          (res: any) => {
-            res.sort((a, b) => {
-              return parseInt(b.count, 10) - parseInt(a.count, 10);
-            }).filter((x) => {
-              return x.name !== 'Last Auto-Curation';
-            }).map((x) => {
-              this.pagination.tableColumnOptions.push(x.name);
-            });
-          }
-        );
+        this.logger.debug('Load Data has been triggered')
 
         // Handle similarity search
         if (this.location.path().split('?')[0] === '/spectra/similaritySearch') {
@@ -182,10 +170,9 @@ export class SpectraBrowserComponent implements OnInit{
           }
 
           // Handle general queries
-          if (typeof this.queryParam !== 'undefined' || typeof this.textParam !== 'undefined') {
-            this.logger.info('Accepting RSQL query from URL: "' + this.queryParam + '", and text search: "' + this.textParam + '"');
+          if (typeof this.queryParam !== 'undefined') {
+            this.logger.info('Accepting filter from URL: "' + this.queryParam + '"');
             this.query = this.queryParam;
-            this.textQuery = this.textParam;
           }
 
           // Handle page number
@@ -197,9 +184,13 @@ export class SpectraBrowserComponent implements OnInit{
           }
 
           // Handle page size
-          if ((typeof this.sizeParam !== 'undefined') && (parseInt(this.sizeParam, 10) !== this.pagination.itemsPerPage)) {
+          if (parseInt(this.sizeParam, 10) === this.pagination.itemsPerPage) {
+            //just pass
+          }
+          else if ((typeof this.sizeParam !== 'undefined') && (parseInt(this.sizeParam, 10) !== this.pagination.itemsPerPage)) {
             this.setPageSize(this.sizeParam);
-          } else {
+          }
+          else {
             const itemsPerPage = this.cookie.get('spectraBrowser-pagination-itemsPerPage');
             if ((typeof itemsPerPage !== 'undefined') && (parseInt(itemsPerPage, 10) !== this.pagination.itemsPerPage)) {
               this.setPageSize(itemsPerPage);
@@ -225,7 +216,7 @@ export class SpectraBrowserComponent implements OnInit{
     /**
      * Get total exact mass as accurate mass of spectrum
      */
-    addMetadataMap(spectra) {
+    addMetadataMap(spectra: SpectrumModel[]) {
         for (let i = 0; i < spectra.length; i++) {
             const metaDataMap = {};
 
@@ -243,7 +234,7 @@ export class SpectraBrowserComponent implements OnInit{
                         }
                     });
 
-                    if (spectra[i].compound.kind === 'biological') {
+                    if (spectra[i].compound[j].kind === 'biological') {
                         break;
                     }
                 }
@@ -308,7 +299,7 @@ export class SpectraBrowserComponent implements OnInit{
         this.itemsPerPageSelectionSubject.subscribe(
             (x) => {
                 const size = parseInt(this.pagination.itemsPerPageSelection, 10);
-                if (!Number.isNaN(size)) {
+                if (!Number.isNaN(size) && (parseInt(this.sizeParam, 10) !== this.pagination.itemsPerPage)) {
                     this.logger.info('Updating search to use page size to ' + size);
                     this.router.navigate([], {queryParams:
                         {size: size.toString()}, queryParamsHandling: 'merge', skipLocationChange: false, replaceUrl: true}).then();
@@ -358,8 +349,12 @@ export class SpectraBrowserComponent implements OnInit{
      * Submits our query to the server
      */
     submitQuery() {
+      if(!this.spectrumCache.hasCurrentCount(this.query)) {
         this.calculateResultCount();
-        this.loadSpectra();
+      } else {
+        this.pagination.totalSize = this.spectrumCache.getCurrentCount(this.query);
+      }
+      this.loadSpectra();
     }
 
     /**
@@ -392,11 +387,10 @@ export class SpectraBrowserComponent implements OnInit{
      */
     calculateResultCount() {
         this.spectrum.searchSpectraCount({
-            endpoint: 'count',
-            query: this.query,
-            text: this.textQuery
+            query: this.query
         }).pipe(first()).subscribe((res: any) => {
             this.pagination.totalSize = res.count;
+            this.spectrumCache.setCurrentCount(this.query, res.count);
         });
     }
 
@@ -436,13 +430,13 @@ export class SpectraBrowserComponent implements OnInit{
 
         this.logger.info('Submitted query (page ' + currentPage + '): ' + this.query);
 
-        // Log query with google analytics
+        // Log query with Google Analytics
         this.$gaProvider.event('query', 'execute', this.query, currentPage);
 
         if (this.initial && !this.sizeParam) {
           this.hideSplash();
           this.pagination.loading = false;
-        } else if (this.query === undefined && this.textQuery === undefined) {
+        } else if (this.query === undefined) {
             this.logger.info('submitting empty query');
             this.spectrum.searchSpectra({
                 size: this.pagination.itemsPerPage,
@@ -454,14 +448,13 @@ export class SpectraBrowserComponent implements OnInit{
             this.spectrum.searchSpectra({
                 endpoint: 'search',
                 query: this.query,
-                text: this.textQuery,
                 page: currentPage,
                 size: this.pagination.itemsPerPage
             }).pipe(first()).subscribe(this.searchSuccess, this.searchError);
         }
     }
 
-    searchSuccess = (res) => {
+    searchSuccess = (res: SpectrumModel[]) => {
         this.duration = (Date.now() - this.startTime) / 1000;
 
         if (res.length > 0) {

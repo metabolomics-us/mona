@@ -1,15 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
-import java.io.InputStreamReader
-
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+
+import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by sajjan on 2/14/17.
   */
-class FinalizeCurationTest extends AnyWordSpec {
+class FinalizeCurationTest extends AnyWordSpec with LazyLogging{
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
@@ -20,11 +21,11 @@ class FinalizeCurationTest extends AnyWordSpec {
     val spectrumGiven: Spectrum = reader.read(input)
 
     "given a spectra" must {
-      val processedSpectrum = processor.process(spectrumGiven)
+      val processedSpectrum = processor.process(new Spectrum(spectrumGiven))
 
       "add lastCurated field to spectrum" in {
-        assert(spectrumGiven.lastCurated == null)
-        assert(processedSpectrum.lastCurated != null)
+        assert(spectrumGiven.getLastCurated == null)
+        assert(processedSpectrum.getLastCurated != null)
       }
     }
   }

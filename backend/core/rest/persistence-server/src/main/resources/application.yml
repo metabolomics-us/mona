@@ -1,0 +1,22 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:1111/
+  application:
+    name: persistence-service
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  profiles:
+    include:
+      - mona.persistence
+      - mona.persistence.init
+      - swagger
+
+#our local server port
+server:
+  port: 2222
+
+
+#basic information who we are
+info:
+  component: MoNA Persistence Services

@@ -14,6 +14,7 @@ export class SpectrumCacheService{
     browserSpectraScroll;
     browserLocation;
     spectrum;
+    currentCount;
 
     constructor(public logger: NGXLogger) {
         /**
@@ -35,9 +36,14 @@ export class SpectrumCacheService{
          * Stored spectrum for viewing
          */
         this.spectrum = null;
+
+      /**
+       * Stored Count
+       */
+      this.currentCount = {};
     }
 
-    /**
+  /**
      * Clear all values stored in this cache factory
      */
     clear() {
@@ -100,4 +106,22 @@ export class SpectrumCacheService{
     removeSpectrum() {
         this.spectrum = null;
     }
+
+    hasCurrentCount(query: string) {
+      return query in this.currentCount;
+    }
+
+    getCurrentCount(query: string) {
+      return this.currentCount[query];
+    }
+
+    setCurrentCount(query: string, count: number) {
+      this.currentCount[query] = count;
+    }
+
+    removeCurrentCount(query) {
+      delete this.currentCount[query];
+    }
+
+
 }

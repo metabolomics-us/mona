@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build Docker Images" type="CompoundRunConfigurationType">
+    <toRun name="Build Docker Image Auth Server" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Bootstrap" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Config" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Curation Runner" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Curation Scheduler" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Discovery" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Download Scheduler" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Persistence Server" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Proxy Prod" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Similarity" type="MavenRunConfiguration" />
+    <toRun name="Build Docker Image Webhooks Server" type="MavenRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>

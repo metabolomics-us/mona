@@ -298,7 +298,7 @@ export class UploadLibraryService{
             library: undefined,
             tags: [],
             metaData: [],
-            compound: undefined,
+            compound: [],
             comments: [],
             submitter: ''
         };
@@ -335,7 +335,7 @@ export class UploadLibraryService{
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result);
-          reader.onerror = () => reject;
+          reader.onerror = (error) => reject(error.target.error.message);
           reader.readAsArrayBuffer(file);
         });
       };
@@ -353,9 +353,9 @@ export class UploadLibraryService{
       };
 
       const arrayBufferToString = async (arrayBuffer) => {
-        // Start with 2MB by default
-        const chunkSize = 2 * 1024 * 1024;
-        // Buffer only 200 spectrum at a time
+        // Start with 2.5MB by default
+        const chunkSize = 3 * 1024 * 1024;
+        // Buffer only 150 spectrum at a time
         const bufferSize = 200;
         const decoder = new TextDecoder();
         // offset is where we begin our starting slice index
@@ -378,7 +378,11 @@ export class UploadLibraryService{
           // Every loop we match the next regex value in the slice to grab a spectrum
           // With the /g tag on the regex it will match the entire slice, so everytime
           // we execute .exec() it will return a matched block until blocks is null
-          // or we hit our poolSize limit.
+          // or, we hit our poolSize limit (would rather hit the poolSize limit
+          // because the regex is very finicky and will typically not match the
+          // entire ion set if it gets cut off). For future dev, if you realize
+          // that the number of uploaded spectra doesn't match the file, then make
+          // the buffer smaller or increment the chunkSize (try buffer first).
           while (( blocks = regex.exec(decodedText)) !== null ) {
             // Push full match stored in blocks[0] and file name into our promise buffer
             promiseBuffer.push([blocks[0]]);
@@ -393,7 +397,7 @@ export class UploadLibraryService{
               break;
             }
           }
-          // Now that we broke out, we need to move our offset so we take a new chunk from
+          // Now that we broke out, we need to move our offset so, we take a new chunk from
           // the buffer where we last left off in the regex. In order to get identical sizing
           // to the array buffer, we throw a substring of the decodedText into a blob and then
           // call the .size() function to get an appropriate size of our smaller slice.
@@ -414,7 +418,12 @@ export class UploadLibraryService{
 
       const processFiles = async () => {
         // Wait for FileReader to return our arrayBuffer
-        const arrayBuff = await readFileAsync();
+        let arrayBuff;
+        await readFileAsync().then((value) => {
+          arrayBuff = value;
+        }).catch((reason) => {
+          return Promise.reject(reason);
+        });
         if (file.name.toLowerCase().indexOf('.txt') > 0) {
           await arrayBufferToStringTxtFile(arrayBuff);
         } else {
@@ -427,6 +436,8 @@ export class UploadLibraryService{
         // Once we finished our read, set isSTP to false so the spectra upload progress bar shows completed.
         this.isSTP = false;
         this.uploadProcess.next(false);
+      }).catch((reason) => {
+        return Promise.reject(reason);
       });
     }
 
@@ -466,22 +477,26 @@ export class UploadLibraryService{
         // Add origin to spectrum metadata before callback
         const addOriginMetadata = (spectrum) => {
             if (typeof origin !== 'undefined') {
-                spectrum.meta.push({name: 'origin', value: origin});
+              spectrum.meta.push({name: 'origin', value: origin});
+              callback(spectrum);
+            } else if (typeof spectrum === 'undefined' || spectrum === null) {
+              callback(null);
             }
-            callback(spectrum);
+
+
         };
         // Parse data
         if (typeof origin !== 'undefined') {
             if (origin.toLowerCase().indexOf('.msp') > 0) {
-                // this.logger.info('uploading msp file...');
+                this.logger.debug('uploading msp file...');
                 this.mspParserLibService.convertFromData(data, addOriginMetadata);
             }
             else if (origin.toLowerCase().indexOf('.mgf') > 0) {
-                // this.logger.info('uploading mgf file...');
+                this.logger.debug('uploading mgf file...');
                 this.mgfParserLibService.convertFromData(data, addOriginMetadata);
             }
             else if (origin.toLowerCase().indexOf('.txt') > 0) {
-                // this.logger.info('uploading massbank file...');
+                this.logger.debug('uploading massbank file...');
                 this.massbankParserLibService.convertFromData(data, addOriginMetadata);
             }
             else {

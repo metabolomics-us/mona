@@ -4,22 +4,20 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.TagStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.config.DownloadConfig
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.config.DownloadListenerConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.core.annotation.Order
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import org.springframework.http.HttpMethod
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
-import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter, WebSecurityCustomizer}
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.config.annotation.web.builders.{WebSecurity}
 
 /**
   * Created by sajjan on 5/25/16.
@@ -28,19 +26,18 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @EnableWebSecurity
 @EnableScheduling
 @Order(5)
-@Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
+@Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration],
   classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig], classOf[DownloadConfig], classOf[DownloadListenerConfig]))
-@EnableMongoRepositories(basePackageClasses = Array(classOf[TagStatisticsMongoRepository]))
 class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Autowired
   val restSecurityService: RestSecurityService = null
 
   /**
-    * only authenticated users can schedule downloads from the system
-    *
-    * @param http
-    */
+   * only authenticated users can schedule downloads from the system
+   *
+   * @param http
+   */
   override final def configure(http: HttpSecurity): Unit = {
     restSecurityService.prepare(http)
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

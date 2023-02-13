@@ -28,5 +28,5 @@ case class SearchResult(hit: Spectrum, score: Double) extends Ordered[SearchResu
 
   override def compare(that: SearchResult): Int = this.score.compareTo(that.score)
 
-  override def toString: String = s"${hit.splash}: $score"
+  override def toString: String = s"${hit.getSplash.getSplash}: $score"
 }

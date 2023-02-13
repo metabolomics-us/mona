@@ -1,12 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.util
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain._
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Impacts, MetaData, Score, Spectrum}
+
+import scala.collection.mutable.{ArrayBuffer, Buffer}
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 4/20/16.
   */
-object CurationUtilities {
-  final def getCompounds(s: Spectrum, kind: String): Array[Compound] = s.compound.filter(_.kind == kind)
+object CurationUtilities extends LazyLogging {
+  final def getCompounds(s: Spectrum, kind: String): Array[Compound] = s.getCompound.asScala.toArray.filter(_.getKind == kind)
 
   final def getBiologicalCompounds(s: Spectrum): Array[Compound] = getCompounds(s, "biological")
 
@@ -27,9 +31,9 @@ object CurationUtilities {
     * @param name
     * @return
     */
-  def findMetaDataValue(metaData: Array[MetaData], name: String): String = {
-    metaData.filter(_.name == name) match {
-      case x: Array[MetaData] if x.nonEmpty => x.head.value.toString
+  def findMetaDataValue(metaData: Buffer[MetaData], name: String): String = {
+    metaData.filter(_.getName == name) match {
+      case x: Buffer[MetaData] if x.nonEmpty => x.head.getValue.toString
       case _ => null
     }
   }
@@ -42,10 +46,16 @@ object CurationUtilities {
     * @return
     */
   final def addImpact(score: Score, impactValue: Double, impactReason: String): Score = {
-    if (score == null || score.impacts == null) {
-      Score(Array(Impact(impactValue, impactReason)), 0.0)
+    if (score == null || score.getImpacts == null) {
+      val impacts: java.util.List[Impacts] =  Array(new Impacts(impactValue, impactReason)).toList.asJava
+      val zero: Double = 0.0
+      new Score(impacts, zero, zero, zero)
     } else {
-      score.copy(impacts = score.impacts :+ Impact(impactValue, impactReason))
+      val impacts: ArrayBuffer[Impacts] = ArrayBuffer[Impacts]()
+      impacts.appendAll(score.getImpacts.asScala)
+      impacts.append(new Impacts(impactValue, impactReason))
+      score.setImpacts(impacts.asJava)
+      score
     }
   }
 }

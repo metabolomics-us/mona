@@ -4,7 +4,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusCon
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
 import org.apache.http.impl.client.HttpClientBuilder
@@ -28,7 +28,7 @@ import org.springframework.web.client.{RestOperations, RestTemplate}
 @SpringBootApplication
 @EnableWebSecurity
 @Order(5)
-@Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
+@Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration],
   classOf[JWTAuthenticationConfig], classOf[CurationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig]))
 class CurationScheduler extends WebSecurityConfigurerAdapter {
 

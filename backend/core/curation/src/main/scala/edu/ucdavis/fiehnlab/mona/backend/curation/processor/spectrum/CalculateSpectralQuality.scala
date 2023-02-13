@@ -19,7 +19,7 @@ class CalculateSpectralQuality extends ItemProcessor[Spectrum, Spectrum] with La
   override def process(spectrum: Spectrum): Spectrum = {
     // Compute the descriptive features defined in Nesvizhskii et al (2006):
     // http://www.mcponline.org/content/5/4/652.full
-    val ions: Array[Array[Double]] = spectrum.spectrum.split(' ').map(_.split(':').map(_.toDouble))
+    val ions: Array[Array[Double]] = spectrum.getSpectrum.split(' ').map(_.split(':').map(_.toDouble))
 
     // Calculate spectrum features
     val numPeaksTransformed: Double = math.sqrt(ions.length)

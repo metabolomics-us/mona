@@ -19,7 +19,7 @@
             <p style="text-align: center">
                 <a [routerLink]="['/spectra/search']" class="btn btn-info btn-lg mr-1"><fa-icon [icon]="faSearch"></fa-icon> Search Spectra</a>
               <a [routerLink]="['/spectra/browse']" class="btn btn-info btn-lg mr-1 ml-1"><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</a>
-              <a href="https://wcmc.myjetbrains.com/youtrack/issues?q=mona" class="btn btn-warning btn-lg ml-1"><fa-icon [icon]="faExclamationTriangle"></fa-icon> Issue Tracker</a>
+              <a href="https://github.com/metabolomics-us/mona/issues" class="btn btn-warning btn-lg ml-1"><fa-icon [icon]="faExclamationTriangle"></fa-icon> GitHub Issue Tracker</a>
             </p>
         </div>
     </div>
@@ -31,6 +31,19 @@
             <h3 class="font-weight-bold">News</h3>
             <hr/>
 
+          <div class="news-cell">
+            <span class="news-title"><h4>MoNA Backend Updates</h4></span>
+            <div class="news-date">January 1st, 2023</div>
+            <div class="content">
+              <p>
+                MoNA has undergone substantial changes to its backend services. Frontend features work as they did before with an exception of
+                the RSQL query system which has been changed to the <a [routerLink]="['/documentation/query']">Spring Filtering system</a>.
+                For more detailed notes of the code changes, click <a href="https://github.com/metabolomics-us/mona/wiki/MoNA-2022-Spring-2.6.3-Update-and-Postgresql-Data-Migration">here</a>.
+                To see new schema changes, see the updated <a href="http://mona.fiehnlab.ucdavis.edu/swagger-ui.html">Swagger API Docs</a>.
+              </p>
+            </div>
+          </div>
+          <hr/>
           <div class="news-cell">
             <span class="news-title"><h4>Ability to Delete Your Submitted Spectra</h4></span>
             <div class="news-date"><em>March 4th, 2022</em></div>
@@ -44,31 +57,7 @@
             </div>
           </div>
           <hr/>
-          <div class="news-cell">
-            <span class="news-title"><h4>Curated and Community Feedback</h4></span>
-            <div class="news-date"><em>January 31st, 2022</em></div>
-            <div class="content">
-              <p>
-                The spectrum feedback feature has been enhanced to allow users to rate spectrum and see community feedback via bar graph on every spectrum.
-                Additionally, all spectra will be curated with a <em>Clean</em> or <em>Noisy</em> feedback based on the curated spectral
-                and normalized entropy. To learn more about spectral and normalized entropy, click <a [routerLink]="['/documentation/entropy']">here</a>.
-              </p>
-            </div>
-          </div>
-          <hr/>
-          <div class="news-cell">
-            <span class="news-title"><h4>Spectral and Normalized Entropy Curation</h4></span>
-            <div class="news-date">January 31st, 2022</div>
-            <div class="content">
-              <p>
-                Current and future spectra will now be curated with spectral and normalized entropy calculations. This change will be added to new and existing
-                spectra on the MoNA platform. To learn more about spectral and normalized entropy, click <a [routerLink]="['/documentation/entropy']">here</a>.
-              </p>
-            </div>
-          </div>
-          <hr/>
         </div>
-
         <div class="col-md-6 float-right">
             <h3 class="font-weight-bold">Submitter High Scores</h3>
 

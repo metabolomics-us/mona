@@ -1,11 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
 import java.nio.file.Path
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExport
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.QueryExport
 
 /**
   * Created by sajjan on 9/13/16.

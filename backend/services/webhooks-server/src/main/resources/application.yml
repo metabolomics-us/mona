@@ -5,12 +5,19 @@ mona:
       host: mona.fiehnlab.ucdavis.edu
       port: 80
 spring:
-  cloud:
-    config:
-      uri:  http://localhost:1111
-
+  config:
+    import: optional:configserver:${SPRING_CONFIG_URI:http://localhost:1111}
   rabbitmq:
     host: 127.0.0.1
-  data:
-    mongodb:
-      host: 127.0.0.1
+  application:
+    name: webhook-service
+  main:
+    allow-bean-definition-overriding: true
+
+#our local server port
+server:
+  port: 4444
+
+#basic information who we are
+info:
+  component: MoNA WebHook Services

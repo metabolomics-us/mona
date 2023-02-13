@@ -21,7 +21,7 @@ class PeakIndexTest extends AnyWordSpec with Matchers with LazyLogging {
     val records: Array[SimpleSpectrum] = JSONDomainReader
       .create[Array[Spectrum]]
       .read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-      .map(s => new SimpleSpectrum(s.id, s.spectrum))
+      .map(s => new SimpleSpectrum(s.getId, s.getSpectrum))
 
     val spectrum: SimpleSpectrum = records.head
 

@@ -2,18 +2,19 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.controller
 
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurationService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import io.swagger.annotations.ApiModel
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation._
+import javax.persistence.EntityManager
 
 
 /**
@@ -24,12 +25,14 @@ import org.springframework.web.bind.annotation._
 @RestController
 @RequestMapping(value = Array("/rest/curation"))
 class CurationController extends LazyLogging {
-
   @Autowired
-  val mongoRepository: ISpectrumMongoRepositoryCustom = null
+  val spectrumPersistenceService: SpectrumPersistenceService = null
 
   @Autowired
   val curationService: CurationService = null
+
+  @Autowired
+  val entityManager: EntityManager = null
 
   /**
     * schedules the spectra with the specified id for curation
@@ -40,13 +43,12 @@ class CurationController extends LazyLogging {
   @RequestMapping(path = Array("/{id}"))
   @Async
   def curateById(@PathVariable("id") id: String, request: HttpServletRequest): Future[ResponseEntity[CurationJobScheduled]] = {
-    val spectrum = mongoRepository.findOne(id)
+    val spectrum = spectrumPersistenceService.findByMonaId(id)
 
     if (spectrum == null) {
       new AsyncResult[ResponseEntity[CurationJobScheduled]](new ResponseEntity(HttpStatus.NOT_FOUND))
     } else {
       curationService.scheduleSpectrum(spectrum)
-
       new AsyncResult[ResponseEntity[CurationJobScheduled]](
         new ResponseEntity[CurationJobScheduled](CurationJobScheduled(1), HttpStatus.OK)
       )
@@ -62,15 +64,15 @@ class CurationController extends LazyLogging {
   @Async
   def curateByQuery(@RequestParam(required = false, name = "query") query: String): Future[ResponseEntity[CurationJobScheduled]] = {
 
-    val it = new DynamicIterable[Spectrum, String](query, 100) {
+    val it = new DynamicIterable[Spectrum, String](query, 1000) {
       /**
         * Loads more data from the server for the given query
         */
       override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
         if (query == null || query.isEmpty) {
-          mongoRepository.findAll(pageable)
+          spectrumPersistenceService.findAll(pageable)
         } else {
-          mongoRepository.rsqlQuery(query, pageable)
+          spectrumPersistenceService.findAll(query, pageable)
         }
       }
     }.iterator
@@ -85,6 +87,7 @@ class CurationController extends LazyLogging {
       if (count % 10000 == 0) {
         logger.info(s"Scheduled $count spectra...")
       }
+      entityManager.detach(spectrum)
     }
 
     logger.info(s"Finished scheduling $count spectra")
@@ -104,5 +107,5 @@ class CurationController extends LazyLogging {
   }
 }
 
-@ApiModel
+@Schema
 case class CurationJobScheduled(count: Int)

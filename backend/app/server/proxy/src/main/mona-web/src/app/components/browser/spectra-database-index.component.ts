@@ -134,10 +134,9 @@ export class SpectraDatabaseIndexComponent implements OnInit {
                     .subscribe(
                         (response: any) => {
                             field.data = [];
-
                             if (response !== null && typeof response !== 'undefined') {
                               // Transform data for D3 plot
-                              response.values.forEach((x) => {
+                              response.metaDataValueCount.forEach((x) => {
                                 field.data.push({
                                   key: x.value,
                                   y: x.count

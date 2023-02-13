@@ -14,7 +14,7 @@ export class RegistrationService {
 
     submit() {
         return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/users`,
-            {username: this.newSubmitter.emailAddress,
+            {emailAddress: this.newSubmitter.emailAddress,
              password: this.newSubmitter.password},
             {headers: {
                 'Content-Type': 'application/json'
@@ -25,7 +25,7 @@ export class RegistrationService {
 
     authorize() {
         return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/auth/login`,
-            {username: this.newSubmitter.emailAddress,
+            {emailAddress: this.newSubmitter.emailAddress,
              password: this.newSubmitter.password},
             {headers: {
                 'Content-Type': 'application/json'

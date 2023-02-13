@@ -1,186 +1,162 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.util.Date
-
-import com.mongodb.{BasicDBObject, DBObject}
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.GlobalStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.GlobalStatistics
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{CompoundRepository, MetaDataRepository, SpectrumRepository, SpectrumSubmitterRepository, StatisticsGlobalRepository, StatisticsTagRepository, TagsRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.Sort
-import org.springframework.data.mongodb.core.MongoOperations
-import org.springframework.data.mongodb.core.aggregation.Aggregation._
-import org.springframework.data.mongodb.core.aggregation.{AggregationOperation, AggregationOperationContext}
-import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.scheduling.annotation.{Async, Scheduled}
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
 
+import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.jdk.CollectionConverters._
+import scala.jdk.StreamConverters.StreamHasToScala
 
 /**
   * Created by sajjan on 8/2/16.
-  */
+ * */
 @Service
+@Profile(Array("mona.persistence"))
 class StatisticsService extends LazyLogging {
+  @Autowired
+  private val spectrumPersistenceService: SpectrumPersistenceService = null
 
   @Autowired
-  private val mongoOperations: MongoOperations = null
-
-  @Autowired
-  private val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
-
-  @Autowired
-  private val globalStatisticsRepository: GlobalStatisticsMongoRepository = null
+  private val globalStatisticsRepository: StatisticsGlobalRepository = null
 
   @Autowired
   private val metaDataStatisticsService: MetaDataStatisticsService = null
 
   @Autowired
+  private val metaDataRepository: MetaDataRepository = null
+
+  @Autowired
   private val tagStatisticsService: TagStatisticsService = null
+
+  @Autowired
+  private val tagsRepository: TagsRepository = null
+
+  @Autowired
+  private val statisticsTagRepository: StatisticsTagRepository = null
 
   @Autowired
   val submitterStatisticsService: SubmitterStatisticsService = null
 
   @Autowired
+  val spectraSubmittersRepository: SpectrumSubmitterRepository = null
+
+  @Autowired
   val compoundClassStatisticsService: CompoundClassStatisticsService = null
 
+  @Autowired
+  private val compoundRepository: CompoundRepository = null
 
+  @Autowired
+  private val entityManager: EntityManager = null
+
+  def generateCompoundCount(): Long = {
+    val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
+    compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
+      compound.getMetaData.asScala.foreach { metadata =>
+        if (metadata.getName == "InChIKey") {
+          inchiKeys.append(metadata.getValue.substring(0, 14))
+        }
+      }
+      entityManager.detach(compound)
+    }
+    inchiKeys.distinct.length
+  }
+
+  def generateMetaDataCount(): Long = {
+    val metaDataCounterMap: Map[String, Int] = Map()
+    metaDataRepository.streamAllBy().toScala(Iterator).foreach{ metaData =>
+      if(!metaDataCounterMap.contains(metaData.getName)) {
+        metaDataCounterMap(metaData.getName) = 1
+      }
+      entityManager.detach(metaData)
+    }
+    metaDataCounterMap.size.toLong
+  }
+
+  def generateTagCount(): Long = {
+    val tagsCounter: Map[String, Int] = Map()
+    tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
+      if(tag.getSpectrum == null && tag.getCompound == null) {
+        logger.debug(s"Exclude Library Tag Duplicates")
+      } else {
+        if (!tagsCounter.contains(tag.getText)) {
+          tagsCounter(tag.getText) = 1
+        }
+      }
+      entityManager.detach(tag)
+    }
+    tagsCounter.size.toLong
+  }
+
+  def generateSubmitterCount(): Long = {
+    val submitterCounter: Map[String, Integer] = Map()
+    spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
+      if (!submitterCounter.contains(submitter.getEmailAddress)) {
+        submitterCounter(submitter.getEmailAddress) = 1
+      }
+      entityManager.detach(submitter)
+    }
+    submitterCounter.size.toLong
+  }
   /**
     * Update the data in the global statistics repository
     *
     * @return
-    */
-  def updateGlobalStatistics(): GlobalStatistics = {
+    **/
+  def updateGlobalStatistics(): String = {
+    globalStatisticsRepository.deleteAll()
     // Spectrum count
-    val spectrumCount: Long = spectrumMongoRepository.count()
-
-
-    // Compound count
-    val compoundCount: Long =
-      mongoOperations.aggregate(
-        newAggregation(
-          classOf[Spectrum],
-          project("compound"),
-          unwind("compound"),
-          unwind("compound.metaData"),
-          `match`(Criteria.where("compound.metaData.name").is("InChIKey")),
-          project().and("compound.metaData.value").as("value"),
-
-          // Get first InChIKey block and group
-          new AggregationOperation() {
-            override def toDBObject(context: AggregationOperationContext): DBObject =
-              context.getMappedObject(new BasicDBObject(
-                "$project", new BasicDBObject(
-                  "value", new BasicDBObject(
-                    "$substr", Array("$value", 0, 14)
-                  )
-                )
-              ))
-          },
-
-          group("value"),
-          group().count().as("count")
-        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
-        classOf[Spectrum], classOf[AggregationResult]
-      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
-
-
-    // MetaData count
-    val metaDataCount: Long =
-      mongoOperations.aggregate(
-        newAggregation(
-          classOf[Spectrum],
-          project("metaData"),
-          unwind("metaData"),
-          group("metaData.name"),
-          group().count().as("count")
-        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
-        classOf[Spectrum], classOf[AggregationResult]
-      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
-
-
-    // MetaData value count
-    val metaDataValueCount: Long =
-      mongoOperations.aggregate(
-        newAggregation(
-          classOf[Spectrum],
-          project("metaData"),
-          unwind("metaData"),
-          group().count().as("count")
-        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
-        classOf[Spectrum], classOf[AggregationResult]
-      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
-
-
-    // Tag count
-    val tagCount: Long =
-      mongoOperations.aggregate(
-        newAggregation(
-          classOf[Spectrum],
-          project("tags"),
-          unwind("tags"),
-          group("tags.text"),
-          group().count().as("count")
-        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
-        classOf[Spectrum], classOf[AggregationResult]
-      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
-
-
-    // Tag value count
-    val tagValueCount: Long =
-      mongoOperations.aggregate(
-        newAggregation(
-          classOf[Spectrum],
-          project("tags"),
-          unwind("tags"),
-          group().count().as("count")
-        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
-        classOf[Spectrum], classOf[AggregationResult]
-      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
-
-
-    // Submitter count
-    val submitterCount: Long =
-      mongoOperations.aggregate(
-        newAggregation(
-          classOf[Spectrum],
-          project("submitter"),
-          group("submitter").count().as("count"),
-          group("submitter.id").count().as("count")
-        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
-        classOf[Spectrum], classOf[AggregationResult]
-      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
-
+    val spectrumCount: Long = spectrumPersistenceService.count()
+    val compoundCount: Long = generateCompoundCount()
+    val metaDataValueCount: Long = metaDataRepository.count()
+    val metaDataCount: Long = generateMetaDataCount()
+    val tagValueCount: Long = tagsRepository.count()
+    val tagCount: Long = generateTagCount()
+    val submitterCount: Long = generateSubmitterCount()
 
     // Save global statistics
-    globalStatisticsRepository.save(GlobalStatistics(null, new Date, spectrumCount, compoundCount, metaDataCount,
+    globalStatisticsRepository.save(new StatisticsGlobal(new Date, spectrumCount, compoundCount, metaDataCount,
       metaDataValueCount, tagCount, tagValueCount, submitterCount))
+
+    "Global Statistics Updated"
   }
 
   /**
-    *
-    * @return
-    */
-  def getGlobalStatistics: GlobalStatistics =
-    globalStatisticsRepository.findAll(new Sort(Sort.Direction.DESC, "date"))
-      .asScala.headOption.getOrElse(GlobalStatistics(null, new Date, 0, 0, 0, 0, 0, 0, 0))
+   *
+   * @return
+   * */
+  def getGlobalStatistics: StatisticsGlobal =
+    globalStatisticsRepository.findAll()
+      .asScala.headOption.getOrElse(new StatisticsGlobal(new Date, 0, 0, 0, 0, 0, 0, 0))
 
 
   /**
     * Update all statistics
-    */
+   * */
   @Async
   @Scheduled(cron = "0 0 0 * * *")
+  @Transactional
   def updateStatistics(): Unit = {
-    metaDataStatisticsService.updateMetaDataStatistics()
-    tagStatisticsService.updateTagStatistics()
-    submitterStatisticsService.updateSubmitterStatistics()
-    compoundClassStatisticsService.updateCompoundClassStatistics()
-    updateGlobalStatistics()
+    val metaDataResult = metaDataStatisticsService.updateMetaDataStatistics()
+    logger.info(s"${metaDataResult}")
+    val submitterResult = submitterStatisticsService.updateSubmitterStatistics()
+    logger.info(s"${submitterResult}")
+    val compoundClassResult = compoundClassStatisticsService.updateCompoundClassStatistics()
+    logger.info(s"${compoundClassResult}")
+    val tagResult = tagStatisticsService.updateTagStatistics()
+    logger.info(s"${tagResult}")
+    val globalResult = updateGlobalStatistics()
+    logger.info(s"${globalResult}")
+    logger.info(s"Statistics Update is Completed!")
   }
 }
-
-
-case class AggregationResult(_id: String, count: Long)

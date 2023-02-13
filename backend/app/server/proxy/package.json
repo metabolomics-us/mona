@@ -1,12 +1,12 @@
 {
   "name": "proxy",
   "author": "Nolan Guzman: nolanguzman97@gmail.com",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "prod": "ng build --prod",
+    "prod": "ng build --prod --aot --output-hashing=all",
     "staging": "ng build --configuration=staging",
     "test": "ng test",
     "lint": "ng lint",

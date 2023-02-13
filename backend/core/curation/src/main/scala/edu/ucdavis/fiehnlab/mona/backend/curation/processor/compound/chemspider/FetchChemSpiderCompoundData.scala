@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestOperations
 
+import scala.collection.mutable.Buffer
+import scala.jdk.CollectionConverters._
+
 /**
   * Created by sajjan on 4/6/17.
   */
@@ -21,18 +24,19 @@ class FetchChemSpiderCompoundData extends ItemProcessor[Spectrum, Spectrum] with
 
 
   override def process(spectrum: Spectrum): Spectrum = {
-    val updatedCompound: Array[Compound] = spectrum.compound.map(compound => fetchCompoundData(compound, spectrum.id))
+    val updatedCompound: Buffer[Compound] = spectrum.getCompound.asScala.map(compound => fetchCompoundData(compound, spectrum.getId))
 
     // Assembled spectrum with updated compounds
-    spectrum.copy(compound = updatedCompound)
+    spectrum.setCompound(updatedCompound.asJava)
+    spectrum
   }
 
   /**
-    * Requests compound properties from ChemSpider
-    *
-    * @param compound
-    * @return
-    */
+   * Requests compound properties from ChemSpider
+   *
+   * @param compound
+   * @return
+   */
   def fetchCompoundData(compound: Compound, id: String): Compound = {
     compound
   }

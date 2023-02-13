@@ -1,75 +1,68 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository
 
-import java.lang.Iterable
-
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Users
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.stereotype.{Component, Repository}
+import org.springframework.stereotype.{Component}
 
-/**
-  * allows us to work with user objects
-  */
-@Repository
-trait IUserRepository extends PagingAndSortingRepository[User, String] {
-
-  /**
-    * finds a given user by its username
-    *
-    * @param username
-    * @return
-    */
-  def findByUsername(username: String): User
-}
+import java.lang
+import java.util.Optional
 
 @Component
-class UserRepository extends PagingAndSortingRepository[User, String] with LazyLogging {
+class UserRepository extends LazyLogging with PagingAndSortingRepository[Users, String]{
 
   @Autowired
   val userRepository: IUserRepository = null
 
-
-  override def findAll(pageable: Pageable): Page[User] = userRepository.findAll(pageable)
-
-  override def findAll(sort: Sort): Iterable[User] = userRepository.findAll(sort)
-
-  override def delete(id: String): Unit = userRepository.delete(id)
-
-  override def findOne(id: String): User = userRepository.findOne(id)
-
-  override def findAll(): Iterable[User] = userRepository.findAll()
-
-  override def delete(iterable: Iterable[_ <: User]): Unit = userRepository.delete(iterable)
-
-  override def deleteAll(): Unit = userRepository.deleteAll()
-
-  override def findAll(iterable: Iterable[String]): Iterable[User] = userRepository.findAll(iterable)
-
-  override def exists(id: String): Boolean = userRepository.exists(id)
-
-  override def count(): Long = userRepository.count()
-
-  override def delete(t: User): Unit = userRepository.delete(t)
-
-  override def save[S <: User](iterable: Iterable[S]): Iterable[S] = userRepository.save(iterable)
-
-  override def save[S <: User](s: S): S = {
-    if (s.password.matches("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}")) {
+  def save[S <: Users](s: S): S = {
+    if (s.getPassword.matches("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}")) {
       userRepository.save(s)
     } else {
-      val hashedPassword = new BCryptPasswordEncoder().encode(s.password)
-      userRepository.save(s.copy(password = hashedPassword).asInstanceOf[S])
+      val hashedPassword = new BCryptPasswordEncoder().encode(s.getPassword)
+      s.setPassword(hashedPassword)
+      userRepository.save(s)
     }
   }
 
   /**
-    * Finds a given user by its username
-    *
-    * @param username
-    * @return
-    */
-  def findByUsername(username: String): User = userRepository.findByUsername(username)
+   * Finds a given user by its username
+   *
+   * @param username
+   * @return
+   */
+
+  def deleteByEmailAddress(emailAddress: String): Unit = userRepository.deleteByEmailAddress(emailAddress)
+
+  def findByEmailAddress(emailAddress: String): Users = userRepository.findByEmailAddress(emailAddress)
+
+  def existsByEmailAddress(emailAddress: String): Boolean = userRepository.existsByEmailAddress(emailAddress)
+
+  override def findAll(sort: Sort): lang.Iterable[Users] = userRepository.findAll(sort)
+
+  override def findAll(pageable: Pageable): Page[Users] = userRepository.findAll(pageable)
+
+  override def saveAll[S <: Users](entities: lang.Iterable[S]): lang.Iterable[S] = userRepository.saveAll(entities)
+
+  override def findById(id: String): Optional[Users] = userRepository.findById(id)
+
+  override def existsById(id: String): Boolean = userRepository.existsById(id)
+
+  override def findAll(): lang.Iterable[Users] = userRepository.findAll()
+
+  override def findAllById(ids: lang.Iterable[String]): lang.Iterable[Users] = userRepository.findAllById(ids)
+
+  override def count(): Long = userRepository.count()
+
+  override def deleteById(id: String): Unit = userRepository.deleteById(id)
+
+  override def delete(entity: Users): Unit = userRepository.delete(entity)
+
+  override def deleteAllById(ids: lang.Iterable[_ <: String]): Unit = userRepository.deleteAllById(ids)
+
+  override def deleteAll(entities: lang.Iterable[_ <: Users]): Unit = userRepository.deleteAll(entities)
+
+  override def deleteAll(): Unit = userRepository.deleteAll()
 }

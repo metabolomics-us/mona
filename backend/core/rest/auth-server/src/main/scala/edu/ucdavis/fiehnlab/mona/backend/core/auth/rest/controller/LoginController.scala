@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation._
 class LoginController extends LazyLogging {
 
   @Autowired
-  @Qualifier("loginServiceDelegate")
+    @Qualifier("loginServiceDelegate")
   val loginService: LoginService = null
 
   /**
@@ -59,6 +59,7 @@ class LoginController extends LazyLogging {
 
   @RequestMapping(path = Array("/extend"), method = Array(RequestMethod.POST))
   def extendToken(@RequestBody request: LoginResponse): LoginResponse = {
+    logger.info(s"${request}");
     loginService.extend(request.token)
   }
 }

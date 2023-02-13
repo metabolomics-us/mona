@@ -12,13 +12,14 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {DownloadNotifModalComponent} from './download-notif-modal.component';
 import {DownloadNotifErrorModalComponent} from './download-notif-error-modal.component';
 import {faCloudDownloadAlt} from '@fortawesome/free-solid-svg-icons';
+import {SpectrumModel} from "../../mocks/spectrum.model";
 
 @Component({
     selector: 'spectra-download',
     templateUrl: '../../views/templates/spectra/download.html'
 })
 export class SpectraDownloadComponent {
-    @Input() spectrum;
+    @Input() spectrum: SpectrumModel;
     faCloudDownloadAlt = faCloudDownloadAlt;
 
     constructor(public spectraQueryBuilderService: SpectraQueryBuilderService,
@@ -63,9 +64,9 @@ export class SpectraDownloadComponent {
                 });
             } else {
                 const query = this.spectraQueryBuilderService.getQuery();
-                query.format = 'msp';
+                const payload = {query, "format": "msp"}
 
-                this.submitQueryExportRequest(query);
+                this.submitQueryExportRequest(payload);
              }
     }
 
@@ -80,9 +81,9 @@ export class SpectraDownloadComponent {
             });
         } else {
             const query = this.spectraQueryBuilderService.getQuery();
-            query.format = 'json';
+            const payload = {query, "format": "json"};
 
-            this.submitQueryExportRequest(query);
+            this.submitQueryExportRequest(payload);
         }
     }
 

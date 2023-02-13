@@ -5,10 +5,9 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Path}
 import java.util.zip.{ZipEntry, ZipOutputStream}
 import java.util.{Date, UUID}
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{PredefinedQuery, QueryExport}
 
 /**
   * Created by sajjan on 9/13/16.
@@ -25,7 +24,7 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
     *
     * @return
     */
-  protected def exportFilename: String = s"MoNA-export-$basename.${export.format}"
+  protected def exportFilename: String = s"MoNA-export-$basename.${export.getFormat}"
 
   /**
     * Filename for compressed export
@@ -34,9 +33,9 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
     */
   protected def compressedExportFilename: String = {
     if (exportFilename.contains('.')) {
-      s"${exportFilename.substring(0, exportFilename.lastIndexOf('.'))}-${export.format}.zip"
+      s"${exportFilename.substring(0, exportFilename.lastIndexOf('.'))}-${export.getFormat}.zip"
     } else {
-      s"$exportFilename-${export.format}.zip"
+      s"$exportFilename-${export.getFormat}.zip"
     }
   }
 
@@ -84,10 +83,10 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
     * @return
     */
   private def getLabel: String = {
-    if (export.label == null || export.label.isEmpty)
-      export.id
+    if (export.getLabel == null || export.getLabel.isEmpty)
+      export.getId
     else
-      export.label
+      export.getLabel
   }
 
   /**
@@ -97,10 +96,10 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
   private def buildExportBasename(): String = {
     val sanitizedLabel: String = getLabel.split(" - ").last.replaceAll(" ", "_").replaceAll("/", "-")
 
-    if (export.emailAddress == null || export.emailAddress.isEmpty) {
+    if (export.getEmailAddress == null || export.getEmailAddress.isEmpty) {
       sanitizedLabel
     } else {
-      export.emailAddress.split("@").head + '-' + sanitizedLabel
+      export.getEmailAddress.split("@").head + '-' + sanitizedLabel
     }
   }
 
@@ -191,7 +190,7 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
     val queryFile: Path = downloadDir.resolve(queryFilename)
 
     logger.info(s"Exporting query file ${queryFile.getFileName}")
-    Files.write(queryFile, export.query.getBytes(StandardCharsets.UTF_8))
+    Files.write(queryFile, export.getQuery.getBytes(StandardCharsets.UTF_8))
   }
 
   /**
@@ -208,25 +207,21 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
   def toQueryExport: QueryExport = {
     // Update export object with filesize, query count and filenames
     if (compress) {
-      export.copy(
-        label = getLabel,
-        count = counter,
-        date = new Date,
-        size = Files.size(downloadDir.resolve(compressedExportFilename)),
-
-        queryFile = queryFilename,
-        exportFile = compressedExportFilename
-      )
+      export.setLabel(getLabel)
+      export.setCount(counter)
+      export.setDate(new Date())
+      export.setSize(Files.size(downloadDir.resolve(compressedExportFilename)))
+      export.setQueryFile(queryFilename)
+      export.setExportFile(compressedExportFilename)
+      export
     } else {
-      export.copy(
-        label = getLabel,
-        count = counter,
-        date = new Date,
-        size = Files.size(downloadDir.resolve(exportFilename)),
-
-        queryFile = queryFilename,
-        exportFile = exportFilename
-      )
+      export.setLabel(getLabel)
+      export.setCount(counter)
+      export.setDate(new Date())
+      export.setSize(Files.size(downloadDir.resolve(exportFilename)))
+      export.setQueryFile(queryFilename)
+      export.setExportFile(exportFilename)
+      export
     }
   }
 }
@@ -246,7 +241,7 @@ object SpectrumDownloader {
   def apply(query: PredefinedQuery, export: QueryExport, format: String, downloadDir: Path,
                     compress: Boolean): SpectrumDownloader = export match {
 
-    case null => SpectrumDownloader(query.label, query.query, format, downloadDir, compress)
+    case null => SpectrumDownloader(query.getLabel, query.getQuery, format, downloadDir, compress)
     case _: QueryExport => SpectrumDownloader(export, format, downloadDir, compress)
   }
 
@@ -284,7 +279,7 @@ object SpectrumDownloader {
     */
   def apply(label: String, query: String, format: String, downloadDir: Path, compress: Boolean): SpectrumDownloader = {
     SpectrumDownloader(
-      QueryExport(UUID.randomUUID.toString, label, query, format, null, new Date, 0, 0, null, null),
+      new QueryExport(UUID.randomUUID.toString, label, query, format, null, new Date, 0, 0, null, null),
       format, downloadDir, compress
     )
   }

@@ -46,7 +46,7 @@ export class SearchBoxComponent implements OnInit {
 
         // Handle full text search
         else {
-            this.spectraQueryBuilderService.setTextSearch(query);
+            this.spectraQueryBuilderService.addGenericSearch(query);
         }
         this.searchBoxQuery = '';
         this.spectraQueryBuilderService.executeQuery();

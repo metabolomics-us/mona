@@ -5,6 +5,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
+import scala.collection.mutable.Buffer
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 4/21/16.
@@ -23,37 +25,37 @@ class MassAccuracyValidation extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val massAccuracyMetaData: Array[MetaData] = spectrum.metaData.filter(x => x.name == CommonMetaData.MASS_ACCURACY && x.computed)
+    val massAccuracyMetaData: Buffer[MetaData] = spectrum.getMetaData.asScala.filter(x => x.getName == CommonMetaData.MASS_ACCURACY && x.getComputed)
 
     if (massAccuracyMetaData.isEmpty) {
-      logger.debug(s"${spectrum.id}: Mass accuracy not defined for specturm")
+      logger.debug(s"${spectrum.getId}: Mass accuracy not defined for specturm")
       spectrum
     }
 
     else {
-      logger.info(massAccuracyMetaData.head.toString)
-      val massAccuracy: Double = massAccuracyMetaData.head.value.asInstanceOf[Double]
+      logger.info(s"Mass accuracy value is: ${massAccuracyMetaData.head.getValue}")
+      val massAccuracy: Double = massAccuracyMetaData.head.getValue.toDouble
 
       if (massAccuracy <= HIGH_ACCURACY) {
-        logger.info(s"${spectrum.id}: Has a high mass accuracy of $massAccuracy")
+        logger.info(s"${spectrum.getId}: Has a high mass accuracy of $massAccuracy")
 
-        spectrum.copy(
-          score = CurationUtilities.addImpact(spectrum.score, 2, s"High mass accuracy of ${"%.3f".format(massAccuracy)} ppm")
-        )
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 2, s"High mass accuracy of ${"%.3f".format(massAccuracy)} ppm"))
+        spectrum
       } else if (massAccuracy <= GOOD_ACCURACY) {
-        logger.info(s"${spectrum.id}: Has a good mass accuracy of $massAccuracy")
+        logger.info(s"${spectrum.getId}: Has a good mass accuracy of $massAccuracy")
 
-        spectrum.copy(
-          score = CurationUtilities.addImpact(spectrum.score, 1, s"Mass accuracy of ${"%.3f".format(massAccuracy)} ppm")
-        )
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, s"Mass accuracy of ${"%.3f".format(massAccuracy)} ppm"))
+        spectrum
+
       } else if (massAccuracy > MINIMUM_ACCURACY) {
-        logger.info(s"S${spectrum.id}: Has a poor mass accuracy of $massAccuracy, greater than the threshold of $MINIMUM_ACCURACY")
+        logger.info(s"S${spectrum.getId}: Has a poor mass accuracy of $massAccuracy, greater than the threshold of $MINIMUM_ACCURACY")
 
-        spectrum.copy(
-          score = CurationUtilities.addImpact(spectrum.score, -1, s"Poor mass accuracy of ${"%.3f".format(massAccuracy)} ppm")
+        spectrum.setScore(
+          CurationUtilities.addImpact(spectrum.getScore, -1, s"Poor mass accuracy of ${"%.3f".format(massAccuracy)} ppm")
         )
+        spectrum
       } else {
-        logger.info(s"${spectrum.id}: Has mass accuracy of $massAccuracy, within the threshold of $MINIMUM_ACCURACY")
+        logger.info(s"${spectrum.getId}: Has mass accuracy of $massAccuracy, within the threshold of $MINIMUM_ACCURACY")
         spectrum
       }
     }
