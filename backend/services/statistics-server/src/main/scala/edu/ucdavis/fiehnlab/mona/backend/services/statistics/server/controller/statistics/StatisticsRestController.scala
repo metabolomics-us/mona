@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.statistics
+package edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.controller.statistics
 
 import java.util.concurrent.Future
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service._

@@ -59,6 +59,7 @@ class StatisticsService extends LazyLogging {
   @Autowired
   private val entityManager: EntityManager = null
 
+
   def generateCompoundCount(): Long = {
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
     compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
@@ -72,6 +73,7 @@ class StatisticsService extends LazyLogging {
     inchiKeys.distinct.length
   }
 
+
   def generateMetaDataCount(): Long = {
     val metaDataCounterMap: Map[String, Int] = Map()
     metaDataRepository.streamAllBy().toScala(Iterator).foreach{ metaData =>
@@ -82,6 +84,7 @@ class StatisticsService extends LazyLogging {
     }
     metaDataCounterMap.size.toLong
   }
+
 
   def generateTagCount(): Long = {
     val tagsCounter: Map[String, Int] = Map()
@@ -98,6 +101,7 @@ class StatisticsService extends LazyLogging {
     tagsCounter.size.toLong
   }
 
+
   def generateSubmitterCount(): Long = {
     val submitterCounter: Map[String, Integer] = Map()
     spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
@@ -113,6 +117,7 @@ class StatisticsService extends LazyLogging {
     *
     * @return
     **/
+
   def updateGlobalStatistics(): String = {
     globalStatisticsRepository.deleteAll()
     // Spectrum count
@@ -147,16 +152,11 @@ class StatisticsService extends LazyLogging {
   @Scheduled(cron = "0 0 0 * * *")
   @Transactional
   def updateStatistics(): Unit = {
-    val metaDataResult = metaDataStatisticsService.updateMetaDataStatistics()
-    logger.info(s"${metaDataResult}")
-    val submitterResult = submitterStatisticsService.updateSubmitterStatistics()
-    logger.info(s"${submitterResult}")
-    val compoundClassResult = compoundClassStatisticsService.updateCompoundClassStatistics()
-    logger.info(s"${compoundClassResult}")
-    val tagResult = tagStatisticsService.updateTagStatistics()
-    logger.info(s"${tagResult}")
-    val globalResult = updateGlobalStatistics()
-    logger.info(s"${globalResult}")
+    metaDataStatisticsService.updateMetaDataStatistics()
+    submitterStatisticsService.updateSubmitterStatistics()
+    compoundClassStatisticsService.updateCompoundClassStatistics()
+    tagStatisticsService.updateTagStatistics()
+    updateGlobalStatistics()
     logger.info(s"Statistics Update is Completed!")
   }
 }
