@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
+    <artifactId>statistics-server</artifactId>
+    <version>2.6.3-SNAPSHOT</version>
+    <name>statistics-server</name>
+
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
+        <artifactId>services</artifactId>
+        <version>2.6.3-SNAPSHOT</version>
+    </parent>
+
+    <description>This module handles aggregation of spectrum attributes and generation of statistics</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.typesafe.scala-logging</groupId>
+            <artifactId>scala-logging_2.13</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>2.6.3-SNAPSHOT</version>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>statistics</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>api-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>api-server</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>domain</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+    </dependencies>
+</project>

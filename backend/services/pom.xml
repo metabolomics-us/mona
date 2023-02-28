@@ -22,6 +22,7 @@
         <module>curation-runner</module>
         <module>downloader</module>
         <module>download-scheduler</module>
+        <module>statistics-server</module>
         <module>webhooks-server</module>
         <module>similarity</module>
     </modules>

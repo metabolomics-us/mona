@@ -57,10 +57,6 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
 
       //deletes need authentication
       .antMatchers(HttpMethod.DELETE).authenticated()
-
-      //update statistics need authentication
-      .antMatchers(HttpMethod.POST, "/rest/statistics/update").hasAuthority("ADMIN")
-      .antMatchers(HttpMethod.POST, "/rest/spectra/refresh").hasAuthority("ADMIN")
   }
 
   /**
@@ -73,17 +69,11 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
     web.ignoring()
       //get is available for most endpoints
       .antMatchers(HttpMethod.GET, "/rest/spectra/**")
-      .antMatchers(HttpMethod.GET, "/rest/metaData/**")
-      .antMatchers(HttpMethod.GET, "/rest/tags/**")
-      .antMatchers(HttpMethod.GET, "/rest/statistics/**")
       .antMatchers(HttpMethod.GET, "/rest/news/**")
       .antMatchers(HttpMethod.GET, "/rest/feedback/**")
 
       .antMatchers(HttpMethod.POST, "/rest/feedback")
       .antMatchers(HttpMethod.POST, "/rest/spectra/count")
-
-      //no authentication for metadata
-      .antMatchers(HttpMethod.POST, "/rest/metaData/**")
   }
 }
 

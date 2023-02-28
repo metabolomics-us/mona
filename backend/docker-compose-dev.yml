@@ -141,6 +141,16 @@ services:
       options:
         max-size: "100M"
 
+  statistics:
+    image: public.ecr.aws/fiehnlab/mona-statistics-server:test
+    depends_on:
+      - webhooks
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      options:
+        max-size: "100M"
+
   # Main authentication service
   auth:
     image: public.ecr.aws/fiehnlab/mona-auth-server:test

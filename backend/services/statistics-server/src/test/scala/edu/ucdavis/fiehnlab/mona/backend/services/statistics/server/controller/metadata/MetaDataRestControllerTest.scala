@@ -1,9 +1,7 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.metadata
+package edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.controller.metadata
 
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-
-import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
@@ -12,22 +10,23 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
+import edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.StatisticServer
+import edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.controller.config.EmbeddedRestServerConfig
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
-import scala.concurrent.duration._
-import scala.language.postfixOps
+import java.io.InputStreamReader
 import scala.jdk.CollectionConverters._
+import scala.language.postfixOps
 
 /**
   * Created by wohlgemuth on 3/8/16.
   */
-@SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 @ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class MetaDataRestControllerTest extends AbstractSpringControllerTest with Eventually{
 

@@ -5,8 +5,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginServ
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service.RestLoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{ RestServerConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.RestServerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
+import edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.StatisticServer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.{Bean, Configuration, Import, Primary}
@@ -28,7 +29,7 @@ class RestClientTestConfig {
 }
 
 @Configuration
-@Import(Array(classOf[RestServerConfig]))
+@Import(Array(classOf[RestServerConfig], classOf[StatisticServer]))
 class EmbeddedRestServerConfig extends LazyLogging {
 
   /**
