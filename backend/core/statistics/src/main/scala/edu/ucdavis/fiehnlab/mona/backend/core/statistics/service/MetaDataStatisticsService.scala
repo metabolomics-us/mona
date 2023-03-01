@@ -81,6 +81,8 @@ class MetaDataStatisticsService extends LazyLogging{
 
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted MetaData Object #${counter}")
+        entityManager.flush()
+        entityManager.clear()
       }
       entityManager.detach(metaData)
     }
@@ -91,7 +93,7 @@ class MetaDataStatisticsService extends LazyLogging{
     *
     * @return
     */
-  @Transactional()
+  @Transactional
   def updateMetaDataStatistics(): String = {
     statisticsMetaDataRepository.deleteAll()
 
@@ -100,7 +102,10 @@ class MetaDataStatisticsService extends LazyLogging{
       val metaDataValueList: List[MetaDataValueCount] = value.toList.map{case(value, count) =>
         new MetaDataValueCount(value, count)
       }
-      statisticsMetaDataRepository.save(new StatisticsMetaData(key, metaDataCounterMap(key), metaDataValueList.asJava))
+      val entry = new StatisticsMetaData(key, metaDataCounterMap(key), metaDataValueList.asJava)
+      statisticsMetaDataRepository.save(entry)
+      entityManager.detach(entry)
+
     }
 
     "MetaData Statistics Updated"

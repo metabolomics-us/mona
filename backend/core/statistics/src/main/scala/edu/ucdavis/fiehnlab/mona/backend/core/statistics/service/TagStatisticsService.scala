@@ -52,6 +52,8 @@ class TagStatisticsService extends LazyLogging{
 
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted Tag Object #${counter}")
+        entityManager.flush()
+        entityManager.clear()
       }
       entityManager.detach(tag)
     }
@@ -62,7 +64,7 @@ class TagStatisticsService extends LazyLogging{
    *
    * @return
    * */
-  @Transactional()
+  @Transactional
   def updateTagStatistics(): String = {
     statisticsTagRepository.deleteAll()
 
@@ -71,6 +73,7 @@ class TagStatisticsService extends LazyLogging{
     tagsCounter.foreach { case (key, value) =>
       val newStatisticTag = new StatisticsTag(key, tagsRuleBase(key), value, if (libraryRepository.existsByLibrary(key)) "library" else null)
       statisticsTagRepository.save(newStatisticTag)
+      entityManager.detach(newStatisticTag)
     }
     "Tag Statistics Completed"
   }

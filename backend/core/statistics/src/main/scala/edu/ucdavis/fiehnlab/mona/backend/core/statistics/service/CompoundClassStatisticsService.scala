@@ -100,6 +100,8 @@ class CompoundClassStatisticsService extends LazyLogging{
 
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted Compound Object #${counter}")
+        entityManager.flush()
+        entityManager.clear()
       }
       inchiKeys.clearAndShrink()
       compoundClasses.clear()
@@ -113,7 +115,7 @@ class CompoundClassStatisticsService extends LazyLogging{
     *
     * @return
     */
-  @Transactional()
+  @Transactional
   def updateCompoundClassStatistics(): String = {
     val finalMap = updateCompoundClassStatisticsHelper()
     finalMap.foreach { case (key, value) =>
@@ -121,6 +123,7 @@ class CompoundClassStatisticsService extends LazyLogging{
       val compoundsCount = finalMap(key)("compounds").distinct.length
       val statsCompoundClass = new StatisticsCompoundClasses(key,spectraCount,compoundsCount)
       statisticsCompoundClassesRepository.save(statsCompoundClass)
+      entityManager.detach(statsCompoundClass)
     }
     "Compound Class Statistics Completed"
   }

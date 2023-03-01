@@ -61,6 +61,7 @@ class StatisticsService extends LazyLogging {
 
 
   def generateCompoundCount(): Long = {
+    var counter = 0
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
     compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
       compound.getMetaData.asScala.foreach { metadata =>
@@ -68,7 +69,12 @@ class StatisticsService extends LazyLogging {
           inchiKeys.append(metadata.getValue.substring(0, 14))
         }
       }
+      counter+=1
       entityManager.detach(compound)
+      if (counter % 10000 == 0) {
+        entityManager.flush()
+        entityManager.clear()
+      }
     }
     inchiKeys.distinct.length
   }
@@ -76,11 +82,17 @@ class StatisticsService extends LazyLogging {
 
   def generateMetaDataCount(): Long = {
     val metaDataCounterMap: Map[String, Int] = Map()
+    var counter = 0
     metaDataRepository.streamAllBy().toScala(Iterator).foreach{ metaData =>
       if(!metaDataCounterMap.contains(metaData.getName)) {
         metaDataCounterMap(metaData.getName) = 1
       }
+      counter+=1
       entityManager.detach(metaData)
+      if (counter % 10000 == 0) {
+        entityManager.flush()
+        entityManager.clear()
+      }
     }
     metaDataCounterMap.size.toLong
   }
@@ -88,6 +100,7 @@ class StatisticsService extends LazyLogging {
 
   def generateTagCount(): Long = {
     val tagsCounter: Map[String, Int] = Map()
+    var counter = 0
     tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
       if(tag.getSpectrum == null && tag.getCompound == null) {
         logger.debug(s"Exclude Library Tag Duplicates")
@@ -96,7 +109,12 @@ class StatisticsService extends LazyLogging {
           tagsCounter(tag.getText) = 1
         }
       }
+      counter+=1
       entityManager.detach(tag)
+      if (counter % 10000 == 0) {
+        entityManager.flush()
+        entityManager.clear()
+      }
     }
     tagsCounter.size.toLong
   }
@@ -104,11 +122,17 @@ class StatisticsService extends LazyLogging {
 
   def generateSubmitterCount(): Long = {
     val submitterCounter: Map[String, Integer] = Map()
+    var counter = 0
     spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
       if (!submitterCounter.contains(submitter.getEmailAddress)) {
         submitterCounter(submitter.getEmailAddress) = 1
       }
+      counter+=1
       entityManager.detach(submitter)
+      if (counter % 10000 == 0) {
+        entityManager.flush()
+        entityManager.clear()
+      }
     }
     submitterCounter.size.toLong
   }
