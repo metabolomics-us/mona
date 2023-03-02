@@ -125,6 +125,7 @@ class CompoundClassStatisticsService extends LazyLogging{
       statisticsCompoundClassesRepository.save(statsCompoundClass)
       entityManager.detach(statsCompoundClass)
     }
+    finalMap.clear()
     "Compound Class Statistics Completed"
   }
 }

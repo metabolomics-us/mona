@@ -75,6 +75,8 @@ class TagStatisticsService extends LazyLogging{
       statisticsTagRepository.save(newStatisticTag)
       entityManager.detach(newStatisticTag)
     }
+    tagsCounter.clear()
+    tagsRuleBase.clear()
     "Tag Statistics Completed"
   }
 

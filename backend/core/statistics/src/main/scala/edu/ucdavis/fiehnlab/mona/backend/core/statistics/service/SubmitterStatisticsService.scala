@@ -64,6 +64,9 @@ class SubmitterStatisticsService extends LazyLogging{
       statisticsSubmitterRepository.save(entry)
       entityManager.detach(entry)
     }
+    submitterObjects.clear()
+    submitterCounter.clear()
+    submitterScores.clear()
     "Submitter Statistics Completed"
   }
   /**

@@ -107,7 +107,8 @@ class MetaDataStatisticsService extends LazyLogging{
       entityManager.detach(entry)
 
     }
-
+    metaDataNameMap.clear()
+    metaDataCounterMap.clear()
     "MetaData Statistics Updated"
   }
 }

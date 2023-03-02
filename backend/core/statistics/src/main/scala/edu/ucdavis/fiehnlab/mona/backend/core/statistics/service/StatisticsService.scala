@@ -71,12 +71,15 @@ class StatisticsService extends LazyLogging {
       }
       counter+=1
       entityManager.detach(compound)
-      if (counter % 10000 == 0) {
+      if (counter % 100000 == 0) {
+        logger.info(s"\tCompleted Compound Count #${counter}")
         entityManager.flush()
         entityManager.clear()
       }
     }
-    inchiKeys.distinct.length
+    val finalCount = inchiKeys.distinct.length
+    inchiKeys.clearAndShrink()
+    finalCount
   }
 
 
@@ -89,12 +92,15 @@ class StatisticsService extends LazyLogging {
       }
       counter+=1
       entityManager.detach(metaData)
-      if (counter % 10000 == 0) {
+      if (counter % 100000 == 0) {
+        logger.info(s"\tCompleted MetaData Count #${counter}")
         entityManager.flush()
         entityManager.clear()
       }
     }
-    metaDataCounterMap.size.toLong
+    val finalCount = metaDataCounterMap.size.toLong
+    metaDataCounterMap.clear()
+    finalCount
   }
 
 
@@ -111,12 +117,15 @@ class StatisticsService extends LazyLogging {
       }
       counter+=1
       entityManager.detach(tag)
-      if (counter % 10000 == 0) {
+      if (counter % 100000 == 0) {
+        logger.info(s"\tCompleted Tag Count #${counter}")
         entityManager.flush()
         entityManager.clear()
       }
     }
-    tagsCounter.size.toLong
+    val finalCount = tagsCounter.size.toLong
+    tagsCounter.clear()
+    finalCount
   }
 
 
@@ -130,11 +139,14 @@ class StatisticsService extends LazyLogging {
       counter+=1
       entityManager.detach(submitter)
       if (counter % 10000 == 0) {
+        logger.info(s"\tCompleted Submitter Count #${counter}")
         entityManager.flush()
         entityManager.clear()
       }
     }
-    submitterCounter.size.toLong
+    val finalCount = submitterCounter.size.toLong
+    submitterCounter.clear()
+    finalCount
   }
   /**
     * Update the data in the global statistics repository
