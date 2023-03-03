@@ -60,6 +60,7 @@ class StatisticsService extends LazyLogging {
   private val entityManager: EntityManager = null
 
 
+  @Transactional
   def generateCompoundCount(): Long = {
     var counter = 0
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
@@ -73,16 +74,17 @@ class StatisticsService extends LazyLogging {
       entityManager.detach(compound)
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted Compound Count #${counter}")
-        entityManager.flush()
-        entityManager.clear()
       }
     }
     val finalCount = inchiKeys.distinct.length
     inchiKeys.clearAndShrink()
+    entityManager.flush()
+    entityManager.clear()
     finalCount
   }
 
 
+  @Transactional
   def generateMetaDataCount(): Long = {
     val metaDataCounterMap: Map[String, Int] = Map()
     var counter = 0
@@ -100,10 +102,13 @@ class StatisticsService extends LazyLogging {
     }
     val finalCount = metaDataCounterMap.size.toLong
     metaDataCounterMap.clear()
+    entityManager.flush()
+    entityManager.clear()
     finalCount
   }
 
 
+  @Transactional
   def generateTagCount(): Long = {
     val tagsCounter: Map[String, Int] = Map()
     var counter = 0
@@ -119,16 +124,17 @@ class StatisticsService extends LazyLogging {
       entityManager.detach(tag)
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted Tag Count #${counter}")
-        entityManager.flush()
-        entityManager.clear()
       }
     }
     val finalCount = tagsCounter.size.toLong
     tagsCounter.clear()
+    entityManager.flush()
+    entityManager.clear()
     finalCount
   }
 
 
+  @Transactional
   def generateSubmitterCount(): Long = {
     val submitterCounter: Map[String, Integer] = Map()
     var counter = 0
@@ -140,12 +146,12 @@ class StatisticsService extends LazyLogging {
       entityManager.detach(submitter)
       if (counter % 10000 == 0) {
         logger.info(s"\tCompleted Submitter Count #${counter}")
-        entityManager.flush()
-        entityManager.clear()
       }
     }
     val finalCount = submitterCounter.size.toLong
     submitterCounter.clear()
+    entityManager.flush()
+    entityManager.clear()
     finalCount
   }
   /**
@@ -154,6 +160,7 @@ class StatisticsService extends LazyLogging {
     * @return
     **/
 
+  @Transactional
   def updateGlobalStatistics(): String = {
     globalStatisticsRepository.deleteAll()
     // Spectrum count
@@ -168,6 +175,8 @@ class StatisticsService extends LazyLogging {
     // Save global statistics
     globalStatisticsRepository.save(new StatisticsGlobal(new Date, spectrumCount, compoundCount, metaDataCount,
       metaDataValueCount, tagCount, tagValueCount, submitterCount))
+    entityManager.flush()
+    entityManager.clear()
 
     "Global Statistics Updated"
   }
@@ -193,6 +202,8 @@ class StatisticsService extends LazyLogging {
     compoundClassStatisticsService.updateCompoundClassStatistics()
     tagStatisticsService.updateTagStatistics()
     updateGlobalStatistics()
+    entityManager.flush()
+    entityManager.clear()
     logger.info(s"Statistics Update is Completed!")
   }
 }

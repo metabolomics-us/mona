@@ -26,7 +26,9 @@ class SubmitterStatisticsService extends LazyLogging{
   @Autowired
   private val entityManager: EntityManager = null
 
-  def updateSubmitterStatisticsHelper(): (Map[String, SpectrumSubmitterStatistics], Map[String, Integer], Map[String, ListBuffer[Double]]) = {
+  @Transactional
+  def updateSubmitterStatistics(): String = {
+    statisticsSubmitterRepository.deleteAll()
     val submitterObjects: Map[String, SpectrumSubmitterStatistics] = Map()
     val submitterCounter: Map[String, Integer] = Map()
     val submitterScores: Map[String, ListBuffer[Double]] = Map()
@@ -45,18 +47,9 @@ class SubmitterStatisticsService extends LazyLogging{
 
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted Submitter Object #${counter}")
-        entityManager.flush()
-        entityManager.clear()
       }
       entityManager.detach(submitter)
     }
-    (submitterObjects, submitterCounter, submitterScores)
-  }
-
-  @Transactional
-  def updateSubmitterStatistics(): String = {
-    statisticsSubmitterRepository.deleteAll()
-    val (submitterObjects, submitterCounter, submitterScores) = updateSubmitterStatisticsHelper()
 
     submitterObjects.foreach { case (key, value) =>
       val averagedScore = submitterScores(key).sum / submitterScores(key).length
@@ -67,6 +60,8 @@ class SubmitterStatisticsService extends LazyLogging{
     submitterObjects.clear()
     submitterCounter.clear()
     submitterScores.clear()
+    entityManager.flush()
+    entityManager.clear()
     "Submitter Statistics Completed"
   }
   /**

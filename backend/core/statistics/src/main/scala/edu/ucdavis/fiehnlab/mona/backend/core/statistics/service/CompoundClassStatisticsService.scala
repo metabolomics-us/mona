@@ -117,7 +117,62 @@ class CompoundClassStatisticsService extends LazyLogging{
     */
   @Transactional
   def updateCompoundClassStatistics(): String = {
-    val finalMap = updateCompoundClassStatisticsHelper()
+    val finalMap: Map[String, Map[String, ArrayBuffer[String]]] = Map()
+    val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
+    val compoundClasses: Map[String, String] = Map()
+    val compoundClassString: ArrayBuffer[String] = ArrayBuffer()
+    var counter = 0
+    compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
+
+      compound.getMetaData.asScala.foreach { metadata =>
+        if (metadata.getName == "InChIKey") {
+          inchiKeys.append(metadata.getValue.substring(0, 14))
+        }
+      }
+      compound.getClassification.asScala.foreach { classification =>
+        compoundClasses(classification.getName) = classification.getValue
+      }
+
+      if (compoundClasses.contains("kingdom")) {
+        if (compoundClasses("kingdom") != "Chemical entities") {
+          compoundClassString.append(compoundClasses("kingdom"))
+        }
+      }
+      if (compoundClasses.contains("superclass")) {
+        compoundClassString.append(compoundClasses("superclass"))
+      }
+      if (compoundClasses.contains("class")) {
+        compoundClassString.append(compoundClasses("class"))
+      }
+      if (compoundClasses.contains("subclass")) {
+        compoundClassString.append(compoundClasses("subclass"))
+      }
+
+      if (compoundClassString.length > 0) {
+        for (i <- 0 until compoundClassString.length) {
+          val combinedString = compoundClassString.slice(0, i + 1).mkString("|")
+          if (!finalMap.contains(combinedString)) {
+            finalMap(combinedString) = Map("spectra" -> ArrayBuffer[String](compound.getSpectrum.getId), "compounds" -> (ArrayBuffer[String]() ++= inchiKeys))
+          } else {
+            if (finalMap(combinedString).contains("spectra")) {
+              finalMap(combinedString)("spectra").append(compound.getSpectrum.getId)
+            }
+            if (finalMap(combinedString).contains("compounds")) {
+              finalMap(combinedString)("compounds") ++= inchiKeys
+            }
+          }
+        }
+      }
+      counter += 1
+
+      if (counter % 100000 == 0) {
+        logger.info(s"\tCompleted Compound Object #${counter}")
+      }
+      inchiKeys.clearAndShrink()
+      compoundClasses.clear()
+      compoundClassString.clearAndShrink()
+      entityManager.detach(compound)
+    }
     finalMap.foreach { case (key, value) =>
       val spectraCount = finalMap(key)("spectra").distinct.length
       val compoundsCount = finalMap(key)("compounds").distinct.length
@@ -126,6 +181,11 @@ class CompoundClassStatisticsService extends LazyLogging{
       entityManager.detach(statsCompoundClass)
     }
     finalMap.clear()
+    inchiKeys.clearAndShrink()
+    compoundClasses.clear()
+    compoundClassString.clearAndShrink()
+    entityManager.flush()
+    entityManager.clear()
     "Compound Class Statistics Completed"
   }
 }
