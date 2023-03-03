@@ -107,9 +107,7 @@ class StatisticsRestController {
     * @return
    * */
   @RequestMapping(path = Array("/statistics/update"), method = Array(RequestMethod.POST))
-  @Async
   @ResponseBody
-  @Transactional
   def updateStatistics(): String = {
     statisticsService.updateStatistics()
     entityManager.flush()
