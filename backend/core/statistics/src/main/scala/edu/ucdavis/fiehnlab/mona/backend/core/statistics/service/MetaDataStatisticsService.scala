@@ -6,9 +6,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import javax.persistence.EntityManager
+import org.springframework.transaction.annotation.{Propagation, Transactional}
 
+import javax.persistence.EntityManager
 import scala.collection.mutable.Map
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
@@ -83,11 +83,11 @@ class MetaDataStatisticsService extends LazyLogging{
         metaDataCounterMap(metaData.getName) = 1
       }
       counter += 1
+      entityManager.detach(metaData)
 
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted MetaData Object #${counter}")
       }
-      entityManager.detach(metaData)
     }
 
     metaDataNameMap.foreach{ case(key, value) =>

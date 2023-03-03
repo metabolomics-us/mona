@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.{Async, Scheduled}
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import javax.persistence.EntityManager
+import org.springframework.transaction.annotation.{Propagation, Transactional}
 
+import javax.persistence.EntityManager
 import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
@@ -103,7 +103,6 @@ class StatisticsService extends LazyLogging {
     finalCount
   }
 
-
   def generateTagCount(): Long = {
     val tagsCounter: Map[String, Int] = Map()
     var counter = 0
@@ -186,9 +185,8 @@ class StatisticsService extends LazyLogging {
   /**
     * Update all statistics
    * */
-  @Async
   @Scheduled(cron = "0 0 0 * * *")
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   def updateStatistics(): Unit = {
     metaDataStatisticsService.updateMetaDataStatistics()
     submitterStatisticsService.updateSubmitterStatistics()

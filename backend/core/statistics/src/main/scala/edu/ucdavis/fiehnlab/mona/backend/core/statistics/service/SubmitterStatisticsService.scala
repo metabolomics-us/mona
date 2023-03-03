@@ -7,9 +7,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import javax.persistence.EntityManager
+import org.springframework.transaction.annotation.{Propagation, Transactional}
 
+import javax.persistence.EntityManager
 import scala.collection.mutable.{ListBuffer, Map}
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
@@ -44,11 +44,12 @@ class SubmitterStatisticsService extends LazyLogging{
         submitterScores(submitter.getEmailAddress) = ListBuffer[Double](submitter.getScore)
       }
       counter += 1
+      entityManager.detach(submitter)
 
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted Submitter Object #${counter}")
       }
-      entityManager.detach(submitter)
+
     }
 
     submitterObjects.foreach { case (key, value) =>
