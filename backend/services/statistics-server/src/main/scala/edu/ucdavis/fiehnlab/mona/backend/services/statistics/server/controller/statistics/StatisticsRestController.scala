@@ -11,9 +11,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsCompoundClasses
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmitter
 import org.springframework.context.annotation.Profile
-import org.springframework.transaction.annotation.Transactional
-
-import javax.persistence.EntityManager
 
 
 /**
@@ -39,9 +36,6 @@ class StatisticsRestController {
 
   @Autowired
   val submitterStatisticsService: SubmitterStatisticsService = null
-
-  @Autowired
-  private val entityManager: EntityManager = null
 
 
   /**
@@ -110,8 +104,6 @@ class StatisticsRestController {
   @ResponseBody
   def updateStatistics(): String = {
     statisticsService.updateStatistics()
-    entityManager.flush()
-    entityManager.clear()
     "Statistics update queued"
   }
 }
