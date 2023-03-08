@@ -6,9 +6,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsTag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import javax.persistence.EntityManager
+import org.springframework.transaction.annotation.{Propagation, Transactional}
 
+import javax.persistence.EntityManager
 import scala.collection.mutable.Map
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
@@ -31,8 +31,15 @@ class TagStatisticsService extends LazyLogging{
 
   @Autowired
   private val entityManager: EntityManager = null
+  /**
+   * Collect a list of unique tags with their respective counts
+   *
+   * @return
+   * */
+  @Transactional
+  def updateTagStatistics(): String = {
+    statisticsTagRepository.deleteAll()
 
-  def updateTagStatisticsHelper(): (Map[String, Int], Map[String, Boolean]) = {
     val tagsCounter: Map[String, Int] = Map()
     val tagsRuleBase: Map[String, Boolean] = Map()
     var counter = 0
@@ -49,29 +56,22 @@ class TagStatisticsService extends LazyLogging{
         }
       }
       counter += 1
+      entityManager.detach(tag)
 
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted Tag Object #${counter}")
       }
-      entityManager.detach(tag)
     }
-    (tagsCounter, tagsRuleBase)
-  }
-  /**
-   * Collect a list of unique tags with their respective counts
-   *
-   * @return
-   * */
-  @Transactional()
-  def updateTagStatistics(): String = {
-    statisticsTagRepository.deleteAll()
-
-    val (tagsCounter, tagsRuleBase) = updateTagStatisticsHelper()
 
     tagsCounter.foreach { case (key, value) =>
       val newStatisticTag = new StatisticsTag(key, tagsRuleBase(key), value, if (libraryRepository.existsByLibrary(key)) "library" else null)
       statisticsTagRepository.save(newStatisticTag)
+      //entityManager.detach(newStatisticTag)
     }
+    tagsCounter.clear()
+    tagsRuleBase.clear()
+    entityManager.flush()
+    entityManager.clear()
     "Tag Statistics Completed"
   }
 

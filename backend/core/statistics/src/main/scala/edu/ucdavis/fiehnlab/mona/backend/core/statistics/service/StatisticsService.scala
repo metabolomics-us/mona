@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.{Async, Scheduled}
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import javax.persistence.EntityManager
+import org.springframework.transaction.annotation.{Propagation, Transactional}
 
+import javax.persistence.EntityManager
 import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
@@ -61,6 +61,7 @@ class StatisticsService extends LazyLogging {
 
 
   def generateCompoundCount(): Long = {
+    var counter = 0
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
     compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
       compound.getMetaData.asScala.foreach { metadata =>
@@ -68,26 +69,46 @@ class StatisticsService extends LazyLogging {
           inchiKeys.append(metadata.getValue.substring(0, 14))
         }
       }
+      counter+=1
       entityManager.detach(compound)
+      if (counter % 100000 == 0) {
+        logger.info(s"\tCompleted Compound Count #${counter}")
+      }
     }
-    inchiKeys.distinct.length
+    val finalCount = inchiKeys.distinct.length
+    inchiKeys.clearAndShrink()
+    entityManager.flush()
+    entityManager.clear()
+    finalCount
   }
 
 
   def generateMetaDataCount(): Long = {
     val metaDataCounterMap: Map[String, Int] = Map()
+    var counter = 0
     metaDataRepository.streamAllBy().toScala(Iterator).foreach{ metaData =>
       if(!metaDataCounterMap.contains(metaData.getName)) {
         metaDataCounterMap(metaData.getName) = 1
       }
+      counter+=1
       entityManager.detach(metaData)
+      if (counter % 100000 == 0) {
+        logger.info(s"\tCompleted MetaData Count #${counter}")
+        entityManager.flush()
+        entityManager.clear()
+      }
     }
-    metaDataCounterMap.size.toLong
+    val finalCount = metaDataCounterMap.size.toLong
+    metaDataCounterMap.clear()
+    entityManager.flush()
+    entityManager.clear()
+    finalCount
   }
 
 
   def generateTagCount(): Long = {
     val tagsCounter: Map[String, Int] = Map()
+    var counter = 0
     tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
       if(tag.getSpectrum == null && tag.getCompound == null) {
         logger.debug(s"Exclude Library Tag Duplicates")
@@ -96,21 +117,38 @@ class StatisticsService extends LazyLogging {
           tagsCounter(tag.getText) = 1
         }
       }
+      counter+=1
       entityManager.detach(tag)
+      if (counter % 100000 == 0) {
+        logger.info(s"\tCompleted Tag Count #${counter}")
+      }
     }
-    tagsCounter.size.toLong
+    val finalCount = tagsCounter.size.toLong
+    tagsCounter.clear()
+    entityManager.flush()
+    entityManager.clear()
+    finalCount
   }
 
 
   def generateSubmitterCount(): Long = {
     val submitterCounter: Map[String, Integer] = Map()
+    var counter = 0
     spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
       if (!submitterCounter.contains(submitter.getEmailAddress)) {
         submitterCounter(submitter.getEmailAddress) = 1
       }
+      counter+=1
       entityManager.detach(submitter)
+      if (counter % 10000 == 0) {
+        logger.info(s"\tCompleted Submitter Count #${counter}")
+      }
     }
-    submitterCounter.size.toLong
+    val finalCount = submitterCounter.size.toLong
+    submitterCounter.clear()
+    entityManager.flush()
+    entityManager.clear()
+    finalCount
   }
   /**
     * Update the data in the global statistics repository
@@ -132,6 +170,8 @@ class StatisticsService extends LazyLogging {
     // Save global statistics
     globalStatisticsRepository.save(new StatisticsGlobal(new Date, spectrumCount, compoundCount, metaDataCount,
       metaDataValueCount, tagCount, tagValueCount, submitterCount))
+    entityManager.flush()
+    entityManager.clear()
 
     "Global Statistics Updated"
   }
@@ -148,15 +188,16 @@ class StatisticsService extends LazyLogging {
   /**
     * Update all statistics
    * */
-  @Async
   @Scheduled(cron = "0 0 0 * * *")
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   def updateStatistics(): Unit = {
     metaDataStatisticsService.updateMetaDataStatistics()
     submitterStatisticsService.updateSubmitterStatistics()
     compoundClassStatisticsService.updateCompoundClassStatistics()
     tagStatisticsService.updateTagStatistics()
     updateGlobalStatistics()
+    entityManager.flush()
+    entityManager.clear()
     logger.info(s"Statistics Update is Completed!")
   }
 }

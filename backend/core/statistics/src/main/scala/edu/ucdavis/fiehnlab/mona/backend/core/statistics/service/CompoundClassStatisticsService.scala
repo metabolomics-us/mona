@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsCompou
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.annotation.{Propagation, Transactional}
 
 import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.jdk.CollectionConverters._
@@ -49,7 +49,13 @@ class CompoundClassStatisticsService extends LazyLogging{
     */
   def countCompoundClassStatistics: Long = statisticsCompoundClassesRepository.count()
 
-  def updateCompoundClassStatisticsHelper(): Map[String, Map[String,ArrayBuffer[String]]] = {
+  /**
+    * Collect a list of compound class groups with spectrum and compound counts
+    *
+    * @return
+    */
+  @Transactional
+  def updateCompoundClassStatistics(): String = {
     val finalMap: Map[String, Map[String, ArrayBuffer[String]]] = Map()
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
     val compoundClasses: Map[String, String] = Map()
@@ -106,22 +112,19 @@ class CompoundClassStatisticsService extends LazyLogging{
       compoundClassString.clearAndShrink()
       entityManager.detach(compound)
     }
-    finalMap
-  }
-  /**
-    * Collect a list of compound class groups with spectrum and compound counts
-    *
-    * @return
-    */
-  @Transactional()
-  def updateCompoundClassStatistics(): String = {
-    val finalMap = updateCompoundClassStatisticsHelper()
     finalMap.foreach { case (key, value) =>
       val spectraCount = finalMap(key)("spectra").distinct.length
       val compoundsCount = finalMap(key)("compounds").distinct.length
       val statsCompoundClass = new StatisticsCompoundClasses(key,spectraCount,compoundsCount)
       statisticsCompoundClassesRepository.save(statsCompoundClass)
+      entityManager.detach(statsCompoundClass)
     }
+    finalMap.clear()
+    inchiKeys.clearAndShrink()
+    compoundClasses.clear()
+    compoundClassString.clearAndShrink()
+    entityManager.flush()
+    entityManager.clear()
     "Compound Class Statistics Completed"
   }
 }
