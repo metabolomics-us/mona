@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.statistics
+package edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.controller.statistics
 
 import java.util.concurrent.Future
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service._
@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsCompoundClasses
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmitter
 import org.springframework.context.annotation.Profile
+
 
 /**
   * Created by sajjan on 8/4/16.
@@ -100,11 +101,9 @@ class StatisticsRestController {
     * @return
    * */
   @RequestMapping(path = Array("/statistics/update"), method = Array(RequestMethod.POST))
-  @Async
   @ResponseBody
   def updateStatistics(): String = {
     statisticsService.updateStatistics()
-
     "Statistics update queued"
   }
 }
