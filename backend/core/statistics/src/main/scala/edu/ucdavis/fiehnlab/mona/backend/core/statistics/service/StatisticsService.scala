@@ -59,6 +59,7 @@ class StatisticsService extends LazyLogging {
   @Autowired
   private val entityManager: EntityManager = null
 
+
   def generateCompoundCount(): Long = {
     var counter = 0
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
@@ -81,6 +82,7 @@ class StatisticsService extends LazyLogging {
     finalCount
   }
 
+
   def generateMetaDataCount(): Long = {
     val metaDataCounterMap: Map[String, Int] = Map()
     var counter = 0
@@ -102,6 +104,7 @@ class StatisticsService extends LazyLogging {
     entityManager.clear()
     finalCount
   }
+
 
   def generateTagCount(): Long = {
     val tagsCounter: Map[String, Int] = Map()
