@@ -25,5 +25,5 @@ class EmbeddedRestServerConfig extends LazyLogging {
 }
 
 @SpringBootApplication(scanBasePackageClasses = Array())
-@Import(Array(classOf[PostgresqlConfiguration])
+@Import(Array(classOf[PostgresqlConfiguration]))
 class TestConfig
