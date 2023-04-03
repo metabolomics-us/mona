@@ -157,7 +157,7 @@ services:
         max-size: "100M"
 
   statistics:
-    image: public.ecr.aws/fiehnlab/mona-statistics-server:test
+    image: public.ecr.aws/fiehnlab/mona-statistics-server:prod
     depends_on:
       - webhooks
       - discovery
