@@ -39,10 +39,6 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-            <artifactId>statistics</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
