@@ -12,6 +12,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsCompou
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmitter
 import org.springframework.context.annotation.Profile
 
+
 /**
   * Created by sajjan on 8/4/16.
 **/
@@ -100,11 +101,9 @@ class StatisticsRestController {
     * @return
    * */
   @RequestMapping(path = Array("/statistics/update"), method = Array(RequestMethod.POST))
-  @Async
   @ResponseBody
   def updateStatistics(): String = {
     statisticsService.updateStatistics()
-
     "Statistics update queued"
   }
 }

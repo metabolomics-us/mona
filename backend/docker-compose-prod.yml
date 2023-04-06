@@ -157,7 +157,7 @@ services:
         max-size: "100M"
 
   statistics:
-    image: public.ecr.aws/fiehnlab/mona-statistics-server:test
+    image: public.ecr.aws/fiehnlab/mona-statistics-server:prod
     depends_on:
       - webhooks
       - discovery
@@ -203,7 +203,8 @@ services:
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xss4m -Xmx4g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       options:
-        max-size: "100M"
+        max-size: "10G"
+        max-file: "3"
 
   # Download service for scheduling and running download jobs
   downloader:

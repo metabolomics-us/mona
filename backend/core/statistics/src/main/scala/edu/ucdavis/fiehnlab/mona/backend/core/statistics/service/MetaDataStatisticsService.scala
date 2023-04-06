@@ -6,9 +6,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import javax.persistence.EntityManager
+import org.springframework.transaction.annotation.{Propagation, Transactional}
 
+import javax.persistence.EntityManager
 import scala.collection.mutable.Map
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters.StreamHasToScala
@@ -57,14 +57,19 @@ class MetaDataStatisticsService extends LazyLogging{
     * @return
     */
   def countMetaDataStatistics: Long = statisticsMetaDataRepository.count()
-
-  def updateMetaDataStatisticsHelper(): (Map[String, Map[String, Int]],Map[String, Int]) = {
+  /**
+    * Update the data in the metadata statistics repository
+    *
+    * @return
+    */
+  @Transactional
+  def updateMetaDataStatistics(): String = {
+    statisticsMetaDataRepository.deleteAll()
     val metaDataNameMap: Map[String, Map[String, Int]] = Map()
     val metaDataCounterMap: Map[String, Int] = Map()
     var counter = 0
 
     metaDataRepository.streamAllBy().toScala(Iterator).foreach { metaData =>
-
       if (metaDataNameMap.contains(metaData.getName)) {
         if (metaDataNameMap(metaData.getName).contains(metaData.getValue)) {
           metaDataNameMap(metaData.getName)(metaData.getValue) += 1
@@ -78,31 +83,26 @@ class MetaDataStatisticsService extends LazyLogging{
         metaDataCounterMap(metaData.getName) = 1
       }
       counter += 1
+      entityManager.detach(metaData)
 
       if (counter % 100000 == 0) {
         logger.info(s"\tCompleted MetaData Object #${counter}")
       }
-      entityManager.detach(metaData)
     }
-    (metaDataNameMap, metaDataCounterMap)
-  }
-  /**
-    * Update the data in the metadata statistics repository
-    *
-    * @return
-    */
-  @Transactional()
-  def updateMetaDataStatistics(): String = {
-    statisticsMetaDataRepository.deleteAll()
 
-    val (metaDataNameMap, metaDataCounterMap) = updateMetaDataStatisticsHelper()
     metaDataNameMap.foreach{ case(key, value) =>
       val metaDataValueList: List[MetaDataValueCount] = value.toList.map{case(value, count) =>
         new MetaDataValueCount(value, count)
       }
-      statisticsMetaDataRepository.save(new StatisticsMetaData(key, metaDataCounterMap(key), metaDataValueList.asJava))
-    }
+      val entry = new StatisticsMetaData(key, metaDataCounterMap(key), metaDataValueList.asJava)
+      statisticsMetaDataRepository.save(entry)
+      entityManager.detach(entry)
 
+    }
+    metaDataNameMap.clear()
+    metaDataCounterMap.clear()
+    entityManager.flush()
+    entityManager.clear()
     "MetaData Statistics Updated"
   }
 }

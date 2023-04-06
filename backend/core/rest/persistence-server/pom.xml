@@ -35,11 +35,6 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-            <artifactId>statistics</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>edu.ucdavis.fiehnlab.splash</groupId>
             <artifactId>core</artifactId>
         </dependency>
