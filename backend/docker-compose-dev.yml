@@ -28,8 +28,11 @@ services:
       - postgresql-data:/var/lib/postgresql/data
       - ./postgresql-dev.conf:/etc/postgresql.conf
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: postgres
 
   postgresql-hero:
     image: ankane/pghero
@@ -46,8 +49,11 @@ services:
       - "15672:15672"
       - "5672:5672"
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: rabbitmq
 
 
   #
@@ -68,8 +74,11 @@ services:
       - GIT_USER=${GIT_USER}
       - GIT_PASS=${GIT_PASS}
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: discovery-service
 
   config-server:
     image: public.ecr.aws/fiehnlab/mona-config:test
@@ -83,8 +92,11 @@ services:
       - GIT_USER=${GIT_USER}
       - GIT_PASS=${GIT_PASS}
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: config-service
 
 
   #
@@ -98,8 +110,11 @@ services:
       - config-server
     entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: bootstrap-service
 #
 #  # Webhook support to notify external apis
   webhooks:
@@ -110,8 +125,11 @@ services:
       - config-server
     entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: webhooks-service
 #
 #  # Scheduler for curation jobs
   curationScheduler:
@@ -123,8 +141,11 @@ services:
       - webhooks
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: curation-scheduler-service
 
   #
   # Persistence server, which utilizes above services, and other dependent services
@@ -138,8 +159,11 @@ services:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: persistence-service
 
   statistics:
     image: public.ecr.aws/fiehnlab/mona-statistics-server:test
@@ -148,16 +172,22 @@ services:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: statistics-service
 
   # Main authentication service
   auth:
     image: public.ecr.aws/fiehnlab/mona-auth-server:test
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: auth-service
 
   # MoNA similarity service
   similarity:
@@ -169,8 +199,11 @@ services:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx3g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: similarity-service
 
 
   #
@@ -188,8 +221,11 @@ services:
       - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: proxy-service
 
   # Download service for scheduling and running download jobs
   downloader:
@@ -203,8 +239,11 @@ services:
     volumes:
       - downloader-data:/data
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: downloader-service
 
   # Run scheduled curation tasks
   curationRunner:
@@ -214,5 +253,8 @@ services:
       - webhooks
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
+      driver: awslogs
       options:
-        max-size: "100M"
+        awslogs-region: us-west-2
+        awslogs-group: mona-test-logs
+        awslogs-stream: curation-runner-service
