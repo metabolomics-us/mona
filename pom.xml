@@ -18,12 +18,12 @@
     </parent>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <encoding>UTF-8</encoding>
         <scala.version>2.13</scala.version>
         <scala.minor.version>6</scala.minor.version>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <jackson.version>2.13.1</jackson.version>
     </properties>
 
@@ -183,7 +183,7 @@
                         <plugin>
                             <groupId>net.alchim31.maven</groupId>
                             <artifactId>scala-maven-plugin</artifactId>
-                            <version>4.6.1</version>
+                            <version>4.7.0</version>
                         </plugin>
                     </plugins>
                 </pluginManagement>
@@ -210,7 +210,7 @@
                     <plugin>
                         <groupId>net.alchim31.maven</groupId>
                         <artifactId>scala-maven-plugin</artifactId>
-                        <version>4.6.1</version>
+                        <version>4.7.0</version>
                         <executions>
                             <execution>
                                 <id>scala-compile</id>
@@ -232,7 +232,12 @@
                             <scalaVersion>${scala.version}.${scala.minor.version}</scalaVersion>
                             <jvmArgs>
                                 <jvmArg>-Xms64m</jvmArg>
-                                <jvmArg>-Xmx2048m</jvmArg>
+                                <jvmArg>-Xmx8192m</jvmArg>
+                                <jvmArg>-XX:+UseParallelGC</jvmArg>
+                                <jvmArg>-XX:ReservedCodeCacheSize=2G</jvmArg>
+                                <jvmArg>-XX:+UseCodeCacheFlushing</jvmArg>
+                                <jvmArg>--add-opens=java.base/sun.nio.ch=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens java.base/java.lang=ALL-UNNAMED</jvmArg>
                             </jvmArgs>
                         </configuration>
                     </plugin>
@@ -322,7 +327,7 @@
                         <plugin>
                             <groupId>net.alchim31.maven</groupId>
                             <artifactId>scala-maven-plugin</artifactId>
-                            <version>4.6.1</version>
+                            <version>4.7.0</version>
                         </plugin>
                     </plugins>
                 </pluginManagement>
@@ -348,7 +353,7 @@
                     <plugin>
                         <groupId>net.alchim31.maven</groupId>
                         <artifactId>scala-maven-plugin</artifactId>
-                        <version>4.6.1</version>
+                        <version>4.7.0</version>
                         <executions>
                             <execution>
                                 <id>scala-compile</id>
@@ -364,6 +369,8 @@
                             <jvmArgs>
                                 <jvmArg>-Xms64m</jvmArg>
                                 <jvmArg>-Xmx1024m</jvmArg>
+                                <jvmArg>-XX:+UseParallelGC</jvmArg>
+                                <jvmArg>-XX:ReservedCodeCacheSize=4G</jvmArg>
                             </jvmArgs>
                         </configuration>
                     </plugin>
@@ -460,7 +467,7 @@
 
             <properties>
                 <docker.registry>public.ecr.aws/fiehnlab</docker.registry>
-                <docker.baseImage>openjdk:8</docker.baseImage>
+                <docker.baseImage>amazoncorretto:17.0.6</docker.baseImage>
                 <docker.imagePrefix>mona</docker.imagePrefix>
                 <docker.imageName>${docker.imagePrefix}-${project.name}</docker.imageName>
                 <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
@@ -620,7 +627,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
