@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf
 
-import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 
 import java.io.{PrintWriter, Writer}
@@ -10,7 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 /**
   * Created by sajjan on 2/21/18.
   */
-class SDFWriter extends DomainWriter with LazyLogging{
+class SDFWriter extends DomainWriter{
 
   override val CRLF: Boolean = true
 
@@ -33,8 +32,7 @@ class SDFWriter extends DomainWriter with LazyLogging{
     */
   private def buildMOL(compound: Compound, writer: PrintWriter): Unit = {
     if (compound != null && compound.getMolFile != null && compound.getMolFile != "") {
-      //Remove blank spaces and first blank line
-      logger.info(s"${compound.getMolFile}")
+      //Remove bad spaces
       writer.println(compound.getMolFile.replaceAll("\\s+$", ""))
     } else {
       // Use NIST-style entry for records with no MOL data
