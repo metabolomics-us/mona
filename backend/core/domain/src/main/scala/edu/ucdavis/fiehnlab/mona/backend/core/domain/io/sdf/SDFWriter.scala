@@ -32,7 +32,8 @@ class SDFWriter extends DomainWriter{
     */
   private def buildMOL(compound: Compound, writer: PrintWriter): Unit = {
     if (compound != null && compound.getMolFile != null && compound.getMolFile != "") {
-      writer.println(compound.getMolFile.split("M  END").head.replaceAll("\\s+$", ""))
+      //Remove bad spaces
+      writer.println(compound.getMolFile.replaceAll("\\s+$", ""))
     } else {
       // Use NIST-style entry for records with no MOL data
       if (compound.getNames.asScala.nonEmpty) {
