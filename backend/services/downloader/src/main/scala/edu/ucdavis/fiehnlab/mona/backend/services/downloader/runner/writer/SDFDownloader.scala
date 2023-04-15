@@ -32,7 +32,7 @@ class SDFDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = 
     *
     * @return
     */
-  override def getRecordSeparator: String = "\n"
+  override def getRecordSeparator: String = ""
 
   /**
     *
