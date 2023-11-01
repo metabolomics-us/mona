@@ -60,15 +60,19 @@ class SimilarityPopulationService extends LazyLogging {
     var counter: Int = 0
     spectrumRepository.streamAllBy().toScala(Iterator).foreach { spectrum =>
       // Add precursor information if available
-      val mainIndexSize: Int = addToIndex(spectrum, "default", IndexType.DEFAULT)
-      val peakIndexSize: Int = addToIndex(spectrum, "default", IndexType.PEAK)
+      try {
+        val mainIndexSize: Int = addToIndex(spectrum, "default", IndexType.DEFAULT)
+        val peakIndexSize: Int = addToIndex(spectrum, "default", IndexType.PEAK)
 
-      counter += 1
+        counter += 1
 
-      if (counter % 10000 == 0) {
-        logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.getId}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
-      } else {
-        logger.debug(s"\tIndexed spectrum #$counter with id ${spectrum.getId}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
+        if (counter % 10000 == 0) {
+          logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.getId}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
+        } else {
+          logger.debug(s"\tIndexed spectrum #$counter with id ${spectrum.getId}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
+        }
+      } catch {
+        case nfe: NumberFormatException => logger.error(s"Invalid spectrum: ${spectrum}")
       }
       entityManager.detach(spectrum)
     }
