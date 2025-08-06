@@ -18,15 +18,15 @@
 - Gain Access to the following
   - Internal mona-config private repo
     - You'll need admin access and will need to generate a Personal Access Token (https://github.com/settings/tokens)
-    - Then open your `~/.bash_rc` and set the following variables, 'GIT_USER' and 'GIT_PASS' to your github username and
+    - Then open your `~/.bash_rc` and set 'GIT_USER' and 'GIT_PASS' to your GitHub username and
       new personal access token. This allows the discovery service to work as intended
     - Note: You'll need to set these tokens on the IPA and GOSE servers as they expire every year (you can configure
       how quickly these expire).
-  - Access to AWS account and ability to push to ECR
+  - Access to AWS account and the ability to push to ECR
   - Admin access to public mona repo
   - You'll need a settings.xml file for your maven 'User Settings File' this will include the nexus profile
     and all the necessary repo's for pulling down libraries. Please ask a developer on the team for this config
-    and store file at `~/.m2`
+    and store the file at `~/.m2`
 
 
 ## Starting Development:
@@ -52,7 +52,7 @@
 
 ## Generate new Docker Images:
 - Make sure the following Maven profiles are selected (and only those): nexus, scala, docker
-- The following services can be built into docker images: discovery, bootstrap, webhooks-server,curation-scheduler,
+- The following services can be built into docker images: discovery, bootstrap, webhooks-server, curation-scheduler,
   repository, persistence-server, auth-server, similarity, proxy, download-scheduler, and curation-runner
 - `mvn clean install` will build a local docker image for the corresponding service
 - `mvn clean deploy` will build the docker image and deploy it to ECR (make sure you signed in to AWS CLI)
@@ -66,9 +66,9 @@
 - Make sure you added framework support for scala 2.13 in IntelliJ for the mona project
 - When making a new branch for git, naming convention should typically have a ticket number (i.e. FIEHN-1234) following
   a slash and a description of the ticket (i.e. FIEHN-1234/ThisIsATicket).
-- If your having issues pulling packages with maven, you can troubleshoot with deleting your `~/.m2/repository` directory.
+- If you're having issues pulling packages with maven, you can troubleshoot with deleting your `~/.m2/repository` directory.
   Additionally, ensure you have the correct 'settings.xml' file in `~/.m2`. If problems still persist, try the 'Invalidate
-  Caches' under File tab in IntelliJ IDEA.
+  Caches' under the File tab in IntelliJ IDEA.
 
 
 ### ports for cluster service nodes:

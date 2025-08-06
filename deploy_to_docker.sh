@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "============================="
-echo "    DEPLOYING IMAGES         "
+echo "      DEPLOYING IMAGES       "
 echo "============================="
 
 docker push public.ecr.aws/fiehnlab/mona-auth-server:prod
