@@ -10,3 +10,4 @@ backend/load_test/*.hprof
 ./data
 git.properties
 target/
+nginx_v2/
