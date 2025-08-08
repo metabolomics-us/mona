@@ -1,0 +1,274 @@
+version: "3"
+
+volumes:
+  postgresql-data:
+  downloader-data:
+
+services:
+  #
+  # Databases & Messaging
+  #
+
+  postgresql:
+    image: postgres:13.4
+    hostname: postgresql
+    restart: always
+    #THIS MUST BE ADDED AT SERVICE LEVEL
+    shm_size: 4gb
+    stop_grace_period: 5m
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c config_file=/etc/postgresql.conf
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${MONA_USER}
+      - POSTGRES_PASSWORD=${MONA_PASS}
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+      - ./postgresql-dev.conf:/etc/postgresql.conf
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: postgres
+
+  postgresql-hero:
+    image: ankane/pghero
+    ports:
+      - "8081:8080"
+    environment:
+      - DATABASE_URL=postgres://${MONA_USER}:${MONA_PASS}@postgresql:5432/mona
+    deploy:
+      mode: replicated
+
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: rabbitmq
+
+
+  #
+  # MoNA base services
+  #
+
+  # The discovery service provided us with a local overview of our services
+  # and allows for easy scaling and load balancing using our proxy at a later stage
+  discovery:
+    image: public.ecr.aws/fiehnlab/mona-discovery:test
+    ports:
+      - "8761:8761"
+    depends_on:
+      - postgresql
+    entrypoint: bash -c "./wait-for-it.sh postgresql:5432 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.server.git.username=$GIT_USER -Dspring.cloud.config.server.git.password=$GIT_PASS -Dspring.profiles.active=docker -jar *.jar"
+    environment:
+      - JAVA_OPTS='-Xmx2g -XX:+UseParallelGC'
+      - GIT_USER=${GIT_USER}
+      - GIT_PASS=${GIT_PASS}
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: discovery-service
+
+  config-server:
+    image: public.ecr.aws/fiehnlab/mona-config:test
+    ports:
+      - "1111:1111"
+    depends_on:
+      - postgresql
+    entrypoint: bash -c "./wait-for-it.sh postgresql:5432 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker,prod -Dspring.cloud.config.server.git.username=$GIT_USER -Dspring.cloud.config.server.git.password=$GIT_PASS -jar *.jar"
+    environment:
+      - JAVA_OPTS='-Xmx2g -XX:+UseParallelGC'
+      - GIT_USER=${GIT_USER}
+      - GIT_PASS=${GIT_PASS}
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: config-service
+
+
+  #
+  # Initial services to start up
+  #
+
+  # Bootstrap service which pre-populated and synchronizes the databases
+  bootstrap:
+    image: public.ecr.aws/fiehnlab/mona-bootstrap:test
+    depends_on:
+      - config-server
+    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: bootstrap-service
+
+#  # Webhook support to notify external apis
+  webhooks:
+    image: public.ecr.aws/fiehnlab/mona-webhooks-server:test
+    ports:
+      - "4444:4444"
+    depends_on:
+      - config-server
+    entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: webhooks-service
+
+#  # Scheduler for curation jobs
+  curationScheduler:
+    image: public.ecr.aws/fiehnlab/mona-curation-scheduler:test
+    ports:
+      - "5555:5555"
+    depends_on:
+      - config-server
+      - webhooks
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: curation-scheduler-service
+
+  #
+  # Persistence server, which utilizes above services, and other dependent services
+  #
+
+  # Persistence service with query interface
+  persistence:
+    image: public.ecr.aws/fiehnlab/mona-persistence-server:test
+    depends_on:
+      - webhooks
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: persistence-service
+
+  statistics:
+    image: public.ecr.aws/fiehnlab/mona-statistics-server:test
+    depends_on:
+      - webhooks
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: statistics-service
+
+  # Main authentication service
+  auth:
+    image: public.ecr.aws/fiehnlab/mona-auth-server:test
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: auth-service
+
+  # MoNA similarity service
+  similarity:
+    image: public.ecr.aws/fiehnlab/mona-similarity:test
+    ports:
+    - "9999:9999"
+    depends_on:
+      - webhooks
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx3g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: similarity-service
+
+
+  #
+  # Proxy and additional standalone services
+  #
+
+  # The main entrypoint for MoNA
+  proxy:
+    image: public.ecr.aws/fiehnlab/mona-proxy:test
+    ports:
+      - "8080:8080"
+    depends_on:
+      - webhooks
+    environment:
+      - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: proxy-service
+
+  # Download service for scheduling and running download jobs
+  downloader:
+    image: public.ecr.aws/fiehnlab/mona-download-scheduler:test
+    ports:
+      - "7777:7777"
+    depends_on:
+      - persistence
+      - webhooks
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    volumes:
+      - downloader-data:/data
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: downloader-service
+
+  # Run scheduled curation tasks
+  curationRunner:
+    image: public.ecr.aws/fiehnlab/mona-curation-runner:test
+    depends_on:
+      - persistence
+      - webhooks
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    logging:
+      driver: json-file
+#      driver: awslogs
+#      options:
+#        awslogs-region: us-west-2
+#        awslogs-group: mona-test-logs
+#        awslogs-stream: curation-runner-service
