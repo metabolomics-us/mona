@@ -31,9 +31,16 @@
 <div class="row">
     <div class="col-md-12">
         <ngb-accordion closeOthers="true" #acc="ngbAccordion">
-            <ngb-panel id="display-panel" title="Display Generated Query">
+            <ngb-panel id="display-panel" title="Query Information & Help">
                 <ng-template ngbPanelContent>
-                  Generated Query: <button (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
+
+                  <div>
+                    <strong>Note:</strong> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query
+                    downloads to avoid putting unnecessary strain on the servers
+                  </div>
+
+                  <br />
+                  Current query:
                   <pre *ngIf="!editQuery" class="input-group-text">{{query !== '' && query !== undefined ? query : "[Empty Query]"}}</pre>
                   <div *ngIf="editQuery">
                     <form (submit)="updateQuery(query)">
@@ -46,16 +53,24 @@
                     </form>
                   </div>
 
+                  <button (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon> edit query</button>
+                  <p></p>
+
                   <div>
                     Example cURL command to download all spectral JSON records matching the generated query:
                     <pre class="input-group-text">{{{query: query} | curlPipe}}</pre>
                   </div>
 
-                  <div>To download as an MSP file, add the header: <code>Accept: text/msp</code>.</div>
+                  <p></p>
+                  <div>To download results as an MSP file, add the header: <code class="ml-3"> Accept: text/msp</code></div>
 
-                  <div>
-                    <strong>Note:</strong> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query
-                    downloads to avoid putting unnecessary strain on the servers.
+                  <div class="col-md-12">
+                    <p></p>
+                    <p>
+                      <ngb-alert type="warning" [dismissible]="false">
+                        <a [routerLink]="['/documentation/query']">Learn more</a> about making queries
+                      </ngb-alert>
+                    </p>
                   </div>
                 </ng-template>
             </ngb-panel>
@@ -69,36 +84,36 @@
             <button class="btn btn-primary mr-1"
                     *ngIf="pagination.table === false" (click)="pagination.table = true; setTable()"
                     placement="right"
-                    ngbTooltip="Display Spectra in Tabular Mode">
-              <fa-icon [icon]="faTable" size="2x"></fa-icon>
+                    ngbTooltip="Enable compact format">
+              <fa-icon [icon]="faList"></fa-icon>
             </button>
 
             <button class="btn btn-primary mr-1"
                     *ngIf="pagination.table === true" (click)="pagination.table = false; setTable()"
                     placement="right"
-                    ngbTooltip="Display Spectra in Panel Mode">
-              <fa-icon [icon]="faList" size="2x"></fa-icon>
+                    ngbTooltip="Enable expanded format">
+              <fa-icon [icon]="faTable"></fa-icon>
             </button>
 
             <button class="btn btn-primary" (click)="searchSpectra()" placement="right"
-                    ngbTooltip="Start a New Query">
-              <fa-icon [icon]="faSearch" size="2x"></fa-icon>
+                    ngbTooltip="Start a new query">
+              <fa-icon [icon]="faSearch"></fa-icon>
             </button>
 
             <button class="btn btn-primary ml-1" (click)="resetQuery()" placement="right"
-                    ngbTooltip="Reset the Current Query">
-              <fa-icon [icon]="faSync" size="2x"></fa-icon>
+                    ngbTooltip="Reset the current query">
+              <fa-icon [icon]="faSync"></fa-icon>
             </button>
         </div>
 
         <div class="float-right">
             <button class="btn btn-danger mr-1" *ngIf="authenticationService.isLoggedIn() " type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
-              <fa-icon [icon]="faTrash" size="2x"></fa-icon> <strong>Batch Delete</strong>
+              <fa-icon [icon]="faTrash"></fa-icon> <strong>Batch Delete</strong>
             </button>
             <button class="btn btn-primary" (click)="acc.isExpanded('display-panel')? acc.collapse('display-panel'): acc.expand('display-panel')" placement="left"
                     ngbTooltip="Number of spectra retrieved in this query, click to see additional details">
 
-              <fa-icon [icon]="faBookmark" size="2x"></fa-icon>
+              <fa-icon [icon]="faBookmark"></fa-icon>
               <span *ngIf="authenticationService.isAdmin() && duration !== undefined"> ({{duration | number: '1.2-2'}} s)</span>
               <strong *ngIf="pagination.totalSize > -1"> {{pagination.totalSize|number}}</strong>
               <strong *ngIf="pagination.totalSize <= -1"> Loading...</strong>
@@ -111,26 +126,19 @@
     <div class="col-md-12">
         <div ngbDropdown class="d-inline-block float-left">
             <button class="btn btn-primary" ngbDropdownToggle [disabled]="isSimilaritySearch()">
-               {{pagination.itemsPerPage}} Records Per Page
+               {{pagination.itemsPerPage}} records per page
             </button>
             <div ngbDropdownMenu>
                 <button (click)="setPageSize(option)" *ngFor="let option of pagination.itemsPerPageOptions" ngbDropdownItem>{{option+' records/page'}}</button>
             </div>
         </div>
         <div class="float-right" *ngIf="authenticationService.isLoggedIn()">
-          <button class="btn btn-primary" type="button" (click)="queryUserSpectra()">My Submitted Spectra <fa-icon [icon]="faSearch"></fa-icon></button>
+          <button class="btn btn-primary" type="button" (click)="queryUserSpectra()">My Submitted Spectra</button>
         </div>
     </div>
 </div>
 
 <div class="row top17">
-    <div class="col-md-12">
-      <p>
-        <ngb-alert type="warning" [dismissible]="false">
-          <strong>Click <a [routerLink]="['/documentation/query']">here</a> to learn more the changes to the querying system.</strong>
-        </ngb-alert>
-      </p>
-    </div>
     <!-- display spectra as list -->
     <div class="col-md-12" *ngIf="pagination.table !== true">
         <div *ngFor="let spectrum of spectra" class="m-md-3">
@@ -197,12 +205,14 @@
     </div>
 
     <!-- loading information -->
-    <div class="text-center" *ngIf="pagination.loading && !searchSplash">
+    <div class="w-100 text-center" *ngIf="pagination.loading && !searchSplash">
+      <br />
       <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading...</h4>
     </div>
 
-    <div class="text-center" *ngIf="!pagination.loading && spectra.length == 0">
-        <h4>No results found!</h4>
+    <div class="w-100 text-center" *ngIf="!pagination.loading && spectra.length == 0">
+        <br />
+        <h4>No results found</h4>
     </div>
 
     <!-- spacer -->
