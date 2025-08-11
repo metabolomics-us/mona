@@ -345,6 +345,15 @@ body {
     color: #428bca;
 }
 
+.btn.btn-primary:hover,
+.btn.btn-primary:focus,
+.btn.btn-primary:active,
+.btn.btn-primary.active {
+  background-color: #0b3f6c !important;
+  border-color: #0b3f6c !important;
+}
+
+
 .btn-success.btn-outline {
     color: #5cb85c;
 }
