@@ -9,5 +9,5 @@ import {faSearch} from "@fortawesome/free-solid-svg-icons";
     templateUrl: '../../views/spectra/query/search.html'
 })
 export class SearchComponent {
-  protected readonly faSearch = faSearch;
+  readonly faSearch = faSearch;
 }
