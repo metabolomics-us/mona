@@ -1,0 +1,63 @@
+Frontend:
+    - Search icons next to:
+        - Spectra attributes on search page
+        - Submitter name on a display full record
+        - Compound metadata in display full record
+        - Mass spectral metadata in display full record
+        - Submitter High Scores names on homepage
+        - Compound Classification hierarchy 
+    - Download button size on display full record
+    - Hover turns to click cursor over "Similar Spectra" when in display full record mode
+    - Have libraby selection be a dropdown of checkboxes to minimize space taken up (on search page)
+    - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
+        - Add legend to describe colors of tags (green = has tag, red = does not have, blank = unselected)
+        - Do not make Add Additional Tags to Query a clickable name, turn into a header stlye font
+        - Allow for search?
+    - Reformat similarity search instructions: "Supports spectra in the single-line format... etc."
+        - Same for the upload page
+    - Add "Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files" to parenthesis after "Upload a file"
+    - Similarity search page: change "Load Spectrum" button to "Similarity Search"
+    - Think about changing the yellow grayed out "Searching...." page/animation
+    - Create new query / Add to query button box is formatted incorrectly for the spectra attributes when browsing for example
+        - Change the highlight color, it's too dark
+        - Also same formatting issue on the compound metadata parts
+    - Display full record button does not open a new page like it says it will 
+    - Make folder icons show clickable on hover in Download page
+    - What is "Additional Downloads" used for? It's empty on prod
+    - Database Index & Statistic page
+        - "Database Content" box is chopped
+        - Metadata pie chart shows decimals for spectral count
+        - Ionization mode for pie chart goes out of bounds
+        - Change the "MS Level, Ion Mode, Precursor Type" Dropdown to a cleaner 3 box selection
+        - Change "Database Content" "Metadata" and "Compound Classes" headers to be more visible and defined
+        - Have Spectrum vs Compound count be highlighted based on current selection
+        - Search icon Query button doesn't highlight on hover (compound classes page)
+        - Remove outline box from all three subtabs, looks weird
+        - MS5 is too similar to MS2 in color
+        - Duplicate Ioniziation modes on pie chart? (3 positive, 2 negative types)
+        - Are M-H and [M-H]- the same precursor type? Merge them maybe?
+        - Make the Database Content table more compact, numbers are too far apart from their attributes
+    - Reformat the "Please log in before uploading spectra" box to be smaller, adjust message below it
+    - Make the display hidden downloads checkbox highlight blue instead of current green (Downloads page)
+    - Change search checkboxes to more clickable buttons
+    - Move the "Create New Library" info icon one space to the right (advanced uploader page)
+        - "Select a file clean" ? Does it mean upload file
+    - Make folder names bolded in Download page
+    - Why are download buttons on Download page not aligned?
+    - How is the submitter high scores table calculated? Needs to be adjusted
+    - "Click to see the explanation for the 5.00/5 score" - remove decimals
+        - Same with "Explanation for the 5.00 / 5 star score"
+        - Also add a space for the info icon to breathe
+    - (provided by ClassyFire) info icon should not be clicked by default
+    - 
+    - 
+
+Backend:
+    - What is "Additional Downloads" used for? It's empty on prod
+    - Debug the random error I had when starting out where it said there were 0 spectra and search wouldn't work
+    - What does "Add to Query" vs "Create New Query" do?
+    - What are "hidden downloads" like on the downloads page?
+    - Duplicate Ioniziation modes on pie chart? (3 positive, 2 negative types)
+    - Are M-H and [M-H]- the same precursor type? Merge them maybe?
+    - 
+    
