@@ -6,13 +6,16 @@ Frontend:
         - Mass spectral metadata in display full record
         - Submitter High Scores names on homepage
         - Compound Classification hierarchy 
+        - Admin page next to first name
     - Download button size on display full record
+    - Typo in "Upload an spectral library file and dynamically modify the mass spectra and metadata"
     - Hover turns to click cursor over "Similar Spectra" when in display full record mode
     - Have libraby selection be a dropdown of checkboxes to minimize space taken up (on search page)
     - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
         - Add legend to describe colors of tags (green = has tag, red = does not have, blank = unselected)
         - Do not make Add Additional Tags to Query a clickable name, turn into a header stlye font
-        - Allow for search?
+        - Currently sorted by number of spectra associated, which is good
+        - Allow for search? 
     - Reformat similarity search instructions: "Supports spectra in the single-line format... etc."
         - Same for the upload page
     - Add "Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files" to parenthesis after "Upload a file"
@@ -49,8 +52,9 @@ Frontend:
         - Same with "Explanation for the 5.00 / 5 star score"
         - Also add a space for the info icon to breathe
     - (provided by ClassyFire) info icon should not be clicked by default
-    - 
-    - 
+    - Remove the "Click here to learn more the changes to the query system popup"
+    - How are "Top Rated Spectral Records" being displayed? Like which are chosen to be shown (homepage)
+    - Admin page Filter query term formatting
 
 Backend:
     - What is "Additional Downloads" used for? It's empty on prod
@@ -59,5 +63,8 @@ Backend:
     - What are "hidden downloads" like on the downloads page?
     - Duplicate Ioniziation modes on pie chart? (3 positive, 2 negative types)
     - Are M-H and [M-H]- the same precursor type? Merge them maybe?
-    - 
+    - Links to "Originally submitted to..." like eu massbank shows error404 page not found
+    - Can't see users' uploaded spectra on admin page?
+    - Manage submitters page does not load when refreshed
+    - User profile page fails when refreshed
     
