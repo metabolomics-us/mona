@@ -36,7 +36,6 @@ Frontend:
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
         - Make the Database Content table more compact, numbers are too far apart from their attributes
     - Reformat the "Please log in before uploading spectra" box to be smaller, adjust message below it
-    - Make the display hidden downloads checkbox highlight blue instead of current green (Downloads page)
     - Change search checkboxes to more clickable buttons
     - Move the "Create New Library" info icon one space to the right (advanced uploader page)
         - "Select a file clean" ? Does it mean upload file
@@ -75,3 +74,5 @@ Fixed:
     - Typo in "Upload an spectral library file and dynamically modify the mass spectra and metadata" - fixed
     - Submitter high scores now ordered by count with minimum avg score of 3
     - Admin manage submitters page cleaned up
+    - Make the checkboxes highlight blue instead of current green
+    - Adjust navbar padding and font weight
