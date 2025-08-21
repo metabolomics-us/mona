@@ -20,7 +20,7 @@
 
         <!-- Select files to upload -->
         <div *ngIf="spectraLoaded === 0" class="card">
-            <div class="card-header"><strong>Select a file clean</strong></div>
+            <div class="card-header"><strong>Upload a File</strong></div>
             <div class="card-body">
                 <div class="input-group">
                     <span class="input-group-btn">
@@ -29,18 +29,18 @@
                         </span>
                     </span>
 
-                    <input id="spectrumFile" type="text" class="form-control" [(ngModel)]="fileUpload" readonly/>
+                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" [(ngModel)]="fileUpload" readonly/>
                 </div>
 
-                <span class="help-block">Supports MSP and MGF mass spectral library files and MassBank Records Format</span>
-                <hr/>
+                <br />
                 <div class="form-check">
                   <input type="checkbox" class="form-check-input" id="libraryBool" name="librayBool" [(ngModel)]="showLibraryForm">
-                  <label class="form-check-label" for="libraryBool">Create New Library  </label> <fa-icon [icon]="faQuestionCircle" (click)="goToDocumentation()" ngbTooltip="Creates new spectra library for easy search and download. Click for more details."></fa-icon>
+                  <label class="form-check-label" for="libraryBool">Create New Library</label>
                 </div>
                 <div *ngIf="showLibraryForm">
+                  <p></p>
+                  <h5 class="text-info font-weight-bold"><a target="_blank" [routerLink]="['/documentation/uploadLibrary']">Help <fa-icon [icon]="faQuestionCircle" size="sm"></fa-icon></a></h5>
                   <br/>
-                  <h3 class="text-info font-weight-bold">See Documentation <a [routerLink]="['/documentation/uploadLibrary']">Here</a></h3>
                   <form #libForm="ngForm"  id="libForm" class="form-horizontal" novalidate role="form">
                     <div class="form-group row">
                       <label for="libraryLink" class="col-sm-3 col-form-label"><strong>Library</strong></label>
@@ -86,10 +86,11 @@
                         <input type="url" pattern="https*://.*" class="form-control" id="libraryLink" name="libraryLink"
                                placeholder="Optional - Default is http://massbank.us" [(ngModel)]="library.link" #libraryLink = "ngModel"/>
                         <p *ngIf="!libraryLink.valid && !libraryLink.pristine" class="help-block">
-                          Link is must be http:// or https://.
+                          Link must be http:// or https://
                         </p>
                       </div>
                     </div>
+                    <br />
 
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label"><strong>Submitter</strong></label>
@@ -123,9 +124,10 @@
                                placeholder="Optional" [(ngModel)]="library.submitter.institution">
                       </div>
                     </div>
+                    <br/>
                     <div class="form-group row">
                       <label class="col-sm-7 col-form-label flex-nowrap">
-                        <strong>Additional Tags:</strong> Press Enter or Tab after typing to create tag
+                        <strong>Additional Tags <fa-icon [icon]="faQuestionCircle" ngbTooltip="Press ENTER to register a new tag (max of 3)"></fa-icon> </strong>
                       </label>
                     </div>
                     <hr/>
@@ -141,11 +143,12 @@
                         </tag-input>
                       </div>
                     </div>
-                    <button class="btn btn-info float-right" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles()">Submit</button>
+                    <br />
+                    <button class="btn btn-primary float-right" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles()">Submit</button>
                   </form>
                 </div>
                 <br *ngIf="!showLibraryForm"/>
-                <button class="btn btn-info float-right" *ngIf="!showLibraryForm" [disabled]="fileUpload === null" (click)="parseFiles()">Submit</button>
+                <button class="btn btn-primary float-right" *ngIf="!showLibraryForm" [disabled]="fileUpload === null" (click)="parseFiles()">Submit</button>
             </div>
         </div>
 
