@@ -35,7 +35,6 @@ Frontend:
         - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
         - Make the Database Content table more compact, numbers are too far apart from their attributes
-    - Reformat the "Please log in before uploading spectra" box to be smaller, adjust message below it
     - Change search checkboxes to more clickable buttons
     - Move the "Create New Library" info icon one space to the right (advanced uploader page)
         - "Select a file clean" ? Does it mean upload file
@@ -76,3 +75,4 @@ Fixed:
     - Admin manage submitters page cleaned up
     - Make the checkboxes highlight blue instead of current green
     - Adjust navbar padding and font weight
+    - Reformat the "Please log in before uploading spectra" box to be smaller, adjust message below it
