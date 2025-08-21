@@ -22,9 +22,20 @@ export class SpectraTopScoresForUsersComponent implements OnInit{
     ngOnInit() {
         this.statistics.spectraTopScores().subscribe((data) => {
             this.scores = data;
+            // Score adjustment, -0.45 from each score, commented out 8/21
             // this.scores.forEach((x) => {
             //     x.score -= 0.45;
             // });
+
+            // ---===Submitters ordered by count instead of score (with score of at least 3.0)===---
+            // Filter out submitters with scores less than 3.0
+            const filtered = data.filter(x => x.score >= 3.0);
+
+            // Sort by count
+            filtered.sort((a, b) => b.count - a.count);
+
+            // Assign the sorted array to scores
+            this.scores = filtered;
         });
     }
 }
