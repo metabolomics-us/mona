@@ -33,7 +33,7 @@ export class DisplayCompoundComponent implements  OnInit{
       // calculate some unique id for the compound picture
       this.pictureId = Math.floor(Math.random() * 100000);
       this.chemId = Math.floor(Math.random() * 100000);
-      this.showClassyFireInfo = true;
+      this.showClassyFireInfo = false;
 
       // Build compound classification tree
       this.classifications = [];
