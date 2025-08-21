@@ -14,7 +14,7 @@
                 </p>
                 <br />
 
-                <label>Upload a File:</label>
+                <label><strong>Upload a File:</strong></label>
                 <p class="help-block" *ngIf="uploadError"><strong>{{uploadError}}</strong></p>
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
                     <span class="input-group-btn">
@@ -33,7 +33,7 @@
 
                 <div class="input-group" [ngClass]="{'has-error': pasteError}">
                   <div class="input-group">
-                    <label>Paste a Mass Spectrum:</label>
+                    <label><strong>Paste a Mass Spectrum:</strong></label>
                     <p class="help-block" [hidden]="pasteError"><strong>{{pasteError}}</strong></p>
                   </div>
                     <textarea class="form-control" [rows]="10" name="pastedSpectrum" [(ngModel)]="pastedSpectrum"></textarea>
