@@ -1,14 +1,10 @@
 Frontend:
     - Search icons next to:
-        - Spectra attributes on search page
-        - Submitter name on a display full record
+        - Spectra attributes on browse page
         - Compound metadata in display full record
-        - Mass spectral metadata in display full record
         - Submitter High Scores names on homepage
         - Compound Classification hierarchy 
         - Admin page next to first name
-    - Download button size on display full record
-    - Typo in "Upload an spectral library file and dynamically modify the mass spectra and metadata"
     - Hover turns to click cursor over "Similar Spectra" when in display full record mode
     - Have libraby selection be a dropdown of checkboxes to minimize space taken up (on search page)
     - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
@@ -24,7 +20,6 @@ Frontend:
     - Create new query / Add to query button box is formatted incorrectly for the spectra attributes when browsing for example
         - Change the highlight color, it's too dark
         - Also same formatting issue on the compound metadata parts
-    - Display full record button does not open a new page like it says it will 
     - Make folder icons show clickable on hover in Download page
     - What is "Additional Downloads" used for? It's empty on prod
     - Database Index & Statistic page
@@ -49,6 +44,7 @@ Frontend:
     - Why are download buttons on Download page not aligned?
     - How is the submitter high scores table calculated? Needs to be adjusted
     - "Click to see the explanation for the 5.00/5 score" - remove decimals
+        - Just realized we can have half stars, so maybe try to have them be visualized too, but that explains the decimals
         - Same with "Explanation for the 5.00 / 5 star score"
         - Also add a space for the info icon to breathe
     - (provided by ClassyFire) info icon should not be clicked by default
@@ -68,3 +64,12 @@ Backend:
     - Manage submitters page does not load when refreshed
     - User profile page fails when refreshed
     
+Fixed: 
+    - Display full record button does not open a new page like it says it will - should be fixed
+    - Right caret on buttons like dipeptide_neg - should be fixed
+    - Space between comment bubbles on "Review Spectrum Quality" - should be fixed
+    - Download button size on single spectra
+    - Search icons next to:
+        - Submitter name on a display full record - should be fixed
+        - Mass spectral metadata in display full record - should be fixed
+    - Typo in "Upload an spectral library file and dynamically modify the mass spectra and metadata" - fixed
