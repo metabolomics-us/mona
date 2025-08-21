@@ -22,9 +22,9 @@ export class SpectraTopScoresForUsersComponent implements OnInit{
     ngOnInit() {
         this.statistics.spectraTopScores().subscribe((data) => {
             this.scores = data;
-            this.scores.forEach((x) => {
-                x.score -= 0.45;
-            });
+            // this.scores.forEach((x) => {
+            //     x.score -= 0.45;
+            // });
         });
     }
 }
