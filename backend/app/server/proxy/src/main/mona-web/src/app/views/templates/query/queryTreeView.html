@@ -4,8 +4,8 @@
 <div class="list-group panel-query-tree well">
     <div *ngFor="let node of treeModel">
         <div class="list-group-item" *ngIf="showHidden || node.display">
-            <fa-icon [icon]="faFolder" *ngIf="node.children.length && node.collapsed" (click)="treeId.selectNodeHead(node)"></fa-icon>
-            <fa-icon [icon]="faFolderOpen" *ngIf="node.children.length && !node.collapsed" (click)="treeId.selectNodeHead(node)"></fa-icon>
+            <fa-icon class="clickable" [icon]="faFolder" *ngIf="node.children.length && node.collapsed" (click)="treeId.selectNodeHead(node)"></fa-icon>
+            <fa-icon class="clickable" [icon]="faFolderOpen" *ngIf="node.children.length && !node.collapsed" (click)="treeId.selectNodeHead(node)"></fa-icon>
             <fa-icon [icon]="faFile" *ngIf="!node.children.length"></fa-icon>
 
             <span *ngIf="node.query !== null">&nbsp;<a [routerLink]="['/spectra/browse']" [queryParams]="{query: node.query}">{{node.singleLabel}}</a> ({{node.queryCount | number:'1.0-0'}} {{node.queryCount === 1 ? "spectrum" : "spectra"}})</span>
