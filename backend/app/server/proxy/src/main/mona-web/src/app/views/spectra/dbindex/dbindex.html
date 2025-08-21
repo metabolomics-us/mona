@@ -9,9 +9,7 @@
                     <table class="table table-striped" *ngIf="globalData">
                         <thead>
                         <tr>
-                            <th>
-                                <h2 style="margin-top: 0;"><small>Database Content:</small></h2>
-                            </th>
+                            <h2 style="margin-top: 0;"><small>Database Content:</small></h2>
                         </tr>
                         </thead>
                         <tbody>
@@ -83,13 +81,15 @@
                     <div class="h5">
                         This sunburst chart displays the breakdown of compound classifications, which were obtained using
                         <a href="http://classyfire.wishartlab.com/">ClassyFire</a> by Wishart Lab.
-                      
+
                         <br /><br />
 
                         Clicking on a partition
                         will zoom into it and display a finer-grained view of its child partitions.  Clicking on the center
                         circle will zoom out to the parent partition.
                     </div>
+
+                    <br />
 
                     <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="sunburstDataMode">
                         <label ngbButtonLabel class="btn-primary">
