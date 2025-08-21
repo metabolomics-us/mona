@@ -75,11 +75,11 @@
 </div>
 
 <div class="modal-footer" *ngIf="state !== 'success'">
-    <button class="btn btn-primary"
+    <button class="btn btn-primary btn-block"
             (click)="submitRegistration()"
             [disabled]="!submitterFormStatus"
             *ngIf="state === 'register'">Register</button>
-  <button class="btn btn-primary"
+  <button class="btn btn-primary btn-block"
           (click)="resetState()"
           *ngIf="state === 'fail'">Try Again</button>
 </div>
