@@ -1,4 +1,5 @@
 Frontend:
+    - Create small MoNA logo for browser Mo on top of NA in yellow
     - Search icons next to:
         - Spectra attributes on browse page
         - Compound metadata in display full record
