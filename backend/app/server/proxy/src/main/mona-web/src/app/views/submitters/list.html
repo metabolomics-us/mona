@@ -8,9 +8,10 @@
     <div #error></div>
     <form role="form">
         <div class="input-group" *ngFor="let sub of submitters; index as i"> <!-- filter:submitter.query -->
-            <span class="form-check-label"> <label [for]="'query_'+i">Filter</label></span>
-            <input [id]="'query_'+i" class="form-control" name="query" [(ngModel)]="sub.query"
-                   placeholder="Please enter your query term"/>
+<!--          This was the query bar for each user, commented out 8/21-->
+<!--            <span class="form-check-label"> <label [for]="'query_'+i">Filter</label></span>-->
+<!--            <input [id]="'query_'+i" class="form-control" name="query" [(ngModel)]="sub.query"-->
+<!--                   placeholder="Query term"/>-->
             <table class="table">
                 <thead>
                 <tr>
@@ -18,8 +19,8 @@
                     <th>Last</th>
                     <th>Institution</th>
                     <th>Email</th>
-                    <th>Avg Score</th>
-                    <th>Uploaded Spectra</th>
+<!--                    <th>Avg Score</th>-->
+<!--                    <th>Uploaded Spectra</th>-->
                     <th></th>
                 </tr>
                 </thead>
@@ -30,9 +31,9 @@
                     <td>{{sub.institution}}</td>
                     <td>{{sub.emailAddress}}</td>
                     <td>
-                        <button (click)="displayEditDialog(sub)" class="btn btn-default"><fa-icon
+                        <button (click)="displayEditDialog(sub)" class="btn btn-default" ngbTooltip="Edit user"><fa-icon
                                 [icon]="faEdit"></fa-icon></button>
-                        <button (click)="remove(i)" class="btn btn-default"><fa-icon
+                        <button (click)="remove(i)" class="btn btn-default" ngbTooltip="Delete user"><fa-icon
                                 [icon]="faMinusSquare"></fa-icon></button>
                         <input type="hidden" name="sub.id" name="subid" [(ngModel)]="sub.id" value="{{sub.id}}"/>
                     </td>
@@ -43,7 +44,7 @@
         </div>
 
         <button (click)="displayCreateDialog()" class="btn btn-default"><fa-icon
-                [icon]="faUser"></fa-icon>Add a new submitter
+                [icon]="faUser"></fa-icon> Add a new submitter
         </button>
     </form>
 </div>
