@@ -8,8 +8,8 @@
             <div *ngIf="page === 0">
                 <p class="lead">
                     <small>
-                        Please choose a mass spectrum to search.  You may upload a file, from which we load
-                        only first spectrum, or paste a mass spectrum in text format.
+                        Please provide a mass spectrum to search against. You may upload a file (from which only the first spectrum would be
+                        loaded), or paste a mass spectrum in text format.
                     </small>
                 </p>
                 <br />
@@ -22,13 +22,9 @@
                             Browse&hellip; <input type="file" name="upload" [(ngModel)]="fileUpload" (change)="parseFiles($event)" />
                         </span>
                     </span>
-                    <input id="spectrumFile" type="text" class="form-control" name="filenames" [(ngModel)]="filenames" readonly />
+                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" name="filenames" [(ngModel)]="filenames" readonly />
                 </div>
 
-                <span class="help-block">Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files</span>
-
-                <br />
-                <br />
                 <br />
 
                 <div class="input-group" [ngClass]="{'has-error': pasteError}">
@@ -36,17 +32,18 @@
                     <label><strong>Paste a Mass Spectrum:</strong></label>
                     <p class="help-block" [hidden]="pasteError"><strong>{{pasteError}}</strong></p>
                   </div>
-                    <textarea class="form-control" [rows]="10" name="pastedSpectrum" [(ngModel)]="pastedSpectrum"></textarea>
-                  <div class="input-group">
-                    <span class="text-left">
-                        Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
-                        <code>[m/z] [intensity]</code><br />
-                        <code>[m/z] [intensity]</code><br />
-                        <code>...</code>
-                    </span>
-                  </div>
+                    <textarea placeholder="Supports single-line and multi-line spectra formats:
+
+[m/z]:[intensity] [m/z]:[intensity] ...
+
+OR
+
+[m/z] [intensity]
+[m/z] [intensity]"
+                    class="form-control" [rows]="10" name="pastedSpectrum" [(ngModel)]="pastedSpectrum"></textarea>
                 </div>
-                <button class="btn btn-primary" (click)="parsePastedSpectrum(pastedSpectrum)">Load Spectrum</button>
+                <br />
+                <button class="btn btn-primary" (click)="parsePastedSpectrum(pastedSpectrum)">Search</button>
             </div>
 
             <!-- Loading page -->
