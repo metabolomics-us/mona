@@ -9,18 +9,19 @@
     <div class="col">
       <hr/>
       <div class="row justify-content-center">
-        <h3>Library Deletion Utility</h3>
+        <h3>Delete Libraries</h3>
       </div>
       <hr/>
       <div class="row justify-content-start" *ngIf="libraryTags && libraryTags.length > 0">
         <form (ngSubmit)="submitDeletionQuery()" class="col">
-          <span *ngFor="let x of libraryTags">
-                <input type="checkbox" name="libraryTag" [(ngModel)]="x.selected" label> {{x.text}} ({{x.count}} spectra)
-                <br />
-          </span>
+          <div *ngFor="let x of libraryTags">
+                <label class="clickable">
+                    <input class="clickable" type="checkbox" name="libraryTag" [(ngModel)]="x.selected"> {{x.text}} ({{x.count}} spectra)
+                </label>
+          </div>
           <div class="row mt-2">
             <div class="col-sm">
-              <button type="submit" class="btn btn-primary">Delete</button>
+              <button type="submit" class="btn btn-danger">Delete Selected Libraries</button>
             </div>
             <div class="col-sm">
               <button type="button" (click)="refreshTags()" class="btn btn-secondary">Refresh Libraries</button>
@@ -32,23 +33,23 @@
     <div class="col">
       <hr/>
       <div class="row justify-content-center">
-        <h3>Admin Buttons (Use to force updates)</h3>
+        <h3>Admin Buttons (force updates)</h3>
       </div>
       <hr/>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-info mr-2" (click)="updateStatistics()">Update Statistics</button>
+        <button class="btn btn-warning mr-2" (click)="updateStatistics()">Update Statistics</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-info mr-2" (click)="refreshSimilarity()">Refresh Similarity Service</button>
+        <button class="btn btn-warning mr-2" (click)="refreshSimilarity()">Refresh Similarity Service</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-info mr-2" (click)="updatePredefinedQueries()">Update Predefined Queries</button>
+        <button class="btn btn-warning mr-2" (click)="updatePredefinedQueries()">Update Predefined Queries</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-info mr-2" (click)="updateStaticQueries()">Update Static Queries</button>
+        <button class="btn btn-warning mr-2" (click)="updateStaticQueries()">Update Static Queries</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-info mr-2" (click)="reCurateAllData()">Re-Curate All Data</button>
+        <button class="btn btn-warning mr-2" (click)="reCurateAllData()">Re-Curate All Data</button>
       </div>
     </div>
   </div>
@@ -56,16 +57,16 @@
     <div class="col">
       <hr/>
       <div class="row justify-content-center">
-        <h3>Force Delete By ID</h3>
+        <h3>Force Delete by ID</h3>
       </div>
       <hr/>
       <div class="row justify-content-center">
         <div class="col mb-1">
-          <label>Input ID's (Comma seperated, No Spaces): </label><input type="text" [(ngModel)]="removeIDs"/>
+          <label class="mr-2">Input IDs: </label><input placeholder="Comma separated, no spaces" type="text" [(ngModel)]="removeIDs"/>
         </div>
       </div>
       <div class="row">
-        <button type="button" class="btn btn-primary" [disabled]="removeIDs === null" (click)="deleteByIds()">Delete Values</button>
+        <button type="button" class="btn btn-danger" [disabled]="removeIDs === null" (click)="deleteByIds()">Delete Values</button>
       </div>
     </div>
   </div>
@@ -86,10 +87,10 @@
                        name="email" [(ngModel)]="newPassword.emailAddress"
                        #email = "ngModel" required/>
                 <p *ngIf="!email.valid && !email.pristine" class="help-block">
-                  Please enter a valid email.</p>
+                  Please enter a valid email</p>
               </div>
               <div class="col-sm-3">
-                <button type="button" (click)="validateUser()">Validate Email</button>
+                <button class="btn btn-info btn-sm" type="button" (click)="validateUser()">Validate Email</button>
               </div>
             </div>
 
@@ -119,7 +120,7 @@
             </div>
 
             <div class="form-group row">
-              <button class="btn btn-primary"
+              <button class="btn btn-warning"
                 (click)="submitPasswordChange()"
                 [disabled]="!passwordChangeForm.valid">
                 Change Password
