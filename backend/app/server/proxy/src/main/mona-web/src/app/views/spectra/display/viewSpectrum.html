@@ -14,11 +14,11 @@
                     <div class="row">
                         <div class="col-md-12" *ngIf="spectrum.score">
                             <span placement="right"
-                                  ngbTooltip="Click to see the explanation for the {{0.0 + spectrum.score.score | number:'1.2-2'}} / 5 score"
+                                  ngbTooltip="Click to see the explanation for the {{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00 score"
                                   (click)="showScore = !showScore">
                                 Rating:
                                 <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
-                              <fa-icon [icon]="faQuestionCircle"></fa-icon>
+                              <fa-icon class="ml-2" [icon]="faQuestionCircle"></fa-icon>
                             </span>
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                         <div class="col-md-12">
                             <div class="card top17">
                                 <div class="card-header">
-                                    Explanation for the {{spectrum.score.score | number:'1.2-2'}} / 5 star score
+                                    Explanation for the {{spectrum.score.score | number:'1.2-2'}} / 5.00 star score
                                 </div>
                                 <div class="card-body">
                                     <table class="table">
