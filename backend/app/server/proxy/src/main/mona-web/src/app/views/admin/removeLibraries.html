@@ -16,7 +16,7 @@
         <form (ngSubmit)="submitDeletionQuery()" class="col">
           <div *ngFor="let x of libraryTags">
                 <label class="clickable">
-                    <input class="clickable" type="checkbox" name="libraryTag" [(ngModel)]="x.selected"> {{x.text}} ({{x.count}} spectra)
+                    <input class="clickable" type="checkbox" name="libraryTag" [(ngModel)]="x.selected"> {{x.text}} ({{x.count | number: '1.0-0'}} spectra)
                 </label>
           </div>
           <div class="row mt-2">
