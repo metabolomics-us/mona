@@ -238,7 +238,7 @@
                                 <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.compound; index as i">
                                     <ng-template *ngIf="accordionStatus.isCompoundOpen[i]" ngbPanelHeader>
                                       <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none">
-                                        <span *ngIf="compound.kind !== null"><strong>{{compound.kind}}</strong></span>
+                                        <span *ngIf="compound.kind !== null"><strong>{{compound.kind | titlecase}}</strong></span>
                                         <span *ngIf="compound.kind === null"><strong>Submitted Compound</strong></span>
                                         <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc2.isExpanded('compoundInfo')"></fa-icon>
                                         <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc2.isExpanded('compoundInfo')"></fa-icon>
