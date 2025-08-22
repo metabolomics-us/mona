@@ -1,17 +1,13 @@
 <div class="row">
     <div class="col-md-12">
         <h3><fa-icon [icon]="faDatabase"></fa-icon> Database Index &amp; Statistics</h3>
+          <br />
 
         <ul ngbNav #nav="ngbNav" [destroyOnHide]="false">
             <li [ngbNavItem]="0">
-                <a ngbNavLink class="search-heading"> Database Content</a>
+                <a ngbNavLink class="search-heading btn btn-primary">Database Content</a>
                 <ng-template ngbNavContent>
                     <table class="table table-striped" *ngIf="globalData">
-                        <thead>
-                        <tr>
-                            <h2 style="margin-top: 0;"><small>Database Content:</small></h2>
-                        </tr>
-                        </thead>
                         <tbody>
                         <tr>
                             <td>Submitters:</td>
@@ -34,11 +30,11 @@
                             <td>{{globalData.metaDataValueCount | number}}</td>
                         </tr>
                         <tr>
-                            <td>Tags Types:</td>
+                            <td>Tag Types:</td>
                             <td>{{globalData.tagCount | number}}</td>
                         </tr>
                         <tr>
-                            <td>Total Tags:</td>
+                            <td>Applied Tags:</td>
                             <td>{{globalData.tagValueCount | number}}</td>
                         </tr>
                         </tbody>
@@ -50,7 +46,7 @@
             </li>
 
             <li [ngbNavItem]="1">
-                <a ngbNavLink class="search-heading">MetaData</a>
+                <a ngbNavLink class="search-heading btn btn-primary">Metadata</a>
                 <ng-template ngbNavContent>
                     <div class="h5">
                         The pie chart below shows the distribution of metadata values for the selected metadata type.
@@ -59,13 +55,14 @@
                     </div>
                     <br />
 
-                    <div>
-                        <select [(ngModel)]="selectedMetadataField" (ngModelChange)="selectMetadataField($event)" >
+                    <div class="text-center">
+                        <select class="btn btn-primary" [(ngModel)]="selectedMetadataField" (ngModelChange)="selectMetadataField($event)" >
                             <option [ngValue]="f" *ngFor="let f of metadataFields">{{f.title}}</option>
                         </select>
+                        <p>Metadata type</p>
+                        <p></p>
                     </div>
 
-                    <div class="text-center"><h4>{{selectedMetadataField.title}}</h4></div>
                     <div style="height: 600px; width: 100%" class="text-center">
                       <nvd3 [options]="metadataChartOptions"
                             [data]="selectedMetadataField.data"></nvd3>
@@ -76,10 +73,10 @@
             </li>
 
             <li [ngbNavItem]="2">
-                <a ngbNavLink class="search-heading">Compound Classes</a>
+                <a ngbNavLink class="search-heading btn btn-primary">Compound Classes</a>
                 <ng-template ngbNavContent>
                     <div class="h5">
-                        This sunburst chart displays the breakdown of compound classifications, which were obtained using
+                        This sunburst chart displays the breakdown of compound classifications, which are obtained using
                         <a href="http://classyfire.wishartlab.com/">ClassyFire</a> by Wishart Lab.
 
                         <br /><br />
@@ -91,15 +88,28 @@
 
                     <br />
 
+                  <div class="text-center">
                     <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="sunburstDataMode">
-                        <label ngbButtonLabel class="btn-primary">
-                            <input ngbButton type="radio" [value]=true (click)="changeSunburstDataMode('spectrum')">Spectrum Count
+                        <label ngbButtonLabel class="btn btn-primary">
+                            <input ngbButton type="radio" [value]="'spectrum'" (click)="changeSunburstDataMode('spectrum')">Spectrum Count
                         </label>
-                        <label ngbButtonLabel class="btn-primary">
-                            <input ngbButton type="radio" (click)="changeSunburstDataMode('compound')">Compound Count
+                        <label ngbButtonLabel class="btn btn-primary">
+                            <input ngbButton type="radio" [value]="'compound'" (click)="changeSunburstDataMode('compound')">Compound Count
                         </label>
                     </div>
-                    <br />
+                  </div>
+<!--                  <div class="text-center">-->
+<!--                    <div class="btn-group btn-group-toggle" ngbRadioGroup name="sunburstMode" [(ngModel)]="sunburstDataMode">-->
+<!--                      <label ngbButtonLabel class="btn btn-primary">-->
+<!--                        <input ngbButton type="radio" [value]="'spectrum'"> Spectrum Count-->
+<!--                      </label>-->
+<!--                      <label ngbButtonLabel class="btn btn-primary">-->
+<!--                        <input ngbButton type="radio" [value]="'compound'"> Compound Count-->
+<!--                      </label>-->
+<!--                    </div>-->
+<!--                  </div>-->
+
+                  <br />
                     <div class="text-center">
                       <nvd3 [options]="sunburstOptions"
                             [data]="activeCompoundClassData"
@@ -109,7 +119,7 @@
 
                     <h3>
                         Sub-Classifications <br />
-                        <small>Please click on the sunburst to refine your queries</small>
+                        <small>Click on the sunburst chart to refine your queries</small>
                     </h3>
                     <table class="table table-hover">
                         <thead>
