@@ -1,11 +1,13 @@
 Frontend:
     - Search feature on downloads page
     - Search icons next to:
-        - Spectra attributes on browse page
-        - Compound metadata in display full record
         - Submitter High Scores names on homepage
-        - Compound Classification hierarchy 
         - Admin page of submitters next to first name
+        - Spectra attributes on browse page
+        - Display Full Record page:
+            - Both metadata fields in display full record
+            - Compound Classification hierarchy
+            - Next to submitter name on "display full record"
     - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
         - Add legend to describe colors of tags (green = has tag, red = does not have, blank = unselected)
         - Currently sorted by number of spectra associated, which is good
