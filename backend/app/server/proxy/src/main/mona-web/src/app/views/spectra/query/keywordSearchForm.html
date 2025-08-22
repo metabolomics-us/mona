@@ -57,6 +57,7 @@
                 </table>
             </div>
 
+            <br/>
             <div class="form-group row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
@@ -69,7 +70,9 @@
                             <tbody>
                             <tr>
                                 <td *ngFor="let x of ionMode">
-                                    <input type="checkbox" name="ionSelected" [(ngModel)]="x.selected"> {{x.name}}
+                                    <label class="clickable">
+                                        <input type="checkbox" name="ionSelected" [(ngModel)]="x.selected"> {{x.name}}
+                                    </label>
                                 </td>
                             </tr>
                             </tbody>
@@ -92,10 +95,11 @@
                             <tbody>
                             <tr>
                                 <td>
-                                     <span *ngFor="let x of sourceIntroduction">
-                                         <input type="checkbox" name="sourceIntro" [(ngModel)]="x.selected"> {{x.name}} ({{x.abv}})
-                                         <br/>
-                                     </span>
+                                     <div *ngFor="let x of sourceIntroduction">
+                                        <label class="clickable">
+                                          <input type="checkbox" name="sourceIntro" [(ngModel)]="x.selected"> {{x.name}} ({{x.abv}})
+                                        </label>
+                                     </div>
                                 </td>
                             </tr>
                             </tbody>
@@ -111,13 +115,16 @@
                         <table class="table table-condensed">
                             <thead>
                             <tr>
-                                <th>MS Type</th>
+                                <th>MS Level</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td *ngFor="let x of msType">
-                                    <input type="checkbox" name="msSelected" [(ngModel)]="x.selected"> {{x.name}}
+                                <!-- Align ms levels with equal spacing (style.width...) -->
+                                <td *ngFor="let x of msType" [style.width.%]="100 / msType.length">
+                                    <label class="clickable">
+                                        <input type="checkbox" name="msSelected" [(ngModel)]="x.selected"> {{x.name}}
+                                    </label>
                                 </td>
                             </tr>
                             </tbody>
@@ -133,16 +140,21 @@
                         <table class="table table-condensed">
                             <thead>
                             <tr>
-                                <th>Library</th>
+                                <th>
+                                  Libraries
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
                                 <td>
-                                    <span *ngFor="let x of libraryTags">
-                                        <input type="checkbox" name="libraryTag" [(ngModel)]="x.selected" label> {{x.text}}
-                                        <br />
-                                    </span>
+                                    <!-- Show first 3 libraries or all based on expandedLibraries toggle -->
+                                    <div *ngFor="let x of (expandedLibraries ? libraryTags : (libraryTags | slice:0:3))">
+                                        <label class="clickable">
+                                            <input type="checkbox" name="libraryTag" [(ngModel)]="x.selected"> {{x.text}}
+                                        </label>
+                                    </div>
+                                    <button type="button" class="btn btn-link btn-sm text-decoration-none" (click)="toggleLibraryExpansion()">{{expandedLibraries ? 'Show less' : 'Show more'}}</button>
                                 </td>
                             </tr>
                             </tbody>

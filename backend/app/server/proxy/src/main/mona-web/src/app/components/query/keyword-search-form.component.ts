@@ -26,6 +26,11 @@ export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
     faSearch = faSearch;
     faCaretDown = faCaretDown;
 
+    expandedLibraries = false;
+    toggleLibraryExpansion() {
+      this.expandedLibraries = !this.expandedLibraries;
+    }
+
     constructor(public spectraQueryBuilderService: SpectraQueryBuilderService,
                 public tagService: TagService, public logger: NGXLogger) {}
 
