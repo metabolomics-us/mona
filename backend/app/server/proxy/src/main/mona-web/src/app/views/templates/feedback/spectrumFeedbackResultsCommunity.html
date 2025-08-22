@@ -2,7 +2,7 @@
     <ngb-accordion #ac="ngbAccordion" [closeOthers]="false">
       <ngb-panel id="feedbackPanel">
         <ng-template ngbPanelHeader>
-          <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
+          <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
             <strong>Community Feedback ({{totalReviews | number: '1.0':'en-US'}} user reviews)</strong>
             <fa-icon [icon]="faAngleDown" pull="right" *ngIf="ac.isExpanded('feedbackPanel')"></fa-icon>
             <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!ac.isExpanded('feedbackPanel')"></fa-icon>

@@ -109,7 +109,7 @@
                             <ngb-accordion #acc="ngbAccordion" [closeOthers]="false">
                                 <ngb-panel id="masspecPanel">
                                     <ng-template ngbPanelHeader>
-                                      <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
+                                      <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
                                         <strong>Mass Spectrum</strong>
                                         <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('masspecPanel')"></fa-icon>
                                         <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('masspecPanel')"></fa-icon>
@@ -125,7 +125,7 @@
 
                                 <ngb-panel id="ionPanel">
                                   <ng-template ngbPanelHeader>
-                                    <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
+                                    <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
                                       <strong>Ion / Peak Table</strong>
                                       <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('ionPanel')"></fa-icon>
                                       <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('ionPanel')"></fa-icon>
@@ -161,7 +161,7 @@
 
                                 <ngb-panel id="similarityPanel">
                                     <ng-template ngbPanelHeader>
-                                      <button ngbPanelToggle (click)="loadSimilarSpectra()" class="btn btn-link container-fluid text-left pl-0">
+                                      <button ngbPanelToggle (click)="loadSimilarSpectra()" class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
                                         <strong>Similar Spectra</strong>
                                         <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('similarityPanel')"></fa-icon>
                                         <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('similarityPanel')"></fa-icon>
@@ -237,7 +237,7 @@
                             <ngb-accordion #acc2 activeIds="compoundInfo">
                                 <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.compound; index as i">
                                     <ng-template *ngIf="accordionStatus.isCompoundOpen[i]" ngbPanelHeader>
-                                      <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none">
+                                      <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
                                         <span *ngIf="compound.kind !== null"><strong>{{compound.kind | titlecase}}</strong></span>
                                         <span *ngIf="compound.kind === null"><strong>Submitted Compound</strong></span>
                                         <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc2.isExpanded('compoundInfo')"></fa-icon>
