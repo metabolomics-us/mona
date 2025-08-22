@@ -515,3 +515,10 @@ input[type="checkbox"] {
 .clickable {
   cursor: pointer;
 }
+
+.accordion-title {
+  color: #232222;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+}

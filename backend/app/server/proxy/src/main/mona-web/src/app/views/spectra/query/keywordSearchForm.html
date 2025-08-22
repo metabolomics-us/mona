@@ -153,20 +153,41 @@
         </div>
     </div>
 
-    <!-- Additional tags -->
-    <div class="row mb-2">
-        <div class="col-md-12 h-auto">
-            <ngb-accordion #acc>
-                <ngb-panel id="additionalTags" title="Additional Tags">
-                    <ng-template ngbPanelContent>
-                        <tag-display [tags]="queryTags"></tag-display>
-                    </ng-template>
-                </ngb-panel>
-            </ngb-accordion>
-        </div>
-    </div>
+    <!-- Additional tags OLD BACKUP -->
+<!--    <div class="row mb-2">-->
+<!--        <div class="col-md-12 h-auto">-->
+<!--            <ngb-accordion #acc>-->
+<!--                <ngb-panel id="additionalTags" title="Additional Tags">-->
+<!--                    <ng-template ngbPanelContent>-->
+<!--                        <tag-display [tags]="queryTags"></tag-display>-->
+<!--                    </ng-template>-->
+<!--                </ngb-panel>-->
+<!--            </ngb-accordion>-->
+<!--        </div>-->
+<!--    </div>-->
 
-    <div class="row">
+  <!-- Additional tags -->
+  <div class="row mb-2">
+    <div class="col-md-12 h-auto">
+      <ngb-accordion #acc>
+        <ngb-panel id="additionalTags">
+          <ng-template ngbPanelTitle>
+          <span class="accordion-title">
+            Additional Tags
+            <fa-icon [icon]="faCaretDown" class="ml-2"></fa-icon>
+          </span>
+          </ng-template>
+          <ng-template ngbPanelContent>
+            <tag-display [tags]="queryTags"></tag-display>
+          </ng-template>
+        </ngb-panel>
+      </ngb-accordion>
+    </div>
+  </div>
+
+  <br />
+
+  <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
                 <div class="col-sm-2 mr-2">
