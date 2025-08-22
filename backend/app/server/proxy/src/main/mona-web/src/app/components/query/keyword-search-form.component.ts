@@ -75,9 +75,9 @@ export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-      setTimeout(() => {
-        this.accordion.expand('additionalTags');
-      }, 1000);
+      // setTimeout(() => {
+      //   this.accordion.expand('additionalTags');
+      // }, 1000);
     }
 
   submitQuery() {

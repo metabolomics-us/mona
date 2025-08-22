@@ -153,9 +153,10 @@
         </div>
     </div>
 
+    <!-- Additional tags -->
     <div class="row mb-2">
         <div class="col-md-12 h-auto">
-            <ngb-accordion #acc activeIds="additionalTags">
+            <ngb-accordion #acc>
                 <ngb-panel id="additionalTags" title="Additional Tags">
                     <ng-template ngbPanelContent>
                         <tag-display [tags]="queryTags"></tag-display>
