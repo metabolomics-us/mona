@@ -1,6 +1,5 @@
 Frontend:
-    - Search feature on downloads page
-    - Search icons next to:
+    - Remove clunky search fa-icons next to:
         - Submitter High Scores names on homepage
         - Admin page of submitters next to first name
         - Spectra attributes on browse page
@@ -8,27 +7,26 @@ Frontend:
             - Both metadata fields in display full record
             - Compound Classification hierarchy
             - Next to submitter name on "display full record"
-    - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
-        - Add legend to describe colors of tags (green = has tag, red = does not have, blank = unselected)
-        - Currently sorted by number of spectra associated, which is good
-        - Allow for search? 
-    - Think about changing the yellow grayed out "Searching...." page/animation/splash
-        - Changed to Loading... for now
     - Create new query / Add to query button box is formatted incorrectly for the spectra attributes when browsing for example
         - Change the highlight color, it's too dark
         - Also same formatting issue on the compound metadata parts
-    - What is "Additional Downloads" used for? It's empty on prod
+    - Allow for half-scores to be visualized by the star rating system
+    - Make additional downloads on Download page a clickable dropdown
+    - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
+        - Add legend to describe colors of tags (green = has tag, red = does not have, blank = unselected)
+        - Currently sorted by number of spectra associated, which is good
+        - Allow for search?
+    - Have a "Create an Account" button on the log in pop up - tried but no luck with modal state switching
+    - Forgot Username / Password?
+    - Think about changing the yellow grayed out "Searching...." page/animation/splash
+        - Changed to Loading... for now
     - Database Index & Statistic page
         - Metadata pie chart shows decimals for spectral count
-        - MS5 is too similar to MS2 in color
+        - MS5 color in the legend is too similar to MS2
             - Not hardcoded, part of db3 colors?
         - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
-    - Make folder names bolded in Download page
-    - Allow for half-scores to be visualized by the star rating system
-    - Have a "Create an Account" button on the log in pop up - tried but no luck with modal state switching
-    - Forgot Username / Password?
-    - Make additional downloads on Download page a clickable dropdown
+    - Search feature on downloads page
 
 Backend:
     - What is "Additional Downloads" used for? It's empty on prod
@@ -91,3 +89,4 @@ Done:
     - Search "Additional Tags" feature
         - Do not make Add Additional Tags to Query a clickable name, turn into a header style font
     - Searchbox highlight darker on hover
+    - Admin page
