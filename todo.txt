@@ -1,16 +1,13 @@
 Frontend:
-    - Library drop down in search, maybe show top 5 and a "show more" button
-    - Make checkbox buttons more clickable
+    - Search feature on downloads page
     - Search icons next to:
         - Spectra attributes on browse page
         - Compound metadata in display full record
         - Submitter High Scores names on homepage
         - Compound Classification hierarchy 
         - Admin page of submitters next to first name
-    - Have library selection be a dropdown of checkboxes to minimize space taken up (on search page)
     - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
         - Add legend to describe colors of tags (green = has tag, red = does not have, blank = unselected)
-        - Do not make Add Additional Tags to Query a clickable name, turn into a header style font
         - Currently sorted by number of spectra associated, which is good
         - Allow for search? 
     - Think about changing the yellow grayed out "Searching...." page/animation/splash
@@ -25,14 +22,8 @@ Frontend:
             - Not hardcoded, part of db3 colors?
         - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
-    - Change search checkboxes to more clickable buttons
     - Make folder names bolded in Download page
-    - Why are download buttons on Download page not aligned?
-    - "Click to see the explanation for the 5.00/5 score" - remove decimals
-        - Just realized we can have half stars, so maybe try to have them be visualized too, but that explains the decimals
-        - Same with "Explanation for the 5.00 / 5 star score"
-        - Also add a space for the info icon to breathe
-    - How are "Top Rated Spectral Records" being displayed? Like which are chosen to be shown (homepage)
+    - Allow for half-scores to be visualized by the star rating system
     - Have a "Create an Account" button on the log in pop up - tried but no luck with modal state switching
     - Forgot Username / Password?
     - Make additional downloads on Download page a clickable dropdown
@@ -93,3 +84,8 @@ Done:
             - Decided against the change
         - Ionization modes for pie chart goes out of bounds - should be fixed
     - Additional Tags in quick search should not be expanded by default
+    - Make checkbox buttons more clickable on search page
+    - Library drop down in search, show top 3 and a "show more" button - wasn't able to test on dev
+    - Search "Additional Tags" feature
+        - Do not make Add Additional Tags to Query a clickable name, turn into a header style font
+    - Searchbox highlight darker on hover
