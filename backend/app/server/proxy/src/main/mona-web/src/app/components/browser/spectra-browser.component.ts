@@ -19,7 +19,7 @@ import {MassDeletionService} from '../../services/persistence/mass-deletion.serv
 import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
-import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faChartBar} from '@fortawesome/free-solid-svg-icons';
 import {faBookmark} from '@fortawesome/free-regular-svg-icons';
 import {BehaviorSubject} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -58,6 +58,7 @@ export class SpectraBrowserComponent implements OnInit{
     faSpinner = faSpinner;
     faBookmark = faBookmark;
     faTrash = faTrash;
+    faChartBar = faChartBar;
 
     constructor(public spectrum: Spectrum, public spectraQueryBuilderService: SpectraQueryBuilderService,  public location: Location,
                 public spectrumCache: SpectrumCacheService,  public metadata: Metadata,  public cookie: CookieMain,
