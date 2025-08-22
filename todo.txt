@@ -1,15 +1,4 @@
 Frontend:
-    - Remove clunky search fa-icons next to:
-        - Submitter High Scores names on homepage
-        - Admin page of submitters next to first name
-        - Spectra attributes on browse page
-        - Display Full Record page:
-            - Both metadata fields in display full record
-            - Compound Classification hierarchy
-            - Next to submitter name on "display full record"
-    - Create new query / Add to query button box is formatted incorrectly for the spectra attributes when browsing for example
-        - Change the highlight color, it's too dark
-        - Also same formatting issue on the compound metadata parts
     - Allow for half-scores to be visualized by the star rating system
     - Make additional downloads on Download page a clickable dropdown
     - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
@@ -29,14 +18,13 @@ Frontend:
     - Search feature on downloads page
 
 Backend:
-    - What is "Additional Downloads" used for? It's empty on prod
+    - What is "Additional Downloads" and what are they used for? It's empty on prod
+    - What are "hidden downloads" like on the downloads page? There are none shown on prod?
     - Debug the random error I had when starting out where it said there were 0 spectra and search wouldn't work
         - Happens if you connect to the IP? Instead of the URL
-    - What does "Add to Query" vs "Create New Query" do?
-    - What are "hidden downloads" like on the downloads page?
     - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
     - Are M-H and [M-H]- the same precursor type? Merge them maybe?
-    - Links to "Originally submitted to..." like eu massbank shows error404 page not found
+    - Links to "Originally submitted to..." like eu MassBank shows error404 page not found
     - Manage submitters page does not load when refreshed
     - User profile page fails when refreshed
     
@@ -90,3 +78,14 @@ Done:
         - Do not make Add Additional Tags to Query a clickable name, turn into a header style font
     - Searchbox highlight darker on hover
     - Admin page
+    - Remove clunky search fa-icons next to: - should all be gone
+        - Submitter High Scores names on homepage
+        - Admin page of submitters next to first name
+        - Spectra attributes on browse page
+        - Display Full Record page:
+            - Both metadata fields in display full record
+            - Compound Classification hierarchy
+            - Next to submitter name on "display full record"
+    - Create new query / Add to query button box is formatted incorrectly for the spectra attributes when browsing for example
+        - Change the highlight color, it's too dark
+        - Also same formatting issue on the compound metadata parts
