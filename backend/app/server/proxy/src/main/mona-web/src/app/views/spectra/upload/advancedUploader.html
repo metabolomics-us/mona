@@ -35,11 +35,11 @@
                 <br />
                 <div class="form-check">
                   <input type="checkbox" class="form-check-input" id="libraryBool" name="librayBool" [(ngModel)]="showLibraryForm">
-                  <label class="form-check-label" for="libraryBool">Create New Library</label>
+                  <label class="form-check-label clickable" for="libraryBool">Create New Library</label>
                 </div>
                 <div *ngIf="showLibraryForm">
                   <p></p>
-                  <h5 class="text-info font-weight-bold"><a target="_blank" [routerLink]="['/documentation/uploadLibrary']">Help <fa-icon [icon]="faQuestionCircle" size="sm"></fa-icon></a></h5>
+                  <h6 class="text-info font-weight-bold"><a ngbTooltip="How to create a new library" target="_blank" [routerLink]="['/documentation/uploadLibrary']">Help <fa-icon [icon]="faQuestionCircle" size="sm"></fa-icon></a></h6>
                   <br/>
                   <form #libForm="ngForm"  id="libForm" class="form-horizontal" novalidate role="form">
                     <div class="form-group row">
