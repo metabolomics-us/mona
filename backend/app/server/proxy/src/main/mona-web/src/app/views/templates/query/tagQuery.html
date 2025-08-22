@@ -1,11 +1,8 @@
 <div class="btn-group top5" ngbDropdown [placement]="['right']">
-    <button type="button" class="btn dropdown-toggle btn-sm" ngbDropdownToggle
-            [ngClass]="{'btn-primary' : tag.ruleBased, 'btn-primary' : !tag.ruleBased}">
-
+    <button type="button" class="btn btn-primary dropdown-toggle btn-sm" ngbDropdownToggle>
         <span *ngIf="tag.ruleBased">
           <fa-icon [icon]="faFlask"></fa-icon>
         </span>
-
       {{tag.text}}
     </button>
 
