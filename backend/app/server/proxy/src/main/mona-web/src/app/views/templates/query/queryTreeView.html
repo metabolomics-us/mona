@@ -12,7 +12,7 @@
             <span *ngIf="node.query === null"> {{node.singleLabel}}</span>
 
             <span class="float-right" [hidden]="node.jsonExport === null || node.mspExport === null || node.sdfExport === null" ngbDropdown>
-                    <a ngbDropdownToggle class="dropdown-toggle btn btn-primary"><fa-icon [icon]="faFileDownload"></fa-icon></a>
+                    <a ngbDropdownToggle class="dropdown-toggle btn btn-primary"><fa-icon [icon]="faFileDownload"> Download</fa-icon></a>
                     <ul class="uib-dropdown-menu dropdown-menu-right" placement="right" gaCategory="download" ngbDropdownMenu>
                         <li *ngIf="node.jsonExport !== null"><a ngbDropdownItem href="{{downloadJSON(node)}}" download [gaEvent]="node.downloadLabel + '.json'"><fa-icon [icon]="faFileDownload"></fa-icon> JSON (Internal MoNA Format) ({{node.jsonExport.size|bytesPipe}})</a></li>
                         <li *ngIf="node.mspExport !== null"><a ngbDropdownItem href="{{downloadMSP(node)}}" download [gaEvent]="node.downloadLabel + '.msp'"><fa-icon [icon]="faFileDownload"></fa-icon> MSP (NIST compatible) ({{node.mspExport.size|bytesPipe}})</a></li>
