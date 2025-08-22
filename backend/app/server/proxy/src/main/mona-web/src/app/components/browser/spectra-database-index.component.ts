@@ -87,7 +87,9 @@ export class SpectraDatabaseIndexComponent implements OnInit {
                     }
                 },
                 showLabels: true,
-                labelsOutside: true,
+                // labelsOutside: true,
+                // try with labels inside to see if pie charts look better
+                labelsOutside: false,
                 duration: 500,
                 labelThreshold: 0.01,
                 color: (d, i) => {
@@ -99,7 +101,7 @@ export class SpectraDatabaseIndexComponent implements OnInit {
                         top: 5,
                         right: 35,
                         bottom: 5,
-                        left: 0
+                        left: 15
                     }
                 }
             }
