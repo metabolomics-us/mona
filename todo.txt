@@ -1,14 +1,9 @@
 Frontend:
     - Allow for half-scores to be visualized by the star rating system
-    - Make additional downloads on Download page a clickable dropdown
-    - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
-        - Add legend to describe colors of tags (green = has tag, red = does not have, blank = unselected)
-        - Currently sorted by number of spectra associated, which is good
-        - Allow for search?
+        - Can do it with custom ng template on the ngbrating bootstrap component, use fa icons
+    - Reorganize the spectra full view so that all dropdowns are under "compound information"
+        - Give the spectra metadata its own dropdown too
     - Have a "Create an Account" button on the log in pop up - tried but no luck with modal state switching
-    - Forgot Username / Password?
-    - Think about changing the yellow grayed out "Searching...." page/animation/splash
-        - Changed to Loading... for now
     - Database Index & Statistic page
         - Metadata pie chart shows decimals for spectral count
         - MS5 color in the legend is too similar to MS2
@@ -16,9 +11,14 @@ Frontend:
         - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
     - Search feature on downloads page
+    - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
+        - Allow for search
+        - Add legend to describe colors of tags (green = has tag, red = does not have, blank = unselected)
+        - Currently sorted by number of spectra associated, which is good
 
 Backend:
     - What is "Additional Downloads" and what are they used for? It's empty on prod
+        - Make additional downloads on Download page a clickable dropdown (frontend)
     - What are "hidden downloads" like on the downloads page? There are none shown on prod?
     - Debug the random error I had when starting out where it said there were 0 spectra and search wouldn't work
         - Happens if you connect to the IP? Instead of the URL
@@ -27,7 +27,8 @@ Backend:
     - Links to "Originally submitted to..." like eu MassBank shows error404 page not found
     - Manage submitters page does not load when refreshed
     - User profile page fails when refreshed
-    
+    - Forgot Username / Password feature
+
 Done:
     - Display full record button does not open a new page like it says it will - should be fixed
     - Right caret on buttons like dipeptide_neg - should be fixed
@@ -89,3 +90,7 @@ Done:
     - Create new query / Add to query button box is formatted incorrectly for the spectra attributes when browsing for example
         - Change the highlight color, it's too dark
         - Also same formatting issue on the compound metadata parts
+    - Think about changing the yellow grayed out "Searching...." page/animation/splash
+        - Changed to Loading... for now
+    - In spectra view
+        - Make buttons nicer, remove btn-link class
