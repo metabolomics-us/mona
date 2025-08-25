@@ -534,3 +534,27 @@ input[type="checkbox"] {
 .gryclr:hover {
   color: #353434 !important;
 }
+
+.gray-background {
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.code-block {
+  background-color: #ececec;
+  padding: 10px;
+  border-radius: 10px;
+  color: darkslategray;
+  font-family: CourierNew, Courier, monospace;
+  font-size: 15px;
+}
+
+.code-text {
+  background-color: #ececec;
+  padding: 3px;
+  border-radius: 5px;
+  color: darkslategray;
+  font-family: CourierNew, Courier, monospace;
+  font-size: 15px;
+}

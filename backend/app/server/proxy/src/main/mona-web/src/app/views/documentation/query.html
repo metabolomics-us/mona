@@ -7,95 +7,94 @@
         <p></p>
 
         <div>
-            <h4>General query format</h4>
+            <h4>General Query Format</h4>
             <hr/>
             <div>
               <p>
                 MoNA utilizes the <a href="https://github.com/turkraft/spring-filter">Spring Filter</a> library to create dynamic queries. Below is an example query with all its parts explained.
               </p>
+              <br />
               <h6>Example query:</h6>
-              <p>
-                <code>curl -G -H "Content-Type: application/json" --data-urlencode "query=exists(metaData.name:'ionization mode' and metaData.value:'positive')" --data-urlencode "size=10" --data-urlencode "page=1" http://mona.fiehnlab.ucdavis.edu/rest/spectra/search</code>
+              <p class="code-block">
+                curl -G -H "Content-Type: application/json" --data-urlencode "query=exists(metaData.name:'ionization mode' and metaData.value:'positive')" --data-urlencode "size=10" --data-urlencode "page=1" http://mona.fiehnlab.ucdavis.edu/rest/spectra/search
               </p>
-              <p>
-                1) <code>-G</code> ensures the cURL call is <strong>GET</strong>
-              </p>
-              <p>
-                2) <code>-H "Content-Type: application/json"</code> tells cURL to return a <b>JSON</b> payload.
-              </p>
-              <p>
-                3) <code>--data-urlencode "query=exists(metaData.name:'ionization mode' and metaData.value:'positive')"</code>
-                will encode the query parameter to ensure all values of the text are passed to the backend. The query itself will
-                be further explained later.
-              </p>
-              <p>
-                4) <code>--data-urlencode "size=10"</code> sets the JSON result size to 10 spectra.
-                <strong>Please use size if possible! Large result sets can cause strain on the database and
-                extend query times.</strong>
-              </p>
-              <p>
-                5) <code>--data-urlencode "page=1"</code> accesses the first page of the above size of a given result set. If the above query
-                results in 200 total results, and you designate a size of 10 like above, you'll have 20 available pages of results.
-              </p>
-              <p>
-                6) <code>http://mona.fiehnlab.ucdavis.edu/rest/spectra/search</code> is the REST endpoint you'll contact for your searches.
-              </p>
+              <div class="ml-3">
+              <li>
+                <code class="code-text">-G</code> ensures the cURL call is <b>GET</b>
+              </li>
+              <p></p>
+              <li>
+                <code class="code-text">-H "Content-Type: application/json"</code> tells cURL to return a <b>JSON payload</b>
+              </li>
+                <p></p>
+              <li>
+                <code class="code-text">--data-urlencode "query=exists(metaData.name:'ionization mode' and metaData.value:'positive')"</code>
+                ensures all values of the text are passed to the <b>backend</b>. The details of the query
+                are explained in the next section
+              </li>
+                <p></p>
+              <li>
+                <code class="code-text">--data-urlencode "size=10"</code> sets the <b>JSON result size</b> to 10 spectra.
+                Please use the size parameter when possible! Large result sets can cause strain on the database and
+                extend query times
+              </li>
+                <p></p>
+              <li>
+                <code class="code-text">--data-urlencode "page=1"</code> <b> accesses only the first page</b> of a given result set. If a query
+                had 200 results and you designated a page size of 10 like above, there will be 20 pages of results
+              </li>
+                <p></p>
+              <li>
+                <code class="code-text">http://mona.fiehnlab.ucdavis.edu/rest/spectra/search</code> is the <b>REST endpoint</b>
+              </li>
+              </div>
             </div>
 
             <br /><br /><br />
-            <h4>Spring Filter query format</h4>
+            <h4>Spring Filter Query Format</h4>
             <hr/>
             <div>
               <p>
-                Please take some time to read the <a href="https://github.com/turkraft/spring-filter/blob/main/README.md">README.md</a> from the Spring Filter project!
-                The MoNA team has decided to use <strong>Spring Filter</strong> for all of its querying. The library allows for nested querying and provides an
+                MoNA uses <strong>Spring Filter</strong> for all of its querying.
+                Please take some time to view the <a href="https://github.com/turkraft/spring-filter/blob/main/README.md">README</a> from the Spring Filter project.
+                The library allows for nested querying and provides an
                 extensive amount of functions and operations to create custom queries.
               </p>
+              <br />
               <h5>Referencing Spectrum Objects</h5>
               <p>
-                Spring Filter uses dot notation to reference nested objects. Let's a simplified Spectrum object for example:
+                Spring Filter uses dot notation to reference nested objects. Below is a simplified spectrum object as an example
               </p>
-              <pre>
-                <code>
+              <pre class="code-block">
                   {{ '{' }}
                     "id": "MoNA000001",
                     "compound": [
                       {{ '{' }}
                         "metaData": {{ '{' }}"name": "InChIKey", value: "BRMWTNUJHUMWMS-LURJTMIESA-N"{{ '}' }}
-                  {{ '}' }}
+                      {{ '}' }}
                     ],
-                  "metaData": {{ '{' }}"name": "ionization mode", value: "positive"{{ '}' }},
-                  {{ '}' }}
-                  </code>
-              </pre>
+                    "metaData": {{ '{' }}"name": "ionization mode", value: "positive"{{ '}' }},
+                  {{ '}' }}</pre>
               <p>
-                If we want to check the id value, then we reference: <code>id</code>
+                - To reference the <em>ID</em>, use <code class="code-text">id</code> <br />
+                - To reference the <em>compound metadata name</em>, use <code class="code-text">compound.metaData.name</code> <br />
+                - To reference the <em>spectrum metadata value</em>, use <code class="code-text">metaData.value</code>
               </p>
-              <p>
-                If we want to check compound metadata name, then we reference: <code>compound.metaData.name</code>
-              </p>
-              <p>
-                Or if we want to check spectrum metadata value, then we reference: <code>metaData.value</code>
-              </p>
-              <p>
-                There will be a spectrum data object on the bottom of this page for you to reference when creating queries. Simply put,
-                you can use Javascript like dot notation to reference fields within a spectrum object for searching.
-              </p>
+              <br />
               <h5>Operators</h5>
-              <hr/>
               <table class="table">
                 <tr> <th>Literal</th> <th>Description</th> <th>Example</th> </tr>
-                <tr> <td>and<td>AND Condition Between Two Expressions</td> <td>id : 'MoNA000001' <b>and</b> metaData.name : 'positive'</td> </tr>
-                <tr> <td>or<td>OR Condition Between Two Expressions</td> <td>id : 'MoNA000001' <b>or</b> metaData.name : 'positive'</td> </tr>
-                <tr> <td>not<td>NOT Condition For Given Expressions</td> <td> <b>not</b> (metaData.name : 'positive') </td> </tr>
+                <tr> <td>and<td>AND condition between two expressions</td> <td>id : 'MoNA000001' <b>and</b> metaData.name : 'positive'</td> </tr>
+                <tr> <td>or<td>OR condition between two expressions</td> <td>id : 'MoNA000001' <b>or</b> metaData.name : 'positive'</td> </tr>
+                <tr> <td>not<td>NOT condition for given expressions</td> <td> <b>not</b> (metaData.name : 'positive') </td> </tr>
               </table>
+              <br />
               <h5>Comparators</h5>
-              <hr/>
-              <table class="table">
+              <table class="table text-nowrap">
                 <tr> <th>Literal</th> <th>Description</th> <th>Example</th> </tr>
                 <tr> <td>~<td>checks if the left (string) expression is similar to the right (string) expression</td> <td>metaData.name <b>~</b> '*ionization'</td> </tr>
                 <tr> <td>:<td>checks if the left expression is equal to the right expression</td> <td>id <b>:</b> MoNA000001</td> </tr>
-                <tr> <td>!<td>checks if the left expression is not equal to the right expression</td> <td>compound.metaData.value <b>!</b> 'BRMWTNUJHUMWMS-LURJTMIESA-N'</td> </tr>
+                <tr> <td>!<td>checks if the left expression is not equal to the right expression</td> <td>compound.metaData.value <b>!</b> 'BRMW-LURJTMIESA-N'</td> </tr>
                 <tr> <td>><td>checks if the left expression is greater than the right expression</td> <td>metaData.value <b>></b> 100</td> </tr>
                 <tr> <td>>: <td>checks if the left expression is greater or equal to the right expression</td> <td>metaData.value <b>>:</b> 100</td> </tr>
                 <tr> <td><<td>checks if the left expression is smaller than the right expression</td> <td>metaData.value <b><</b> 100</td> </tr>
@@ -106,25 +105,27 @@
                 <tr> <td>is not empty<td>checks if the (collection) expression is not empty</td> <td>compound <b>is not empty</b></td> </tr>
                 <tr> <td>in<td>checks if an expression is present in the right expressions</td> <td>metaData.value <b>in (</b>'positive'<b>,</b> 'negative'<b>)</b></td> </tr>
               </table>
+              <br />
               <h5>Subqueries</h5>
-              <hr/>
-              <table class="table">
+              <table class="table" style="word-break: keep-all">
                 <tr> <th>Name<th>Description</th> <th>Example</th> <th>Explanation</th> </tr>
                 <tr> <td> exists<td> returns the existence of a subquery result </td> <td> <b>exists(</b>metaData.value: 'positive' and metaData.name: 'ionization mode'<b>)</b> </td> <td> returns true if metadata name is ionization mode and the value is positive</td> </tr>
               </table>
 
               <p>
-                Subquries are the most important function as they allow of to query a given table multiple times. Normally, we are limited to searching each field a single time such
-                as only being able to visit <code>metaData.name</code> once in a given query statement. But, with subqueries, we are able to join the metaData table multiple times
+                Subqueries are the most important function as they allow us to query a given table multiple times.
+                Normally, we are limited to searching each field a single time, such
+                as only being able to visit <code class="code-text">metaData.name</code> once in a given query statement.
+                But with subqueries, we are able to join the metaData table multiple times
                 and check various field values.
               </p>
-              <p>Subqueries allow us to perform custom queries like the following that searches for dirty spectra:</p>
-              <p>
-                <code>exists(metaData.name:'normalized entropy' and metaData.value>'0.8') and exists(metaData.name:'spectral entropy' and metaData.value>'3.0')</code>
+              <p>Subqueries allow us to perform custom queries like the following, which searches for dirty spectra:</p>
+              <p class="code-block">
+                exists(metaData.name:'normalized entropy' and metaData.value>'0.8') and exists(metaData.name:'spectral entropy' and metaData.value>'3.0')
               </p>
 
-              <br /><br /><br />
-              <h4>Spectra Browser query format</h4>
+              <br /> <br /> <br />
+              <h4>Spectra Browser Query Format</h4>
               <hr/>
               <p>
                 The queries that you construct for cURL commands work exactly the same as they do in the <a [routerLink]="['/spectra/browse']">Spectra Browser</a>.
@@ -134,13 +135,13 @@
                 1) Look at the top of the page and click on <strong>Current Query Information & Help</strong>
               </p>
               <p>
-                2) Next to <strong>Current Query</strong> you will see the edit button <fa-icon [icon]="faEdit"></fa-icon>, click it and it will allow you to edit the field.
+                2) Below the <strong>Current Query</strong> you will see the <code class="code-text">edit</code> button <fa-icon [icon]="faEdit"></fa-icon>, click it and it will allow you to edit the field
               </p>
               <p>
-                3) Type or copy your query into the field and then click on <code>Update Query</code>. This will execute the query and provide you results!
-                In addition you'll be provided a cURL command that you can then execute on the command line.
+                3) Type or copy your query into the field and then click on <code class="code-text">Update Query</code>
               </p>
-              <sub>Note: The generated cURL command will already be url encoded so it is a simple copy and paste onto the command line.</sub>
+              <sub>Note: The generated cURL command will already be url encoded so it is a simple copy and paste onto the command line</sub>
+              <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
             </div>
         </div>
     </div>
