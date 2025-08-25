@@ -1,4 +1,6 @@
 Frontend:
+    - Add "Successfully logged out" toast message
+    - Admin dropdown options highlight differently than other navbars, same with some of the "Create new query" ones
     - Allow for half-scores to be visualized by the star rating system
         - Can do it with custom ng template on the ngbrating bootstrap component, use fa icons
     - Reorganize the spectra full view so that all dropdowns are under "compound information"
@@ -15,6 +17,9 @@ Frontend:
         - Allow for search
         - Add legend to describe colors of tags (green = has tag, red = does not have, blank = unselected)
         - Currently sorted by number of spectra associated, which is good
+    - Account creation date on "manage submitters" page
+    - Add confirmation for "Delete User" on "manage submitters"
+        - Fix backend part of it, don't think it actually deleted the user
 
 Backend:
     - What is "Additional Downloads" and what are they used for? It's empty on prod
@@ -94,3 +99,4 @@ Done:
         - Changed to Loading... for now
     - In spectra view
         - Make buttons nicer, remove btn-link class
+    - Made code blocks much cleaner and better looking
