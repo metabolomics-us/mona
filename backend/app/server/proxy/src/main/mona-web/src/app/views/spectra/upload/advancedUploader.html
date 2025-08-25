@@ -385,14 +385,14 @@
                             <p class="lead">Removes low intensity ions from a mass spectrum.</p>
                             <div style="margin-top: 10px;">
                                 <div>
-                                    <div class="col-sm-3 form-group"><strong>Top <code>n</code> Ions</strong></div>
+                                    <div class="col-sm-3 form-group"><strong>Top <code class="code-text">n</code> Ions</strong></div>
                                     <div class="col-sm-9 form-group">
                                         <input type="number"
                                                [(ngModel)]="ionCuts.nIons"
                                                ngDefaultControl
                                                placeholder="Number of ions"
                                                class="form-control" />
-                                        <span class="help-block">Keeps at most the <code>n</code> ions with the highest intensity</span>
+                                        <span class="help-block">Keeps at most the <code class="code-text">n</code> ions with the highest intensity</span>
                                     </div>
                                 </div>
 
@@ -407,7 +407,7 @@
 
                                         <span class="help-block">
                                         Removes all ions below the given percentage of the base peak intensity (where
-                                        the value <code>0</code> will retain all ions while the value <code>100</code>
+                                        the value <code class="code-text">0</code> will retain all ions while the value <code class="code-text">100</code>
                                         will retain only the base peak.
                                     </span>
                                     </div>
