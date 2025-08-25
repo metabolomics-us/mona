@@ -144,11 +144,11 @@
                       </div>
                     </div>
                     <br />
-                    <button class="btn btn-primary float-right" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles()">Upload</button>
+                    <button class="btn btn-primary float-right" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles()">Continue</button>
                   </form>
                 </div>
                 <br *ngIf="!showLibraryForm"/>
-                <button class="btn btn-primary float-right" *ngIf="!showLibraryForm" [disabled]="fileUpload === null" (click)="parseFiles()">Upload</button>
+                <button class="btn btn-primary float-right" *ngIf="!showLibraryForm" [disabled]="fileUpload === null" (click)="parseFiles()">Continue</button>
             </div>
         </div>
 
