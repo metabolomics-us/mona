@@ -109,10 +109,10 @@
 
         <div class="float-right">
             <button class="btn btn-danger mr-1" *ngIf="authenticationService.isLoggedIn() " type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
-              <fa-icon [icon]="faTrash"></fa-icon> <strong>Batch Delete</strong>
+              <fa-icon [icon]="faTrash"></fa-icon> <strong> Batch Delete</strong>
             </button>
-            <button class="btn btn-primary" (click)="acc.isExpanded('display-panel')? acc.collapse('display-panel'): acc.expand('display-panel')" placement="left"
-                    ngbTooltip="Number of spectra retrieved in this query, click to see additional details">
+            <button class="btn btn-primary" (click)="acc.isExpanded('display-panel')? acc.collapse('display-panel'): acc.expand('display-panel')" placement="right"
+                    ngbTooltip="Number of spectra results from this query">
 
               <fa-icon [icon]="faBookmark"></fa-icon>
               <span *ngIf="authenticationService.isAdmin() && duration !== undefined"> ({{duration | number: '1.2-2'}} s)</span>
@@ -134,7 +134,7 @@
             </div>
         </div>
         <div class="float-right" *ngIf="authenticationService.isLoggedIn()">
-          <button class="btn btn-primary" type="button" (click)="queryUserSpectra()">My Submitted Spectra</button>
+          <button class="btn btn-primary" ngbTooltip="Query your submitted spectra" placement="bottom" type="button" (click)="queryUserSpectra()">My Submitted Spectra</button>
         </div>
     </div>
 </div>
