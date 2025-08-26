@@ -4,7 +4,6 @@
     <div class="col-md-12">
       <h3><fa-icon [icon]="faCloudUpload"></fa-icon> Basic Uploader</h3>
 
-        <div class="h5">Upload single mass spectra using a simple, guided wizard</div>
         <br />
 
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
@@ -14,7 +13,7 @@
 
         <!-- Select files to upload -->
         <div *ngIf="page === 0" class="card">
-            <div class="card-header"><strong style="font-size: 1.2em;">Submit a Mass Spectrum to Upload</strong></div>
+            <div class="card-header"><strong style="font-size: 1.2em;">Upload a Single Mass Spectrum</strong></div>
 
             <div class="card-body">
                 <p class="lead">
@@ -48,12 +47,13 @@
 OR
 
 [m/z] [intensity]
-[m/z] [intensity]"
+[m/z] [intensity]
+..."
 
-                  class="form-control" [rows]="10" [(ngModel)]="pastedSpectrum"></textarea>
+                  class="form-control" [rows]="9" [(ngModel)]="pastedSpectrum"></textarea>
                 </div>
                 <br />
-              <button class="btn btn-primary" (click)="parsePastedSpectrum(pastedSpectrum)">Continue</button>
+              <button class="btn btn-primary" [disabled]="!pastedSpectrum" (click)="parsePastedSpectrum(pastedSpectrum)">Continue</button>
             </div>
         </div>
 
