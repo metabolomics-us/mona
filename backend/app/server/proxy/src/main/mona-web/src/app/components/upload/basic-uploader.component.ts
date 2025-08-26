@@ -116,6 +116,9 @@ export class BasicUploaderComponent implements OnInit{
     else if (column === 'annotation') {
       if (this.ionTableSort === '+annotation') { this.ionTableSort = '-annotation'; } else { this.ionTableSort = '+annotation'; }
     }
+    else if (column === 'relativeIntensity') {
+      if (this.ionTableSort === '+relativeIntensity') { this.ionTableSort = '-relativeIntensity'; } else { this.ionTableSort = '+relativeIntensity'; }
+    }
   }
 
 
