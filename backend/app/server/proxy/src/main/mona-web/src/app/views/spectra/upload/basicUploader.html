@@ -85,7 +85,7 @@ OR
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                     <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                      <li class="previous"><button class="fakeRef" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
+                      <li class="previous"><button class="fakeRef davis-blue" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
                     </ul>
                   </div>
                   <div class="mx-auto order-0">
@@ -95,22 +95,25 @@ OR
                   </div>
                   <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                     <ul class="navbar-nav ml-auto">
-                      <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                      <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                     </ul>
                   </div>
                 </nav>
             </div>
 
             <div class="card-body">
-                <p class="lead">
-                    <small>Below is your submitted mass spectrum.  Please verify that it appears as
-                    you expect <br /> You may also add annotations to specific peaks in the ion table below.</small>
-                </p>
+                <p class="lead"><small>
+                      Below is your submitted mass spectrum. Please verify that it appears as you expect.
+                      <br />
+                      You may also add annotations to specific peaks in the ion table below.
+                    </small></p>
 
                 <p class="lead" *ngIf="fileHasMultipleSpectra">
-                    <small><strong>Note: </strong> The file you uploaded contains multiple mass spectral records.  The basic
-                    uploader is only designed to process a single spectrum, and so only the first spectrum in your file
-                    will be displayed.</small>
+                    <small><strong class="text-danger">WARNING: </strong>
+                    The file you uploaded contains multiple mass spectral records.
+                    The basic uploader is designed to handle only a single spectrum.
+                    Only the first spectrum in your file will be processed.
+                    To upload multiple spectra at once, use the advanced uploader.</small>
                 </p>
 
                 <div class="masspec-modal">
@@ -130,10 +133,10 @@ OR
                         <thead>
                         <tr>
                             <th>&nbsp;</th>
-                            <th><button class="fakeRef" (click)="sortIonTable('ion')">Ion</button></th>
-                            <th><button class="fakeRef" (click)="sortIonTable('intensity')">Intensity</button></th>
-                            <th><button class="fakeRef" (click)="sortIonTable('relativeIntensity')">Relative Intensity</button></th>
-                            <th><button class="fakeRef" (click)="sortIonTable('annotation')">Annotation</button></th>
+                            <th><button class="fakeRef davis-blue" (click)="sortIonTable('ion')">Ion</button></th>
+                            <th><button class="fakeRef davis-blue" (click)="sortIonTable('intensity')">Intensity</button></th>
+                            <th><button class="fakeRef davis-blue" (click)="sortIonTable('relativeIntensity')">Relative Intensity</button></th>
+                            <th><button class="fakeRef davis-blue" (click)="sortIonTable('annotation')">Annotation</button></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -156,12 +159,12 @@ OR
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                     <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                      <li class="previous"><button class="fakeRef" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
+                      <li class="previous"><button class="fakeRef davis-blue" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
                     </ul>
                   </div>
                   <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                     <ul class="navbar-nav ml-auto">
-                      <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                      <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                     </ul>
                   </div>
                 </nav>
