@@ -566,3 +566,9 @@ input[type="checkbox"] {
 .davis-blue:hover {
   color: #276db3 !important;
 }
+
+/* override accordion headers to not have underlines on hover */
+.card-header .btn:hover,
+.card-header a:hover {
+  text-decoration: none !important;
+}
