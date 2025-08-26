@@ -193,10 +193,10 @@ export class BasicUploaderComponent implements OnInit{
                     });
                 }
             } else {
-                this.pasteError = 'Spectrum does not have complete ion/intensity pairs!';
+                this.pasteError = 'Spectrum does not have complete ion/intensity pairs';
             }
         } else {
-            this.pasteError = 'Unrecognized spectrum format!';
+            this.pasteError = 'Unrecognized spectrum format';
         }
 
 
@@ -367,7 +367,7 @@ export class BasicUploaderComponent implements OnInit{
         }
 
         else {
-            this.compoundError = 'Please provide compound details!';
+            this.compoundError = 'Please provide compound details';
             this.compoundProcessing = false;
         }
     }

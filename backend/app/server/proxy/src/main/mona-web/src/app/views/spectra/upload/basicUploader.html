@@ -178,17 +178,17 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
                   <ul class="navbar-nav mx-auto">
-                    <li><strong style="font-size: 1.2em;">Compound Information</strong></li>
+                    <li><strong class="text-nowrap" style="font-size: 1.2em;">Compound Information</strong></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -215,8 +215,8 @@ OR
                 </div>
 
                 <div *ngIf="compoundError" class="alert alert-danger" role="alert">
-                  <h3><fa-icon [icon]="faExclamationTriangle"></fa-icon> Error!</h3>
-                    <h4>{{compoundError}}</h4>
+                  <h5><fa-icon [icon]="faExclamationTriangle"></fa-icon> Error</h5>
+                    <h6>{{compoundError}}</h6>
                 </div>
                 <br />
 
