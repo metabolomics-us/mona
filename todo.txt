@@ -1,6 +1,5 @@
 Frontend:
     - Add "Successfully logged out" toast message
-    - Admin dropdown options highlight differently than other navbars, same with some of the "Create new query" ones
     - Allow for half-scores to be visualized by the star rating system
         - Can do it with custom ng template on the ngbrating bootstrap component, use fa icons
     - Reorganize the spectra full view so that all dropdowns are under "compound information"
@@ -100,3 +99,5 @@ Done:
     - In spectra view
         - Make buttons nicer, remove btn-link class
     - Made code blocks much cleaner and better looking
+    - Admin dropdown options highlight differently than other navbars - wasn't able to test on dev
+    - Clean up all resource pages
