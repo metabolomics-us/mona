@@ -282,11 +282,11 @@ OR
                 <div class="row form-group">
                     <ngb-accordion class="col-sm-12 col-lg-12">
                         <ngb-panel>
-                            <ng-template ngbPanelTitle>Import MOL/SDF File</ng-template>
+                            <ng-template ngbPanelTitle><span class="davis-blue">Import MOL/SDF File</span></ng-template>
                             <ng-template ngbPanelContent>
                                 <div>
                                     Load a MOL file to attach to this spectrum record.  Please note that the MOL data must contain explicit hydrogens to
-                                    Convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
+                                    convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
                                     will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
                                     using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
                                 </div>
@@ -302,7 +302,7 @@ OR
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Upload a MOL/SDF file.</label>
+                                    <label><b>Upload a MOL/SDF file</b></label>
 
                                     <div class="input-group">
                                     <span class="input-group-btn">
@@ -310,21 +310,17 @@ OR
                                             Browse&hellip; <input type="file" (change)="parseMolFile($event)" [disabled]="compoundProcessing" />
                                         </span>
                                     </span>
-
-                                        <input id="molFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
+                                        <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
                                     </div>
                                     <div class="input-group">
 
                                     </div>
                                 </div>
-
-                                <span class="help-block">Import a MOL or SDF file.  Note that if you upload an SDF
-                                file with multiple structures, only the first structure will be read.</span>
                             </ng-template>
                         </ngb-panel>
 
                         <ngb-panel>
-                            <ng-template ngbPanelTitle>Draw a Molecular Structure</ng-template>
+                            <ng-template ngbPanelTitle><span class="davis-blue">Draw a Molecular Structure</span></ng-template>
                             <ng-template ngbPanelContent>
                                 <div>
                                     Draw a structure with the ChemDoodle drawing tool to generate a MOL file.  If uploading to MoNA, the provided MOL file
@@ -351,12 +347,12 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
