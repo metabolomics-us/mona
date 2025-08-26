@@ -221,15 +221,24 @@ OR
                 <br />
 
                 <div class="row form-group">
-                    <div class="col-lg-3"><label>Names:</label></div>
-                    <div class="col-lg-9">
-                        <input type="text"
-                               *ngFor="let name of currentSpectrum.names; index as i"
-                               [(ngModel)]="currentSpectrum.names[i]"
-                               placeholder="Name"
-                               class="form-control" />
-                        <button type="button" class="btn btn-default btn-xs" (click)="addName()">+</button>
+                  <div class="col-lg-3">
+                    <label>Names:</label>
+                  </div>
+                  <div class="col-lg-9">
+                    <div *ngFor="let name of currentSpectrum.names; index as i; trackBy: trackByIndex" class="input-group mb-1">
+                      <input
+                        type="text"
+                        [(ngModel)]="currentSpectrum.names[i]"
+                        placeholder="Name"
+                        class="form-control" />
+                      <span class="input-group-btn">
+                        <button type="button" ngbTooltip="Remove name" class="btn btn-xs" (click)="removeName(i)"><fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
+                      </span>
                     </div>
+
+                    <!-- Add name button below -->
+                    <button type="button" ngbTooltip="Add a name" class="btn btn-default btn-xs mt-2" (click)="addName()"><fa-icon size="xs" [icon]="faPlusSquare"></fa-icon></button>
+                  </div>
                 </div>
 
                 <div class="row form-group">
