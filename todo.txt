@@ -21,6 +21,7 @@ Frontend:
         - Fix backend part of it, don't think it actually deleted the user
 
 Backend:
+    - Can't upload to dev or prod??
     - What is "Additional Downloads" and what are they used for? It's empty on prod
         - Make additional downloads on Download page a clickable dropdown (frontend)
     - What are "hidden downloads" like on the downloads page? There are none shown on prod?
@@ -41,7 +42,7 @@ Done:
     - Search icons next to:
         - Submitter name on a display full record - should be fixed
         - Mass spectral metadata in display full record - should be fixed
-    - Typo in "Upload an spectral library file and dynamically modify the mass spectra and metadata" - fixed
+    - Typo in "Upload an spectral library file and dynamically modify the mass spectra and metadata"
     - How is the submitter high scores table calculated? Needs to be adjusted
         - Submitter high scores now ordered by count with minimum avg score of 3
     - Admin manage submitters page cleaned up
@@ -83,7 +84,7 @@ Done:
         - Do not make Add Additional Tags to Query a clickable name, turn into a header style font
     - Searchbox highlight darker on hover
     - Admin page
-    - Remove clunky search fa-icons next to: - should all be gone
+    - Remove clunky search fa-icons next to:
         - Submitter High Scores names on homepage
         - Admin page of submitters next to first name
         - Spectra attributes on browse page
@@ -99,5 +100,7 @@ Done:
     - In spectra view
         - Make buttons nicer, remove btn-link class
     - Made code blocks much cleaner and better looking
-    - Admin dropdown options highlight differently than other navbars - wasn't able to test on dev
+    - Admin dropdown options highlight differently than other navbars
     - Clean up all resource pages
+    - Clean up basic uploader guided wizard
+        - Formatting, functionality, buttons, etc.
