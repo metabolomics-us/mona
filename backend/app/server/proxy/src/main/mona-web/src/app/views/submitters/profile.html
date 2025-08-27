@@ -13,18 +13,9 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-md-4 col-lg-4" align="center">
-                            <img alt="User Pic" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=100" class="img-circle">
-                            <br />
-                        </div>
-
                         <div class=" col-md-8 col-lg-8">
                             <table class="table table-user-information borderless">
                                 <tbody>
-                                <tr>
-                                    <td>Username:</td>
-                                    <td>{{user.emailAddress}}</td>
-                                </tr>
                                 <tr>
                                     <td>Name:</td>
                                     <td>{{user.firstName}} {{user.lastName}}</td>
@@ -44,7 +35,7 @@
                 </div>
 
                 <div class="panel-footer">
-                    <a class="btn btn-primary" (click)="queryUserSpectra()"><fa-icon [icon]="faSearch"></fa-icon> My Submitted Spectra</a>
+                    <button class="btn btn-primary" (click)="queryUserSpectra()">My Submitted Spectra</button>
                     <!--
                     <a data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
                     <span class="pull-right">
@@ -52,7 +43,6 @@
                     </span>
                     -->
                 </div>
-
             </div>
         </div>
     </div>
