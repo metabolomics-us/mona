@@ -1,4 +1,5 @@
 Frontend:
+    - metadata buttons on advanced uploader
     - Add "Successfully logged out" toast message
     - Allow for half-scores to be visualized by the star rating system
         - Can do it with custom ng template on the ngbrating bootstrap component, use fa icons
