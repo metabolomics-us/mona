@@ -109,7 +109,7 @@
 
         <div class="float-right">
             <button class="btn btn-danger mr-1" *ngIf="authenticationService.isLoggedIn() " type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
-              <fa-icon [icon]="faTrash"></fa-icon> <strong> Batch Delete</strong>
+              <fa-icon [icon]="faTrash"></fa-icon> Batch Delete
             </button>
             <button class="btn btn-primary" (click)="acc.isExpanded('display-panel')? acc.collapse('display-panel'): acc.expand('display-panel')" placement="right"
                     ngbTooltip="Number of spectra results from this query">
