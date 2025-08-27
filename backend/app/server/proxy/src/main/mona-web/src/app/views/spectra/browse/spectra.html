@@ -32,7 +32,13 @@
     <div class="col-md-12">
       <h3><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</h3>
         <ngb-accordion closeOthers="true" #acc="ngbAccordion">
-            <ngb-panel id="display-panel" title="Current Query Information & Help">
+<!--            <ngb-panel id="display-panel" title="Current Query Information & Help">-->
+          <ngb-panel id="display-panel">
+                <ng-template ngbPanelTitle>
+                    <span class="davis-blue">
+                        <fa-icon [icon]="faSearch"></fa-icon> Query Information
+                    </span>
+                </ng-template>
                 <ng-template ngbPanelContent>
 
                   <div>
@@ -41,8 +47,9 @@
                   </div>
 
                   <br />
-                  Current query:
-                  <pre *ngIf="!editQuery" class="input-group-text">{{query !== '' && query !== undefined ? query : "[Empty Query]"}}</pre>
+                  Current query
+                  <button class="btn btn-primary btn-xs" (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
+                  <pre *ngIf="!editQuery" class="input-group-text">{{query !== '' && query !== undefined ? query : "[Empty]"}}</pre>
                   <div *ngIf="editQuery">
                     <form (submit)="updateQuery(query)">
                       <div class="input-group">
@@ -54,19 +61,17 @@
                     </form>
                   </div>
 
-                  <button (click)="editQuery = !editQuery">edit <fa-icon [icon]="faEdit"></fa-icon></button>
-                  <p></p>
-
                   <div>
-                    Example cURL command to download all spectral JSON records matching the generated query:
+                    <br/>
+                    cURL command to download all spectral records matching the current query (JSON):
                     <pre class="input-group-text">{{{query: query} | curlPipe}}</pre>
                   </div>
 
                   <p></p>
                   <div>To download results as an MSP file, add the header: <code class="code-text"> Accept: text/msp</code></div>
 
-                  <div class="col-md-12">
-                    <p></p>
+                  <div>
+                    <br/>
                     <p>
                       <ngb-alert type="warning" [dismissible]="false">
                         <a [routerLink]="['/documentation/query']">Learn more</a> about the query system
@@ -85,14 +90,14 @@
             <button class="btn btn-primary mr-1"
                     *ngIf="pagination.table === false" (click)="pagination.table = true; setTable()"
                     placement="right"
-                    ngbTooltip="Enable compact format">
+                    ngbTooltip="Enable compact view">
               <fa-icon [icon]="faList"></fa-icon>
             </button>
 
             <button class="btn btn-primary mr-1"
                     *ngIf="pagination.table === true" (click)="pagination.table = false; setTable()"
                     placement="right"
-                    ngbTooltip="Enable expanded format">
+                    ngbTooltip="Enable expanded view">
               <fa-icon [icon]="faTable"></fa-icon>
             </button>
 
