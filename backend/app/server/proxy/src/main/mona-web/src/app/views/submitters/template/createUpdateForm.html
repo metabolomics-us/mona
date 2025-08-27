@@ -60,7 +60,13 @@
                     pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,30})"/>
 
             <p *ngIf="!password.valid && !password.pristine" class="text-danger">
-                Please enter a valid password! (See requirements above)</p>
+                Please enter a valid password!<br/>
+                - 1 Lowercase letter<br/>
+                - 1 Uppercase letter<br/>
+                - 1 Number<br/>
+                - 1 Special character<br/>
+                - 6 to 30 characters<br/>
+            </p>
         </div>
     </div>
 

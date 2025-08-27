@@ -1,10 +1,6 @@
 <div *ngIf="new">
     <div class="modal-header">
-        <h4 class="modal-title">Create a new Submitter</h4>
-
-        <h5>
-            Please fill out all the properties to define a new Submitter
-        </h5>
+        <h4 class="modal-title">Create New User</h4>
     </div>
     <div class="modal-body">
         <submitter-form [submitter]="submitter" (formStatus)="submitterFormStatus = $event"></submitter-form>
@@ -17,11 +13,7 @@
 
 <div *ngIf="!new">
     <div class="modal-header">
-        <h4 class="modal-title">Modify an existing Submitter</h4>
-
-        <h5>
-            Please adjust out all the properties of your Submitter
-        </h5>
+        <h4 class="modal-title">Edit User</h4>
     </div>
 
     <div *ngIf="submitter" class="modal-body">
