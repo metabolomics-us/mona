@@ -266,7 +266,7 @@
                                 <div class="row form-group">
                                     <ngb-accordion class="col-sm-12 col-lg-12">
                                         <ngb-panel>
-                                            <ng-template ngbPanelTitle>Import MOL/SDF File</ng-template>
+                                            <ng-template ngbPanelTitle><span class="davis-blue">Import MOL/SDF File</span></ng-template>
 
                                             <ng-template ngbPanelContent>
                                                 Convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
@@ -283,15 +283,12 @@
                                                   <div class="input-group">
                                                     <span class="input-group-btn">
                                                         <span class="btn btn-primary btn-file">
-                                                           Browse <fa-icon [icon]="faFolderOpen"></fa-icon><input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseMolFile($event)"/>
+                                                           Browse...<input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseMolFile($event)"/>
                                                         </span>
                                                     </span>
-                                                    <input id="molFile" type="text" class="form-control" [(ngModel)]="convMolUpload" ngDefaultControl readonly />
+                                                    <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="convMolUpload" ngDefaultControl readonly />
                                                   </div>
                                                 </div>
-
-                                                <span class="help-block">Import a MOL or SDF file.  Note that if you upload an SDF
-                                                file with multiple structures, only the first structure will be read.</span>
 
                                                 <div class="form-group text-center">
                                                     <button (click)="convertMolToInChI()" class="btn btn-primary" ngDefaultControl>Convert to InChI Code and InChIKey</button>
@@ -300,7 +297,7 @@
                                         </ngb-panel>
 
                                         <ngb-panel>
-                                            <ng-template ngbPanelTitle>Draw a Molecular Structure</ng-template>
+                                            <ng-template ngbPanelTitle><span class="davis-blue">Draw a Molecular Structure</span></ng-template>
 
                                             <ng-template ngbPanelContent>
                                                 Draw a structure with the ChemDoodle drawing tool to generate a MOL file.  If uploading to MoNA, the provided MOL file
@@ -325,7 +322,7 @@
                     </li>
 
                     <li ngbNavItem="Metadata">
-                        <a ngbNavLink>Metadata</a>
+                        <a ngbNavLink class="davis-blue">Metadata</a>
                         <ng-template ngbNavContent>
                             <div id="metadata_editor" style="height: 500px; overflow: auto; margin-top: 10px;">
                                 <div *ngFor="let meta of currentSpectrum.meta; index as i">
@@ -360,7 +357,7 @@
                     </li>
 
                     <li ngbNavItem="Tags">
-                        <a ngbNavLink>Tags</a>
+                        <a ngbNavLink class="davis-blue">Tags</a>
                         <ng-template ngbNavContent>
                             <p class="lead">
                                 Please add any 'tags' here, you consider useful for other people. <br />
@@ -383,7 +380,7 @@
                     </li>
 
                     <li ngbNavItem="Trim Spectra">
-                        <a ngbNavLink>Trim Spectra</a>
+                        <a ngbNavLink class="davis-blue">Trim Spectra</a>
                         <ng-template ngbNavContent>
                             <p class="lead">Removes low intensity ions from a mass spectrum.</p>
                             <div style="margin-top: 10px;">
@@ -438,16 +435,16 @@
                     </li>
 
                     <li ngbNavItem="Ion Table">
-                        <a ngbNavLink>Ion Table</a>
+                        <a ngbNavLink class="davis-blue">Ion Table</a>
                         <ng-template ngbNavContent>
                             <div style="height: 500px; overflow: auto; margin-top: 10px;" *ngIf="showIonTable">
                                 <table class="table">
                                     <thead>
                                     <tr>
                                         <th>&nbsp;</th>
-                                        <th><a [routerLink]="" (click)="sortIonTable('ion')">Ion</a></th>
-                                        <th><a [routerLink]="" (click)="sortIonTable('intensity')">Intensity</a></th>
-                                        <th><a [routerLink]="" (click)="sortIonTable('annotation')">Annotation</a></th>
+                                        <th><a class="davis-blue text-decoration-none" [routerLink]="" (click)="sortIonTable('ion')">Ion</a></th>
+                                        <th><a class="davis-blue text-decoration-none" [routerLink]="" (click)="sortIonTable('intensity')">Intensity</a></th>
+                                        <th><a class="davis-blue text-decoration-none" [routerLink]="" (click)="sortIonTable('annotation')">Annotation</a></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -475,7 +472,7 @@
                     </li>
 
                     <li ngbNavItem="Discard Spectrum">
-                        <a ngbNavLink>Discard Spectrum</a>
+                        <a ngbNavLink class="davis-blue">Discard Spectrum</a>
                         <ng-template ngbNavContent>
                             <p class="lead">Are you sure you wish to remove this spectrum?</p>
                             <button class="btn btn-danger" (click)="removeCurrentSpectrum()">Remove</button>
@@ -505,10 +502,10 @@
                 </nav>
                 <hr />
                 <div class="text-center">
-                    <button class="btn btn-warning mr-1" (click)="resetFile()">Restart</button>
+                    <button class="btn btn-danger mr-1" (click)="resetFile()">Restart</button>
                     <button class="btn btn-primary ml-1 mr-1" (click)="exportFile()">Export as MSP</button>
                     <button *ngIf="!authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="waitForLogin(); authenticationService.requestModal()">Login to Upload to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
-                    <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="uploadFile()">Upload to MoNA <fa-icon [icon]="faCloudUploadAlt"></fa-icon></button>
+                    <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="uploadFile()"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload to MoNA</button>
                 </div>
             </div>
         </div>
