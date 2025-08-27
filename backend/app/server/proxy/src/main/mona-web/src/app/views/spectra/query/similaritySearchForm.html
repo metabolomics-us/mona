@@ -39,8 +39,9 @@
 OR
 
 [m/z] [intensity]
-[m/z] [intensity]"
-                    class="form-control" [rows]="10" name="pastedSpectrum" [(ngModel)]="pastedSpectrum"></textarea>
+[m/z] [intensity]
+..."
+                    class="form-control" [rows]="9" name="pastedSpectrum" [(ngModel)]="pastedSpectrum"></textarea>
                 </div>
                 <br />
                 <button class="btn btn-primary" (click)="parsePastedSpectrum(pastedSpectrum)">Search</button>
