@@ -366,17 +366,17 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
                   <ul class="navbar-nav mx-auto">
-                    <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
+                    <li><strong style="font-size: 1.2em;" class="text-nowrap">Spectrum Metadata</strong></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -397,7 +397,7 @@ OR
                     <div>
                         <label>Source Introduction / Chromatography Type:</label> <br />
                         <select class="form-control" name="chromatography" [(ngModel)]="metadata.chromatography">
-                            <option value="" selected="selected">Select One</option>
+                            <option value="" selected="selected"></option>
                             <option value="Liquid Chromatography (LC)">Liquid Chromatography (LC)</option>
                             <option value="Gas Chromatography (GC)">Gas Chromatography (GC)</option>
                             <option value="Direct Infusion (DI)">Direct Injection/Infusion (DI)</option>
@@ -415,7 +415,7 @@ OR
                     <div>
                         <label>MS Type / Level:</label> <br />
                         <select class="form-control" name="mslevel" [(ngModel)]="metadata.mslevel">
-                            <option value="" selected="selected">Select One</option>
+                            <option value="" selected="selected"></option>
                             <option value="MS">MS</option>
                             <option value="MS2">MS2</option>
                             <option value="MS3">MS3</option>
@@ -438,7 +438,7 @@ OR
                     <div>
                         <label>Ionization Method:</label> <br />
                         <select class="form-control" name="ionization" [(ngModel)]="metadata.ionization">
-                            <option value="" selected="selected">Select One</option>
+                            <option value="" selected="selected"></option>
                             <option value="Atmospheric Pressure Chemical Ionization (APCI)">Atmospheric Pressure Chemical Ionization (APCI)</option>
                             <option value="Electron Impact (EI)">Electron Impact (EI)</option>
                             <option value="Chemical Ionization (CI)">Chemical Ionization (CI)</option>
@@ -452,7 +452,7 @@ OR
                     <div>
                         <label>Polarity / Ion Mode:</label> <br />
                         <select class="form-control" name="ionmode" [(ngModel)]="metadata.ionmode">
-                            <option value="" selected="selected">Select One</option>
+                            <option value="" selected="selected"></option>
                             <option value="Positive">Positive</option>
                             <option value="Negative">Negative</option>
                         </select>
@@ -472,12 +472,12 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -491,17 +491,17 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
                   <ul class="navbar-nav mx-auto">
-                    <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
+                    <li><strong style="font-size: 1.2em;" class="text-nowrap">Spectrum Metadata II</strong></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -512,11 +512,11 @@ OR
                     <small>
                         In addition to the recommended metadata, we encourage users to provide any other information
                         available about this mass spectral record including:
-
                         <ul>
                             <li>Sample properties</li>
                             <li>Instrument manufacturer and model</li>
                             <li>Analytical methods and conditions</li>
+                            <li>More...</li>
                         </ul>
                     </small>
                 </div>
@@ -536,15 +536,16 @@ OR
                                  class="form-control" />
                         </div>
                         <div class="col-sm-5 form-group">
+                          <div class="input-group">
                           <input required type="text"
                                  [(ngModel)]="meta.value"
                                  [disabled]="!meta.name || meta.name === ''"
                                  placeholder="Metadata Value"
                                  class="form-control" />
-                        </div>
-                        <div class="col-sm-5 form-group">
-                          <button (click)="removeMetadataField(i)" class="btn btn-default"
-                                  ngbTooltip="Remove this metadata field"><fa-icon [icon]="faMinusSquare"></fa-icon></button>
+                            <button (click)="removeMetadataField(i)" class="btn btn-default"
+                                    ngbTooltip="Remove this metadata field"><fa-icon [icon]="faMinusSquare"></fa-icon>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -559,12 +560,12 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="validateMetadata()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="validateMetadata()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
