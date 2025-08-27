@@ -9,7 +9,7 @@
         <br />
 
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h4><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h4>
+            <h4><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h4>
         </div>
 
         <!-- Message indicating loading in background -->
@@ -174,7 +174,7 @@
                     <div class="navbar-collapse collapse w-auto order-1 order-md-0 dual-collapse2">
                         <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
                             <li class="nav-item">
-                              <button class="fakeRef" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button>
+                              <button class="fakeRef davis-blue" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button>
                             </li>
                         </ul>
                     </div>
@@ -185,7 +185,7 @@
                     </div>
                    <div class="navbar-collapse collapse w-auto order-3 dual-collapse2">
                        <ul class="navbar-nav ml-auto">
-                           <li class="nav-item"><button class="fakeRef" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                           <li class="nav-item"><button class="fakeRef davis-blue" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                        </ul>
                    </div>
                 </nav>
@@ -486,7 +486,7 @@
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                         <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                            <li class="nav-item"><button class="fakeRef" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                            <li class="nav-item"><button class="fakeRef davis-blue" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                         </ul>
                     </div>
                     <div class="mx-auto order-0">
@@ -496,7 +496,7 @@
                     </div>
                     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                         <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"><button class="fakeRef" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon> </button></li>
+                            <li class="nav-item"><button class="fakeRef davis-blue" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon> </button></li>
                         </ul>
                     </div>
                 </nav>
