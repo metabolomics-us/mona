@@ -572,3 +572,13 @@ input[type="checkbox"] {
 .card-header a:hover {
   text-decoration: none !important;
 }
+
+.toast-centered {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 2000 !important; /* make sure it sits above the table */
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3) !important;
+  border-radius: 0.5rem !important;
+}

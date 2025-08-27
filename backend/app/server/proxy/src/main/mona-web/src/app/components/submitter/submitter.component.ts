@@ -18,6 +18,8 @@ import {faEdit, faMinusSquare, faUser} from '@fortawesome/free-solid-svg-icons';
 export class SubmitterComponent implements OnInit{
     submitters;
     listSubmitter;
+    pendingUser;
+    showDeletionConfirmation = false;
     faEdit = faEdit;
     faMinusSquare = faMinusSquare;
     faUser = faUser;
@@ -27,20 +29,55 @@ export class SubmitterComponent implements OnInit{
 
     ngOnInit() {
         /**
-         * contains all local objects
-         * @Array objects with submitter info
+         * Try loading submitters
+         * This fixed the refresh bug where submitters were not being loaded when you refresh the page
          */
         this.submitters = [];
 
-        /**
-         * list all our submitters in the system
-         */
-        this.listSubmitter = this.list();
+        const tryLoad = () => {
+          const user = this.auth.getCurrentUser?.();
+          if (user?.accessToken && this.auth.isAdmin()) {
+            clearInterval(timer);
+            this.list();
+          }
+        };
+        const timer = setInterval(tryLoad, 200);
+        tryLoad(); // attempt immediately as well
+    }
+
+    /**
+     * Prompts toast to confirm deletion of user
+     */
+    askToDelete(submitter) {
+      this.showDeletionConfirmation = true;
+      this.pendingUser = submitter;
+    }
+
+    /**
+     * Deletes user
+     */
+    confirmUserDelete() {
+      if (!this.pendingUser) { return; }
+
+      const index = this.submitters.indexOf(this.pendingUser);
+      if (index > -1) {
+        this.remove(index);
+      }
+
+      this.cancelUserDelete();
+    }
+
+    /**
+     * Cancels user deletion toast
+     */
+    cancelUserDelete() {
+      this.showDeletionConfirmation = false;
+      this.pendingUser = null;
     }
 
     /**
      * deletes our submitter from the system
-     * @param submitterId unique ID of submitter to delete
+     * @param index unique ID of submitter to delete
      */
     remove(index) {
         const submitterToRemove = this.submitters[index];
