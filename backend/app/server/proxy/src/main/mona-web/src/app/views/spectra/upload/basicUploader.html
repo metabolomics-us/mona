@@ -7,7 +7,7 @@
         <br />
 
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h4><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h4>
+            <h4><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h4>
         </div>
 
 
@@ -578,7 +578,7 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
@@ -588,9 +588,9 @@ OR
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="fakeRef" (click)="uploadFile()">Upload to MoNA <fa-icon [icon]="faCloudUpload"></fa-icon></button></li>
+                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="btn btn-primary" (click)="uploadFile()"><fa-icon [icon]="faCloudUpload"></fa-icon> Upload to MoNA</button></li>
                     <li class="next"*ngIf="!authenticationService.isLoggedIn()">
-                      <button class="fakeRef" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
+                      <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
                     </li>
                   </ul>
                 </div>
@@ -708,14 +708,14 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="fakeRef" (click)="uploadFile()">Upload to MoNA <fa-icon [icon]="faCloudUpload"></fa-icon></button></li>
+                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="btn btn-primary" (click)="uploadFile()"><fa-icon [icon]="faCloudUpload"></fa-icon> Upload to MoNA</button></li>
                     <li class="next"*ngIf="!authenticationService.isLoggedIn()">
-                      <button class="fakeRef" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
+                      <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
                     </li>
                   </ul>
                 </div>
