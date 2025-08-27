@@ -77,13 +77,13 @@ export class SubmitterComponent implements OnInit{
 
     /**
      * deletes our submitter from the system
-     * @param index unique ID of submitter to delete
+     * @param index in submitters array that gets translated to submitter email address
      */
     remove(index) {
         const submitterToRemove = this.submitters[index];
         const token = this.auth.getCurrentUser().accessToken;
 
-        this.submitter.delete({id: submitterToRemove.id}, token).pipe(first()).subscribe(
+        this.submitter.delete({emailAddress: submitterToRemove.emailAddress}, token).pipe(first()).subscribe(
             () => {
                 // remove it from the scope and update our table
                 this.submitters.splice(index, 1);

@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
+import {switchMap} from 'rxjs/operators';
 
 @Injectable()
 export class Submitter {
@@ -38,6 +39,9 @@ export class Submitter {
           Authorization: 'Bearer ' + token
         }
       };
-      return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/submitters/${data.id}`, config);
+      // Delete both the submitter and the user
+      return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/submitters/${data.emailAddress}`, config).pipe(
+        switchMap(() => this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/users/${data.emailAddress}`, config))
+      );
     }
 }
