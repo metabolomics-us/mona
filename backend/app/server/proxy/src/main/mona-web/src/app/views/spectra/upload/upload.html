@@ -4,7 +4,7 @@
         <h3><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload Spectra</h3>
 
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h4><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h4>
+            <h4><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h4>
         </div>
 
         <div style="padding-left: 3em;">
