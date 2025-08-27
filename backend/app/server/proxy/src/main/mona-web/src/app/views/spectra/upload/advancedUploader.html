@@ -210,20 +210,23 @@
 
                 <ul ngbNav #nav='ngbNav' class="nav-tabs">
                     <li ngbNavItem="Identifiers">
-                        <a ngbNavLink>Identifiers</a>
+                        <a ngbNavLink class="davis-blue">Identifiers</a>
                         <ng-template ngbNavContent>
                             <div class="container-fluid" style="height: 500px; overflow: auto; margin-top: 10px;">
                                 <div class="row form-group">
                                     <div class="col-lg-3"><label>Names</label></div>
                                       <div class="col-lg-9">
-                                        <div *ngFor="let name of currentSpectrum.names; index as i">
+                                        <div *ngFor="let name of currentSpectrum.names; index as i; trackBy: trackByIndex" class="input-group">
                                           <input type="text"
                                                  [(ngModel)]="currentSpectrum.names[i]"
                                                  ngDefaultControl
                                                  placeholder="Name"
                                                  class="form-control" />
+                                          <span class="input-group-btn">
+                                            <button type="button" ngbTooltip="Remove name" placement="left" class="btn btn-xs" (click)="removeName(i)"><fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
+                                          </span>
                                         </div>
-                                        <button type="button" class="btn btn-default btn-xs" (click)="addName()">+</button>
+                                        <button type="button" class="btn btn-default btn-xs" (click)="addName()"><fa-icon size="xs" placement="bottom" ngbTooltip="Add a name" [icon]="faPlusSquare"></fa-icon></button>
                                     </div>
                                 </div>
 

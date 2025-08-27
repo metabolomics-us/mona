@@ -234,8 +234,16 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
+  removeName(index: number) {
+    this.currentSpectrum.names.splice(index, 1);
+  }
 
-	/**
+  trackByIndex(index: number, item: any) {
+    return index;
+  }
+
+
+  /**
 	 * Handle metadata functionality
 	 */
 
