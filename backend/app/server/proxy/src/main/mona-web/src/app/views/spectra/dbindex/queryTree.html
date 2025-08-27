@@ -3,8 +3,8 @@
       <h3><fa-icon [icon]="faCloudDownloadAlt"></fa-icon> Download Spectra</h3>
 
         <div class="h5">
-            Here you will find a set of commonly referenced predefined queries.  Clicking the name of the query will display the associated
-            spectra in the query browser.  Each query is also available to download in either JSON (MoNA internal) format
+            A set of commonly referenced predefined queries. Click on a query to view its associated spectra
+            in the spectra browser. Queries are available to download in JSON (MoNA internal) format
             or as NIST MS Search compatible MSP/SDF files.
         </div>
 
@@ -27,8 +27,8 @@
                 <div class="list-group-item" style="padding-left: 3em;" *ngFor="let file of $any(st.files)">
                     <span>{{file.description}}</span>
                     <span class="pull-right">
-                        <a [routerLink]="[file.path]" target="_blank" gaEvent="['download', 'click', file.fileName]" class="btn btn-primary">
-                          <fa-icon [icon]="faDownload"></fa-icon>
+                        <a [routerLink]="[file.path]" target="_blank" gaEvent="['download', 'click', file.fileName]" class="btn btn-primary btn-sm">
+                          <fa-icon [icon]="faDownload"></fa-icon> Download
                         </a>
                     </span>
                 </div>
