@@ -92,7 +92,7 @@ export class UploadLibraryService{
 
             // we got nothing so we give up
             else {
-                reject('sorry given object was invalid, we need a name, or an InChI code, InChI Key or an array with names for this to work!');
+                reject('sorry, the given object was invalid. We need a name, InChI code, InChI Key, or an array with names for this to work!');
             }
         };
 
