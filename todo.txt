@@ -1,4 +1,5 @@
 Frontend:
+    - Upload MOL/SDF file doesn't work in advanced uploader
     - Show "email" already taken error, 409 conflict on frontend
     - Add "Successfully logged out" toast message
     - Allow for half-scores to be visualized by the star rating system
@@ -107,3 +108,8 @@ Done:
     - Fix formatting and functionality of 'manage spectra' admin page
     - metadata buttons on advanced uploader
     - redo manage spectra admin page buttons
+    - advanced uploader formatting
+    - Update Compound is sending wrong API call to TCS:
+        - Just need to fix name one now, uses 'oldcts' endpoint instead of cts
+        - Sending: http://cts.fiehnlab.ucdavis.edu/service/convert/InChIKey/Chemical%20Name/XLYOFNOQVPJJNP-UHFFFAOYSA-N
+        - Needs:   http://cts.fiehnlab.ucdavis.edu/rest/convert/InChIKey/Chemical%20Name/XLYOFNOQVPJJNP-UHFFFAOYSA-N
