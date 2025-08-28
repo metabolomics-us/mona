@@ -362,9 +362,10 @@
                     <li ngbNavItem="Tags">
                         <a ngbNavLink class="davis-blue">Tags</a>
                         <ng-template ngbNavContent>
-                            <p class="lead">
-                                Please add any 'tags' here, you consider useful for other people. <br />
-                                Tags provide an easy way to find and label spectra.
+                            <p>
+                                Please add any tags you might consider useful to other people. <br />
+                                Tags provide an easy way to find and label spectra. Press <kbd class="code-text">enter</kbd> to add a new tag.
+                              <br/>
                             </p>
                             <tag-input [(ngModel)]="currentSpectrum.tags"
                                        [identifyBy]="'text'"
@@ -377,7 +378,7 @@
                             <br />
 
                             <div class="text-center">
-                              <button (click)="applyTagsToAll()"  ngDefaultControl class="btn btn-default btn-sm"><fa-icon [icon]="faSave"></fa-icon> Apply these tags to all spectra</button>
+                              <button (click)="applyTagsToAll()"  ngDefaultControl class="btn btn-primary btn-sm"><fa-icon [icon]="faSave"></fa-icon> Apply these tags to all spectra</button>
                             </div>
                         </ng-template>
                     </li>
@@ -385,22 +386,24 @@
                     <li ngbNavItem="Trim Spectra">
                         <a ngbNavLink class="davis-blue">Trim Spectra</a>
                         <ng-template ngbNavContent>
-                            <p class="lead">Removes low intensity ions from a mass spectrum.</p>
+                            <h5>Remove low intensity ions from a mass spectrum</h5>
+                            <p></p>
                             <div style="margin-top: 10px;">
                                 <div>
-                                    <div class="col-sm-3 form-group"><strong>Top <code class="code-text">n</code> Ions</strong></div>
+                                    <div class="col-sm-3 form-group" style="margin-bottom: 0.3rem"><strong>Top Ions</strong></div>
                                     <div class="col-sm-9 form-group">
                                         <input type="number"
                                                [(ngModel)]="ionCuts.nIons"
                                                ngDefaultControl
                                                placeholder="Number of ions"
                                                class="form-control" />
-                                        <span class="help-block">Keeps at most the <code class="code-text">n</code> ions with the highest intensity</span>
+                                        <span class="help-block ml-2">Keeps the top <code class="code-text">n</code> ions with the highest intensity</span>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <div class="col-sm-3 form-group"><strong>Base Peak Cut</strong></div>
+                                  <br/>
+                                    <div class="col-sm-3 form-group" style="margin-bottom: 0.3rem"><strong>Base Peak Percentage Cut</strong></div>
                                     <div class="col-sm-9 form-group">
                                         <input type="number"
                                                [(ngModel)]="ionCuts.basePeak"
@@ -408,30 +411,29 @@
                                                placeholder="Percentage of base peak"
                                                class="form-control" />
 
-                                        <span class="help-block">
-                                        Removes all ions below the given percentage of the base peak intensity (where
-                                        the value <code class="code-text">0</code> will retain all ions while the value <code class="code-text">100</code>
-                                        will retain only the base peak.
+                                        <span class="help-block ml-2">
+                                        Removes all ions with intensities below the given percentage of the base peak <fa-icon size="xs" [icon]="faInfoCircle" ngbTooltip="The base peak is the peak with the highest intensity" placement="bottom"></fa-icon>
                                     </span>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <div class="col-sm-3 form-group"><strong>Absolute Abundance Cut</strong></div>
+                                  <br/>
+                                    <div class="col-sm-3 form-group" style="margin-bottom: 0.3rem"><strong>Absolute Abundance Cut</strong></div>
                                     <div class="col-sm-9 form-group">
                                         <input type="number"
                                                [(ngModel)]="ionCuts.absAbundance"
                                                ngDefaultControl
                                                placeholder="Absolute abundance"
                                                class="form-control" />
-                                        <span class="help-block">Removes all ions below the given absolute abundance</span>
+                                        <span class="help-block ml-2">Removes all ions below the given absolute abundance/intensity</span>
                                     </div>
                                 </div>
 
                                 <div class="text-center">
-                                    <button class="btn btn-warning mr-1" (click)="resetIonCuts()">Reset Spectrum</button>
-                                    <button class="btn btn-primary mr-1 ml-1" (click)="performIonCuts(undefined)">Trim Spectrum</button>
-                                    <button class="btn btn-primary ml-1" (click)="performAllIonCuts()">Trim <strong>All</strong> Spectra</button>
+                                    <button class="btn btn-primary mr-1" (click)="performIonCuts(undefined)">Trim Spectrum</button>
+                                    <button class="btn btn-primary mr-1 ml-1" (click)="performAllIonCuts()">Trim <strong>All</strong> Spectra</button>
+                                    <button class="btn btn-warning ml-1" (click)="resetIonCuts()">Reset Spectrum</button>
                                 </div>
                             </div>
                         </ng-template>
@@ -477,7 +479,7 @@
                     <li ngbNavItem="Discard Spectrum">
                         <a ngbNavLink class="davis-blue">Discard Spectrum</a>
                         <ng-template ngbNavContent>
-                            <p class="lead">Are you sure you wish to remove this spectrum?</p>
+                            <p>Are you sure you want to remove this spectrum?</p>
                             <button class="btn btn-danger" (click)="removeCurrentSpectrum()">Remove</button>
                         </ng-template>
                     </li>
@@ -506,7 +508,7 @@
                 <hr />
                 <div class="text-center">
                     <button class="btn btn-danger mr-1" (click)="resetFile()">Restart</button>
-                    <button class="btn btn-primary ml-1 mr-1" (click)="exportFile()">Export as MSP</button>
+                    <button class="btn btn-primary ml-1 mr-1" (click)="exportFile()"><fa-icon [icon]="faFileExport"></fa-icon> Export as MSP</button>
                     <button *ngIf="!authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="waitForLogin(); authenticationService.requestModal()">Login to Upload to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
                     <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="uploadFile()"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload to MoNA</button>
                 </div>

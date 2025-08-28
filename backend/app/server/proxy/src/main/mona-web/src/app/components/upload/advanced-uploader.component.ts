@@ -20,7 +20,7 @@ import {HttpClient} from '@angular/common/http';
 import {
   faSpinner, faExclamationTriangle, faMinusSquare, faPlusSquare,
   faSave, faCloudUploadAlt, faUser, faArrowLeft, faArrowRight,
-  faSignInAlt, faFolderOpen, faQuestionCircle, faTrash
+  faSignInAlt, faFolderOpen, faQuestionCircle, faTrash, faInfoCircle, faFileExport,
 } from '@fortawesome/free-solid-svg-icons';
 import {first} from 'rxjs/operators';
 import {ToasterConfig, ToasterService} from 'angular2-toaster';
@@ -95,6 +95,8 @@ export class AdvancedUploaderComponent implements OnInit{
   faFolderOpen = faFolderOpen;
   faQuestionCircle = faQuestionCircle;
   faTrash = faTrash;
+  faInfoCircle = faInfoCircle;
+  faFileExport = faFileExport;
 
 	constructor( public authenticationService: AuthenticationService,  public location: Location,
 				          public uploadLibraryService: UploadLibraryService,  public ctsService: CtsService,
