@@ -232,12 +232,12 @@ OR
                         placeholder="Name"
                         class="form-control" />
                       <span class="input-group-btn">
-                        <button type="button" ngbTooltip="Remove name" class="btn btn-xs" (click)="removeName(i)"><fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
+                        <button type="button" ngbTooltip="Remove name" class="btn btn-default" (click)="removeName(i)"><fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
                       </span>
                     </div>
 
                     <!-- Add name button below -->
-                    <button type="button" ngbTooltip="Add a name" class="btn btn-default btn-xs mt-2" (click)="addName()"><fa-icon size="xs" [icon]="faPlusSquare"></fa-icon></button>
+                    <button type="button" ngbTooltip="Add a name" class="btn btn-default mt-2" (click)="addName()"><fa-icon size="xs" [icon]="faPlusSquare"></fa-icon></button>
                   </div>
                 </div>
 
@@ -550,7 +550,7 @@ OR
                       </div>
                     </div>
                     <div class="col-sm-12">
-                        <button type="button" class="btn btn-default btn-xs" (click)="addMetadataField()" ngbTooltip="Add a new metadata field"><fa-icon [icon]="faPlusSquare"></fa-icon> </button>
+                        <button type="button" class="btn btn-default" (click)="addMetadataField()" ngbTooltip="Add a new metadata field"><fa-icon [icon]="faPlusSquare"></fa-icon> </button>
                     </div>
                 </div>
             </div>
