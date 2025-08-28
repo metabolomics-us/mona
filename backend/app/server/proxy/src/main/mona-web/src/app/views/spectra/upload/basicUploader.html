@@ -211,7 +211,7 @@ OR
                 </div>
 
                 <div class="alert alert-info" role="alert" *ngIf="compoundProcessing" style="text-align: center;">
-                  <h4>Pulling compound data...<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></h4>
+                  <h4><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Pulling compound data...</h4>
                 </div>
 
                 <div *ngIf="compoundError" class="alert alert-danger" role="alert">
@@ -274,7 +274,7 @@ OR
                 <div class="form-group text-center">
                     <button type="button" class="btn btn-primary mr-1" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
                         <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
-                        <span>Update Compound</span>
+                        <span> Update Compound</span>
                     </button>
                     <button (click)="resetCompound()" class="btn btn-danger" [disabled]="compoundProcessing">Reset Compound</button>
                 </div>
