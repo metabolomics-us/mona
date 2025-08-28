@@ -1,4 +1,7 @@
 Frontend:
+    - Delete user button doesn't work
+        - Add confirmation after clicking
+    - Show "email" already taken error, 409 conflict on frontend
     - metadata buttons on advanced uploader
     - redo manage spectra admin page buttons    
     - Add "Successfully logged out" toast message
@@ -29,6 +32,7 @@ Backend:
     - What are "hidden downloads" like on the downloads page? There are none shown on prod?
     - Debug the random error I had when starting out where it said there were 0 spectra and search wouldn't work
         - Happens if you connect to the IP? Instead of the URL
+        - Nope, happened again randomly 8/27
     - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
     - Are M-H and [M-H]- the same precursor type? Merge them maybe?
     - Links to "Originally submitted to..." like eu MassBank shows error404 page not found
@@ -106,3 +110,9 @@ Done:
     - Clean up all resource pages
     - Clean up basic uploader guided wizard
         - Formatting, functionality, buttons, etc.
+    - Admin page made all users appear under one header
+    - Delete user button actually works now
+        - Deletes both user and submitter from db
+    - Fixed manage submitters admin page completely
+    - Change log in buttons to davis blu
+    - Fix formatting and functionality of 'manage spectra' admin page
