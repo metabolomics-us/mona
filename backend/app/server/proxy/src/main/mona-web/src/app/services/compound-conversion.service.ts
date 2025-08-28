@@ -30,6 +30,7 @@ export class CompoundConversionService{
         this.http.get(`${this.apiUrl}/rest/convert/InChIKey/Chemical%20Name/${inchiKey}`).subscribe(
             (res: any) => {
                 if (res.length > 0 && res[0].results.length > 0) {
+                    // callback(res[0].results);
                     callback(res[0].results.slice(0, 5));
                 } else {
                     errorCallback({status: 200});
@@ -43,10 +44,10 @@ export class CompoundConversionService{
      * Look up the InChI for given InChIKey from the CTS
      */
     getInChIByInChIKey(inchiKey, callback, errorCallback) {
-        this.http.get(`${this.apiUrl}/service/convert/InChIKey/InChI%20Code/${inchiKey}`).subscribe(
+        this.http.get(`${this.apiUrl}/rest/convert/InChIKey/InChI%20Code/${inchiKey}`).subscribe(
             (response: any) => {
-                if (response.length > 0 && response[0].result.length > 0) {
-                    callback(response[0].result);
+                if (response.length > 0 && response[0].results.length > 0) {
+                    callback(response[0].results);
                 } else {
                     errorCallback({status: 200});
                 }
