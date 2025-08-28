@@ -20,6 +20,7 @@ import scala.jdk.CollectionConverters._
 class FetchCTSCompoundData extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
   val ENABLED: Boolean = true
 
+  // TODO: Does this URL need to be changed from .edu/service/... to .edu/rest/... ? I don't know where it's used
   val URL: String = "http://cts.fiehnlab.ucdavis.edu/service/compound/"
 
   @Autowired
