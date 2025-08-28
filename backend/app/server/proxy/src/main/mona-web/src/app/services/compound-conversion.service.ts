@@ -27,7 +27,7 @@ export class CompoundConversionService{
      * Returns high ranking names for given InChIKey from the CTS
      */
     InChIKeyToName(inchiKey, callback, errorCallback) {
-        this.http.get(`${this.apiUrl}/service/convert/InChIKey/Chemical%20Name/${inchiKey}`).subscribe(
+        this.http.get(`${this.apiUrl}/rest/convert/InChIKey/Chemical%20Name/${inchiKey}`).subscribe(
             (res: any) => {
                 if (res.length > 0 && res[0].results.length > 0) {
                     callback(res[0].results);
