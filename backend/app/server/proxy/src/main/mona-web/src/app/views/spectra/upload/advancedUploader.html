@@ -223,10 +223,10 @@
                                                  placeholder="Name"
                                                  class="form-control" />
                                           <span class="input-group-btn">
-                                            <button type="button" ngbTooltip="Remove name" placement="left" class="btn btn-xs" (click)="removeName(i)"><fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
+                                            <button type="button" ngbTooltip="Remove name" placement="left" class="btn btn-default" (click)="removeName(i)"><fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
                                           </span>
                                         </div>
-                                        <button type="button" class="btn btn-default btn-xs" (click)="addName()"><fa-icon size="xs" placement="bottom" ngbTooltip="Add a name" [icon]="faPlusSquare"></fa-icon></button>
+                                        <button type="button" class="btn btn-default" (click)="addName()"><fa-icon size="xs" placement="bottom" ngbTooltip="Add a name" [icon]="faPlusSquare"></fa-icon></button>
                                     </div>
                                 </div>
 
@@ -327,6 +327,7 @@
                             <div id="metadata_editor" style="height: 500px; overflow: auto; margin-top: 10px;">
                                 <div *ngFor="let meta of currentSpectrum.meta; index as i">
                                     <div class="col-sm-5 form-group" [ngClass]="{'has-error': !meta.name && meta.name != ''}">
+                                        Label:
                                         <input type="text"
                                                [(ngModel)]="meta.name"
                                                ngDefaultControl
@@ -334,6 +335,7 @@
                                                class="form-control" />
                                     </div>
                                     <div class="col-sm-5 form-group">
+                                        Value:
                                         <input type="text"
                                                [(ngModel)]="meta.value"
                                                ngDefaultControl
@@ -343,14 +345,15 @@
                                     </div>
                                     <div class="col-sm-2 form-group">
                                         <button (click)="removeMetadataField(i)" class="btn btn-default"
-                                                ngbTooltip="Remove this metadata field" ngDefaultControl><fa-icon [icon]="faMinusSquare"></fa-icon></button>
+                                                ngbTooltip="Remove this metadata field" placement="right" ngDefaultControl><fa-icon [icon]="faTrash"></fa-icon></button>
                                         <button (click)="applyMetadataToAll(i)" class="btn btn-default"
-                                                ngbTooltip="Copy this metadata value to all spectra" ngDefaultControl><fa-icon [icon]="faSave"></fa-icon></button>
+                                                ngbTooltip="Copy this metadata value to all spectra" placement="right" ngDefaultControl><fa-icon [icon]="faSave"></fa-icon></button>
                                     </div>
+                                  <hr>
                                 </div>
 
                                 <div class="col-sm-12">
-                                  <button type="button" class="btn btn-default btn-xs" (click)="addMetadataField()"  ngDefaultControl ngbTooltip="Add a new metadata field"><fa-icon [icon]="faPlusSquare"></fa-icon></button>
+                                  <button type="button" class="btn btn-primary btn-sm" (click)="addMetadataField()"  ngDefaultControl><fa-icon [icon]="faPlusSquare"></fa-icon> Add New Metadata Field</button>
                                 </div>
                             </div>
                         </ng-template>
