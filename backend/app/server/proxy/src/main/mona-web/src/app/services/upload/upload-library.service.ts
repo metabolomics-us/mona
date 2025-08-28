@@ -65,6 +65,9 @@ export class UploadLibraryService{
          */
         const resolveByName = (spec, resolve, reject) => {
             if (spec.name) {
+              // TODO: chemifyService is outdated, uses wrong URL (needs oldcts.fiehnlab...),
+              //  uses old nameToInChIKey function here, look at new version
+              //  written in compound-conversion.service.ts (8/28/25)
                 this.chemifyService.nameToInChIKey(spec.name, (key) => {
                     if (key === null) {
                         reject('sorry no InChI Key found for ' + spec.name + ', at name to InChI key!');
@@ -79,6 +82,9 @@ export class UploadLibraryService{
             // if we have a bunch of names
             else if (spec.names && spec.names.length > 0) {
 
+                // TODO: chemifyService is outdated, uses wrong URL (needs oldcts.fiehnlab...),
+                //  uses old nameToInChIKey function here, look at new version
+                //  written in compound-conversion.service.ts (8/28/25)
                 this.chemifyService.nameToInChIKey(spec.names[0], (key) => {
                     if (key === null) {
                         reject('sorry no InChI Key found for ' + spec.names[0] + ', at names to InChI key!');
