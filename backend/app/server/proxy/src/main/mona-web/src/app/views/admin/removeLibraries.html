@@ -7,7 +7,7 @@
 <div *ngIf="auth.isLoggedIn() && auth.isAdmin()" class="container">
   <div class="row mb-2">
     <div class="col">
-      <hr/>
+      <br/>
       <div class="row justify-content-center">
         <h3>Delete Libraries</h3>
       </div>
@@ -24,57 +24,57 @@
               <button type="submit" class="btn btn-danger">Delete Selected Libraries</button>
             </div>
             <div class="col-sm">
-              <button type="button" (click)="refreshTags()" class="btn btn-secondary">Refresh Libraries</button>
+              <button type="button" (click)="refreshTags()" class="btn btn-primary">Refresh Libraries</button>
             </div>
           </div>
         </form>
       </div>
     </div>
     <div class="col">
-      <hr/>
+      <br/>
       <div class="row justify-content-center">
-        <h3>Admin Buttons (force updates)</h3>
+        <h3>Admin Buttons (Force Updates)</h3>
       </div>
       <hr/>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-warning mr-2" (click)="updateStatistics()">Update Statistics</button>
+        <button class="btn btn-primary mr-2" (click)="updateStatistics()">Update Statistics</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-warning mr-2" (click)="refreshSimilarity()">Refresh Similarity Service</button>
+        <button class="btn btn-primary mr-2" (click)="refreshSimilarity()">Refresh Similarity Service</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-warning mr-2" (click)="updatePredefinedQueries()">Update Predefined Queries</button>
+        <button class="btn btn-primary mr-2" (click)="updatePredefinedQueries()">Update Predefined Queries</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-warning mr-2" (click)="updateStaticQueries()">Update Static Queries</button>
+        <button class="btn btn-primary mr-2" (click)="updateStaticQueries()">Update Static Queries</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-warning mr-2" (click)="reCurateAllData()">Re-Curate All Data</button>
+        <button class="btn btn-primary mr-2" (click)="reCurateAllData()">Re-Curate All Data</button>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col">
-      <hr/>
+      <br/> <br/> <br/> <br/> <br/>
       <div class="row justify-content-center">
-        <h3>Force Delete by ID</h3>
+        <h3>Force Delete Libraries by ID</h3>
       </div>
       <hr/>
       <div class="row justify-content-center">
         <div class="col mb-1">
-          <label class="mr-2">Input IDs: </label><input placeholder="Comma separated, no spaces" type="text" [(ngModel)]="removeIDs"/>
+          <span>Library IDs:</span>
+          <input class="form-control col-sm-3" placeholder="Comma separated, no spaces" type="text" [(ngModel)]="removeIDs"/>
+          <p></p>
+          <button type="button" class="btn btn-danger" [disabled]="removeIDs === null" (click)="deleteByIds()">Delete Libraries</button>
         </div>
-      </div>
-      <div class="row">
-        <button type="button" class="btn btn-danger" [disabled]="removeIDs === null" (click)="deleteByIds()">Delete Values</button>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col">
-      <hr/>
+      <br/> <br/> <br/>
       <div class="row justify-content-center">
-        <h3>Change User Password</h3>
+        <h3>Change a User's Password</h3>
       </div>
       <hr/>
       <div class="row justify-content-center">
@@ -83,46 +83,46 @@
             <div class="form-group row" [ngClass]="{ 'has-error' : !email.valid && !email.pristine}">
               <label for="email" class="col-sm-3 col-form-label">Email Address:</label>
               <div class="col-sm-6">
-                <input type="email" class="form-control" placeholder="Please enter email address" id="email"
+                <input type="email" class="form-control" placeholder="Please enter and validate the email address first" id="email"
                        name="email" [(ngModel)]="newPassword.emailAddress"
                        #email = "ngModel" required/>
-                <p *ngIf="!email.valid && !email.pristine" class="help-block">
+                <p *ngIf="!email.valid && !email.pristine" class="help-block text-danger">
                   Please enter a valid email</p>
               </div>
               <div class="col-sm-3">
-                <button class="btn btn-info btn-sm" type="button" (click)="validateUser()">Validate Email</button>
+                <button class="btn btn-primary" type="button" (click)="validateUser()" [disabled]="!email.valid">Validate Email</button>
               </div>
             </div>
 
-            <div class="form-group row" [ngClass]="{ 'has-error' : !password.valid && !password.pristine}">
-              <label for="password" class="col-sm-3 col-form-label">Password:</label>
+            <div class="form-group row" [ngClass]="{ 'has-error' : !password.valid && !password.pristine}" [hidden]="hidePasswords">
+              <label for="password" class="col-sm-3 col-form-label">New Password:</label>
               <div class="col-sm-9">
-                <input  class="form-control" placeholder="Please enter your password" id="password"
-                        name="password" type="password" [(ngModel)]="newPassword.password"
-                        #password = "ngModel" required [hidden]="hidePasswords"/>
+                <input class="form-control" placeholder="Please enter a new password" id="password"
+                       name="password" type="password" [(ngModel)]="newPassword.password"
+                       #password = "ngModel" required/>
 
-                <p *ngIf="!password.valid && !password.pristine" class="help-block">
+                <p *ngIf="!password.valid && !password.pristine" class="help-block text-danger">
                   Please enter a valid password</p>
               </div>
             </div>
 
             <div class="form-group row" [ngClass]="{ 'has-error' : (!passwordMatch.valid &&
-              !passwordMatch.pristine) || newPassword.password != newPassword.passwordMatch}">
-              <label for="passwordMatch" class="col-sm-3 col-form-label">Re-enter Password:</label>
+              !passwordMatch.pristine) || newPassword.password != newPassword.passwordMatch}" [hidden]="hidePasswords">
+              <label for="passwordMatch" class="col-sm-3 col-form-label">Re-enter New Password:</label>
               <div class="col-sm-9">
-                <input  class="form-control" type="password"  placeholder="Please re-enter your password" id="passwordMatch"
+                <input  class="form-control" type="password"  placeholder="Please re-enter the new password" id="passwordMatch"
                         name="passwordMatch" [(ngModel)]="newPassword.passwordMatch"
                         #passwordMatch = "ngModel"  [hidden]="hidePasswords" required/>
 
                 <p *ngIf="(!passwordMatch.valid && !passwordMatch.pristine) ||
-                newPassword.password != newPassword.passwordMatch" class="help-block">Passwords do not match!</p>
+                newPassword.password != newPassword.passwordMatch" class="help-block text-danger">Passwords do not match!</p>
               </div>
             </div>
 
-            <div class="form-group row">
-              <button class="btn btn-warning"
+            <div class="form-group">
+              <button class="btn btn-primary"
                 (click)="submitPasswordChange()"
-                [disabled]="!passwordChangeForm.valid">
+                [disabled]="!passwordChangeForm.valid" [hidden]="hidePasswords">
                 Change Password
               </button>
             </div>

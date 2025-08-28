@@ -246,7 +246,7 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
           title: 'User Email Address Not Found',
           body: 'This user does not seem to exist'
         });
-      })
+      });
     }
   }
 
