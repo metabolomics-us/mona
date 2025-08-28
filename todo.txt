@@ -1,9 +1,5 @@
 Frontend:
-    - Delete user button doesn't work
-        - Add confirmation after clicking
     - Show "email" already taken error, 409 conflict on frontend
-    - metadata buttons on advanced uploader
-    - redo manage spectra admin page buttons    
     - Add "Successfully logged out" toast message
     - Allow for half-scores to be visualized by the star rating system
         - Can do it with custom ng template on the ngbrating bootstrap component, use fa icons
@@ -16,14 +12,6 @@ Frontend:
             - Not hardcoded, part of db3 colors?
         - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
-    - Search feature on downloads page
-    - Have tags be formatted better on search page, in rows instead of one column, and make clickable boxes instead of pop up on click
-        - Allow for search
-        - Add legend to describe colors of tags (green = has tag, red = does not have, blank = unselected)
-        - Currently sorted by number of spectra associated, which is good
-    - Account creation date on "manage submitters" page
-    - Add confirmation for "Delete User" on "manage submitters"
-        - Fix backend part of it, don't think it actually deleted the user
 
 Backend:
     - Can't upload to dev or prod??
@@ -113,6 +101,9 @@ Done:
     - Admin page made all users appear under one header
     - Delete user button actually works now
         - Deletes both user and submitter from db
+        - Added confirmation before deleting
     - Fixed manage submitters admin page completely
     - Change log in buttons to davis blu
     - Fix formatting and functionality of 'manage spectra' admin page
+    - metadata buttons on advanced uploader
+    - redo manage spectra admin page buttons
