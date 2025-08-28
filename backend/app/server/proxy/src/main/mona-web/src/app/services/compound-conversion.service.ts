@@ -30,7 +30,7 @@ export class CompoundConversionService{
         this.http.get(`${this.apiUrl}/rest/convert/InChIKey/Chemical%20Name/${inchiKey}`).subscribe(
             (res: any) => {
                 if (res.length > 0 && res[0].results.length > 0) {
-                    callback(res[0].results);
+                    callback(res[0].results.slice(0, 5));
                 } else {
                     errorCallback({status: 200});
                 }
