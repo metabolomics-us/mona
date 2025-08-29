@@ -1,11 +1,7 @@
 Frontend:
-    - Advanced uploader 'identifiers' tab broken
-        - no 'update compound' button
-        - uploading SDF files works but can't press the buttons to convert the data
     - InChI code update works sometimes only? Might be a dev issue
         - Returned code 500 on: InChI=1S/H2O/h1H
         - Returned code 200 and worked on: InChI=1S/H2O/h1H2
-    - Upload MOL/SDF file doesn't work in advanced uploader
     - Show "email" already taken error, 409 conflict on frontend
     - Add "Successfully logged out" toast message
     - Allow for half-scores to be visualized by the star rating system
@@ -119,3 +115,17 @@ Done:
         - Just need to fix name one now, uses 'oldcts' endpoint instead of cts
         - Sending: http://cts.fiehnlab.ucdavis.edu/service/convert/InChIKey/Chemical%20Name/XLYOFNOQVPJJNP-UHFFFAOYSA-N
         - Needs:   http://cts.fiehnlab.ucdavis.edu/rest/convert/InChIKey/Chemical%20Name/XLYOFNOQVPJJNP-UHFFFAOYSA-N
+    - Basic uploader "Update compound" button when fields are empty just hangs
+    - Upload MOL/SDF file doesn't work in advanced uploader
+    - Fix advanced uploader's 'convertMolToInChI' function, integrate the basic one
+    - Spectra browser and compound classes page navbar colors - should be fixed
+        - Check browse spectra page navbar, I changed the minimum value to 1 instead of 0
+    - Fix home page spectra showcase loading visual bug
+    - Disallow files other than the accepted formats on basic/advanced uploader
+        - Should only accept MSP, MGF, and TXT
+    - Advanced uploader 'identifiers' tab broken
+        - no 'update compound' button
+        - uploading SDF files works but can't press the buttons to convert the data
+    - Error, please provide compound details should not immediately pop up in basic uploader
+        - Maybe put a required pop up first (if it is required?)
+        - Please provide compound details error stays up when uploading mol/sdf
