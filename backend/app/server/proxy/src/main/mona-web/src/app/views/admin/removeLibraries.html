@@ -63,7 +63,7 @@
       <div class="row justify-content-center">
         <div class="col mb-1">
           <span>Library IDs:</span>
-          <input class="form-control col-sm-3" placeholder="Comma separated, no spaces" type="text" [(ngModel)]="removeIDs"/>
+          <input class="form-control col-sm-4" placeholder="Comma separated, no spaces" type="text" [(ngModel)]="removeIDs"/>
           <p></p>
           <button type="button" class="btn btn-danger" [disabled]="removeIDs === null" (click)="deleteByIds()">Delete Libraries</button>
         </div>
