@@ -212,8 +212,19 @@
                     <li ngbNavItem="Identifiers">
                         <a ngbNavLink class="davis-blue">Identifiers</a>
                         <ng-template ngbNavContent>
+                          
                             <div class="container-fluid" style="height: 500px; overflow: auto; margin-top: 10px;">
-                                <div class="row form-group">
+                              <div class="alert alert-info" role="alert" *ngIf="compoundProcessing" style="text-align: center;">
+                                <h4><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Pulling compound data...</h4>
+                              </div>
+
+                              <div *ngIf="compoundError" class="alert alert-danger" role="alert">
+                                <h5><fa-icon [icon]="faExclamationTriangle"></fa-icon> Error</h5>
+                                <h6>{{compoundError}}</h6>
+                              </div>
+                              <br />
+
+                              <div class="row form-group">
                                     <div class="col-lg-3"><label>Names:</label></div>
                                       <div class="col-lg-9">
                                         <div *ngFor="let name of currentSpectrum.names; index as i; trackBy: trackByIndex" class="input-group">
