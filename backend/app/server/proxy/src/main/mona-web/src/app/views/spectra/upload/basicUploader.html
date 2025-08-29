@@ -242,21 +242,21 @@ OR
                 </div>
 
                 <div class="row form-group">
-                    <div class="col-md-3 col-lg-3"><label>InChI:</label></div>
+                    <div class="col-md-3 col-lg-3"><label>SMILES:</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
-                               [(ngModel)]="currentSpectrum.inchi"
-                               placeholder="InChI"
-                               class="form-control" />
+                           [(ngModel)]="currentSpectrum.smiles"
+                           placeholder="SMILES"
+                           class="form-control" />
                     </div>
                 </div>
 
                 <div class="row form-group">
-                    <div class="col-md-3 col-lg-3"><label>SMILES</label></div>
+                    <div class="col-md-3 col-lg-3"><label>InChI Code:</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
-                               [(ngModel)]="currentSpectrum.smiles"
-                               placeholder="SMILES"
+                               [(ngModel)]="currentSpectrum.inchi"
+                               placeholder="InChI Code"
                                class="form-control" />
                     </div>
                 </div>
@@ -272,11 +272,11 @@ OR
                 </div>
 
                 <div class="form-group text-center">
-                    <button type="button" class="btn btn-primary mr-1" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
+                    <button type="button" class="btn btn-primary mr-2" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
                         <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
                         <span> Update Compound</span>
                     </button>
-                    <button (click)="resetCompound()" class="btn btn-danger" [disabled]="compoundProcessing">Reset Compound</button>
+                    <button (click)="resetCompound()" class="btn btn-danger ml-2" [disabled]="compoundProcessing">Reset Compound</button>
                 </div>
 
                 <div class="row form-group">

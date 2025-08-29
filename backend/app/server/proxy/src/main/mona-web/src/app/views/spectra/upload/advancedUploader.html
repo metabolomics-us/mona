@@ -214,7 +214,7 @@
                         <ng-template ngbNavContent>
                             <div class="container-fluid" style="height: 500px; overflow: auto; margin-top: 10px;">
                                 <div class="row form-group">
-                                    <div class="col-lg-3"><label>Names</label></div>
+                                    <div class="col-lg-3"><label>Names:</label></div>
                                       <div class="col-lg-9">
                                         <div *ngFor="let name of currentSpectrum.names; index as i; trackBy: trackByIndex" class="input-group">
                                           <input type="text"
@@ -231,18 +231,18 @@
                                 </div>
 
                                 <div class="row form-group">
-                                    <div class="col-md-3 col-lg-3"><label>InChIKey</label></div>
+                                    <div class="col-md-3 col-lg-3"><label>SMILES:</label></div>
                                     <div class="col-md-9 col-lg-9">
                                         <input type="text"
-                                               [(ngModel)]="currentSpectrum.inchiKey"
-                                               ngDefaultControl
-                                               placeholder="InChIKey"
-                                               class="form-control" />
+                                           [(ngModel)]="currentSpectrum.smiles"
+                                           ngDefaultControl
+                                           placeholder="SMILES"
+                                           class="form-control" />
                                     </div>
                                 </div>
 
                                 <div class="row form-group">
-                                    <div class="col-md-3 col-lg-3"><label>InChI Code</label></div>
+                                    <div class="col-md-3 col-lg-3"><label>InChI Code:</label></div>
                                     <div class="col-md-9 col-lg-9">
                                         <input type="text"
                                                [(ngModel)]="currentSpectrum.inchi"
@@ -253,17 +253,17 @@
                                 </div>
 
                                 <div class="row form-group">
-                                    <div class="col-md-3 col-lg-3"><label>SMILES Code</label></div>
+                                    <div class="col-md-3 col-lg-3"><label>InChIKey:</label></div>
                                     <div class="col-md-9 col-lg-9">
                                         <input type="text"
-                                               [(ngModel)]="currentSpectrum.smiles"
-                                               ngDefaultControl
-                                               placeholder="SMILES Code"
-                                               class="form-control" />
+                                             [(ngModel)]="currentSpectrum.inchiKey"
+                                             ngDefaultControl
+                                             placeholder="InChIKey"
+                                             class="form-control" />
                                     </div>
                                 </div>
 
-                                <div class="row form-group">
+                              <div class="row form-group">
                                     <ngb-accordion class="col-sm-12 col-lg-12">
                                         <ngb-panel>
                                             <ng-template ngbPanelTitle><span class="davis-blue">Import MOL/SDF File</span></ng-template>
