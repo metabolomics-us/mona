@@ -23,7 +23,7 @@ import {
   faSignInAlt, faFolderOpen, faQuestionCircle, faTrash, faInfoCircle, faFileExport,
 } from '@fortawesome/free-solid-svg-icons';
 import {first} from 'rxjs/operators';
-import {ToasterConfig, ToasterService} from 'angular2-toaster';
+import {ToasterService} from 'angular2-toaster';
 import {CompoundConversionService} from '../../services/compound-conversion.service';
 
 @Component({
@@ -82,8 +82,6 @@ export class AdvancedUploaderComponent implements OnInit{
 
   // Parameters provided for trimming spectra
   ionCuts;
-
-  toasterOptions;
 
   // Icons
   faSpinner = faSpinner;
@@ -147,12 +145,6 @@ export class AdvancedUploaderComponent implements OnInit{
 				this.logger.error('failed: ' + error);
 			}
 		);
-		this.toasterOptions = new ToasterConfig({
-      positionClass: 'toast-center',
-      timeout: 0,
-      showCloseButton: true,
-      mouseoverTimerStop: true
-    });
 	}
 
   sortIonTable(column) {
