@@ -1,9 +1,7 @@
 Frontend:
-    - InChI code update works sometimes only? Might be a dev issue
-        - Returned code 500 on: InChI=1S/H2O/h1H
-        - Returned code 200 and worked on: InChI=1S/H2O/h1H2
-    - Show "email" already taken error, 409 conflict on frontend
-    - Add "Successfully logged out" toast message
+    - Edit user does not change password, and update button stays disabled if password doesn't meet requirements even if its valid
+        - Changing email creates a new submitter, but not a new user, can't log in with that updated email
+        - Uses the same form as user registration
     - Allow for half-scores to be visualized by the star rating system
         - Can do it with custom ng template on the ngbrating bootstrap component, use fa icons
     - Reorganize the spectra full view so that all dropdowns are under "compound information"
@@ -17,6 +15,8 @@ Frontend:
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
 
 Backend:
+    - Updating a user's email doesn't work
+        - Creates a new submitter that can't log in with that new email
     - Can't upload to dev or prod??
     - What is "Additional Downloads" and what are they used for? It's empty on prod
         - Make additional downloads on Download page a clickable dropdown (frontend)
@@ -129,3 +129,7 @@ Done:
     - Error, please provide compound details should not immediately pop up in basic uploader
         - Maybe put a required pop up first (if it is required?)
         - Please provide compound details error stays up when uploading mol/sdf
+    - Show "email" already taken error, 409 conflict on add new submitter admin page
+    - Passwords do not have to match during user registration or user password update
+    - Add "Successfully logged out" toast message
+        - Fixed all toaster configuration globally
