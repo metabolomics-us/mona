@@ -1,4 +1,10 @@
 Frontend:
+    - Advanced uploader 'identifiers' tab broken
+        - no 'update compound' button
+        - uploading SDF files works but can't press the buttons to convert the data
+    - InChI code update works sometimes only? Might be a dev issue
+        - Returned code 500 on: InChI=1S/H2O/h1H
+        - Returned code 200 and worked on: InChI=1S/H2O/h1H2
     - Upload MOL/SDF file doesn't work in advanced uploader
     - Show "email" already taken error, 409 conflict on frontend
     - Add "Successfully logged out" toast message
