@@ -11,7 +11,7 @@ import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service'
 import {Metadata} from '../../services/persistence/metadata.resource';
 import {CookieMain} from '../../services/cookie/cookie-main.service';
 import {NGXLogger} from 'ngx-logger';
-import {ToasterConfig, ToasterService} from 'angular2-toaster';
+import {ToasterService} from 'angular2-toaster';
 import {GoogleAnalyticsService} from 'ngx-google-analytics';
 import {AuthenticationService} from '../../services/authentication.service';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
@@ -43,7 +43,6 @@ export class SpectraBrowserComponent implements OnInit{
     sizeParam;
     pageParam;
     tableParam;
-    toasterOptions;
     itemsPerPageSelectionSubject;
     tableSubject;
     tableColumnSelectedSubject;
@@ -69,12 +68,6 @@ export class SpectraBrowserComponent implements OnInit{
     }
 
     ngOnInit() {
-      this.toasterOptions = new ToasterConfig({
-        positionClass: 'toast-center',
-        timeout: 0,
-        showCloseButton: true
-      });
-
       /**
        * contains all local objects and is our model
        */
