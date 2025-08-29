@@ -3,7 +3,6 @@
     <h3><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="auth.requestModal()" class="davis-blue text-decoration-none">log in</a>!</h3>
   </div>
 </div>
-<toaster-container [toasterconfig]="toasterOptions"></toaster-container>
 <div *ngIf="auth.isLoggedIn() && auth.isAdmin()" class="container">
   <div class="row mb-2">
     <div class="col">

@@ -24,19 +24,12 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
   currentUser;
   librarySubscription: Subscription;
   deleteSubscription: Subscription;
-  toasterOptions: ToasterConfig;
   removeIDs: string;
   constructor(public auth: AuthenticationService, public tagService: TagService,
               public logger: NGXLogger, public spectraQueryBuilderService: SpectraQueryBuilderService,
               public spectrum: Spectrum, public toaster: ToasterService, public adminService: AdminService) {}
 
   ngOnInit() {
-    this.toasterOptions = new ToasterConfig({
-      positionClass: 'toast-center',
-      timeout: -1000,
-      showCloseButton: true,
-      mouseoverTimerStop: true
-    });
     this.newPassword = {
       emailAddress: '',
       password: '',
