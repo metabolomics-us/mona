@@ -285,7 +285,7 @@ OR
                             <ng-template ngbPanelTitle><span class="davis-blue">Import MOL/SDF File</span></ng-template>
                             <ng-template ngbPanelContent>
                                 <div>
-                                    Load a MOL file to attach to this spectrum record.  Please note that the MOL data must contain explicit hydrogens to
+                                    Load a MOL file to attach to this spectrum record or copy and paste a molecular structure.  Please note that the MOL data must contain explicit hydrogens to
                                     convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
                                     will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
                                     using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
@@ -293,28 +293,24 @@ OR
                                 <hr />
 
                                 <div class="form-group">
-                                    <label>Copy and paste a molecular structure:</label>
+                                  <label><b>Upload an MOL/SDF file:</b></label>
+                                  <div class="input-group">
+                                      <span class="input-group-btn">
+                                          <span class="btn btn-primary btn-file">
+                                              Browse&hellip; <input type="file" (change)="parseMolFile($event)" [disabled]="compoundProcessing" />
+                                          </span>
+                                      </span>
+                                    <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
+                                  </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label><b>Copy and paste a molecular structure:</b></label>
                                     <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" rows="10"></textarea>
                                 </div>
 
                                 <div class="form-group text-center">
                                     <button (click)="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
-                                </div>
-
-                                <div class="form-group">
-                                    <label><b>Upload a MOL/SDF file</b></label>
-
-                                    <div class="input-group">
-                                    <span class="input-group-btn">
-                                        <span class="btn btn-primary btn-file">
-                                            Browse&hellip; <input type="file" (change)="parseMolFile($event)" [disabled]="compoundProcessing" />
-                                        </span>
-                                    </span>
-                                        <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
-                                    </div>
-                                    <div class="input-group">
-
-                                    </div>
                                 </div>
                             </ng-template>
                         </ngb-panel>
