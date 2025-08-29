@@ -405,7 +405,7 @@
 
                                 <div>
                                   <br/>
-                                    <div class="col-sm-3 form-group" style="margin-bottom: 0.3rem"><strong>Base Peak Percentage Cut</strong></div>
+                                    <div class="col-sm-3 form-group text-nowrap" style="margin-bottom: 0.3rem"><strong>Base Peak Percentage Cut</strong></div>
                                     <div class="col-sm-9 form-group">
                                         <input type="number"
                                                [(ngModel)]="ionCuts.basePeak"
@@ -414,21 +414,21 @@
                                                class="form-control" />
 
                                         <span class="help-block ml-2">
-                                        Removes all ions with intensities below the given percentage of the base peak <fa-icon size="xs" [icon]="faInfoCircle" ngbTooltip="The base peak is the peak with the highest intensity" placement="bottom"></fa-icon>
-                                    </span>
+                                          Removes ions with intensities below the given percentage of the <p class="text-nowrap">base peak <fa-icon size="xs" [icon]="faInfoCircle" ngbTooltip="The base peak is the peak with the highest intensity" placement="bottom"></fa-icon></p>
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div>
                                   <br/>
-                                    <div class="col-sm-3 form-group" style="margin-bottom: 0.3rem"><strong>Absolute Abundance Cut</strong></div>
+                                    <div class="col-sm-3 form-group text-nowrap" style="margin-bottom: 0.3rem"><strong>Absolute Abundance Cut</strong></div>
                                     <div class="col-sm-9 form-group">
                                         <input type="number"
                                                [(ngModel)]="ionCuts.absAbundance"
                                                ngDefaultControl
                                                placeholder="Absolute abundance"
                                                class="form-control" />
-                                        <span class="help-block ml-2">Removes all ions below the given absolute abundance/intensity</span>
+                                        <span class="help-block ml-2">Removes ions below the given absolute abundance/intensity</span>
                                     </div>
                                 </div>
 
