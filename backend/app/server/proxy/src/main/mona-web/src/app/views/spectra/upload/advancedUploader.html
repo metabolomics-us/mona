@@ -289,11 +289,11 @@
 
                                                 <div class="form-group">
                                                   <label><b>Copy and paste a molecular structure:</b></label>
-                                                  <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" ngDefaultControl rows="10"></textarea>
+                                                  <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" ngDefaultControl rows="7"></textarea>
                                                 </div>
 
                                               <div class="form-group text-center">
-                                                    <button (click)="convertMolToInChI()" class="btn btn-primary" ngDefaultControl>Convert to InChI Code and InChIKey</button>
+                                                    <button (click)="convertMolToInChI()" class="btn btn-primary" ngDefaultControl>Fetch Compound Info from MOL Data</button>
                                                 </div>
                                             </ng-template>
                                         </ngb-panel>
@@ -302,9 +302,11 @@
                                             <ng-template ngbPanelTitle><span class="davis-blue">Draw a Molecular Structure</span></ng-template>
 
                                             <ng-template ngbPanelContent>
-                                                Draw a structure with the ChemDoodle drawing tool to generate a MOL file.  If uploading to MoNA, the provided MOL file
-                                                will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
-                                                using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
+                                                Draw a structure with <a href="https://www.chemdoodle.com/" target="_blank">ChemDoodle</a> to generate an MOL file,
+                                                then upload the file in the section above.
+                                                If uploading to MoNA, the provided MOL file will be attached;
+                                                however the full MOL file cannot be included in an MSP export.  Please note that
+                                                using this tool will overwrite any existing MOL file, InChI code or InChIKey.
                                                 <hr />
 
                                                 <div style="width: 100%; height: 100%">
@@ -313,7 +315,7 @@
 
 
                                                 <div class="form-group text-center">
-                                                    <button (click)="convertMolToInChI()" class="btn btn-primary" ngDefaultControl>Convert to InChI Code and InChIKey</button>
+                                                    <button (click)="convertMolToInChI()" class="btn btn-primary" ngDefaultControl>Fetch Compound Info from MOL Data</button>
                                                 </div>
                                             </ng-template>
                                         </ngb-panel>

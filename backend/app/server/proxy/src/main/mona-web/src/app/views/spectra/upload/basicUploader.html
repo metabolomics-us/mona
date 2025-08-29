@@ -306,11 +306,11 @@ OR
 
                                 <div class="form-group">
                                     <label><b>Copy and paste a molecular structure:</b></label>
-                                    <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" rows="10"></textarea>
+                                    <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" rows="7"></textarea>
                                 </div>
 
                                 <div class="form-group text-center">
-                                    <button (click)="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
+                                    <button (click)="convertMolToInChI()" class="btn btn-primary">Fetch Compound Info from MOL Data</button>
                                 </div>
                             </ng-template>
                         </ngb-panel>
@@ -319,8 +319,10 @@ OR
                             <ng-template ngbPanelTitle><span class="davis-blue">Draw a Molecular Structure</span></ng-template>
                             <ng-template ngbPanelContent>
                                 <div>
-                                    Draw a structure with the ChemDoodle drawing tool to generate a MOL file.  If uploading to MoNA, the provided MOL file
-                                    will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
+                                    Draw a structure with <a href="https://www.chemdoodle.com/" target="_blank">ChemDoodle</a> to generate an MOL file,
+                                    then upload the file in the section above.
+                                    If uploading to MoNA, the provided MOL file will be attached;
+                                    however the full MOL file cannot be included in an MSP export.  Please note that
                                     using this tool will overwrite any existing MOL file, InChI code or InChIKey.
                                 </div>
                                 <hr />
@@ -330,7 +332,7 @@ OR
                                 <div class="form-group text-center">
                                     <button type="button" class="btn btn-primary" (click)="convertMolToInChI()" [disabled]="compoundProcessing">
                                         <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
-                                        <span>Pull Compound Info from MOL Data</span>
+                                        <span>Fetch Compound Info from MOL Data</span>
                                     </button>
                                 </div>
                             </ng-template>
