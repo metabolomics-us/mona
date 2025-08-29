@@ -24,6 +24,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {first} from 'rxjs/operators';
 import {ToasterConfig, ToasterService} from 'angular2-toaster';
+import {CompoundConversionService} from '../../services/compound-conversion.service';
 
 @Component({
   selector: 'advanced-uploader',
@@ -49,6 +50,8 @@ export class AdvancedUploaderComponent implements OnInit{
   convMolUpload;
   files;
   showLibraryForm;
+  compoundProcessing;
+  compoundMolError;
 
   // library variables
   library = {
@@ -102,7 +105,8 @@ export class AdvancedUploaderComponent implements OnInit{
 				          public uploadLibraryService: UploadLibraryService,  public ctsService: CtsService,
 				          public tagService: TagService,  public asyncService: AsyncService,  public logger: NGXLogger,
 				          public element: ElementRef, public filterPipe: FilterPipe,  public http: HttpClient,
-              public router: Router, public modalService: NgbModal, public toaster: ToasterService){}
+              public router: Router, public modalService: NgbModal, public toaster: ToasterService,
+              public compoundConversionService: CompoundConversionService){}
 
 	ngOnInit() {
 		this.spectraLoaded = 0;
@@ -565,13 +569,64 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
-	convertMolToInChI() {
-		if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
-		  this.ctsService.convertToInchiKey(this.currentSpectrum.molFile, (result) => {
-				this.currentSpectrum.inchiKey = result.inchikey;
-			}, undefined);
-		}
-	}
+  // Was not working anymore 8/29/2025
+	// convertMolToInChI() {
+	// 	if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
+	// 	  this.ctsService.convertToInchiKey(this.currentSpectrum.molFile, (result) => {
+	// 			this.currentSpectrum.inchiKey = result.inchikey;
+	// 		}, undefined);
+	// 	}
+	// }
+
+  /**
+   * Pull names from CTS given an InChIKey and update the currentSpectrum
+   */
+  pullNames(inchiKey) {
+    // Only pull if there are no names provided
+    if (this.currentSpectrum.names.length === 0 || (this.currentSpectrum.names.length === 1 && this.currentSpectrum.names[0] === '')) {
+      this.compoundConversionService.InChIKeyToName(
+        inchiKey,
+        (data) => {
+          this.currentSpectrum.names = this.currentSpectrum.names.filter((x) => {
+            return x !== '';
+          });
+
+          Array.prototype.push.apply(this.currentSpectrum.names, data);
+
+          this.compoundProcessing = false;
+        },
+        () => {
+          this.compoundProcessing = false;
+        }
+      );
+    } else {
+      this.compoundProcessing = false;
+    }
+  }
+
+
+  convertMolToInChI() {
+    if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
+      this.compoundProcessing = false;
+
+      this.compoundConversionService.parseMOL(
+        this.currentSpectrum.molFile,
+        (response) => {
+          this.currentSpectrum.inchi = response.inchi;
+          this.currentSpectrum.smiles = response.smiles;
+          this.currentSpectrum.inchiKey = response.inchiKey;
+
+          this.pullNames(response.inchiKey);
+        },
+        (response) => {
+          this.compoundMolError = 'Unable to process provided MOL data!';
+          this.compoundProcessing = false;
+        }
+      );
+    } else {
+      this.compoundMolError = '';
+    }
+  }
 
 
 	/**
