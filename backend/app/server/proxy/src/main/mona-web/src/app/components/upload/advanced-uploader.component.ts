@@ -626,6 +626,7 @@ export class AdvancedUploaderComponent implements OnInit{
       );
     } else {
       this.compoundMolError = '';
+      this.compoundError = '';
     }
   }
 
@@ -702,6 +703,7 @@ export class AdvancedUploaderComponent implements OnInit{
     this.logger.info('Retrieving MOL data...');
 
     this.compoundError = undefined;
+    this.compoundMolError = undefined;
     this.compoundProcessing = true;
 
 
@@ -761,6 +763,8 @@ export class AdvancedUploaderComponent implements OnInit{
     this.currentSpectrum.inchiKey = '';
     this.currentSpectrum.smiles = '';
     this.currentSpectrum.names = [''];
+    this.compoundError = undefined;
+    this.compoundMolError = undefined;
   }
 
 

@@ -221,6 +221,8 @@ export class BasicUploaderComponent implements OnInit{
         this.currentSpectrum.inchiKey = '';
         this.currentSpectrum.smiles = '';
         this.currentSpectrum.names = [''];
+        this.compoundError = undefined;
+        this.compoundMolError = undefined;
     }
 
 

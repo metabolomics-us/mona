@@ -222,7 +222,12 @@
                                 <h5><fa-icon [icon]="faExclamationTriangle"></fa-icon> Error</h5>
                                 <h6>{{compoundError}}</h6>
                               </div>
-                              <br />
+
+                              <div *ngIf="compoundMolError" class="alert alert-danger" role="alert">
+                                <h5><fa-icon [icon]="faExclamationTriangle"></fa-icon> Error</h5>
+                                <h6>{{compoundMolError}}</h6>
+                              </div>
+                              <br/>
 
                               <div class="row form-group">
                                     <div class="col-lg-3"><label>Names:</label></div>
