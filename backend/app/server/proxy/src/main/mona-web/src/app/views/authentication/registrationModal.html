@@ -59,7 +59,7 @@
 <div class="modal-footer" *ngIf="state !== 'success'">
     <button class="btn btn-primary btn-block"
             (click)="submitRegistration()"
-            [disabled]="!submitterFormStatus"
+            [disabled]="!submitterFormStatus || registrationService.newSubmitter.password !== registrationService.newSubmitter.passwordMatch"
             *ngIf="state === 'register'">Register</button>
   <button class="btn btn-primary btn-block"
           (click)="resetState()"
