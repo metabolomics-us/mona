@@ -27,6 +27,12 @@ export class CompoundConversionService{
     nameToInChIKey(name, callback, errorCallback) {
       const oldCtsUrl = 'http://oldcts.fiehnlab.ucdavis.edu';
 
+      // Handle empty name provided
+      if (name.trim() === '') {
+        callback('');
+        return;
+      }
+
       this.http.get(`${oldCtsUrl}/chemify/rest/identify/${name}`)
         .subscribe(
           (res: any) => callback(res[0].result),
