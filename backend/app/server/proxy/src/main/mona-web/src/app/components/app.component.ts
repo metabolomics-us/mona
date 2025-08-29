@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
+import {ToasterConfig} from 'angular2-toaster';
 
 @Component({
     selector: 'app-mona',
@@ -31,6 +32,7 @@ import {Router, NavigationEnd} from '@angular/router';
             <div class="row">
                 <div class="col-lg-12 top17">
                     <router-outlet></router-outlet>
+                    <toaster-container [toasterconfig]="toasterOptions"></toaster-container>
                 </div>
             </div>
         </div>
@@ -38,6 +40,13 @@ import {Router, NavigationEnd} from '@angular/router';
 })
 export class AppRootComponent implements OnInit{
   constructor(private router: Router) {}
+
+  toasterOptions = new ToasterConfig( {
+    positionClass: 'toast-center',
+    timeout: -1000,
+    mouseoverTimerStop: true,
+    showCloseButton: true,
+  });
 
   ngOnInit() {
     // scroll to top of page on new page entry
