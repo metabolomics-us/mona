@@ -6,7 +6,7 @@ import {NGXLogger} from 'ngx-logger';
 import {Subscription} from 'rxjs';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Spectrum} from '../../services/persistence/spectrum.resource';
-import {ToasterConfig, ToasterService} from 'angular2-toaster';
+import {ToasterService} from 'angular2-toaster';
 import {AdminService} from '../../services/persistence/admin.resource';
 
 @Component({
@@ -229,14 +229,14 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
         this.currentUser = x;
         this.toaster.pop({
           type: 'success',
-          title: 'Successfully Validated Email Address',
-          body: 'This email address is assigned to a current user'
+          title: 'Validated Email Address',
+          body: 'This email address was found in the database'
         });
       }, (error) => {
         this.hidePasswords = true;
         this.toaster.pop({
           type: 'error',
-          title: 'User Email Address Not Found',
+          title: 'Email Address Not Found',
           body: 'This user does not seem to exist'
         });
       });
