@@ -367,7 +367,9 @@ export class BasicUploaderComponent implements OnInit{
         }
 
         else {
-            this.compoundError = 'Please provide compound details';
+            // Having this would cause the error to show before the user even inputted anything (on basic uploader)
+            // this.compoundError = 'Please provide compound details';
+            this.compoundError = '';
             this.compoundProcessing = false;
         }
     }
