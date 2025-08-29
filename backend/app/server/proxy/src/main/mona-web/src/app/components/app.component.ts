@@ -13,10 +13,10 @@ import {Router, NavigationEnd} from '@angular/router';
             <div class="collapse navbar-collapse" role="navigation" id="navbarSupportedContent">
                 <ul class="nav navbar-nav mr-auto">
                     <browse-drop-down class="nav-item"></browse-drop-down>
-                    <admin-drop-down class="nav-item"></admin-drop-down>
                     <download-button class="nav-item"></download-button>
                     <upload-button class="nav-item"></upload-button>
                     <resource-drop-down class="nav-item"></resource-drop-down>
+                    <admin-drop-down class="nav-item"></admin-drop-down>
                 </ul>
                 <div class="form-inline my-2 my-lg-0">
                   <search-box class="nav-item"></search-box>
