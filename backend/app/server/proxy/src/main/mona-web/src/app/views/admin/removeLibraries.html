@@ -1,6 +1,6 @@
 <div class="row" *ngIf="!auth.isLoggedIn()">
   <div class="col-md-12">
-    <h3><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="auth.requestModal()">log in</a>!</h3>
+    <h3><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="auth.requestModal()" class="davis-blue text-decoration-none">log in</a>!</h3>
   </div>
 </div>
 <toaster-container [toasterconfig]="toasterOptions"></toaster-container>
