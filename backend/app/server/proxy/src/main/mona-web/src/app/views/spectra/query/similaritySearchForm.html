@@ -19,7 +19,7 @@
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" name="upload" [(ngModel)]="fileUpload" (change)="parseFiles($event)" />
+                            Browse&hellip; <input type="file" accept=".msp, .mgf, .txt" name="upload" [(ngModel)]="fileUpload" (change)="parseFiles($event)" />
                         </span>
                     </span>
                     <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" name="filenames" [(ngModel)]="filenames" readonly />
@@ -51,7 +51,7 @@ OR
             <div *ngIf="page === 1">
                 <span class="spinner">
                   <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon>
-                    Please wait while your file is loaded and processed...
+                    Please wait while your file is loaded and processed... This shouldn't take lon
                 </span>
             </div>
 
@@ -71,7 +71,7 @@ OR
                 <br />
 
                 <div class="form-group">
-                    <label class="control-label">Minimum Similarity (default: 500):</label>
+                    <label class="control-label">Minimum Similarity (default 500):</label>
                     <input type="text" [(ngModel)]="minSimilarity"
                            name="minSimilarity"
                            class="form-control"
@@ -103,7 +103,7 @@ OR
                 </div>
                 <br />
 
-                <button class="btn btn-warning mr-1" (click)="fileUpload = null; filenames = null; page = 0">Reset</button>
+                <button class="btn btn-danger mr-1" (click)="fileUpload = null; filenames = null; page = 0">Reset</button>
                 <button class="btn btn-primary ml-1" type="submit">
                     Search for Similar Spectra
                 </button>
