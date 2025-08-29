@@ -77,15 +77,15 @@
             <h3 class="font-weight-bold">Spectra Showcase</h3>
             <br />
 
-            <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="true">
+            <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="showcaseSpectra.length > 0">
+                <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">
+                    <div class="text-center">
+                      <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Spectra Showcase...</h4>
+                    </div>
+                </ng-template>
                 <ng-template ngbSlide *ngFor="let spectrum of showcaseSpectra">
                     <div class="picsum-img-wrapper">
                       <display-spectra-panel class="text-left" [spectrum]="spectrum"></display-spectra-panel>
-                    </div>
-                </ng-template>
-                <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">
-                    <div class="text-center">
-                      <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Showcase Spectra...</h4>
                     </div>
                 </ng-template>
             </ngb-carousel>
