@@ -26,7 +26,7 @@
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" (change)="parseFiles($event)" #fileUpload />
+                            Browse&hellip; <input type="file" accept=".mgf, .msp, .txt" (change)="parseFiles($event)" #fileUpload />
                         </span>
                     </span>
 
@@ -66,7 +66,7 @@ OR
             <div class="card-body text-center">
                 <span class="spinner">
                   <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon>
-                    Please wait while your file is loaded and processed...
+                    Please wait while your file is loaded and processed... This shouldn't take long
                 </span>
             </div>
         </div>
@@ -297,7 +297,7 @@ OR
                                   <div class="input-group">
                                       <span class="input-group-btn">
                                           <span class="btn btn-primary btn-file">
-                                              Browse&hellip; <input type="file" (change)="parseMolFile($event.target.files)" [disabled]="compoundProcessing" />
+                                              Browse&hellip; <input type="file" accept=".mol, .sdf" (change)="parseMolFile($event.target.files)" [disabled]="compoundProcessing" />
                                           </span>
                                       </span>
                                     <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />

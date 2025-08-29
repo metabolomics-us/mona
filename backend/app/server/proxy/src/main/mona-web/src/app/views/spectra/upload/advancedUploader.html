@@ -25,7 +25,7 @@
                 <div class="input-group">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                           Browse&hellip; <input type="file" name="upload" multiple [(ngModel)]="fileUpload" (change)="setFiles($event)"/>
+                           Browse&hellip; <input type="file" accept=".msp, .mgf, .txt" name="upload" multiple [(ngModel)]="fileUpload" (change)="setFiles($event)"/>
                         </span>
                     </span>
 
@@ -288,7 +288,7 @@
                                                   <div class="input-group">
                                                     <span class="input-group-btn">
                                                         <span class="btn btn-primary btn-file">
-                                                           Browse...<input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseMolFile($event)"/>
+                                                           Browse...<input type="file" accept=".mol, .sdf" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseMolFile($event)"/>
                                                         </span>
                                                     </span>
                                                     <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="convMolUpload" ngDefaultControl readonly />
