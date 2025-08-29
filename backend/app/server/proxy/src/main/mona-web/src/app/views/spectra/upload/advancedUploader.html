@@ -263,6 +263,14 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group text-center">
+                                    <button type="button" class="btn btn-primary mr-2" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
+                                        <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
+                                        <span> Update Compound</span>
+                                    </button>
+                                    <button (click)="resetCompound()" class="btn btn-danger ml-2" [disabled]="compoundProcessing">Reset Compound</button>
+                                </div>
+
                               <div class="row form-group">
                                     <ngb-accordion class="col-sm-12 col-lg-12">
                                         <ngb-panel>

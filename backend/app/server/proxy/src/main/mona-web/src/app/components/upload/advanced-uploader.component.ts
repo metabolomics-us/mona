@@ -52,6 +52,7 @@ export class AdvancedUploaderComponent implements OnInit{
   showLibraryForm;
   compoundProcessing;
   compoundMolError;
+  compoundError;
 
   // library variables
   library = {
@@ -255,7 +256,6 @@ export class AdvancedUploaderComponent implements OnInit{
   /**
 	 * Handle metadata functionality
 	 */
-
 	addMetadataField() {
 		this.currentSpectrum.meta.push({name: '', value: ''});
 		this.element.nativeElement.getElementById('metadata_editor').scrollTop = 0;
@@ -328,10 +328,10 @@ export class AdvancedUploaderComponent implements OnInit{
               this.library.link = 'http://massbank.us';
             }
             spectrum.library = this.library;
-            spectrum.tags = []
+            spectrum.tags = [];
             if (this.batchTagList.length > 0) {
-              for(const tag of this.batchTagList) {
-                spectrum.tags.push({ruleBased: false, text: tag.text})
+              for (const tag of this.batchTagList) {
+                spectrum.tags.push({ruleBased: false, text: tag.text});
               }
             }
             spectrum.tags.push(this.library.tag);
@@ -379,10 +379,10 @@ export class AdvancedUploaderComponent implements OnInit{
               this.library.link = 'http://massbank.us';
             }
             spectrum.library = this.library;
-            spectrum.tags = []
+            spectrum.tags = [];
             if (this.batchTagList.length > 0) {
-              for(const tag of this.batchTagList) {
-                spectrum.tags.push({ruleBased: false, text: tag.text})
+              for (const tag of this.batchTagList) {
+                spectrum.tags.push({ruleBased: false, text: tag.text});
               }
             }
             spectrum.tags.push(this.library.tag);
@@ -563,6 +563,7 @@ export class AdvancedUploaderComponent implements OnInit{
 				}
 
 				this.currentSpectrum.molFile = data;
+        this.convertMolToInChI();
 			};
 
 			fileReader.readAsText(event.target.files[0]);
@@ -629,9 +630,143 @@ export class AdvancedUploaderComponent implements OnInit{
   }
 
 
-	/**
-	 * Export a file as MSP
-	 */
+  /**
+   * Pull compound summary given an InChI
+   */
+  processInChI(inchi) {
+    this.compoundConversionService.parseInChI(
+      this.currentSpectrum.inchi,
+      (response) => {
+        this.logger.debug('Parse Inchi response: ' + response);
+        this.currentSpectrum.smiles = response.smiles;
+        this.currentSpectrum.inchiKey = response.inchiKey;
+        this.currentSpectrum.molFile = response.molData;
+
+        this.pullNames(response.inchiKey);
+      },
+      (response) => {
+        this.compoundError = 'Unable to process provided InChI!';
+        this.compoundProcessing = false;
+      }
+    );
+  }
+
+  /**
+   * Pull compound summary given an InChIKey
+   */
+  processInChIKey(inchiKey) {
+    this.compoundConversionService.getInChIByInChIKey(
+      inchiKey,
+      (data) => {
+        this.logger.info('InChi By InchiKey Reponse: ' + data);
+        this.currentSpectrum.inchi = data[0];
+        this.processInChI(data[0]);
+      },
+      (response) => {
+        if (response.status === 200) {
+          this.compoundError = 'No results found for provided InChIKey!';
+        } else {
+          this.compoundError = 'Unable to process provided InChIKey!';
+        }
+
+        this.compoundProcessing = false;
+      }
+    );
+  }
+
+  /**
+   * Convert an array of names to an InChIKey based on the first result
+   * @param names array of compound names
+   * @param callback callback function to get name
+   */
+  namesToInChIKey(names, callback) {
+    if (names.length === 0) {
+      callback(null);
+    } else {
+      this.compoundConversionService.nameToInChIKey(names[0], (molecule) => {
+        if (molecule !== null) {
+          callback(molecule);
+        } else {
+          this.namesToInChIKey(names.slice(1), callback);
+        }
+      }, (error) => {
+        this.namesToInChIKey(names.slice(1), callback);
+      });
+    }
+  }
+
+  /**
+   * Generate MOL file from available compound information
+   */
+  retrieveCompoundData() {
+    this.logger.info('Retrieving MOL data...');
+
+    this.compoundError = undefined;
+    this.compoundProcessing = true;
+
+
+    // Process InChI
+    if (this.currentSpectrum.inchi) {
+      this.processInChI(this.currentSpectrum.inchi);
+    }
+
+    // Process SMILES
+    else if (this.currentSpectrum.smiles) {
+      this.compoundConversionService.parseSMILES(
+        this.currentSpectrum.smiles,
+        (response) => {
+          this.logger.debug('Parse smiles response ' + response);
+          this.currentSpectrum.inchi = response.inchi;
+          this.currentSpectrum.inchiKey = response.inchiKey;
+          this.currentSpectrum.molFile = response.molData;
+
+          this.pullNames(response.inchiKey);
+        },
+        (response) => {
+          this.compoundError = 'Unable to process provided SMILES!';
+          this.compoundProcessing = false;
+        }
+      );
+    }
+
+    // Process InChIKey
+    else if (this.currentSpectrum.inchiKey) {
+      this.processInChIKey(this.currentSpectrum.inchiKey);
+    }
+
+    // Process names
+    else if (this.currentSpectrum.names.length > 0) {
+      this.namesToInChIKey(this.currentSpectrum.names, (inchiKey) => {
+        this.logger.debug('Name to inchikey response: ' + inchiKey);
+        if (inchiKey !== null) {
+          this.logger.info('Found InChIKey: ' + inchiKey);
+          this.currentSpectrum.inchiKey = inchiKey;
+          this.processInChIKey(inchiKey);
+        } else {
+          this.compoundError = 'Unable to find a match for provided name!';
+          this.compoundProcessing = false;
+        }
+      });
+    }
+
+    else {
+      this.compoundError = 'Please provide compound details';
+      this.compoundProcessing = false;
+    }
+  }
+
+  resetCompound() {
+    this.currentSpectrum.molFile = '';
+    this.currentSpectrum.inchi = '';
+    this.currentSpectrum.inchiKey = '';
+    this.currentSpectrum.smiles = '';
+    this.currentSpectrum.names = [''];
+  }
+
+
+  /**
+   * Export a file as MSP
+   */
 	exportFile() {
 		let msp = '';
 
