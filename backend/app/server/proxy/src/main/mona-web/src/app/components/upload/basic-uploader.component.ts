@@ -319,6 +319,7 @@ export class BasicUploaderComponent implements OnInit{
         this.logger.info('Retrieving MOL data...');
 
         this.compoundError = undefined;
+        this.compoundMolError = undefined;
         this.compoundProcessing = true;
 
 
@@ -370,6 +371,7 @@ export class BasicUploaderComponent implements OnInit{
             // Having this would cause the error to show before the user even inputted anything (on basic uploader)
             // this.compoundError = 'Please provide compound details';
             this.compoundError = '';
+            this.compoundMolError = '';
             this.compoundProcessing = false;
         }
     }
@@ -386,6 +388,8 @@ export class BasicUploaderComponent implements OnInit{
             };
 
             fileReader.readAsText(files[0]);
+            this.compoundError = undefined;
+            this.compoundMolError = undefined;
         }
     }
 
@@ -401,6 +405,7 @@ export class BasicUploaderComponent implements OnInit{
                     this.currentSpectrum.inchiKey = response.inchiKey;
 
                     this.pullNames(response.inchiKey);
+                    this.compoundMolError = '';
                 },
                  (response) => {
                     this.compoundMolError = 'Unable to process provided MOL data!';
