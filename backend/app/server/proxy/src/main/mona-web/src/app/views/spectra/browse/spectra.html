@@ -226,7 +226,7 @@
 </div>
 
 <!-- pagination -->
-<div *ngIf="!pagination.loading && pagination.totalSize > -1 && !isSimilaritySearch()" class="d-flex justify-content-center">
+<div *ngIf="!pagination.loading && pagination.totalSize > 0 && !isSimilaritySearch()" class="d-flex justify-content-center davis-blue">
   <ngb-pagination
     [collectionSize]="pagination.totalSize"
     [maxSize]="pagination.maxSize"
