@@ -46,6 +46,7 @@
 
 
     <div class="modal-footer" *ngIf="state === 'login'">
-        <button class="btn btn-primary btn-block" type="submit">Log In</button>
+        <button class="btn btn-primary btn-block" type="submit" [disabled]="!credentials.email || !credentials.password">Log In</button>
+        <button class="btn btn-secondary btn-block" type="button" (click)="register()">Register an Account</button>
     </div>
 </form>

@@ -8,6 +8,7 @@ import {Component, OnInit} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {NGXLogger} from 'ngx-logger';
 import {AuthenticationService} from '../../services/authentication.service';
+import {RegistrationService} from '../../services/registration.service';
 import {AuthenticationModalComponent} from './authentication-modal.component';
 import {RegistrationModalComponent} from './registration-modal.component';
 import {faUser, faCaretDown, faSignOutAlt, faUsers} from '@fortawesome/free-solid-svg-icons';
@@ -28,7 +29,7 @@ export class AuthenticationComponent implements OnInit{
     faUsers = faUsers;
 
     constructor(public modalService: NgbModal, public authenticationService: AuthenticationService,
-                public logger: NGXLogger) {}
+                public logger: NGXLogger, public registrationService: RegistrationService) {}
 
     ngOnInit() {
         this.authenticationService.validate();
@@ -62,6 +63,15 @@ export class AuthenticationComponent implements OnInit{
                 this.handleLogin();
             }
         });
+
+        /**
+         * Listen for external calls to bring up the registration modal
+         */
+        this.registrationService.modalRequest.subscribe((request) => {
+            if (request) {
+              this.handleRegistration();
+            }
+          });
     }
 
     isLoggedIn(): boolean {
