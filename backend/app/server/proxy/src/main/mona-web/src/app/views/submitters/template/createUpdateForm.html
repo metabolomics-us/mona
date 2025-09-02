@@ -60,7 +60,7 @@
                     pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,30})"/>
 
             <p *ngIf="!password.valid && !password.pristine" class="text-danger">
-                Please enter a valid password!<br/>
+                Please enter a valid password:<br/>
                 - 1 Lowercase letter<br/>
                 - 1 Uppercase letter<br/>
                 - 1 Number<br/>
@@ -79,7 +79,7 @@
                     #passwordMatch = "ngModel" required/>
 
             <p *ngIf="(!passwordMatch.valid && !passwordMatch.pristine) ||
-                registrationService.newSubmitter.password != registrationService.newSubmitter.passwordMatch" class="text-danger">Passwords do not match!</p>
+                registrationService.newSubmitter.password != registrationService.newSubmitter.passwordMatch" class="text-danger">Passwords do not match.</p>
         </div>
     </div>
     <input type="hidden" #id = "ngModel" name="id" [(ngModel)]="registrationService.newSubmitter.id" value="{{registrationService.newSubmitter.id}}"/>
