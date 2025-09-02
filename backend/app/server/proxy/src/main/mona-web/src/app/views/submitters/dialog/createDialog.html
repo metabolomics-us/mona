@@ -3,7 +3,7 @@
         <h4 class="modal-title">Create New User</h4>
     </div>
     <div class="modal-body">
-        <submitter-form [submitter]="submitter" (formStatus)="submitterFormStatus = $event"></submitter-form>
+        <submitter-form [isAdminEdit]="false" [submitter]="submitter" (formStatus)="submitterFormStatus = $event"></submitter-form>
     </div>
     <div class="modal-footer">
         <div *ngIf="formErrors" class="alert alert-danger"><b>ERROR: {{formErrors}}</b><br/></div>
@@ -18,7 +18,7 @@
     </div>
 
     <div *ngIf="submitter" class="modal-body">
-        <submitter-form [submitter]="submitter" (formStatus)="submitterFormStatus = $event"></submitter-form>
+        <submitter-form [isAdminEdit]="true" [submitter]="submitter" (formStatus)="submitterFormStatus = $event"></submitter-form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-warning mr-1" (click)="cancelDialog()">Cancel</button>

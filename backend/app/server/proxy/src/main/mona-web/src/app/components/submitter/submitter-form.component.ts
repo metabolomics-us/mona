@@ -19,6 +19,7 @@ export class SubmitterFormComponent implements AfterViewInit, OnDestroy, OnInit{
     @Output() formStatus = new EventEmitter<boolean>();
     @ViewChild('submitterForm') form: NgForm;
     validStatus: boolean;
+    @Input() isAdminEdit: false;
 
     constructor( public registrationService: RegistrationService,
                  public logger: NGXLogger) {}

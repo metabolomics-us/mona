@@ -37,7 +37,7 @@
     </div>
 
     <!--<div submitter-form ng-show="state == 'register'"></div>-->
-    <submitter-form (formStatus)="submitterFormStatus = $event" *ngIf="state ==='register'"></submitter-form>
+    <submitter-form [isAdminEdit]="false" (formStatus)="submitterFormStatus = $event" *ngIf="state ==='register'"></submitter-form>
 
     <div *ngIf="state === 'registering'">
         <h4><span class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Registering account...</span></h4>
