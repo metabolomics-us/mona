@@ -41,6 +41,7 @@ export class SpectraUploadProgressComponent implements OnInit{
 
         this.uploadLibraryService.uploadProcess.subscribe((isUploading: boolean) => {
           if (isUploading) {
+            // TODO: undo this?
             // Temporarily counting completed and failed uploads together
             this.completedSpectraCount = this.uploadLibraryService.completedSpectraCount + this.uploadLibraryService.failedSpectraCount;
             this.uploadedSpectraCount = this.uploadLibraryService.uploadedSpectraCount;
