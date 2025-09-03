@@ -492,7 +492,7 @@ export class SpectraBrowserComponent implements OnInit{
             this.toaster.pop({
               type: 'success',
               title: 'Batch Delete Executed',
-              body: `Batch Delete was successful, refreshing page.`
+              body: `Batch Delete was successful, refresh the page.`
             });
             setTimeout(() => {
               this.resetQuery();
