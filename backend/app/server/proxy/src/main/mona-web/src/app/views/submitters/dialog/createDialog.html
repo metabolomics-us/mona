@@ -7,7 +7,7 @@
     </div>
     <div class="modal-footer">
         <div *ngIf="formErrors" class="alert alert-danger"><b>ERROR: {{formErrors}}</b><br/></div>
-        <button class="btn btn-warning mr-1" (click)="cancelDialog()">Cancel</button>
+        <button class="btn btn-secondary mr-1" (click)="cancelDialog()">Cancel</button>
         <button class="btn btn-primary" (click)="createNewSubmitter()" [disabled]="!submitterFormStatus">Add</button>
     </div>
 </div>
@@ -21,7 +21,7 @@
         <submitter-form [isAdminEdit]="true" [submitter]="submitter" (formStatus)="submitterFormStatus = $event"></submitter-form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-warning mr-1" (click)="cancelDialog()">Cancel</button>
+        <button class="btn btn-secondary mr-1" (click)="cancelDialog()">Cancel</button>
         <button class="btn btn-primary" (click)="updateSubmitter()" [disabled]="!submitterFormStatus">Update</button>
     </div>
 </div>
