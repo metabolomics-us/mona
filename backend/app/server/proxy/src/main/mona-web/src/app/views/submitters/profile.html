@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-md-12" *ngIf="!authenticationService.isLoggedIn()">
-        <h3><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="authenticationService.requestModal()">log in</a>!</h3>
+        <h3><fa-icon [icon]="faUser"></fa-icon> Please <a class="davis-blue text-decoration-none" href="" (click)="authenticationService.requestModal()">log in</a>!</h3>
     </div>
 
     <div class="col-md-12" *ngIf="authenticationService.isLoggedIn()">
