@@ -1,14 +1,19 @@
 <div class="row">
   <div class="col-md-12">
     <h3>Spectral Entropy and Normalized Entropy in MoNA</h3>
-    <br/>
+    <h6>MoNA uses spectral and normalized entropy to measure the quality and complexity of spectra in the database</h6>
+    <br/><br/><br/>
 
-    <p>MoNA uses spectral and normalized entropy to measure the quality and complexity of spectra in the database</p>
+    <h4>Criteria for Spectrum Quality</h4>
+    <hr>
     <p>
-      When a spectrum has a (normalized entropy)<sup>4</sup> higher than 0.8 and a spectral entropy higher
-      than 3, we label it as a low-quality spectrum. <br/>
-      <b>Note:</b> GC-MS Spectra has an exception and has been evaluated as clean
-      regardless of (normalized entropy)<sup>4</sup> and spectral entropy.
+      <span style="color: #35c538"><b>CLEAN</b></span> = (Normalized entropy)<sup>4</sup> &le; 0.8 AND spectral entropy &le; 3.0<br/>
+      <span style="color: #d14538"><b>NOISY</b></span> = (Normalized entropy)<sup>4</sup> &gt; 0.8 AND spectral entropy &gt; 3.0<br/>
+    </p>
+
+    <p class="ml-3">
+      <b>Note:</b> GC-MS Spectra has an exception and is evaluated as clean
+      regardless of entropy levels.
     </p>
 
     <br/> <br/>
