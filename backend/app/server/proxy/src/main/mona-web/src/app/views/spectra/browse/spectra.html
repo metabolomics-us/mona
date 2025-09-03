@@ -119,9 +119,9 @@
                     ngbTooltip="Number of spectra results from this query">
 
               <fa-icon [icon]="faBookmark"></fa-icon>
-              <span *ngIf="authenticationService.isAdmin() && duration !== undefined"> ({{duration | number: '1.2-2'}} s)</span>
               <strong *ngIf="pagination.totalSize > -1"> {{pagination.totalSize|number}}</strong>
               <strong *ngIf="pagination.totalSize <= -1"> Loading...</strong>
+              <span *ngIf="authenticationService.isAdmin() && duration !== undefined"> ({{duration | number: '1.2-2'}} s)</span>
             </button>
         </div>
     </div>
