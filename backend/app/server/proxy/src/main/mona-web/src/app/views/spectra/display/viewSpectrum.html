@@ -13,6 +13,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12" *ngIf="spectrum.score">
+                          <label class="clickable">
                             <span placement="right"
                                   ngbTooltip="Click to see the explanation for the {{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00 score"
                                   (click)="showScore = !showScore">
@@ -20,6 +21,7 @@
                                 <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
                               <fa-icon class="ml-2" [icon]="faQuestionCircle"></fa-icon>
                             </span>
+                          </label>
                         </div>
                     </div>
 
