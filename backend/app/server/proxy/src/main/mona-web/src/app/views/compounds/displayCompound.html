@@ -1,11 +1,12 @@
 <div>
     <div class="row">
         <div class="col-md-6">
-            <h4>Chemical Names</h4>
+            <h4>Chemical Names & Structure</h4>
             <div>
                 <ul>
                     <li *ngFor="let name of compound.names; index as i;">{{name.name}}</li>
                     <li *ngIf="compound.names.length == 0">No compound name provided</li>
+                    <li *ngIf="!compound.molFile">The spectrum's structure could not be visualized because the spectrum has no MOL content</li>
                 </ul>
             </div>
         </div>
@@ -24,13 +25,16 @@
                         </div>
                     </div>
                 </div>
-
-                <div style="width: 250px; height: 250px;">
-                    <div [libChemdoodle]="compound.molFile"  [id]="'big-'+pictureId+'-CompoundViewer_'+chemId"></div>
-                </div>
             </div>
         </div>
     </div>
+
+    <div class="row col-md-12 d-flex justify-content-center">
+      <div class="gray-background" style="padding-bottom: 3px !important;" *ngIf="compound.molFile">
+          <div [libChemdoodle]="compound.molFile"  [id]="'big-'+pictureId+'-CompoundViewer_'+chemId"></div>
+      </div>
+    </div>
+    <br/><br/><br/>
 
     <div class="row" *ngIf="classifications.length > 0">
         <div class="col-md-12">
@@ -69,6 +73,10 @@
                 </thead>
 
                 <tbody>
+                <tr *ngIf="compound.metaData.length == 0">
+                  <td class="col-lg-4 col-md-6">None</td>
+                  <td class="col-lg-8 col-md-6">None</td>
+                </tr>
                 <!-- Create New Pipes for this filtering -->
                 <tr *ngFor="let meta of compound.metaData | filterPipe:{category: '!external id', deleted : '!true', hidden: '!true'} ">
                     <td class="col-lg-4 col-md-6">
