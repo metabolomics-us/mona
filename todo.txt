@@ -1,35 +1,34 @@
 Frontend:
-    - Edit user does not change password, and update button stays disabled if password doesn't meet requirements even if its valid
-        - Changing email creates a new submitter, but not a new user, can't log in with that updated email
-        - Uses the same form as user registration
     - Allow for half-scores to be visualized by the star rating system
         - Can do it with custom ng template on the ngbrating bootstrap component, use fa icons
     - Reorganize the spectra full view so that all dropdowns are under "compound information"
         - Give the spectra metadata its own dropdown too
-    - Have a "Create an Account" button on the log in pop up - tried but no luck with modal state switching
     - Database Index & Statistic page
         - Metadata pie chart shows decimals for spectral count
         - MS5 color in the legend is too similar to MS2
             - Not hardcoded, part of db3 colors?
         - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
+    - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
+    - Forgot Username / Password feature
 
 Backend:
     - Updating a user's email doesn't work
-        - Creates a new submitter that can't log in with that new email
-    - Can't upload to dev or prod??
+        - Creates a new submitter that can't log in with that new email (fails to create a new user)
+    - Can't upload to dev or prod?
     - What is "Additional Downloads" and what are they used for? It's empty on prod
+        - AKA static_download in the db, table is empty on prod, fixed length display issue
         - Make additional downloads on Download page a clickable dropdown (frontend)
     - What are "hidden downloads" like on the downloads page? There are none shown on prod?
+        - On dev they show libraries with 0 entries?
     - Debug the random error I had when starting out where it said there were 0 spectra and search wouldn't work
-        - Happens if you connect to the IP? Instead of the URL
-        - Nope, happened again randomly 8/27
+        - Happens if you connect to the IP? Instead of the URL, nope
+        - Nope, happened again randomly 8/27, still going on 9/3
     - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
+        - Remove case sensitivity from categories in spectra-database-index.component.ts, getMetadataValues() line 132
     - Are M-H and [M-H]- the same precursor type? Merge them maybe?
     - Links to "Originally submitted to..." like eu MassBank shows error404 page not found
-    - Manage submitters page does not load when refreshed
-    - User profile page fails when refreshed
-    - Forgot Username / Password feature
+    - Are relative and scaled _score useless in the score db table? All values are set to 0
 
 Done:
     - Display full record button does not open a new page like it says it will - should be fixed
@@ -133,3 +132,7 @@ Done:
     - Passwords do not have to match during user registration or user password update
     - Add "Successfully logged out" toast message
         - Fixed all toaster configuration globally
+    - Fixed admin's 'edit user' page to not require password and disable the email field while its not working
+    - Have a "Create an Account" button on the log in pop up
+    - Manage submitters page does not load when refreshed
+    - User profile page fails when refreshed, test on prod
