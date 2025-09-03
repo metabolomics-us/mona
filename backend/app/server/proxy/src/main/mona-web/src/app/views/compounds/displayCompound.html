@@ -14,13 +14,13 @@
             <div class="text-right">
                 <div class="h5">
                     <div ngbDropdown>
-                        <button ngbDropdownToggle class="btn btn-primary dropdown-toggle">
+                        <button ngbDropdownToggle class="btn btn-primary btn-sm dropdown-toggle">
                           <fa-icon [icon]="faCloudDownloadAlt"></fa-icon> Download Structure
                         </button>
 
                         <div ngbDropdownMenu>
                           <button ngbDropdownItem (click)="downloadAsMOL()" target="_blank">as MOL file</button>
-                          <button ngbDropdownItem (click)="downloadAsJSON()" target="_blank">as MoNA JSON Record</button>
+                          <button ngbDropdownItem (click)="downloadAsJSON()" target="_blank">as MoNA JSON</button>
                         </div>
                     </div>
                 </div>
