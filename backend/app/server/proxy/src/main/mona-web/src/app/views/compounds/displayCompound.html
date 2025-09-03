@@ -34,7 +34,7 @@
 
     <div class="row" *ngIf="classifications.length > 0">
         <div class="col-md-12">
-            <h4>ClassyFire<sup><a [routerLink]=null (click)="showClassyFireInfo = !showClassyFireInfo"><fa-icon size="sm" ngbTooltip="See more" [icon]="faQuestionCircle"></fa-icon></a></sup> Compound Classification</h4>
+            <h4>ClassyFire<sup><a [routerLink]=null (click)="showClassyFireInfo = !showClassyFireInfo" style="color: #1c1b1b"><fa-icon size="sm" ngbTooltip="What is ClassyFire?" [icon]="faQuestionCircle"></fa-icon></a></sup> Compound Classification</h4>
             <div *ngIf="showClassyFireInfo">
                 <a href="http://classyfire.wishartlab.com" target="_blank">ClassyFire</a>
                 is a freely accessible computational tool that uses the ChemOnt taxonomy to classify chemical
