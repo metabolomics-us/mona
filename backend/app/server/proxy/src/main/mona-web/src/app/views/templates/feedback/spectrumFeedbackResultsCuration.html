@@ -1,16 +1,16 @@
 <span *ngIf="curatedFeedback !== null">
   <strong>
     <span *ngIf="curatedFeedback.value === 'noisy'" class="text-danger">
-      {{curatedFeedback.value.toUpperCase()}} <span><a style="color: inherit" [routerLink]="['/documentation/entropy']" target="_blank"><fa-icon [icon]="faFlask" ngbTooltip="Calculated by MoNA Auto Curation"></fa-icon></a></span>
+      <span><a style="color: inherit" [routerLink]="['/documentation/entropy']" target="_blank">{{curatedFeedback.value.toUpperCase()}} <fa-icon ngbTooltip="Calculated by MoNA Auto Curation" placement="bottom" [icon]="faFlask"></fa-icon></a></span>
     </span>
     <span *ngIf="curatedFeedback.value === 'clean'" class="text-success">
-      {{curatedFeedback.value.toUpperCase()}} <span><a style="color: inherit" [routerLink]="['/documentation/entropy']" target="_blank"><fa-icon [icon]="faFlask" ngbTooltip="Calculated by MoNA Auto Curation"></fa-icon></a></span>
+      <span><a style="color: inherit" [routerLink]="['/documentation/entropy']" target="_blank">{{curatedFeedback.value.toUpperCase()}} <fa-icon ngbTooltip="Calculated by MoNA Auto Curation" placement="bottom" [icon]="faFlask"></fa-icon></a></span>
     </span>
   </strong>
 </span>
 
-<span *ngIf="communityFeedback !== null">
+<span class="ml-3" *ngIf="communityFeedback !== null">
   <strong><span [ngClass]="communityFeedback.value === 'noisy' ? 'text-danger' : (communityFeedback.value === 'neutral' ? 'text-secondary' : 'text-success')">
-    {{communityFeedback.value.toUpperCase()}} <span><fa-icon [icon]="faUserCircle" ngbTooltip="Reviewed by MoNA Users"></fa-icon></span>
+    {{communityFeedback.value.toUpperCase()}} <span><fa-icon [icon]="faUserCircle" ngbTooltip="Reviewed by MoNA Users" placement="bottom"></fa-icon></span>
   </span></strong>
 </span>

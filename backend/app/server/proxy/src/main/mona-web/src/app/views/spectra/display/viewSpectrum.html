@@ -4,9 +4,9 @@
             <div class="card">
                 <div class="card-header">
                   <div class="card-title">
-                    <h3 class="float-left" *ngIf="spectrum.compound[0].names.length > 0">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h3>
-                    <h3 class="float-left" *ngIf="spectrum.compound[0].names.length === 0">Spectrum {{spectrum.id}}</h3>
-                    <h3 class="float-right"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h3>
+                    <h4 class="float-left" *ngIf="spectrum.compound[0].names.length > 0">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h4>
+                    <h4 class="float-left" *ngIf="spectrum.compound[0].names.length === 0">Spectrum {{spectrum.id}}</h4>
+                    <h5 class="float-right"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h5>
                   </div>
                 </div>
 
