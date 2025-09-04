@@ -84,7 +84,7 @@
                       <div class="col-sm-9">
                         <input type="url" pattern="https*://.*" class="form-control" id="libraryLink" name="libraryLink"
                                placeholder="Optional - Default is http://massbank.us" [(ngModel)]="library.link" #libraryLink = "ngModel"/>
-                        <p *ngIf="!libraryLink.valid && !libraryLink.pristine" class="help-block">
+                        <p *ngIf="!libraryLink.valid && !libraryLink.pristine" class="help-block text-danger ml-3">
                           Link must be http:// or https://
                         </p>
                       </div>
