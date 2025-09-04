@@ -1,10 +1,10 @@
 <span *ngIf="curatedFeedback !== null">
   <strong>
     <span *ngIf="curatedFeedback.value === 'noisy'" class="text-danger">
-      <span><a class="text-decoration-none" style="color: inherit" [routerLink]="['/documentation/entropy']" target="_blank">{{curatedFeedback.value.toUpperCase()}} <fa-icon ngbTooltip="Calculated by MoNA Auto Curation" placement="bottom" [icon]="faFlask"></fa-icon></a></span>
+      <span><a class="text-decoration-none" style="color: inherit" [routerLink]="['/documentation/entropy']" target="_blank" (click)="$event.stopPropagation()">{{curatedFeedback.value.toUpperCase()}} <fa-icon ngbTooltip="Calculated by MoNA Auto Curation" placement="bottom" [icon]="faFlask"></fa-icon></a></span>
     </span>
     <span *ngIf="curatedFeedback.value === 'clean'" class="text-success">
-      <span><a class="text-decoration-none" style="color: inherit" [routerLink]="['/documentation/entropy']" target="_blank">{{curatedFeedback.value.toUpperCase()}} <fa-icon ngbTooltip="Calculated by MoNA Auto Curation" placement="bottom" [icon]="faFlask"></fa-icon></a></span>
+      <span><a class="text-decoration-none" style="color: inherit" [routerLink]="['/documentation/entropy']" target="_blank" (click)="$event.stopPropagation()">{{curatedFeedback.value.toUpperCase()}} <fa-icon ngbTooltip="Calculated by MoNA Auto Curation" placement="bottom" [icon]="faFlask"></fa-icon></a></span>
     </span>
   </strong>
 </span>
