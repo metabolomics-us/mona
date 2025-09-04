@@ -217,7 +217,9 @@ export class UploadLibraryService{
                 s.biologicalCompound.names = [];
 
                 if (typeof spectra.name !== 'undefined') {
-                    if (s.spectrum.name !== '') {
+                    // accessing s.spectrum.name here breaks uploading because s.spectrum is undefined
+                    // use spectra.name instead (9/3/25)
+                    if (spectra.name !== '') {
                       s.biologicalCompound.names.push({name: spectra.name});
                     }
                 }
