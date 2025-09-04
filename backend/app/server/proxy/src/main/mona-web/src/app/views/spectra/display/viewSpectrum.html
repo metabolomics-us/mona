@@ -100,9 +100,6 @@
                     <!-- mass spectral properties -->
                     <div class="row">
                         <div class="col-md-12">
-                            <div *ngIf="currentFeedback.length > 0">
-                              <spectrum-feedback-results-community [spectrumID]="spectrum.id" [currentFeedback]="currentFeedback"></spectrum-feedback-results-community>
-                            </div>
                             <ngb-accordion #acc="ngbAccordion" [closeOthers]="false">
                                 <ngb-panel id="masspecPanel">
                                     <ng-template ngbPanelHeader>
@@ -223,6 +220,9 @@
                                     </ng-template>
                                 </ngb-panel>
                             </ngb-accordion>
+                          <div *ngIf="currentFeedback.length > 0">
+                            <spectrum-feedback-results-community [spectrumID]="spectrum.id" [currentFeedback]="currentFeedback"></spectrum-feedback-results-community>
+                          </div>
                         </div>
                     </div>
                     <br/>
