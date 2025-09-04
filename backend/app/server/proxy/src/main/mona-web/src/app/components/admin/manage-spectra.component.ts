@@ -261,4 +261,8 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  hasSelectedLibraries() {
+    return this.libraryTags?.some(tag => tag.selected) ?? false;
+  }
 }

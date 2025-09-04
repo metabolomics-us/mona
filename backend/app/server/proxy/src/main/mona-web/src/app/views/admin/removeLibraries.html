@@ -20,7 +20,7 @@
           </div>
           <div class="row mt-2">
             <div class="col-sm">
-              <button type="submit" class="btn btn-danger">Delete Selected Libraries</button>
+              <button type="submit" class="btn btn-danger" [disabled]="!hasSelectedLibraries()">Delete Selected Libraries</button>
             </div>
             <div class="col-sm">
               <button type="button" (click)="refreshTags()" class="btn btn-primary">Refresh Libraries</button>
