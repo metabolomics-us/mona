@@ -4,14 +4,14 @@
             [disabled]="submitting || submitted">
         <fa-icon *ngIf ="!submitted" [icon]="faComments"></fa-icon>
         <fa-icon *ngIf="submitted" [icon]="faCheck"></fa-icon>
-        <span *ngIf="hasSubmitted"> Re-Review Spectrum Quality</span>
+        <span *ngIf="hasSubmitted"> Change Your Review</span>
         <span *ngIf="!hasSubmitted"> Review Spectrum Quality</span>
     </button>
 
     <div ngbDropdownMenu>
-        <li><button *ngIf="hasSubmitted" [ngClass]="existingFeedback.value === 'clean' ? 'bg-success text-white': ''" ngbDropdownItem (click)="rate('clean')">Clean Spectrum</button></li>
-        <li><button *ngIf ="hasSubmitted" [ngClass]="existingFeedback.value === 'noisy' ? 'bg-danger text-white': ''" ngbDropdownItem (click)="rate('noisy')">Noisy Spectrum</button></li>
-        <li><button *ngIf ="!hasSubmitted" ngbDropdownItem (click)="rate('clean')">Spectrum is clean</button></li>
+        <li><button *ngIf = "hasSubmitted" [ngClass]="existingFeedback.value === 'clean' ? 'bg-success text-white': ''" ngbDropdownItem (click)="rate('clean')">Clean Spectrum</button></li>
+        <li><button *ngIf = "hasSubmitted" [ngClass]="existingFeedback.value === 'noisy' ? 'bg-danger text-white': ''" ngbDropdownItem (click)="rate('noisy')">Noisy Spectrum</button></li>
+        <li><button *ngIf = "!hasSubmitted" ngbDropdownItem (click)="rate('clean')">Spectrum is clean</button></li>
         <li><button *ngIf = "!hasSubmitted" ngbDropdownItem (click)="rate('noisy')">Spectrum is noisy</button></li>
     </div>
 </div>
