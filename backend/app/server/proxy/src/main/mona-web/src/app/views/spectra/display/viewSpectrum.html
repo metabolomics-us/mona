@@ -98,6 +98,7 @@
                   <br/>
 
                     <!-- mass spectral properties -->
+                    <h4>Spectrum and Compound Information</h4>
                     <div class="row">
                         <div class="col-md-12">
                             <ngb-accordion #acc="ngbAccordion" [closeOthers]="false">
@@ -152,6 +153,20 @@
                                     </div>
                                   </ng-template>
                                 </ngb-panel>
+
+                              <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.compound; index as i">
+                                <ng-template *ngIf="accordionStatus.isCompoundOpen[i]" ngbPanelHeader>
+                                  <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
+                                    <span *ngIf="compound.kind !== null"><strong>{{compound.kind | titlecase}}</strong></span>
+                                    <span *ngIf="compound.kind === null"><strong>Submitted Compound</strong></span>
+                                    <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('compoundInfo')"></fa-icon>
+                                    <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('compoundInfo')"></fa-icon>
+                                  </button>
+                                </ng-template>
+                                <ng-template ngbPanelContent>
+                                  <display-compound-info [compound]="compound"></display-compound-info>
+                                </ng-template>
+                              </ngb-panel>
 
                                 <ngb-panel id="similarityPanel">
                                     <ng-template ngbPanelHeader>
@@ -225,30 +240,7 @@
                           </div>
                         </div>
                     </div>
-                    <br/>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h4>Compound Information</h4>
-
-                            <ngb-accordion #acc2 activeIds="compoundInfo">
-                                <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.compound; index as i">
-                                    <ng-template *ngIf="accordionStatus.isCompoundOpen[i]" ngbPanelHeader>
-                                      <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
-                                        <span *ngIf="compound.kind !== null"><strong>{{compound.kind | titlecase}}</strong></span>
-                                        <span *ngIf="compound.kind === null"><strong>Submitted Compound</strong></span>
-                                        <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc2.isExpanded('compoundInfo')"></fa-icon>
-                                        <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc2.isExpanded('compoundInfo')"></fa-icon>
-                                      </button>
-                                    </ng-template>
-                                    <ng-template ngbPanelContent>
-                                      <display-compound-info [compound]="compound"></display-compound-info>
-                                    </ng-template>
-                                </ngb-panel>
-                            </ngb-accordion>
-                        </div>
-                    </div>
-                    <br/>
+                    <br/><br/>
 
                     <div class="row">
                         <div class="col-md-12">
