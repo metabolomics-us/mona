@@ -31,7 +31,6 @@
     <div class="col-md-12">
       <h3><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</h3>
         <ngb-accordion closeOthers="true" #acc="ngbAccordion">
-<!--            <ngb-panel id="display-panel" title="Current Query Information & Help">-->
           <ngb-panel id="display-panel">
                 <ng-template ngbPanelTitle>
                     <span class="davis-blue">
@@ -166,33 +165,47 @@
             <tbody>
             <tr *ngIf="spectra.length === 0"></tr>
 
-            <tr *ngFor="let spectrum of spectra" (click)="viewSpectrum(spectrum.id)">
+            <tr *ngFor="let spectrum of spectra" class="clickable" (click)="viewSpectrum(spectrum.id)">
                 <td>
                     <div>
-                        <div><a style="cursor: pointer" [routerLink]="[viewSpectrum(spectrum.id)]">{{spectrum.id}}</a></div>
+                        <div><a class="davis-blue text-decoration-none clickable"><b>{{spectrum.id}}</b></a></div>
                         <div *ngIf="spectrum.score">
-                            <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
+                            <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true" ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom"></ngb-rating>
                         </div>
                         <div *ngIf="spectrum.similarity !== undefined">
-                            <h4><span class="label label-primary" >Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}}</span></h4>
+                            <span class="label label-primary">Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}} / 1000</span>
                         </div>
+                        <br/><br/><br/>
                         <div>
-                          <h6><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h6>
+                          <h6 class="text-nowrap"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h6>
                         </div>
                     </div>
                 </td>
                 <td>
                     <div>
-                        <ul class="list-unstyled">
+                      <br/>
+                        <ul *ngIf="spectrum.compound[0].names.length > 1" class="list-styled" style="margin-left:0 !important; padding-left: 10px !important;">
                             <li *ngFor="let name of spectrum.compound[0].names | slice:0:3">{{name.name}}</li>
+                        </ul>
+                        <ul *ngIf="spectrum.compound[0].names.length == 1" class="list-unstyled">
+                            <li *ngFor="let name of spectrum.compound[0].names | slice:0:3">{{name.name}}</li>
+                        </ul>
+                        <ul *ngIf="spectrum.compound[0].names.length == 0" class="list-unstyled">
+                          <br/><p></p>
+                            <li style="color: gray; font-size: .8rem">N/A</li>
                         </ul>
                     </div>
                 </td>
-                <td>
-                    <div class="text-center" style="width:150px;height:150px">
-                        <div [libChemdoodle]="spectrum.compound[0].molFile" class="center-block" readonly="true"
-                             [id]="'bioSketch_'+spectrum.id+'_true'" [width]="150" [height]="150"></div>
-                    </div>
+                <td class="d-flex justify-content-center">
+                        <div *ngIf="spectrum.compound[0].molFile" [libChemdoodle]="spectrum.compound[0].molFile" class="center-block" readonly="true" style="padding-top: 8px"
+                             [id]="'bioSketch_'+spectrum.id+'_true'" [width]="130" [height]="126">
+                        </div>
+                        <div *ngIf="!spectrum.compound[0].molFile">
+                          <br/><br/><p></p>
+                          <ul class="list-unstyled">
+                            <li style="color: gray; font-size: .8rem">N/A</li>
+                          </ul>
+                        </div>
                 </td>
                 <td>
                   <div class="masspec-mini text-center">
