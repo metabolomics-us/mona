@@ -130,9 +130,9 @@
                                       <table class="table">
                                         <thead>
                                         <tr>
-                                          <th><button class="btn btn-link p-0 text-dark text-decoration-none" (click)="sortIonTable('ion')">Ion</button></th>
-                                          <th><button class="btn btn-link p-0 text-dark text-decoration-none" (click)="sortIonTable('intensity')">Intensity</button></th>
-                                          <th><button class="btn btn-link p-0 text-dark text-decoration-none" (click)="sortIonTable('annotation')">Annotation</button></th>
+                                          <th><button class="btn btn-link p-0 davis-blue font-weight-bold text-decoration-none" (click)="sortIonTable('ion')">Ion</button></th>
+                                          <th><button class="btn btn-link p-0 davis-blue font-weight-bold text-decoration-none" (click)="sortIonTable('intensity')">Intensity</button></th>
+                                          <th><button class="btn btn-link p-0 davis-blue font-weight-bold text-decoration-none" (click)="sortIonTable('annotation')">Annotation</button></th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -169,7 +169,7 @@
                                       </div>
 
                                       <div class="text-center" *ngIf="!loadingSimilarSpectra && !similarSpectra.length">
-                                        <h4>No spectra found with similarity of at least 500 / 1000.</h4>
+                                        <h5>No spectra found with similarity of at least 500 / 1000</h5>
                                       </div>
 
                                       <div class="text-center" *ngIf="!loadingSimilarSpectra && similarSpectra.length"
