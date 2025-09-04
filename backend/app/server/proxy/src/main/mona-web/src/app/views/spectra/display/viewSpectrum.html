@@ -154,6 +154,44 @@
                                   </ng-template>
                                 </ngb-panel>
 
+                              <ngb-panel id="metadataPanel">
+                                <ng-template ngbPanelHeader>
+                                  <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
+                                    <strong>MS Metadata</strong>
+                                    <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('metadataPanel')"></fa-icon>
+                                    <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('metadataPanel')"></fa-icon>
+                                  </button>
+                                </ng-template>
+
+                                <ng-template ngbPanelContent>
+                                  <div *ngIf="spectrum.metaData.length">
+                                    <table class="table">
+                                      <thead>
+                                      <tr>
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                      <tr *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
+                                        <td class="col-lg-4 col-md-4">
+                                          <metadata-query [metaData]="meta">{{meta.name}}</metadata-query>
+                                        </td>
+                                        <td class="col-lg-8 col-md-8">
+                                          <span *ngIf="checkNumber(meta.value)">{{meta.value | number:'1.0-4'}} {{meta.unit}}</span>
+                                          <span *ngIf="!checkNumber(meta.value)">{{meta.value}} {{meta.unit}}</span>
+                                          <fa-icon [icon]="faFlask"
+                                                   *ngIf="meta.computed === true"
+                                                   ngbTooltip="Calculated by MoNA Auto Curation"
+                                                   placement="top"></fa-icon>
+                                        </td>
+                                      </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </ng-template>
+                              </ngb-panel>
+
                               <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.compound; index as i">
                                 <ng-template *ngIf="accordionStatus.isCompoundOpen[i]" ngbPanelHeader>
                                   <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
@@ -238,36 +276,6 @@
                           <div *ngIf="currentFeedback.length > 0">
                             <spectrum-feedback-results-community [spectrumID]="spectrum.id" [currentFeedback]="currentFeedback"></spectrum-feedback-results-community>
                           </div>
-                        </div>
-                    </div>
-                    <br/><br/>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div *ngIf="spectrum.metaData.length">
-                                <h4>Mass Spectral Metadata</h4>
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Value</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
-                                        <td class="col-lg-4 col-md-4">
-                                          <metadata-query [metaData]="meta"> {{meta.name}}</metadata-query>
-                                        </td>
-                                        <td class="col-lg-8 col-md-8">
-                                            <span *ngIf="checkNumber(meta.value)">{{meta.value | number:'1.0-4'}} {{meta.unit}}</span>
-                                            <span *ngIf="!checkNumber(meta.value)">{{meta.value}} {{meta.unit}} </span>
-                                            <fa-icon [icon]="faFlask" *ngIf="meta.computed === true" ngbTooltip="Calculated by MoNA Auto Curation" placement="top"></fa-icon>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <br/>
                         </div>
                     </div>
                 </div>
