@@ -393,9 +393,14 @@ export class SpectraBrowserComponent implements OnInit{
      * @param id takes spectrum id
      * @param index not needed
      */
+    // Open spectrum viewer in new tab, used for compact view
     viewSpectrum(id) {
-        return '/spectra/display/' + id;
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree(['/spectra/display', id])
+      );
+      window.open(url, '_blank');
     }
+
 
 
     /**
