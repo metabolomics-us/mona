@@ -3,7 +3,7 @@
         <div class="card-title">
             <span *ngIf="spectrum.compound[0].names.length > 0" class="float-left"><a style="cursor: pointer" [routerLink]="[viewSpectrum()]">{{spectrum.compound[0].names[0].name}}</a></span>
             <span *ngIf="spectrum.compound[0].names.length === 0" class="float-left"><a style="cursor: pointer" [routerLink]="[viewSpectrum()]">{{spectrum.id}}</a></span>
-            <span class="float-right">Score: <ngb-rating *ngIf="spectrum.score" [(rate)]="spectrum.score.score" [max]="5" [readonly]="true"></ngb-rating></span>
+            <span class="float-right"><ngb-rating *ngIf="spectrum.score" [(rate)]="spectrum.score.score" [max]="5" [readonly]="true" ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00"></ngb-rating></span>
         </div>
     </div>
 
