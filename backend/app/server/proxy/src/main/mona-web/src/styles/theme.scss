@@ -593,3 +593,13 @@ input[type="checkbox"] {
   line-height: 1.5 !important;
   border-radius: .2rem !important;
 }
+
+.davis-blue .pagination .page-item.active .page-link {
+  background-color: #0b3f6c !important;
+  border-color: #0b3f6c !important;
+  color: white !important;
+}
+
+.page-link {
+  color: #0b3f6c !important;
+}
