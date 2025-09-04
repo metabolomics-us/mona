@@ -13,11 +13,11 @@
                 <div class="card-columns" *ngIf="spectrum.similarity">
                         <ul class="list-inline">
                             <li>
-                                <h4 class="text-md-left">
+                                <h6 class="text-md-left">
                                     <label>
-                                        Similarity: {{1000 * spectrum.similarity | number:"1.0-0"}}
+                                        Similarity: {{1000 * spectrum.similarity | number:"1.0-0"}} / 1000
                                     </label>
-                                </h4>
+                                </h6>
                             </li>
                         </ul>
                 </div>
