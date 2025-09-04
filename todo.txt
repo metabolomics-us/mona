@@ -1,4 +1,11 @@
 Frontend:
+    - Page navigator colors didn't change to davis blue
+    - DB Index legends are formatted wrong
+    - Blue hyperlink texts change color to davis blue or something nicer, no underlines
+    - Originally submitted to:
+        - Why does it use the library description for mona ones? Weird
+    - Ask the team if they want mass spectrum to be expanded by default in the spectrum viewer or not
+        - Disabled it for now, under spectrum-viewer.component.ts - ngAfterViewInit
     - Allow for half-scores to be visualized by the star rating system
         - Can do it with custom ng template on the ngbrating bootstrap component, use fa icons
     - Reorganize the spectra full view so that all dropdowns are under "compound information"
@@ -136,3 +143,7 @@ Done:
     - Have a "Create an Account" button on the log in pop up
     - Manage submitters page does not load when refreshed
     - User profile page fails when refreshed, test on prod
+    - Fix spectrum viewer structure visualizer formatting
+    - Fix compound names list in spectrum viewer
+    - Compound metadata table now shows 'none' if there are no metadata
+    - Mark for deletion button adjusted on browser
