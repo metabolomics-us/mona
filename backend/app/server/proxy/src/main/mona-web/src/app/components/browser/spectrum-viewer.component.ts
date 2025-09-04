@@ -67,7 +67,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
           this.currentFeedback = res;
         });
         this.accordionStatus = {
-          isSpectraOpen: true,
+          isSpectraOpen: false,
           isIonTableOpen: false,
           isSimilarSpectraOpen: false,
           isCompoundOpen: []
@@ -113,9 +113,10 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
 
     ngAfterViewInit() {
       // Have to use timeout timer since canvas won't draw fast enough on first load for masspecPanel
-      setTimeout(() => {
-        this.setAccordionStatus();
-      }, 100);
+      // Commented out so that it does not automatically open by itself 9/3/25
+      // setTimeout(() => {
+      //   this.setAccordionStatus();
+      // }, 100);
     }
 
   setAccordionStatus() {
