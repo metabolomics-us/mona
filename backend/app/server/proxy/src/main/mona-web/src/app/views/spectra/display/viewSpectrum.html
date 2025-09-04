@@ -65,21 +65,6 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-8">
-                            <ul class="list-inline">
-                                <li *ngIf="spectrum.tags.length > 0">Tags: </li>
-                                <li class="list-inline-item" *ngFor="let tag of spectrum.tags">
-                                    <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-4 text-right">
-                            <spectra-download [spectrum]="spectrum"></spectra-download>
-                        </div>
-                    </div>
-
                     <div class="row top5">
                         <div class="col-md-9">
                             <ul class="list-inline">
@@ -94,13 +79,23 @@
                                         Submitter: <submitter-query [submitter]="spectrum.submitter">{{spectrum.submitter.firstName}} {{spectrum.submitter.lastName}}</submitter-query>
                                     </div>
                                 </li>
+                                <li *ngIf="spectrum.tags.length > 0">
+                                    <div class="h6">
+                                      <b>Tags:&emsp;</b>
+                                      <span *ngFor="let tag of spectrum.tags" class="mr-2">
+                                        <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
+                                      </span>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
 
                         <div class="col-md-3 text-right">
+                            <spectra-download [spectrum]="spectrum"></spectra-download>
                             <spectrum-review [spectrum]="spectrum" *ngIf="authenticationService.isLoggedIn()"></spectrum-review>
                         </div>
                     </div>
+                  <br/>
 
                     <!-- mass spectral properties -->
                     <div class="row">
