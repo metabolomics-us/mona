@@ -154,7 +154,7 @@
                                             <input type="checkbox" name="libraryTag" [(ngModel)]="x.selected"> {{x.text}}
                                         </label>
                                     </div>
-                                    <button type="button" class="btn btn-link btn-sm text-decoration-none" (click)="toggleLibraryExpansion()">{{expandedLibraries ? 'Show less' : 'Show more'}}</button>
+                                    <button *ngIf="libraryTags.length > 3" type="button" class="btn btn-link btn-sm text-decoration-none davis-blue" (click)="toggleLibraryExpansion()">{{expandedLibraries ? 'Show less' : 'Show more'}}</button>
                                 </td>
                             </tr>
                             </tbody>
