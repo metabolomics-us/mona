@@ -53,17 +53,7 @@
                         </div>
                     </div>
 
-                    <div class="row top5" *ngIf="spectrum.library !== null">
-                        <div class="col-md-12">
-                            <ul class="list-unstyled">
-                                <li>
-                                    <div class="h5">
-                                        <display-library-reference [spectrum]="spectrum"></display-library-reference>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    <p></p>
 
                     <div class="row top5">
                         <div class="col-md-9">
@@ -79,9 +69,18 @@
                                         Submitter: <submitter-query [submitter]="spectrum.submitter">{{spectrum.submitter.firstName}} {{spectrum.submitter.lastName}}</submitter-query>
                                     </div>
                                 </li>
-                                <li *ngIf="spectrum.tags.length > 0">
+
+                                <hr>
+
+                                <li *ngIf="spectrum.library !== null">
                                     <div class="h6">
-                                      <b>Tags:&emsp;</b>
+                                        <display-library-reference [spectrum]="spectrum"></display-library-reference>
+                                    </div>
+                                </li>
+
+                                <li *ngIf="spectrum.tags.length > 0">
+                                    <div class="h6 d-flex align-items-center">
+                                      <span>Tags:&ensp;</span>
                                       <span *ngFor="let tag of spectrum.tags" class="mr-2">
                                         <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
                                       </span>
