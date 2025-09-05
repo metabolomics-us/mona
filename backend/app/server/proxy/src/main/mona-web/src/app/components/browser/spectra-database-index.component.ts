@@ -87,11 +87,13 @@ export class SpectraDatabaseIndexComponent implements OnInit {
                     }
                 },
                 showLabels: true,
-                // labelsOutside: true,
-                // try with labels inside to see if pie charts look better
                 labelsOutside: false,
                 duration: 500,
-                labelThreshold: 0.01,
+                labelThreshold: 0.03,
+                tooltip: {
+                  keyFormatter: (d) => `<b>${d}</b>:&ensp;`,
+                  valueFormatter: (d) => d3.format('d')(d) + ' spectra',
+                },
                 color: (d, i) => {
                     const colors = d3.scale.category10().range();
                     return colors[i % (colors.length)];
@@ -115,6 +117,10 @@ export class SpectraDatabaseIndexComponent implements OnInit {
                 height: 600,
                 width: 600,
                 duration: 500,
+                tooltip: {
+                  keyFormatter: (d) => `<b>${d}</b>:&ensp;`,
+                  valueFormatter: (d) => d3.format('d')(d) + ' records',
+                },
                 sunburst: {
                     mode: 'size',
                     dispatch: {
