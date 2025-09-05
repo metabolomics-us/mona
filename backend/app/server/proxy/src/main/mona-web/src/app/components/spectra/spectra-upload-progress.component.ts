@@ -13,7 +13,7 @@ import {Component, OnInit} from '@angular/core';
     template: `<div *ngIf="spectraUploadProgress !== -1">
             <div class="text-center"><i>Processed {{completedSpectraCount}} / {{uploadedSpectraCount}} Spectra</i></div>
             <p>
-                <ngb-progressbar [ngClass]="{active: spectraUploadProgress < 100, \'progress-striped\': spectraUploadProgress < 100, \'progress-bar-success\': spectraUploadProgress == 100}" max="100" [value]="spectraUploadProgress">
+                <ngb-progressbar class="custom-progress" [ngClass]="{active: spectraUploadProgress < 100, \'progress-striped\': spectraUploadProgress < 100, \'progress-bar-success\': spectraUploadProgress == 100}" max="100" [value]="spectraUploadProgress">
                     <span style="color: white; white-space: nowrap; font-style: italic; font-weight: bold;" [textContent]="spectraUploadProgressString"></span>
                 </ngb-progressbar>
             </p>
@@ -50,13 +50,13 @@ export class SpectraUploadProgressComponent implements OnInit{
             this.spectraUploadProgressString = this.spectraUploadProgress + '%';
           }
           else if (!isUploading && this.uploadLibraryService.isSTP) {
-            this.spectraUploadProgressString = 'Working on Next Batch of Spectra...';
+            this.spectraUploadProgressString = 'Working on next batch of spectra...';
           }
           else if (!isUploading && !this.uploadLibraryService.isSTP) {
             this.completedSpectraCount = this.uploadLibraryService.completedSpectraCount + this.uploadLibraryService.failedSpectraCount;
             this.uploadedSpectraCount = this.uploadLibraryService.uploadedSpectraCount;
             this.showETA = false;
-            this.spectraUploadProgressString = 'STP Completed!';
+            this.spectraUploadProgressString = 'Upload Completed!';
           }
           else {
             this.spectraUploadProgress = -1;
