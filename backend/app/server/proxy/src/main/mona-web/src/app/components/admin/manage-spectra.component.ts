@@ -117,7 +117,7 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
           this.toaster.pop({
             type: 'success',
             title: 'Deletion Successful!',
-            body: 'Deletion was successful, libraries will persist until they reload overnight. Please wait a few minutes then validate that the libraries were deleted.'
+            body: 'Deletion was successful, libraries associated with the deleted spectra will persist until they reload overnight. Please wait a few minutes then validate that the spectra were deleted.'
           });
           this.removeIDs = null;
         }, (error) => {

@@ -52,24 +52,23 @@
       </div>
     </div>
   </div>
-<!--  Not needed and did not work as of 9/5/25-->
-<!--  <div class="row">-->
-<!--    <div class="col">-->
-<!--      <br/> <br/> <br/> <br/> <br/>-->
-<!--      <div class="row justify-content-center">-->
-<!--        <h3>Force Delete Libraries by ID</h3>-->
-<!--      </div>-->
-<!--      <hr/>-->
-<!--      <div class="row justify-content-center">-->
-<!--        <div class="col mb-1">-->
-<!--          <span>Library IDs:</span>-->
-<!--          <input class="form-control col-sm-4" placeholder="Comma separated, no spaces" type="text" [(ngModel)]="removeIDs"/>-->
-<!--          <p></p>-->
-<!--          <button type="button" class="btn btn-danger" [disabled]="removeIDs === null" (click)="deleteByIds()">Delete Libraries</button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
+  <div class="row">
+    <div class="col">
+      <br/> <br/> <br/> <br/> <br/>
+      <div class="row justify-content-center">
+        <h3>Force Delete Spectra by ID</h3>
+      </div>
+      <hr/>
+      <div class="row justify-content-center">
+        <div class="col mb-1">
+          <span>Spectra IDs:</span>
+          <input class="form-control col-sm-4" placeholder="Comma separated, no spaces" type="text" [(ngModel)]="removeIDs"/>
+          <p></p>
+          <button type="button" class="btn btn-danger" [disabled]="removeIDs === null" (click)="deleteByIds()">Delete Libraries</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col">
       <br/> <br/> <br/>
