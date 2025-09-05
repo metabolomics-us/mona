@@ -97,11 +97,13 @@ export class SpectraDatabaseIndexComponent implements OnInit {
                     return colors[i % (colors.length - 1)];
                 },
                 legend: {
+                    align: true,
+                    rightAlign: false,
                     margin: {
                         top: 5,
                         right: 35,
                         bottom: 5,
-                        left: 15
+                        left: 0
                     }
                 }
             }
