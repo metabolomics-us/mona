@@ -95,6 +95,9 @@ export class SpectraQueryBuilderService {
 
         if (query !== '') {
             this.logger.info('Executing RSQL query: "' + query + '"');
+            // Open a new tab on query. Causes bugs with "Add to Query" though, since it gets reset with every new tab
+            // const url = this.router.serializeUrl(this.router.createUrlTree(['/spectra/browse'], { queryParams: { query } }));
+            // window.open(url, '_blank');
             this.router.navigate(['/spectra/browse'],
                 {queryParams:
                         {
