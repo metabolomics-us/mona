@@ -165,7 +165,7 @@ export class SpectraQueryBuilderService {
           const leftBoundary = parseFloat(value) - tolerance;
           const rightBoundary = parseFloat(value) + tolerance;
 
-          return collection + '.name:\'' + name + '\' and ' + collection + '.value>:' + leftBoundary + ' and ' + collection +'.value <:' + rightBoundary + '\'';
+          return collection + '.name:\'' + name + '\' and ' + collection + '.value>:' + leftBoundary + ' and ' + collection +'.value <:' + rightBoundary;
         } else if (typeof partialQuery !== 'undefined') {
           return collection + '.name:\'' + name + '\' and ' + collection + '.value~\'*' + value + '*\'';
         } else {
