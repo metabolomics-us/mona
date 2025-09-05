@@ -1,6 +1,7 @@
 Frontend:
-    - Page navigator colors didn't change to davis blue
     - DB Index legends are formatted wrong
+        - Try new updates with a large set of precursor types since they are easy to make
+    - DB Index querying under compound classes doesn't work?
     - Blue hyperlink texts change color to davis blue or something nicer, no underlines
     - Originally submitted to:
         - Why does it use the library description for mona ones? Weird
@@ -147,3 +148,18 @@ Done:
     - Fix compound names list in spectrum viewer
     - Compound metadata table now shows 'none' if there are no metadata
     - Mark for deletion button adjusted on browser
+    - Completely overhaul the compact spectra browser view
+        - Make whole row clickable and open a new tab with spectrum full view
+        - Show score rating on hover
+        - Fix similarity formatting
+        - Fix spectrum quality wrapping on smaller displays
+        - Show names appropriately depending on how many are available
+        - Adjust size of structure image and formatting
+        - Show N/A when no structure info is available.
+    - Page navigator colors didn't change to davis blue
+    - Re-review spectrum quality goes out of bounds on smaller screen (laptop)
+    - Tooltip for exact score in browser
+    - Adjust expanded spectra browser formatting
+    - Similarity search is broken error 401 unauthorized
+        - Test the compact view similarity score feature when similarity search works again
+        - Works on Prod, it's an issue with the proxy link I think for dev
