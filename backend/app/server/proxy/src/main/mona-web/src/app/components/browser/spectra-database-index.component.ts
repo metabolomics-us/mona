@@ -94,7 +94,7 @@ export class SpectraDatabaseIndexComponent implements OnInit {
                 labelThreshold: 0.01,
                 color: (d, i) => {
                     const colors = d3.scale.category10().range();
-                    return colors[i % (colors.length - 1)];
+                    return colors[i % (colors.length)];
                 },
                 legend: {
                     align: true,
