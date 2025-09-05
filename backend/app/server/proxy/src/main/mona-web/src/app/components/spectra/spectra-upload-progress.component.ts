@@ -11,10 +11,10 @@ import {Component, OnInit} from '@angular/core';
 @Component({
     selector: 'spectra-upload-progress-bar',
     template: `<div *ngIf="spectraUploadProgress !== -1">
-            <div class="text-center"><i>Processed {{completedSpectraCount}} / {{uploadedSpectraCount}} spectra.</i></div>
+            <div class="text-center"><i>Processed {{completedSpectraCount}} / {{uploadedSpectraCount}} Spectra</i></div>
             <p>
                 <ngb-progressbar [ngClass]="{active: spectraUploadProgress < 100, \'progress-striped\': spectraUploadProgress < 100, \'progress-bar-success\': spectraUploadProgress == 100}" max="100" [value]="spectraUploadProgress">
-                    <span style="color: black; white-space: nowrap; font-style: italic; font-weight: bold;" [textContent]="spectraUploadProgressString"></span>
+                    <span style="color: white; white-space: nowrap; font-style: italic; font-weight: bold;" [textContent]="spectraUploadProgressString"></span>
                 </ngb-progressbar>
             </p>
             <div class="text-center" *ngIf="showETA">{{etaString}}<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> </div>
