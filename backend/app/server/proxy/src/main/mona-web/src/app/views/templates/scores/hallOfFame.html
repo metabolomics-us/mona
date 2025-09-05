@@ -27,7 +27,13 @@
               <submitter-query [submitter]="score">{{score.firstName}} {{score.lastName}}</submitter-query>
             </td>
             <td>
-              <ngb-rating [(rate)]="score.score" [max]="5" [readonly]="true"></ngb-rating>
+              <label ngbTooltip="{{0.0 + score.score | number:'1.2-2'}} / 5.00" placement="bottom">
+                <span *ngFor="let star of stars(score)">
+                  <fa-icon size="sm" *ngIf="star === 1" [icon]="faStar"></fa-icon>
+                  <fa-icon size="sm" *ngIf="star === 0.5" [icon]="faStarHalf"></fa-icon>
+                  <fa-icon size="sm" *ngIf="star === 0" [icon]="faStarEmpty"></fa-icon>
+                </span>
+              </label>
             </td>
             <td>{{score.count | number: "1.0-0"}}</td>
         </tr>

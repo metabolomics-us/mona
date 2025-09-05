@@ -169,9 +169,13 @@
                 <td>
                     <div>
                         <div><a class="davis-blue text-decoration-none clickable"><b>{{spectrum.id}}</b></a></div>
-                        <div *ngIf="spectrum.score">
-                            <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true" ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom"></ngb-rating>
-                        </div>
+                        <label ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom">
+                          <span *ngFor="let star of stars(spectrum)" >
+                            <fa-icon size="xs" *ngIf="star === 1" [icon]="faStar"></fa-icon>
+                            <fa-icon size="xs" *ngIf="star === 0.5" [icon]="faStarHalf"></fa-icon>
+                            <fa-icon size="xs" *ngIf="star === 0" [icon]="faStarEmpty"></fa-icon>
+                          </span>
+                        </label>
                         <div *ngIf="spectrum.similarity !== undefined">
                             <span class="label label-primary">Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}} / 1000</span>
                         </div>

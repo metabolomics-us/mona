@@ -20,8 +20,10 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
 import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
+import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
-import {SpectrumModel} from "../../mocks/spectrum.model";
+import {SpectrumModel} from '../../mocks/spectrum.model';
 
 @Component({
     selector: 'spectrum-viewer',
@@ -50,6 +52,9 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     faQuestionCircle = faQuestionCircle;
     faFlask = faFlask;
     faSpinner = faSpinner;
+    faStar = faStar;
+    faStarEmpty = faStarEmpty;
+    faStarHalf = faStarHalfAlt;
     currentFeedback;
 
     constructor( public logger: NGXLogger,  public cookie: CookieMain,
@@ -254,4 +259,19 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
         return false;
     }
 
+    get stars() {
+      const result: (0 | 0.5 | 1)[] = [];
+      let rounded = Math.round(this.spectrum.score.score * 2) / 2; // round to nearest 0.5
+      for (let i = 0; i < 5; i++) {
+        if (rounded >= 1) {
+          result.push(1);
+        } else if (rounded === 0.5) {
+          result.push(0.5);
+        } else {
+          result.push(0);
+        }
+        rounded -= 1;
+      }
+      return result;
+    }
 }

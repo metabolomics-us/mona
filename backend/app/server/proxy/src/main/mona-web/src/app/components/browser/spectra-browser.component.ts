@@ -20,6 +20,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faChartBar} from '@fortawesome/free-solid-svg-icons';
+import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
+import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import {faBookmark} from '@fortawesome/free-regular-svg-icons';
 import {BehaviorSubject} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -58,6 +60,9 @@ export class SpectraBrowserComponent implements OnInit{
     faBookmark = faBookmark;
     faTrash = faTrash;
     faChartBar = faChartBar;
+    faStar = faStar;
+    faStarEmpty = faStarEmpty;
+    faStarHalf = faStarHalfAlt;
 
     constructor(public spectrum: Spectrum, public spectraQueryBuilderService: SpectraQueryBuilderService,  public location: Location,
                 public spectrumCache: SpectrumCacheService,  public metadata: Metadata,  public cookie: CookieMain,
@@ -518,5 +523,21 @@ export class SpectraBrowserComponent implements OnInit{
       this.spectraQueryBuilderService.prepareQuery();
       this.spectraQueryBuilderService.addUserToQuery(this.authenticationService.getCurrentUser().emailAddress);
       this.spectraQueryBuilderService.executeQuery();
+    }
+
+    stars(spectrum) {
+      const result: (0 | 0.5 | 1)[] = [];
+      let rounded = Math.round(spectrum.score.score * 2) / 2; // round to nearest 0.5
+      for (let i = 0; i < 5; i++) {
+        if (rounded >= 1) {
+          result.push(1);
+        } else if (rounded === 0.5) {
+          result.push(0.5);
+        } else {
+          result.push(0);
+        }
+        rounded -= 1;
+      }
+      return result;
     }
 }

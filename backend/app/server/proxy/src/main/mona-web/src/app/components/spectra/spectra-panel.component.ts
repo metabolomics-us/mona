@@ -6,9 +6,11 @@ import {Component, Input, OnInit} from '@angular/core';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
+import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
+import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import {MassDeletionService} from '../../services/persistence/mass-deletion.service';
 import {AuthenticationService} from '../../services/authentication.service';
-import {SpectrumModel} from "../../mocks/spectrum.model";
+import {SpectrumModel} from '../../mocks/spectrum.model';
 
 @Component({
     selector: 'display-spectra-panel',
@@ -22,6 +24,9 @@ export class SpectraPanelComponent implements OnInit{
     importantMetadata;
     secondaryMetadata;
     faExternalLinkAlt = faExternalLinkAlt;
+    faStar = faStar;
+    faStarEmpty = faStarEmpty;
+    faStarHalf = faStarHalfAlt;
     deletionMark;
 
     constructor( public spectrumCache: SpectrumCacheService, public feedbackCache: FeedbackCacheService,
@@ -107,4 +112,20 @@ export class SpectraPanelComponent implements OnInit{
       }
       return false;
     }
+
+  get stars() {
+    const result: (0 | 0.5 | 1)[] = [];
+    let rounded = Math.round(this.spectrum.score.score * 2) / 2; // round to nearest 0.5
+    for (let i = 0; i < 5; i++) {
+      if (rounded >= 1) {
+        result.push(1);
+      } else if (rounded === 0.5) {
+        result.push(0.5);
+      } else {
+        result.push(0);
+      }
+      rounded -= 1;
+    }
+    return result;
+  }
 }

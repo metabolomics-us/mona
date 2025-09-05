@@ -7,7 +7,13 @@
             <span *ngIf="spectrum.compound[0].names.length === 0" class="float-left">
                 <a class="davis-blue" style="cursor: pointer" [routerLink]="[viewSpectrum()]" target="_blank"><b>{{spectrum.id}}</b></a>
             </span>
-            <span class="float-right"><ngb-rating *ngIf="spectrum.score" [(rate)]="spectrum.score.score" [max]="5" [readonly]="true" ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom"></ngb-rating></span>
+            <span class="float-right" ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom">
+              <span *ngFor="let star of stars">
+                <fa-icon size="sm" *ngIf="star === 1" [icon]="faStar"></fa-icon>
+                <fa-icon size="sm" *ngIf="star === 0.5" [icon]="faStarHalf"></fa-icon>
+                <fa-icon size="sm" *ngIf="star === 0" [icon]="faStarEmpty"></fa-icon>
+              </span>
+            </span>
         </div>
     </div>
 
