@@ -4,14 +4,14 @@
  * This controller is handling the browsing of spectra
  */
 import {Spectrum} from '../../services/persistence/spectrum.resource';
-import {SpectrumModel} from "../../mocks/spectrum.model";
+import {SpectrumModel} from '../../mocks/spectrum.model';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Location} from '@angular/common';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {Metadata} from '../../services/persistence/metadata.resource';
 import {CookieMain} from '../../services/cookie/cookie-main.service';
 import {NGXLogger} from 'ngx-logger';
-import {ToasterService} from 'angular2-toaster';
+import {BodyOutputType, ToasterService} from 'angular2-toaster';
 import {GoogleAnalyticsService} from 'ngx-google-analytics';
 import {AuthenticationService} from '../../services/authentication.service';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
@@ -469,9 +469,10 @@ export class SpectraBrowserComponent implements OnInit{
         this.pagination.loading = false;
 
         this.toaster.pop({
+            bodyOutputType: BodyOutputType.TrustedHtml,
             type: 'error',
-            title: 'Unexpected Error Occurred During Search',
-            body: `If this error continues to occur, please report the following error on YouTrack \n${error}`
+            title: 'Error During Search',
+            body: `ERROR: ${error}<br/>If this error continues to occur, please report it on the issue tracker found under 'Help'`,
         });
     }
 
