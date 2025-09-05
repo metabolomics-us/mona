@@ -56,6 +56,7 @@ export class SpectraUploadProgressComponent implements OnInit{
             this.completedSpectraCount = this.uploadLibraryService.completedSpectraCount + this.uploadLibraryService.failedSpectraCount;
             this.uploadedSpectraCount = this.uploadLibraryService.uploadedSpectraCount;
             this.showETA = false;
+            this.spectraUploadProgress = 100;
             this.spectraUploadProgressString = 'Upload Completed!';
           }
           else {
