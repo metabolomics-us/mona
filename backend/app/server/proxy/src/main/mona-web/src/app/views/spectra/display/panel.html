@@ -74,7 +74,7 @@
         </div>
 
       <span *ngIf="(((auth.isAdmin() && auth.isLoggedIn()) || (sameSubmitter())) && spectrum.tags.length > 0)"><br/><br/></span>
-      <label class="clickable"><span class="float-left mr-2" *ngIf="(auth.isAdmin() && auth.isLoggedIn()) || (sameSubmitter())"><input type="checkbox" id="massDeleteToggle" [checked]="deletionMark.selected" (change)="massDeleteToggle($event)"> Mark for Deletion</span></label>
+      <label class="clickable"><span class="float-left mr-2" style="padding-top: 9px" *ngIf="(auth.isAdmin() && auth.isLoggedIn()) || (sameSubmitter())"><input type="checkbox" id="massDeleteToggle" [checked]="deletionMark.selected" (change)="massDeleteToggle($event)"> Mark for Deletion</span></label>
 
       <a class="btn btn-primary float-right" [routerLink]="[viewSpectrum()]" target="_blank">
         <fa-icon [icon]="faExternalLinkAlt"></fa-icon> Display Full Record
