@@ -374,6 +374,11 @@ body {
     color: #d9534f;
 }
 
+button.btn-link:focus {
+  outline: none;
+  box-shadow: 0 0 0;
+}
+
 .btn-primary.btn-outline:hover,
 .btn-success.btn-outline:hover,
 .btn-info.btn-outline:hover,
