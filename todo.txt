@@ -2,11 +2,14 @@ Frontend:
     - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
     - Forgot Username / Password feature
     - Libraries with the same name but different ID show up as the same on admin page
+    - Sort spectra by score maybe? When searching
 
 Backend:
     - Debug the random error I had when starting out where it said there were 0 spectra and search wouldn't work
         - Happens if you connect to the IP? Instead of the URL, nope
         - Nope, happened again randomly 8/27, still going on 9/5
+        - Still down even after download export completed, don't think that's the issue
+        - Proxy service has interesting error logs
     - DB Index querying under compound classes sometimes doesn't work
     - Database Index & Statistic page
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
@@ -20,6 +23,8 @@ Backend:
     - Links to "Originally submitted to..." like eu MassBank shows error404 page not found
         - Just old libraries whose links are outdated?
     - Are relative_score and scaled_score useless in the score db table? All values are set to 0
+    - Error in downloader service 2025-09-06, empty string. Failed the 'All Spectra' download
+        - Error logs in YouTrack
 
 Done:
     - Display full record button does not open a new page like it says it will - should be fixed
