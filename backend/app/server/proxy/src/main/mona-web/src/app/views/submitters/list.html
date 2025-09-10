@@ -31,7 +31,7 @@
                 </thead>
                 <tbody>
                 <tr *ngFor="let sub of submitters; index as i" id="submitter_{{sub.id}}">
-                    <td><submitter-query [submitter]="sub"><a class="davis-blue">{{sub.firstName}}</a></submitter-query></td>
+                    <td><submitter-query [submitter]="sub"><a class="davis-blue text-decoration-none">{{sub.firstName}}</a></submitter-query></td>
                     <td>{{sub.lastName}}</td>
                     <td>{{sub.institution}}</td>
                     <td>{{sub.emailAddress}}</td>
