@@ -231,37 +231,43 @@
                                       <div class="text-center" *ngIf="!loadingSimilarSpectra && similarSpectra.length"
                                            style="height: 400px; overflow: auto; margin-top: 10px;">
 
-                                        <table class="table table-hover table-striped clickable" style="table-layout: fixed;">
+                                        <table class="table table-hover table-striped" style="table-layout: fixed;">
                                           <thead>
                                           <tr>
-                                            <th>ID</th>
-                                            <th class="text-center">Name</th>
-                                            <th class="text-right" style="width: 110px">Structure</th>
-                                            <th class="text-right" style="width: 110px">Spectrum</th>
-                                            <th class="text-center">Similarity Score</th>
+                                            <th style="width: 150px">ID</th>
+                                            <th class="text-center" style="width: 200px">Name</th>
+                                            <th class="text-center" style="width: 250px">Structure</th>
+                                            <th class="text-center" style="width: 250px">Spectrum</th>
+                                            <th class="text-center" style="width: 150px">Similarity Score</th>
                                           </tr>
                                           </thead>
                                           <tbody>
-                                          <tr *ngFor="let s of similarSpectra"
-                                              (click)="viewSpectrum(s.id)">
-                                            <td>{{s.id}}</td>
+                                          <tr *ngFor="let s of similarSpectra">
+                                            <td><a class="text-decoration-none davis-blue font-weight-bold" [routerLink]="['/spectra/display', s.id]" target="_blank">{{s.id}}</a></td>
                                             <td>
-                                              <ul class="list-unstyled">
+                                              <ul *ngIf="s.compound[0].names.length != 0" class="list-unstyled">
                                                 <li *ngFor="let name of s.compound[0].names | slice:0:3">
                                                   {{name.name}}
                                                 </li>
                                               </ul>
+                                              <div *ngIf="s.compound[0].names.length == 0" style="color: gray; font-size: 0.8rem">
+                                                N/A
+                                              </div>
                                             </td>
-                                            <td>
-                                              <div style="width: 100px; height: 100px">
-                                                <div [libChemdoodle]="s.compound[0].molFile"
+                                            <td class="d-flex justify-content-center">
+                                              <div style="width: 128px; height: 128px">
+                                                <div style="padding-top: 8px" *ngIf="s.compound[0].molFile" [libChemdoodle]="s.compound[0].molFile"
                                                      id="{{'bioSketch_'+s.id}}"
-                                                      [width]="100" [height]="100"></div>
+                                                      [width]="128" [height]="128">
+                                                </div>
+                                                <div *ngIf="!s.compound[0].molFile" style="color: gray; font-size: 0.8rem">
+                                                  N/A
+                                                </div>
                                               </div>
 
                                             </td>
                                             <td>
-                                              <div class="masspec-mini">
+                                              <div class="masspec-mini mx-auto" style="padding-right: 6px">
                                                 <lib-ng-mass-spec-plotter [id]="'massSpec_'+s.id" [miniPlot]="true"
                                                                           [spectrum]="s.spectrum"></lib-ng-mass-spec-plotter>
                                               </div>
