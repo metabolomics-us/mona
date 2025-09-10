@@ -1,10 +1,15 @@
 Frontend:
-    - Tag sizes in additional tags search
-    - Similar spectra opens new tab
+    - Refresh under user profile gives 404, configure in sprint to reroute all unknowns to index.html
     - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
     - Forgot Username / Password feature
     - Libraries with the same name but different ID show up as the same on admin page
-    - Sort spectra by score maybe? When searching
+    - Sort spectra by score or most recently updated maybe? When searching
+        - Pagination, maybe query returns only up to 10 pages of results at a time?
+        - Browse is sorted alphabetically by ID right now
+    - Tag search logic is flawed
+        - If you search for spectra without the tag 'example', it will only show you spectra that have tags that are not example
+            - Even if the spectrum does have the example tag, it will still show up if it has another tag
+                - And it will not show spectra without tags in the results
 
 Backend:
     - Debug the random error I had when starting out where it said there were 0 spectra and search wouldn't work
@@ -176,3 +181,10 @@ Done:
     - Text decoration on user first name on manage submitters
     - Change news italics mismatch
     - Either change similarity / 1000 to text-nowrap or remove the / 1000
+    - Tag sizes in additional tags search
+        - Now shows # of spectra on hover
+        - Fixed caret on panel title to move from right to down on accordion expansion
+    - Similar spectra should open a new tab
+        - Reformatted whole table
+    - Reset button in search sets everything to null, giving error when searching
+        - Completely fixed
