@@ -186,7 +186,8 @@
           <ng-template ngbPanelTitle>
           <span class="accordion-title">
             Additional Tags
-            <fa-icon [icon]="faCaretDown" class="ml-2"></fa-icon>
+            <fa-icon *ngIf="acc.isExpanded('additionalTags')" [icon]="faCaretDown" class="ml-2"></fa-icon>
+            <fa-icon *ngIf="!acc.isExpanded('additionalTags')" [icon]="faCaretRight" class="ml-2"></fa-icon>
           </span>
           </ng-template>
           <ng-template ngbPanelContent>

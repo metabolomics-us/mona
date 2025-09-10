@@ -3,10 +3,10 @@
         <li class="" *ngFor="let tag of tags">
 
             <div class="btn-group" ngbDropdown placement="right">
-                <button type="button" class="btn dropdown-toggle" ngbDropdownToggle [ngClass]="tagClass(tag)">
+                <button type="button" class="btn dropdown-toggle" ngbTooltip="{{tag.count}} spectra" placement="left" ngbDropdownToggle [ngClass]="tagClass(tag)">
+                    <fa-icon [icon]="faTag"></fa-icon>
                     {{tag.text}}
                     <fa-icon [icon]="faFlask" *ngIf="tag.ruleBased"></fa-icon>
-                    <fa-icon [icon]="faTag"></fa-icon>
                 </button>
                 <div class="uib-dropdown-menu" ngbDropdownMenu>
                     <button ngbDropdownItem type="button" (click)="tag.selected = '+'"><fa-icon [icon]="faPlusSquare"></fa-icon> Has Tag</button>

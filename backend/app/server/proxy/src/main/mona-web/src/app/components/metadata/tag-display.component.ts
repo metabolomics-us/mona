@@ -64,17 +64,6 @@ export class TagDisplayComponent implements OnInit {
             tagClass.push('btn-default');
         }
 
-        // Button size based on count
-        if (this.maxTagsCount > 0) {
-            if (tag.count / this.maxTagsCount < 0.25) {
-                tagClass.push('btn-xs');
-            } else if (tag.count / this.maxTagsCount < 0.5) {
-                tagClass.push('btn-sm');
-            } else if (tag.count / this.maxTagsCount > 0.75) {
-                tagClass.push('btn-lg');
-            }
-        }
-
         return tagClass;
     }
 

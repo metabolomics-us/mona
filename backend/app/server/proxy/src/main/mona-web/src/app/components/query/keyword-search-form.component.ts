@@ -5,7 +5,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {TagService} from '../../services/persistence/tag.resource';
 import {NGXLogger} from 'ngx-logger';
-import {faSpinner, faSearch, faCaretDown} from '@fortawesome/free-solid-svg-icons';
+import {faSpinner, faSearch, faCaretDown, faCaretRight} from '@fortawesome/free-solid-svg-icons';
 import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -25,6 +25,7 @@ export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
     faSpinner = faSpinner;
     faSearch = faSearch;
     faCaretDown = faCaretDown;
+    faCaretRight = faCaretRight;
 
     expandedLibraries = false;
     toggleLibraryExpansion() {
