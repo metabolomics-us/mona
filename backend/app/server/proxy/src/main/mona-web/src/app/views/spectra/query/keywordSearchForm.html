@@ -1,6 +1,6 @@
 <h3>Quick Search</h3>
 
-<form (ngSubmit)="submitQuery()">
+<form (ngSubmit)="submitQuery()" #searchForm="ngForm">
     <div class="row">
         <div class="col-md-6">
             <div class="table-responsive">
@@ -48,7 +48,8 @@
                                 <input type="number" [(ngModel)]="query.exactMassTolerance"
                                        name="queryMassTolerance"
                                        class="form-control"
-                                       value="0.5">
+                                       value="0.5"
+                                       placeholder="0.5">
                                 <div class="input-group-prepend"><span class="input-group-text">Da</span></div>
                             </div>
                         </td>
@@ -165,19 +166,6 @@
         </div>
     </div>
 
-    <!-- Additional tags OLD BACKUP -->
-<!--    <div class="row mb-2">-->
-<!--        <div class="col-md-12 h-auto">-->
-<!--            <ngb-accordion #acc>-->
-<!--                <ngb-panel id="additionalTags" title="Additional Tags">-->
-<!--                    <ng-template ngbPanelContent>-->
-<!--                        <tag-display [tags]="queryTags"></tag-display>-->
-<!--                    </ng-template>-->
-<!--                </ngb-panel>-->
-<!--            </ngb-accordion>-->
-<!--        </div>-->
-<!--    </div>-->
-
   <!-- Additional tags -->
   <div class="row mb-2">
     <div class="col-md-12 h-auto">
@@ -207,7 +195,7 @@
                     <button type="submit" class="btn btn-primary">Search</button>
                 </div>
                 <div class="col-sm-2">
-                    <button type="reset" class="btn btn-secondary">Reset</button>
+                    <button type="button" class="btn btn-secondary" (click)="searchForm.resetForm(); resetForm();">Reset</button>
                 </div>
             </div>
         </div>

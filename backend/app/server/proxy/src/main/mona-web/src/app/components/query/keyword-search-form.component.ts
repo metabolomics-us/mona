@@ -175,4 +175,15 @@ export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
         // Redirect to the spectra browser
         this.spectraQueryBuilderService.executeQuery();
     }
+
+    resetForm() {
+      this.query.name = undefined;
+      this.query.classification = undefined;
+      this.query.formula = undefined;
+      this.query.exactMass = undefined;
+      this.query.exactMassTolerance = 0.5;
+      this.queryTags.forEach((tag) => {
+        tag.selected = undefined;
+      });
+    }
 }
