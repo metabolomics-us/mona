@@ -1,4 +1,6 @@
 Frontend:
+    - Tag sizes in additional tags search
+    - Similar spectra opens new tab
     - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
     - Forgot Username / Password feature
     - Libraries with the same name but different ID show up as the same on admin page
@@ -151,6 +153,7 @@ Done:
     - Similarity search is broken error 401 unauthorized
         - Test the compact view similarity score feature when similarity search works again
         - Works on Prod, it's an issue with the proxy link I think for dev
+        - Pretty sure it was the issue that Diego fixed two years ago, test was using the old outdated docker image
     - DB Index legends are formatted wrong
         - Try new updates with a large set of precursor types since they are easy to make
         - MS5 color in the legend is too similar to MS2
@@ -169,3 +172,7 @@ Done:
     - Allow for half-scores to be visualized by the star rating system
         - Can do it with custom ng template on the ngbrating bootstrap component, use fa icons
         - Ended up doing it with custom methods
+    - Delete Libraries button needs to be updated on spectra management page
+    - Text decoration on user first name on manage submitters
+    - Change news italics mismatch
+    - Either change similarity / 1000 to text-nowrap or remove the / 1000
