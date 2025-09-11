@@ -12,3 +12,4 @@ git.properties
 target/
 nginx_v2/
 .todo.txt.swp
+pom.xml.bak
