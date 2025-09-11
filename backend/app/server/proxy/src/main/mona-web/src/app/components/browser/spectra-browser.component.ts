@@ -17,7 +17,7 @@ import {AuthenticationService} from '../../services/authentication.service';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
 import {MassDeletionService} from '../../services/persistence/mass-deletion.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faChartBar} from '@fortawesome/free-solid-svg-icons';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
@@ -31,7 +31,7 @@ import {MassDeleteModalComponent} from './mass-delete-modal.component';
     selector: 'spectra-browser',
     templateUrl: '../../views/spectra/browse/spectra.html'
 })
-export class SpectraBrowserComponent implements OnInit{
+export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     spectra: SpectrumModel[];
     pagination;
     searchSplash;
@@ -50,6 +50,7 @@ export class SpectraBrowserComponent implements OnInit{
     tableColumnSelectedSubject;
     initial;
     status;
+    massChartReady;
     faEdit = faEdit;
     faTable = faTable;
     faList = faList;
@@ -128,8 +129,12 @@ export class SpectraBrowserComponent implements OnInit{
       this.setAndWatchPaginationOptions();
     }
 
+    ngAfterViewInit() {
+        setTimeout(() => this.massChartReady = true, 170);
+    }
+
   loadData() {
-        this.logger.debug('Load Data has been triggered')
+        this.logger.debug('Load Data has been triggered');
 
         // Handle similarity search
         if (this.location.path().split('?')[0] === '/spectra/similaritySearch') {

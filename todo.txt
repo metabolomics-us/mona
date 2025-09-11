@@ -188,3 +188,4 @@ Done:
         - Reformatted whole table
     - Reset button in search sets everything to null, giving error when searching
         - Completely fixed
+    - Mass Spectrum graphs do not load until you refresh page in compact view

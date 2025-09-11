@@ -209,7 +209,7 @@
                 </td>
                 <td>
                   <div class="masspec-mini text-center">
-                    <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.id" [miniPlot]="true" [spectrum]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
+                    <lib-ng-mass-spec-plotter *ngIf="massChartReady === true" [id]="'massSpec_'+spectrum.id" [miniPlot]="true" [spectrum]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
                   </div>
                 </td>
                 <td>
