@@ -6,4 +6,5 @@ echo "        STARTING CORS        "
 echo "============================="
 . ~/.nvm/nvm.sh
 nvm use 8
-CORSPROXY_HOST=0.0.0.0 corsproxy
+
+CORSPROXY_HOST=127.0.0.1 CORSPROXY_PORT=8010 corsproxy

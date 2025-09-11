@@ -15,3 +15,4 @@ docker push public.ecr.aws/fiehnlab/mona-persistence-server:prod
 docker push public.ecr.aws/fiehnlab/mona-proxy:prod
 docker push public.ecr.aws/fiehnlab/mona-similarity:prod
 docker push public.ecr.aws/fiehnlab/mona-webhooks-server:prod
+docker push public.ecr.aws/fiehnlab/mona-statistics-server:prod
