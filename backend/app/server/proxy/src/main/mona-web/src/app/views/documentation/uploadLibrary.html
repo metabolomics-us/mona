@@ -5,17 +5,17 @@
     <p></p>
 
     <div>
-      <h4>What is the purpose of a library?</h4>
+      <h4>What is the purpose of a Library?</h4>
       <hr/>
 
-      <p>In the MoNA world, there are a few reasons why you would want to create a library for your uploaded spectra.</p>
+      <p>There are a few reasons why you would want to create a library for your uploaded spectra.</p>
 
-      <p>1) Creating a library for your spectra will allow yourself and other users to access the library in the
-        <a [routerLink]="['/downloads']">Downloads</a> section and easily download the entire library at one time.</p>
-      <p>
+      <p class="ml-4">1) Creating a library for your spectra will allow you and other users to access the library in the
+        <a [routerLink]="['/downloads']">Downloads</a> section and easily download the entire library.</p>
+      <p class="ml-4">
         2) Creating a library will automatically tag all uploaded spectra with the Library name. This allows for
-        easier searching when using MoNA advanced metadata querying system and search capabilities. </p>
-      <p>
+        easier searching when using MoNA advanced metadata querying system and search capabilities.</p>
+      <p class="ml-4">
         3) And most importantly, proper recognition! Establishing a library ensures that every spectrum in the library
         is properly marked with a Library Name, Description, URL Link, and submitter information.</p>
 
@@ -23,39 +23,42 @@
       <br /><br /><br />
       <h4 class="font-weight-bold">Library: <i class="text-danger">Required Section</i></h4>
       <hr/>
-      <strong>Library ID Prefix: </strong> <span class="text-danger"><i>Required Field</i></span>
+      <strong style="font-size: 1.2rem">Library ID Prefix: </strong> <span class="text-danger"><i>Required Field</i></span>
       <p>
-        The Library ID Prefix is a unique name that is utilized in creating a unique identifier for each spectrum in your
+        The Library ID Prefix is a unique ID that is used in creating a unique identifier for each spectrum in your
         uploaded spectra library. Let's look at the following example. I want to upload the LipidBlast library to MoNA, so
         I will use 'LipidBlast' as the <strong>Library ID Prefix</strong>. This will now be our prefix to create unique IDs'
         for every spectrum such as <strong>LipidBlast0000001, LipidBlast0000002</strong>, and so forth. This allows users to easily search for
         their spectra library in the future.
       </p>
+      <br/>
 
-      <strong>Library Name: </strong> <span class="text-danger"><i>Required Field</i></span>
+      <strong style="font-size: 1.2rem">Library Name: </strong> <span class="text-danger"><i>Required Field</i></span>
       <p>
-        The <strong>Library Name</strong> is simply the name or title of the library you are trying to upload. Following the above example,
+        The Library Name is simply the name or title of the library you are trying to upload. Following the above example,
         we want to upload the <strong>Lipid Blast</strong> library. <strong>LipidBlast</strong> already works as a proper library name so
-        we can fill the <strong>Library Name</strong> field with <strong>LipidBlast</strong>. The Library Name <strong>LipidBlast</strong>
+        we can fill the Library Name field with <strong>LipidBlast</strong>. The Library Name <strong>LipidBlast</strong>
         will now be displayed on each panel in the spectra browser and will be given a tag with the <strong>LipidBlast</strong> name for easy
         metadata searching and querying. Additionally, when you look in the <a [routerLink]="['/downloads']">Downloads</a> section
-        you will see the library with the <strong>LipidBlast</strong> name.
+        you will see the library with the <strong>LipidBlast</strong> name. This Library Name will also
+        be displayed on the spectrum panel in the <a [routerLink]="['/spectra/browse']">Spectra Browser</a> and will be formatted as such:
+        <strong>"Originally submitted to the..."</strong> followed by the provided Library Name.
       </p>
+      <br/>
 
-      <strong>Description: </strong> <span class="text-danger"><i>Required Field</i></span>
+      <strong style="font-size: 1.2rem">Description: </strong> <span class="text-danger"><i>Required Field</i></span>
       <p>
-        The <strong>Description</strong> is a descriptive note that describes the library being uploaded. For example, the <strong>LipidBlast</strong>
-        library encompasses the following description, <strong>"LipidBlast In-Silico MS/MS Database for Lipid Identification"</strong>. This <strong>Description</strong>
-        will be displayed on a spectrum panel in the <a [routerLink]="['/spectra/browse']">Spectra Browser</a> and will be formatted as such
-        <strong>"Originally submitted to the..."</strong> followed by the provided <strong>Description</strong>.
+        The Description is a descriptive note that describes the library being uploaded. For example, the <strong>LipidBlast</strong>
+        library encompasses the following description: "LipidBlast In-Silico MS/MS Database for Lipid Identification".
       </p>
+      <br/>
 
-      <strong>Link: </strong> <span class="text-info"><i>Optional Field</i></span>
+      <strong style="font-size: 1.2rem">Link: </strong> <span class="text-info"><i>Optional Field</i></span>
       <p>
         Lastly, some spectra libraries are hosted outside of MoNA on external websites. The <strong>Link</strong> field allows you to attach
         a URL that will direct users to the site where the spectra library originates from or a site that will provide additional information
         regarding the library. In the case of <strong>LipidBlast</strong>,  <a href="https://fiehnlab.ucdavis.edu/projects/LipidBlast">https://fiehnlab.ucdavis.edu/projects/LipidBlast</a> is attached to the spectra library.
-        The provided <strong>Link</strong> is hyperlinked to the <strong>Description</strong> on the <a [routerLink]="['/spectra/browse']">Spectra Browser</a> page.
+        The provided <strong>Link</strong> is hyperlinked to the <strong>Library Name</strong> on the <a [routerLink]="['/spectra/browse']">Spectra Browser</a> page.
         This is an optional field, so if there is no information to provide, <a href="https://massbank.us">https://massbank.us</a> will be provided by default.
       </p>
 
@@ -67,7 +70,7 @@
         your account information and attach it to the spectra library that you are wanting to submit. But in some cases, users may want to upload spectra libraries
         on someone else's behalf. To assist with this, there is a completely optional section under <strong>Submitter</strong> that allows you to fill in details of
         the spectra libraries original owner. However, if you are the owner of the spectra library or would like to be credited with uploading the library, simply
-        insure you are logged in and leave the <strong>Submitter</strong> section BLANK and MoNA will handle the rest!
+        ensure you are logged in and leave the <strong>Submitter</strong> section blank.
       </p>
 
       <br /><br /><br />
@@ -80,7 +83,7 @@
       </p>
 
       <br /><br /><br />
-      <h4 class="font-weight-bold text-primary">Example: </h4>
+      <h4 class="font-weight-bold" style="color: #0b3f6c">Example: </h4>
       <hr />
       <form id="libForm" class="form-horizontal" novalidate role="form">
         <div class="form-group row">
