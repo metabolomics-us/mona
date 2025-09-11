@@ -11,8 +11,8 @@
                    [(ngModel)]="registrationService.newSubmitter.firstName" #firstName = "ngModel"
                    required/>
 
-            <p *ngIf="!firstName.valid && !firstName.pristine" class="help-block">
-                Your first name is required.</p>
+            <p *ngIf="!firstName.valid && !firstName.pristine" class="help-block text-danger">
+                Your first name is required</p>
         </div>
     </div>
 
@@ -23,8 +23,8 @@
                    placeholder="Please enter your last name" [(ngModel)]="registrationService.newSubmitter.lastName"
                    #lastName = "ngModel" required/>
 
-            <p *ngIf="!lastName.valid && !lastName.pristine" class="help-block">
-                Your last name is required.</p>
+            <p *ngIf="!lastName.valid && !lastName.pristine" class="help-block text-danger">
+                Your last name is required</p>
         </div>
     </div>
 
@@ -35,8 +35,8 @@
                    name="institution" [(ngModel)]="registrationService.newSubmitter.institution"
                    #institution = "ngModel" required/>
 
-            <p *ngIf="!institution.valid && !institution.pristine" class="help-block">
-                Please enter a valid institution.</p>
+            <p *ngIf="!institution.valid && !institution.pristine" class="help-block text-danger">
+                Please enter a valid institution</p>
         </div>
     </div>
 
@@ -45,9 +45,9 @@
         <div class="col-sm-9">
             <input  type="email" class="form-control" placeholder="Please enter your email address" id="email"
                    name="email" [(ngModel)]="registrationService.newSubmitter.emailAddress"
-                   #email = "ngModel" required [disabled]="isAdminEdit"/>
-            <p *ngIf="!email.valid && !email.pristine" class="help-block">
-                Please enter a valid email.</p>
+                   #email="ngModel" required [disabled]="isAdminEdit"/>
+            <p *ngIf="!email.valid && !email.pristine" class="help-block text-danger">
+                Please enter a valid email</p>
         </div>
     </div>
 
