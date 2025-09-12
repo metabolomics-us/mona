@@ -79,7 +79,7 @@ services:
   # The discovery service provided us with a local overview of our services
   # and allows for easy scaling and load balancing using our proxy at a later stage
   discovery:
-    image: public.ecr.aws/fiehnlab/mona-discovery:prod
+    image: public.ecr.aws/fiehnlab/mona-discovery:localprod
     ports:
       - "8761:8761"
     depends_on:
@@ -97,7 +97,7 @@ services:
         awslogs-stream: discovery-service
 
   config-server:
-    image: public.ecr.aws/fiehnlab/mona-config:prod
+    image: public.ecr.aws/fiehnlab/mona-config:localprod
     ports:
       - "1111:1111"
     depends_on:
@@ -121,7 +121,7 @@ services:
 
   # Bootstrap service which pre-populated and synchronizes the databases
   bootstrap:
-    image: public.ecr.aws/fiehnlab/mona-bootstrap:prod
+    image: public.ecr.aws/fiehnlab/mona-bootstrap:localprod
     depends_on:
       - config-server
     entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
@@ -134,7 +134,7 @@ services:
 
   # Webhook support to notify external apis
   webhooks:
-    image: public.ecr.aws/fiehnlab/mona-webhooks-server:prod
+    image: public.ecr.aws/fiehnlab/mona-webhooks-server:localprod
     ports:
       - "4444:4444"
     depends_on:
@@ -149,7 +149,7 @@ services:
 
   #Scheduler for curation jobs
   curationScheduler:
-    image: public.ecr.aws/fiehnlab/mona-curation-scheduler:prod
+    image: public.ecr.aws/fiehnlab/mona-curation-scheduler:localprod
     ports:
       - "5555:5555"
     depends_on:
@@ -170,7 +170,7 @@ services:
 
   # Persistence service with query interface
   persistence:
-    image: public.ecr.aws/fiehnlab/mona-persistence-server:prod
+    image: public.ecr.aws/fiehnlab/mona-persistence-server:localprod
     depends_on:
       - webhooks
       - discovery
@@ -183,7 +183,7 @@ services:
         awslogs-stream: persistence-service
 
   statistics:
-    image: public.ecr.aws/fiehnlab/mona-statistics-server:prod
+    image: public.ecr.aws/fiehnlab/mona-statistics-server:localprod
     depends_on:
       - webhooks
       - discovery
@@ -197,7 +197,7 @@ services:
 
   # Main authentication service
   auth:
-    image: public.ecr.aws/fiehnlab/mona-auth-server:prod
+    image: public.ecr.aws/fiehnlab/mona-auth-server:localprod
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx3g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       driver: awslogs
@@ -208,7 +208,7 @@ services:
 
   # MoNA similarity service
   similarity:
-    image: public.ecr.aws/fiehnlab/mona-similarity:prod
+    image: public.ecr.aws/fiehnlab/mona-similarity:localprod
     ports:
       - "9999:9999"
     depends_on:
@@ -245,7 +245,7 @@ services:
 
   # Download service for scheduling and running download jobs
   downloader:
-    image: public.ecr.aws/fiehnlab/mona-download-scheduler:prod
+    image: public.ecr.aws/fiehnlab/mona-download-scheduler:localprod
     ports:
       - "7777:7777"
     depends_on:
@@ -263,7 +263,7 @@ services:
 
   # Run scheduled curation tasks
   curationRunner:
-    image: public.ecr.aws/fiehnlab/mona-curation-runner:prod
+    image: public.ecr.aws/fiehnlab/mona-curation-runner:localprod
     depends_on:
       - persistence
       - webhooks
