@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
     <artifactId>webhooks-server</artifactId>
-    <version>2.6.3-SNAPSHOT</version>
+    <version>3.0.0-RELEASE</version>
     <name>webhooks-server</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
         <artifactId>services</artifactId>
-        <version>2.6.3-SNAPSHOT</version>
+        <version>3.0.0-RELEASE</version>
     </parent>
 
     <description>This module provides us with webhooks to notify external resources</description>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>postgresql</artifactId>
-            <version>2.6.3-SNAPSHOT</version>
+            <version>3.0.0-RELEASE</version>
         </dependency>
 
         <dependency>

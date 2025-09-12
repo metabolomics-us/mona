@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
     <artifactId>download-scheduler</artifactId>
-    <version>2.6.3-SNAPSHOT</version>
+    <version>3.0.0-RELEASE</version>
     <name>download-scheduler</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
         <artifactId>services</artifactId>
-        <version>2.6.3-SNAPSHOT</version>
+        <version>3.0.0-RELEASE</version>
     </parent>
 
     <description>
