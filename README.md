@@ -1,4 +1,4 @@
-# MassBank of North America Application
+# MassBank of North America
 
 ## Common:
 - Highly Recommended to use Linux OS (Preferably Ubuntu LTS 18.04 or later)
