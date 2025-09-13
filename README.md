@@ -1,7 +1,7 @@
 # MassBank of North America
 
 ## Common:
-- Highly Recommended to use Linux OS (Preferably Ubuntu LTS 18.04 or later)
+- Highly recommended to use Linux OS (Preferably Ubuntu LTS 18.04 or later)
 - Ensure you have the following installed
   - Node Version Manager(NVM)
   - Docker Engine (And Docker-Compose)
@@ -28,7 +28,6 @@
     and all the necessary repo's for pulling down libraries. Please ask a developer on the team for this config
     and store the file at `~/.m2`
 
-
 ## Starting Development:
 - There are 3 scripts in the project to easily start development
   - `./start_docker_dev.sh`
@@ -38,7 +37,7 @@
   - `./start_frontend.sh`
     - Starts the Angular 10 frontend with ng serve for live development (localhost:9090)
 
-## PROD Deployment:
+## Production Deployment:
 - Production deployment is simple with docker
   - Bring down the application with: `docker compose -f docker-compose-prod.yml down`
   - Bring the application back up with `docker compose -f docker-compose-prod.yml up -d`
@@ -50,7 +49,7 @@
   - Run the following docker-compose file: `docker-compose -f docker-compose-test.yml up -d`
   - Finally, run `mvn clean install` on the 'backend' folder
 
-## Generate new Docker Images:
+## Generate New Docker Images:
 - Make sure the following Maven profiles are selected (and only those): nexus, scala, docker
 - The following services can be built into docker images: discovery, bootstrap, webhooks-server, curation-scheduler,
   repository, persistence-server, auth-server, similarity, proxy, download-scheduler, and curation-runner
