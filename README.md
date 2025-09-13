@@ -1,7 +1,7 @@
 # MassBank of North America Application
 
 ## Common:
-- Highly Recommended to use Linux OS (Preferably Ubuntu LTS 18.04 or 20.04)
+- Highly Recommended to use Linux OS (Preferably Ubuntu LTS 18.04 or later)
 - Ensure you have the following installed
   - Node Version Manager(NVM)
   - Docker Engine (And Docker-Compose)
@@ -22,7 +22,7 @@
       new personal access token. This allows the discovery service to work as intended
     - Note: You'll need to set these tokens on the IPA and GOSE servers as they expire every year (you can configure
       how quickly these expire).
-  - Access to AWS account and the ability to push to ECR
+  - Access to an AWS account with the ability to push to ECR. Store credentials `~/.aws/`
   - Admin access to public mona repo
   - You'll need a settings.xml file for your maven 'User Settings File' this will include the nexus profile
     and all the necessary repo's for pulling down libraries. Please ask a developer on the team for this config
@@ -31,12 +31,12 @@
 
 ## Starting Development:
 - There are 3 scripts in the project to easily start development
-  - `./start_corsproxy.sh`
-    - Solves CORS issues when connecting the frontend to the microservices
   - `./start_docker_dev.sh`
     - Starts all necessary docker microservices
+  - `./start_corsproxy.sh`
+    - Solves CORS issues when connecting the frontend to the microservices
   - `./start_frontend.sh`
-    - Starts the Angular 10 frontend with ng serve to develop on the fly
+    - Starts the Angular 10 frontend with ng serve for live development (localhost:9090)
 
 ## PROD Deployment:
 - Production deployment is simple with docker
@@ -48,22 +48,23 @@
 - Using the built-in Maven tab, we can run the full scala test suite
   - Make sure the following Maven profiles are selected (and only those): nexus, scala, scala-test
   - Run the following docker-compose file: `docker-compose -f docker-compose-test.yml up -d`
-  - Finally, run `mvn clean install` on the 'backend(root)' folder
+  - Finally, run `mvn clean install` on the 'backend' folder
 
 ## Generate new Docker Images:
 - Make sure the following Maven profiles are selected (and only those): nexus, scala, docker
 - The following services can be built into docker images: discovery, bootstrap, webhooks-server, curation-scheduler,
   repository, persistence-server, auth-server, similarity, proxy, download-scheduler, and curation-runner
+- Select the module you would like to build an image for in the maven build wizard in IntelliJ (top right folder button)
 - `mvn clean install` will build a local docker image for the corresponding service
 - `mvn clean deploy` will build the docker image and deploy it to ECR (make sure you signed in to AWS CLI)
-  - default tag is 'test' you can easily configure that in the main mona pom.xml under <docker.tag>
+  - the default tag is 'test', you can easily configure that in the main mona pom.xml under <docker.tag>
 - NOTE: For the proxy service pom.xml, you'll need to configure the 'ng.env' variable to 'staging' or 'prod' 
   depending on if the build is for IPA('staging') or GOSE('prod');
 
 ## Important Development Notes:
 - Make sure project sdk/jdk is set to Java 17
 - Make sure to configure Maven in IntelliJ IDEA to use the same project jdk which should be Java 17
-- Make sure you added framework support for scala 2.13 in IntelliJ for the mona project
+- Make sure you added framework support for scala 2.13 in IntelliJ for the mona project 
 - When making a new branch for git, the naming convention is to follow YouTrack or GitHub Issue numbers (i.e. FIEHNLAB-3825)
 - If you're having issues pulling packages with maven, you can troubleshoot with deleting your `~/.m2/repository` directory.
   Additionally, ensure you have the correct 'settings.xml' file in `~/.m2`. If problems still persist, try the 'Invalidate
