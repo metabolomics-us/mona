@@ -197,7 +197,7 @@
                     </div>
                 </td>
                 <td class="d-flex justify-content-center">
-                        <div *ngIf="spectrum.compound[0].molFile" [libChemdoodle]="spectrum.compound[0].molFile" class="center-block" readonly="true" style="padding-top: 8px"
+                        <div *ngIf="spectrum.compound[0].molFile && massChartReady" [libChemdoodle]="spectrum.compound[0].molFile" class="center-block" readonly="true" style="padding-top: 8px"
                              [id]="'bioSketch_'+spectrum.id+'_true'" [width]="130" [height]="126">
                         </div>
                         <div *ngIf="!spectrum.compound[0].molFile">
