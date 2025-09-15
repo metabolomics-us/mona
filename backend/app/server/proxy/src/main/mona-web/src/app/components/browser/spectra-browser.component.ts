@@ -130,7 +130,7 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     }
 
     ngAfterViewInit() {
-        setTimeout(() => this.massChartReady = true, 170);
+        setTimeout(() => this.massChartReady = true, 300);
     }
 
   loadData() {
