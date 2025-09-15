@@ -189,3 +189,6 @@ Done:
     - Reset button in search sets everything to null, giving error when searching
         - Completely fixed
     - Mass Spectrum graphs do not load until you refresh page in compact view
+    - Similarity scores have too many decimals, no decimals needed at all
+    - Browse doesn't work on prod, e.score is not a property?
+        - TypeError: can't access property "score", e.score is undefined
