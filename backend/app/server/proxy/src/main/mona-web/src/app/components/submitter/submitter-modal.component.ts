@@ -77,6 +77,11 @@ export class SubmitterModalComponent {
      handleDialogError(error) {
         const errorReport = [];
 
+        if (error.status === 409) {
+          this.formErrors = 'This email is already taken';
+          return;
+        }
+
         if (error.data) {
             for (let i = 0; i < error.data.errors.length; i++) {
                 const obj = error.data.errors[i];

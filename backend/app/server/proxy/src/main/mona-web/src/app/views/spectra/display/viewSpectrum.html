@@ -3,23 +3,29 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                  <div class="card-title">
-                    <h3 class="float-left" *ngIf="spectrum.compound[0].names.length > 0">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h3>
-                    <h3 class="float-left" *ngIf="spectrum.compound[0].names.length === 0">Spectrum {{spectrum.id}}</h3>
-                    <h3 class="float-right"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h3>
+                  <div class="card-title" style="padding-top: 8px">
+                    <h4 class="float-left" *ngIf="spectrum.compound[0].names.length > 0">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h4>
+                    <h4 class="float-left" *ngIf="spectrum.compound[0].names.length === 0">Spectrum {{spectrum.id}}</h4>
+                    <h5 class="float-right" style="padding-top: 4px"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h5>
                   </div>
                 </div>
 
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12" *ngIf="spectrum.score">
+                          <label class="clickable">
                             <span placement="right"
-                                  ngbTooltip="Click to see the explanation for the {{0.0 + spectrum.score.score | number:'1.2-2'}} / 5 score"
+                                  ngbTooltip="Click to see the explanation for the {{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00 score"
                                   (click)="showScore = !showScore">
-                                Rating:
-                                <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
-                              <fa-icon [icon]="faQuestionCircle"></fa-icon>
+                                Score:
+                                <span *ngFor="let star of stars">
+                                  <fa-icon size="sm" *ngIf="star === 1" [icon]="faStar"></fa-icon>
+                                  <fa-icon size="sm" *ngIf="star === 0.5" [icon]="faStarHalf"></fa-icon>
+                                  <fa-icon size="sm" *ngIf="star === 0" [icon]="faStarEmpty"></fa-icon>
+                                </span>
+                                <fa-icon class="ml-2" size="sm" [icon]="faQuestionCircle"></fa-icon>
                             </span>
+                          </label>
                         </div>
                     </div>
 
@@ -27,7 +33,7 @@
                         <div class="col-md-12">
                             <div class="card top17">
                                 <div class="card-header">
-                                    Explanation for the {{spectrum.score.score | number:'1.2-2'}} / 5 star score
+                                    Explanation for the {{spectrum.score.score | number:'1.2-2'}} / 5.00 score
                                 </div>
                                 <div class="card-body">
                                     <table class="table">
@@ -51,39 +57,15 @@
                         </div>
                     </div>
 
-                    <div class="row top5" *ngIf="spectrum.library !== null">
-                        <div class="col-md-12">
-                            <ul class="list-unstyled">
-                                <li>
-                                    <div class="h5">
-                                        <display-library-reference [spectrum]="spectrum"></display-library-reference>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="row top5">
-                        <div class="col-md-8">
-                            <ul class="list-inline">
-                                <li *ngFor="let tag of spectrum.tags">
-                                    <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-4 text-right">
-                            <spectra-download [spectrum]="spectrum"></spectra-download>
-                        </div>
-                    </div>
+                    <p></p>
 
                     <div class="row top5">
                         <div class="col-md-9">
                             <ul class="list-inline">
                                 <li>
                                     <div class="h5" *ngIf="spectrum.splash">
-                                        SPLASH<sup><a href="http://splash.fiehnlab.ucdavis.edu" target="_blank"><fa-icon [icon]="faQuestionCircle"></fa-icon></a></sup>:
-                                        <splash-query [value]="spectrum.splash">{{spectrum.splash.splash}}</splash-query>
+                                        SPLASH:
+                                        <splash-query [value]="spectrum.splash">{{spectrum.splash.splash}}</splash-query><sup><a href="http://splash.fiehnlab.ucdavis.edu" target="_blank" style="color: #222121"><fa-icon ngbTooltip="What is a SPLASH?" [icon]="faQuestionCircle"></fa-icon></a></sup>
                                     </div>
                                 </li>
                                 <li>
@@ -91,24 +73,41 @@
                                         Submitter: <submitter-query [submitter]="spectrum.submitter">{{spectrum.submitter.firstName}} {{spectrum.submitter.lastName}}</submitter-query>
                                     </div>
                                 </li>
+
+                                <hr>
+
+                                <li *ngIf="spectrum.library !== null">
+                                    <div class="h6">
+                                        <display-library-reference [spectrum]="spectrum"></display-library-reference>
+                                    </div>
+                                </li>
+
+                                <li *ngIf="spectrum.tags.length > 0">
+                                    <div class="h6 d-flex align-items-center">
+                                      <span>Tags:&ensp;</span>
+                                      <span *ngFor="let tag of spectrum.tags" class="mr-2">
+                                        <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
+                                      </span>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
 
                         <div class="col-md-3 text-right">
+                            <spectra-download [spectrum]="spectrum"></spectra-download>
                             <spectrum-review [spectrum]="spectrum" *ngIf="authenticationService.isLoggedIn()"></spectrum-review>
                         </div>
                     </div>
+                  <br/>
 
                     <!-- mass spectral properties -->
+                    <h4>Spectrum and Compound Information</h4>
                     <div class="row">
                         <div class="col-md-12">
-                            <div *ngIf="currentFeedback.length > 0">
-                              <spectrum-feedback-results-community [spectrumID]="spectrum.id" [currentFeedback]="currentFeedback"></spectrum-feedback-results-community>
-                            </div>
                             <ngb-accordion #acc="ngbAccordion" [closeOthers]="false">
                                 <ngb-panel id="masspecPanel">
                                     <ng-template ngbPanelHeader>
-                                      <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
+                                      <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
                                         <strong>Mass Spectrum</strong>
                                         <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('masspecPanel')"></fa-icon>
                                         <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('masspecPanel')"></fa-icon>
@@ -124,8 +123,8 @@
 
                                 <ngb-panel id="ionPanel">
                                   <ng-template ngbPanelHeader>
-                                    <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
-                                      <strong>Ion Table / Peak Table</strong>
+                                    <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
+                                      <strong>Ion / Peak Table</strong>
                                       <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('ionPanel')"></fa-icon>
                                       <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('ionPanel')"></fa-icon>
                                     </button>
@@ -135,9 +134,9 @@
                                       <table class="table">
                                         <thead>
                                         <tr>
-                                          <th><a [routerLink]=null (click)="sortIonTable('ion')">Ion</a></th>
-                                          <th><a [routerLink]=null (click)="sortIonTable('intensity')">Intensity</a></th>
-                                          <th><a [routerLink]=null (click)="sortIonTable('annotation')">Annotation</a></th>
+                                          <th><button class="btn btn-link p-0 davis-blue font-weight-bold text-decoration-none" (click)="sortIonTable('ion')">Ion</button></th>
+                                          <th><button class="btn btn-link p-0 davis-blue font-weight-bold text-decoration-none" (click)="sortIonTable('intensity')">Intensity</button></th>
+                                          <th><button class="btn btn-link p-0 davis-blue font-weight-bold text-decoration-none" (click)="sortIonTable('annotation')">Annotation</button></th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -158,9 +157,61 @@
                                   </ng-template>
                                 </ngb-panel>
 
+                              <ngb-panel id="metadataPanel">
+                                <ng-template ngbPanelHeader>
+                                  <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
+                                    <strong>MS Metadata</strong>
+                                    <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('metadataPanel')"></fa-icon>
+                                    <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('metadataPanel')"></fa-icon>
+                                  </button>
+                                </ng-template>
+
+                                <ng-template ngbPanelContent>
+                                  <div *ngIf="spectrum.metaData.length">
+                                    <table class="table">
+                                      <thead>
+                                      <tr>
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                      <tr *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
+                                        <td class="col-lg-4 col-md-4">
+                                          <metadata-query [metaData]="meta">{{meta.name}}</metadata-query>
+                                        </td>
+                                        <td class="col-lg-8 col-md-8" style="font-family: Roboto, serif">
+                                          <span *ngIf="checkNumber(meta.value)">{{meta.value | number:'1.0-4'}} {{meta.unit}}</span>
+                                          <span *ngIf="!checkNumber(meta.value)">{{meta.value}} {{meta.unit}}</span>
+                                          <fa-icon [icon]="faFlask"
+                                                   *ngIf="meta.computed === true"
+                                                   ngbTooltip="Calculated by MoNA Auto Curation"
+                                                   placement="top"></fa-icon>
+                                        </td>
+                                      </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </ng-template>
+                              </ngb-panel>
+
+                              <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.compound; index as i">
+                                <ng-template *ngIf="accordionStatus.isCompoundOpen[i]" ngbPanelHeader>
+                                  <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
+                                    <span *ngIf="compound.kind !== null"><strong>{{compound.kind | titlecase}}</strong></span>
+                                    <span *ngIf="compound.kind === null"><strong>Submitted Compound</strong></span>
+                                    <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('compoundInfo')"></fa-icon>
+                                    <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('compoundInfo')"></fa-icon>
+                                  </button>
+                                </ng-template>
+                                <ng-template ngbPanelContent>
+                                  <display-compound-info [compound]="compound"></display-compound-info>
+                                </ng-template>
+                              </ngb-panel>
+
                                 <ngb-panel id="similarityPanel">
                                     <ng-template ngbPanelHeader>
-                                      <button ngbPanelToggle (click)="loadSimilarSpectra()" class="btn btn-link container-fluid text-left pl-0">
+                                      <button ngbPanelToggle (click)="loadSimilarSpectra()" class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
                                         <strong>Similar Spectra</strong>
                                         <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('similarityPanel')"></fa-icon>
                                         <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('similarityPanel')"></fa-icon>
@@ -174,7 +225,7 @@
                                       </div>
 
                                       <div class="text-center" *ngIf="!loadingSimilarSpectra && !similarSpectra.length">
-                                        <h4>No spectra found with similarity of at least 500 / 1000.</h4>
+                                        <h5>No spectra found with similarity of at least 500 / 1000</h5>
                                       </div>
 
                                       <div class="text-center" *ngIf="!loadingSimilarSpectra && similarSpectra.length"
@@ -183,34 +234,40 @@
                                         <table class="table table-hover table-striped" style="table-layout: fixed;">
                                           <thead>
                                           <tr>
-                                            <th>ID</th>
-                                            <th class="text-center">Name</th>
-                                            <th class="text-right" style="width: 110px">Structure</th>
-                                            <th class="text-right" style="width: 110px">Spectrum</th>
-                                            <th class="text-center">Similarity Score</th>
+                                            <th style="width: 150px">ID</th>
+                                            <th class="text-center" style="width: 200px">Name</th>
+                                            <th class="text-center" style="width: 250px">Structure</th>
+                                            <th class="text-center" style="width: 250px">Spectrum</th>
+                                            <th class="text-center" style="width: 150px">Similarity Score</th>
                                           </tr>
                                           </thead>
                                           <tbody>
-                                          <tr *ngFor="let s of similarSpectra"
-                                              (click)="viewSpectrum(s.id)">
-                                            <td>{{s.id}}</td>
+                                          <tr *ngFor="let s of similarSpectra">
+                                            <td><a class="text-decoration-none davis-blue font-weight-bold" [routerLink]="['/spectra/display', s.id]" target="_blank">{{s.id}}</a></td>
                                             <td>
-                                              <ul class="list-unstyled">
+                                              <ul *ngIf="s.compound[0].names.length != 0" class="list-unstyled">
                                                 <li *ngFor="let name of s.compound[0].names | slice:0:3">
                                                   {{name.name}}
                                                 </li>
                                               </ul>
+                                              <div *ngIf="s.compound[0].names.length == 0" style="color: gray; font-size: 0.8rem">
+                                                N/A
+                                              </div>
                                             </td>
-                                            <td>
-                                              <div style="width: 100px; height: 100px">
-                                                <div [libChemdoodle]="s.compound[0].molFile"
+                                            <td class="d-flex justify-content-center">
+                                              <div style="width: 128px; height: 128px">
+                                                <div style="padding-top: 8px" *ngIf="s.compound[0].molFile" [libChemdoodle]="s.compound[0].molFile"
                                                      id="{{'bioSketch_'+s.id}}"
-                                                      [width]="100" [height]="100"></div>
+                                                      [width]="128" [height]="128">
+                                                </div>
+                                                <div *ngIf="!s.compound[0].molFile" style="color: gray; font-size: 0.8rem">
+                                                  N/A
+                                                </div>
                                               </div>
 
                                             </td>
                                             <td>
-                                              <div class="masspec-mini">
+                                              <div class="masspec-mini mx-auto" style="padding-right: 6px">
                                                 <lib-ng-mass-spec-plotter [id]="'massSpec_'+s.id" [miniPlot]="true"
                                                                           [spectrum]="s.spectrum"></lib-ng-mass-spec-plotter>
                                               </div>
@@ -225,59 +282,9 @@
                                     </ng-template>
                                 </ngb-panel>
                             </ngb-accordion>
-                        </div>
-                    </div>
-                    <br/>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h4>Compound Information</h4>
-
-                            <ngb-accordion #acc2 activeIds="compoundInfo">
-                                <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.compound; index as i">
-                                    <ng-template *ngIf="accordionStatus.isCompoundOpen[i]" ngbPanelHeader>
-                                      <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
-                                        <span *ngIf="compound.kind !== null"><strong>{{compound.kind}}</strong></span>
-                                        <span *ngIf="compound.kind === null"><strong>Submitted Compound</strong></span>
-                                        <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc2.isExpanded('compoundInfo')"></fa-icon>
-                                        <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc2.isExpanded('compoundInfo')"></fa-icon>
-                                      </button>
-                                    </ng-template>
-                                    <ng-template ngbPanelContent>
-                                      <display-compound-info [compound]="compound"></display-compound-info>
-                                    </ng-template>
-                                </ngb-panel>
-                            </ngb-accordion>
-                        </div>
-                    </div>
-                    <br/>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div *ngIf="spectrum.metaData.length">
-                                <h4>Mass Spectral Metadata</h4>
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Value</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
-                                        <td class="col-lg-4 col-md-4">
-                                          <metadata-query [metaData]="meta"> {{meta.name}}</metadata-query>
-                                        </td>
-                                        <td class="col-lg-8 col-md-8">
-                                            <span *ngIf="checkNumber(meta.value)">{{meta.value | number:'1.0-4'}} {{meta.unit}}</span>
-                                            <span *ngIf="!checkNumber(meta.value)">{{meta.value}} {{meta.unit}}</span>
-                                            <fa-icon [icon]="faFlask" *ngIf="meta.computed === true" ngbTooltip="Calculated by MoNA Auto Curation" placement="top"></fa-icon>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <br/>
+                          <div *ngIf="currentFeedback.length > 0">
+                            <spectrum-feedback-results-community [spectrumID]="spectrum.id" [currentFeedback]="currentFeedback"></spectrum-feedback-results-community>
+                          </div>
                         </div>
                     </div>
                 </div>

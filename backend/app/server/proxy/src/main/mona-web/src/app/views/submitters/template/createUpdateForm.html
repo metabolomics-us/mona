@@ -11,8 +11,8 @@
                    [(ngModel)]="registrationService.newSubmitter.firstName" #firstName = "ngModel"
                    required/>
 
-            <p *ngIf="!firstName.valid && !firstName.pristine" class="help-block">
-                Your first name is required.</p>
+            <p *ngIf="!firstName.valid && !firstName.pristine" class="help-block text-danger">
+                Your first name is required</p>
         </div>
     </div>
 
@@ -23,8 +23,8 @@
                    placeholder="Please enter your last name" [(ngModel)]="registrationService.newSubmitter.lastName"
                    #lastName = "ngModel" required/>
 
-            <p *ngIf="!lastName.valid && !lastName.pristine" class="help-block">
-                Your last name is required.</p>
+            <p *ngIf="!lastName.valid && !lastName.pristine" class="help-block text-danger">
+                Your last name is required</p>
         </div>
     </div>
 
@@ -35,23 +35,23 @@
                    name="institution" [(ngModel)]="registrationService.newSubmitter.institution"
                    #institution = "ngModel" required/>
 
-            <p *ngIf="!institution.valid && !institution.pristine" class="help-block">
-                Please enter a valid institution.</p>
+            <p *ngIf="!institution.valid && !institution.pristine" class="help-block text-danger">
+                Please enter a valid institution</p>
         </div>
     </div>
 
     <div class="form-group row" [ngClass]="{ 'has-error' : !email.valid && !email.pristine}">
         <label for="email" class="col-sm-3 col-form-label">Email Address:</label>
         <div class="col-sm-9">
-            <input type="email" class="form-control" placeholder="Please enter your email address" id="email"
+            <input  type="email" class="form-control" placeholder="Please enter your email address" id="email"
                    name="email" [(ngModel)]="registrationService.newSubmitter.emailAddress"
-                   #email = "ngModel" required/>
-            <p *ngIf="!email.valid && !email.pristine" class="help-block">
-                Please enter a valid email.</p>
+                   #email="ngModel" required [disabled]="isAdminEdit"/>
+            <p *ngIf="!email.valid && !email.pristine" class="help-block text-danger">
+                Please enter a valid email</p>
         </div>
     </div>
 
-    <div class="form-group row" [ngClass]="{ 'has-error' : !password.valid && !password.pristine}">
+    <div *ngIf="!isAdminEdit" class="form-group row" [ngClass]="{ 'has-error' : !password.valid && !password.pristine}">
         <label for="password" class="col-sm-3 col-form-label">Password:</label>
         <div class="col-sm-9">
             <input  class="form-control" placeholder="Please enter your password" id="password"
@@ -60,11 +60,17 @@
                     pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,30})"/>
 
             <p *ngIf="!password.valid && !password.pristine" class="text-danger">
-                Please enter a valid password! (See requirements above)</p>
+                Please enter a valid password:<br/>
+                - 1 Lowercase letter<br/>
+                - 1 Uppercase letter<br/>
+                - 1 Number<br/>
+                - 1 Special character<br/>
+                - 6 to 30 characters<br/>
+            </p>
         </div>
     </div>
 
-    <div class="form-group row" [ngClass]="{ 'has-error' : (!passwordMatch.valid &&
+    <div *ngIf="!isAdminEdit" class="form-group row" [ngClass]="{ 'has-error' : (!passwordMatch.valid &&
         !passwordMatch.pristine) || registrationService.newSubmitter.password != registrationService.newSubmitter.passwordMatch}">
         <label for="passwordMatch" class="col-sm-3 col-form-label">Re-enter Password:</label>
         <div class="col-sm-9">
@@ -73,7 +79,7 @@
                     #passwordMatch = "ngModel" required/>
 
             <p *ngIf="(!passwordMatch.valid && !passwordMatch.pristine) ||
-                registrationService.newSubmitter.password != registrationService.newSubmitter.passwordMatch" class="text-danger">Passwords do not match!</p>
+                registrationService.newSubmitter.password != registrationService.newSubmitter.passwordMatch" class="text-danger">Passwords do not match.</p>
         </div>
     </div>
     <input type="hidden" #id = "ngModel" name="id" [(ngModel)]="registrationService.newSubmitter.id" value="{{registrationService.newSubmitter.id}}"/>

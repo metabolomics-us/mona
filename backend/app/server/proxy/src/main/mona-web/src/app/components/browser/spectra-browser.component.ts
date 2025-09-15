@@ -4,22 +4,24 @@
  * This controller is handling the browsing of spectra
  */
 import {Spectrum} from '../../services/persistence/spectrum.resource';
-import {SpectrumModel} from "../../mocks/spectrum.model";
+import {SpectrumModel} from '../../mocks/spectrum.model';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Location} from '@angular/common';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {Metadata} from '../../services/persistence/metadata.resource';
 import {CookieMain} from '../../services/cookie/cookie-main.service';
 import {NGXLogger} from 'ngx-logger';
-import {ToasterConfig, ToasterService} from 'angular2-toaster';
+import {BodyOutputType, ToasterService} from 'angular2-toaster';
 import {GoogleAnalyticsService} from 'ngx-google-analytics';
 import {AuthenticationService} from '../../services/authentication.service';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
 import {MassDeletionService} from '../../services/persistence/mass-deletion.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {first} from 'rxjs/operators';
-import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faChartBar} from '@fortawesome/free-solid-svg-icons';
+import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
+import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import {faBookmark} from '@fortawesome/free-regular-svg-icons';
 import {BehaviorSubject} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -29,7 +31,7 @@ import {MassDeleteModalComponent} from './mass-delete-modal.component';
     selector: 'spectra-browser',
     templateUrl: '../../views/spectra/browse/spectra.html'
 })
-export class SpectraBrowserComponent implements OnInit{
+export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     spectra: SpectrumModel[];
     pagination;
     searchSplash;
@@ -43,12 +45,12 @@ export class SpectraBrowserComponent implements OnInit{
     sizeParam;
     pageParam;
     tableParam;
-    toasterOptions;
     itemsPerPageSelectionSubject;
     tableSubject;
     tableColumnSelectedSubject;
     initial;
     status;
+    massChartReady;
     faEdit = faEdit;
     faTable = faTable;
     faList = faList;
@@ -58,6 +60,10 @@ export class SpectraBrowserComponent implements OnInit{
     faSpinner = faSpinner;
     faBookmark = faBookmark;
     faTrash = faTrash;
+    faChartBar = faChartBar;
+    faStar = faStar;
+    faStarEmpty = faStarEmpty;
+    faStarHalf = faStarHalfAlt;
 
     constructor(public spectrum: Spectrum, public spectraQueryBuilderService: SpectraQueryBuilderService,  public location: Location,
                 public spectrumCache: SpectrumCacheService,  public metadata: Metadata,  public cookie: CookieMain,
@@ -68,12 +74,6 @@ export class SpectraBrowserComponent implements OnInit{
     }
 
     ngOnInit() {
-      this.toasterOptions = new ToasterConfig({
-        positionClass: 'toast-center',
-        timeout: 0,
-        showCloseButton: true
-      });
-
       /**
        * contains all local objects and is our model
        */
@@ -129,8 +129,12 @@ export class SpectraBrowserComponent implements OnInit{
       this.setAndWatchPaginationOptions();
     }
 
+    ngAfterViewInit() {
+        setTimeout(() => this.massChartReady = true, 250);
+    }
+
   loadData() {
-        this.logger.debug('Load Data has been triggered')
+        this.logger.debug('Load Data has been triggered');
 
         // Handle similarity search
         if (this.location.path().split('?')[0] === '/spectra/similaritySearch') {
@@ -399,9 +403,14 @@ export class SpectraBrowserComponent implements OnInit{
      * @param id takes spectrum id
      * @param index not needed
      */
+    // Open spectrum viewer in new tab, used for compact view
     viewSpectrum(id) {
-        return '/spectra/display/' + id;
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree(['/spectra/display', id])
+      );
+      window.open(url, '_blank');
     }
+
 
 
     /**
@@ -470,9 +479,10 @@ export class SpectraBrowserComponent implements OnInit{
         this.pagination.loading = false;
 
         this.toaster.pop({
+            bodyOutputType: BodyOutputType.TrustedHtml,
             type: 'error',
-            title: 'Unexpected Error Occurred During Search',
-            body: `If this error continues to occur, please report the following error on YouTrack \n${error}`
+            title: 'Error During Search',
+            body: `ERROR: ${error}<br/>If this error continues to occur, please report it on the issue tracker found under 'Help'`,
         });
     }
 
@@ -498,7 +508,7 @@ export class SpectraBrowserComponent implements OnInit{
             this.toaster.pop({
               type: 'success',
               title: 'Batch Delete Executed',
-              body: `Batch Delete was successful, refreshing page.`
+              body: `Batch Delete was successful, refresh the page.`
             });
             setTimeout(() => {
               this.resetQuery();
@@ -518,5 +528,21 @@ export class SpectraBrowserComponent implements OnInit{
       this.spectraQueryBuilderService.prepareQuery();
       this.spectraQueryBuilderService.addUserToQuery(this.authenticationService.getCurrentUser().emailAddress);
       this.spectraQueryBuilderService.executeQuery();
+    }
+
+    stars(spectrum) {
+      const result: (0 | 0.5 | 1)[] = [];
+      let rounded = Math.round(spectrum.score.score * 2) / 2; // round to nearest 0.5
+      for (let i = 0; i < 5; i++) {
+        if (rounded >= 1) {
+          result.push(1);
+        } else if (rounded === 0.5) {
+          result.push(0.5);
+        } else {
+          result.push(0);
+        }
+        rounded -= 1;
+      }
+      return result;
     }
 }

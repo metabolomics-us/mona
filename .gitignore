@@ -10,3 +10,7 @@ backend/load_test/*.hprof
 ./data
 git.properties
 target/
+nginx_v2/
+.todo.txt.swp
+pom.xml.bak
+release.txt

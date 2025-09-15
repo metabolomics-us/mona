@@ -196,7 +196,7 @@ class CompoundSMILESProcessor extends AbstractCompoundProcessor with LazyLogging
 @Component
 class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
 
-  val CTS_URL: String = "http://cts.fiehnlab.ucdavis.edu/service/inchikeytomol/"
+  val CTS_URL: String = "http://oldcts.fiehnlab.ucdavis.edu/service/inchikeytomol/"
 
   @Autowired
   protected val restOperations: RestOperations = null

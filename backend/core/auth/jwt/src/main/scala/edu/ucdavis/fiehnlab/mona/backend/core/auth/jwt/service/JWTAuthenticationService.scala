@@ -31,7 +31,7 @@ class JWTAuthenticationService extends AuthenticationService {
     */
   override def authenticate(token: String): Authentication = {
     if (token == null) {
-      throw new AuthenticationServiceException("sorry no token was provided!")
+      throw new AuthenticationServiceException("sorry, no token was provided!")
     }
 
     val claims: Claims = Jwts.parser().setSigningKey(tokenSecret.value).parseClaimsJws(token).getBody

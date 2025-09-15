@@ -95,6 +95,9 @@ export class SpectraQueryBuilderService {
 
         if (query !== '') {
             this.logger.info('Executing RSQL query: "' + query + '"');
+            // Open a new tab on query. Causes bugs with "Add to Query" though, since it gets reset with every new tab
+            // const url = this.router.serializeUrl(this.router.createUrlTree(['/spectra/browse'], { queryParams: { query } }));
+            // window.open(url, '_blank');
             this.router.navigate(['/spectra/browse'],
                 {queryParams:
                         {
@@ -162,7 +165,7 @@ export class SpectraQueryBuilderService {
           const leftBoundary = parseFloat(value) - tolerance;
           const rightBoundary = parseFloat(value) + tolerance;
 
-          return collection + '.name:\'' + name + '\' and ' + collection + '.value>:' + leftBoundary + ' and ' + collection +'.value <:' + rightBoundary + '\'';
+          return collection + '.name:\'' + name + '\' and ' + collection + '.value>:' + leftBoundary + ' and ' + collection +'.value <:' + rightBoundary;
         } else if (typeof partialQuery !== 'undefined') {
           return collection + '.name:\'' + name + '\' and ' + collection + '.value~\'*' + value + '*\'';
         } else {

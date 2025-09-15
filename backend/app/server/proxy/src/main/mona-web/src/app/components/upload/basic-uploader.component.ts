@@ -116,6 +116,9 @@ export class BasicUploaderComponent implements OnInit{
     else if (column === 'annotation') {
       if (this.ionTableSort === '+annotation') { this.ionTableSort = '-annotation'; } else { this.ionTableSort = '+annotation'; }
     }
+    else if (column === 'relativeIntensity') {
+      if (this.ionTableSort === '+relativeIntensity') { this.ionTableSort = '-relativeIntensity'; } else { this.ionTableSort = '+relativeIntensity'; }
+    }
   }
 
 
@@ -190,10 +193,10 @@ export class BasicUploaderComponent implements OnInit{
                     });
                 }
             } else {
-                this.pasteError = 'Spectrum does not have complete ion/intensity pairs!';
+                this.pasteError = 'Spectrum does not have complete ion/intensity pairs';
             }
         } else {
-            this.pasteError = 'Unrecognized spectrum format!';
+            this.pasteError = 'Unrecognized spectrum format';
         }
 
 
@@ -218,6 +221,8 @@ export class BasicUploaderComponent implements OnInit{
         this.currentSpectrum.inchiKey = '';
         this.currentSpectrum.smiles = '';
         this.currentSpectrum.names = [''];
+        this.compoundError = undefined;
+        this.compoundMolError = undefined;
     }
 
 
@@ -316,6 +321,7 @@ export class BasicUploaderComponent implements OnInit{
         this.logger.info('Retrieving MOL data...');
 
         this.compoundError = undefined;
+        this.compoundMolError = undefined;
         this.compoundProcessing = true;
 
 
@@ -364,7 +370,10 @@ export class BasicUploaderComponent implements OnInit{
         }
 
         else {
-            this.compoundError = 'Please provide compound details!';
+            // Having this would cause the error to show before the user even inputted anything (on basic uploader)
+            // this.compoundError = 'Please provide compound details';
+            this.compoundError = '';
+            this.compoundMolError = '';
             this.compoundProcessing = false;
         }
     }
@@ -381,6 +390,8 @@ export class BasicUploaderComponent implements OnInit{
             };
 
             fileReader.readAsText(files[0]);
+            this.compoundError = undefined;
+            this.compoundMolError = undefined;
         }
     }
 
@@ -396,6 +407,7 @@ export class BasicUploaderComponent implements OnInit{
                     this.currentSpectrum.inchiKey = response.inchiKey;
 
                     this.pullNames(response.inchiKey);
+                    this.compoundMolError = '';
                 },
                  (response) => {
                     this.compoundMolError = 'Unable to process provided MOL data!';
@@ -411,6 +423,14 @@ export class BasicUploaderComponent implements OnInit{
         if (this.currentSpectrum.names[this.currentSpectrum.names.length - 1] !== '') {
             this.currentSpectrum.names.push('');
         }
+    }
+
+    removeName(index: number) {
+        this.currentSpectrum.names.splice(index, 1);
+    }
+
+    trackByIndex(index: number, item: any) {
+        return index;
     }
 
 

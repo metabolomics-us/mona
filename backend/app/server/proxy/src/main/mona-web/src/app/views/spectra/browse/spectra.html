@@ -2,7 +2,7 @@
 <div id="splash-page" *ngIf="searchSplash" class="dissolve-animation">
     <div class="page-splash">
         <div class="page-splash-message">
-            Searching
+            Loading
             <span id="loadpulse">
                 <div class="segment">
                     <div id="layer1" class="ball"></div>
@@ -16,25 +16,34 @@
                     <div id="layer3" class="ball"></div>
                     <div id="layer9" class="pulse"></div>
                 </div>
-                <div class="segment">
-                    <div id="layer4" class="ball"></div>
-                    <div id="layer10" class="pulse"></div>
-                </div>
             </span>
         </div>
     </div>
 </div>
-<toaster-container [toasterconfig]="toasterOptions"></toaster-container>
 
 <div #error></div>
 
 <div class="row">
     <div class="col-md-12">
+      <h3><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</h3>
         <ngb-accordion closeOthers="true" #acc="ngbAccordion">
-            <ngb-panel id="display-panel" title="Display Generated Query">
+          <ngb-panel id="display-panel">
+                <ng-template ngbPanelTitle>
+                    <div style="padding: 0" class="btn davis-blue text-decoration-none">
+                        <fa-icon [icon]="faSearch"></fa-icon> Query Information
+                    </div>
+                </ng-template>
                 <ng-template ngbPanelContent>
-                  Generated Query: <button (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
-                  <pre *ngIf="!editQuery" class="input-group-text">{{query !== '' && query !== undefined ? query : "[Empty Query]"}}</pre>
+
+                  <div>
+                    <strong>Note:</strong> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query
+                    downloads to avoid putting unnecessary strain on the servers
+                  </div>
+
+                  <br />
+                  Current query
+                  <button class="btn btn-primary btn-xs" (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
+                  <pre *ngIf="!editQuery" class="input-group-text">{{query !== '' && query !== undefined ? query : "[Empty]"}}</pre>
                   <div *ngIf="editQuery">
                     <form (submit)="updateQuery(query)">
                       <div class="input-group">
@@ -47,15 +56,21 @@
                   </div>
 
                   <div>
-                    Example cURL command to download all spectral JSON records matching the generated query:
+                    <br/>
+                    cURL command to download all spectral records matching the current query (JSON):
                     <pre class="input-group-text">{{{query: query} | curlPipe}}</pre>
                   </div>
 
-                  <div>To download as an MSP file, add the header: <code>Accept: text/msp</code>.</div>
+                  <p></p>
+                  <div>To download results as an MSP file, add the header: <code class="code-text"> Accept: text/msp</code></div>
 
                   <div>
-                    <strong>Note:</strong> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query
-                    downloads to avoid putting unnecessary strain on the servers.
+                    <br/>
+                    <p>
+                      <ngb-alert type="warning" [dismissible]="false">
+                        <a [routerLink]="['/documentation/query']">Learn more</a> about the query system
+                      </ngb-alert>
+                    </p>
                   </div>
                 </ng-template>
             </ngb-panel>
@@ -69,39 +84,39 @@
             <button class="btn btn-primary mr-1"
                     *ngIf="pagination.table === false" (click)="pagination.table = true; setTable()"
                     placement="right"
-                    ngbTooltip="Display Spectra in Tabular Mode">
-              <fa-icon [icon]="faTable" size="2x"></fa-icon>
+                    ngbTooltip="Enable compact view">
+              <fa-icon [icon]="faList"></fa-icon>
             </button>
 
             <button class="btn btn-primary mr-1"
                     *ngIf="pagination.table === true" (click)="pagination.table = false; setTable()"
                     placement="right"
-                    ngbTooltip="Display Spectra in Panel Mode">
-              <fa-icon [icon]="faList" size="2x"></fa-icon>
+                    ngbTooltip="Enable expanded view">
+              <fa-icon [icon]="faTable"></fa-icon>
             </button>
 
             <button class="btn btn-primary" (click)="searchSpectra()" placement="right"
-                    ngbTooltip="Start a New Query">
-              <fa-icon [icon]="faSearch" size="2x"></fa-icon>
+                    ngbTooltip="Start a new query">
+              <fa-icon [icon]="faSearch"></fa-icon>
             </button>
 
             <button class="btn btn-primary ml-1" (click)="resetQuery()" placement="right"
-                    ngbTooltip="Reset the Current Query">
-              <fa-icon [icon]="faSync" size="2x"></fa-icon>
+                    ngbTooltip="Reset the current query">
+              <fa-icon [icon]="faSync"></fa-icon>
             </button>
         </div>
 
         <div class="float-right">
-            <button class="btn btn-danger mr-1" *ngIf="authenticationService.isLoggedIn() " type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
-              <fa-icon [icon]="faTrash" size="2x"></fa-icon> <strong>Batch Delete</strong>
+            <button class="btn btn-danger mr-1" *ngIf="authenticationService.isLoggedIn() && !pagination.table" type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
+              <fa-icon [icon]="faTrash"></fa-icon> Batch Delete
             </button>
-            <button class="btn btn-primary" (click)="acc.isExpanded('display-panel')? acc.collapse('display-panel'): acc.expand('display-panel')" placement="left"
-                    ngbTooltip="Number of spectra retrieved in this query, click to see additional details">
+            <button class="btn btn-primary" (click)="acc.isExpanded('display-panel')? acc.collapse('display-panel'): acc.expand('display-panel')" placement="right"
+                    ngbTooltip="Number of spectra results from this query">
 
-              <fa-icon [icon]="faBookmark" size="2x"></fa-icon>
-              <span *ngIf="authenticationService.isAdmin() && duration !== undefined"> ({{duration | number: '1.2-2'}} s)</span>
+              <fa-icon [icon]="faBookmark"></fa-icon>
               <strong *ngIf="pagination.totalSize > -1"> {{pagination.totalSize|number}}</strong>
               <strong *ngIf="pagination.totalSize <= -1"> Loading...</strong>
+              <span *ngIf="authenticationService.isAdmin() && duration !== undefined"> ({{duration | number: '1.2-2'}} s)</span>
             </button>
         </div>
     </div>
@@ -110,27 +125,20 @@
 <div class="row top7">
     <div class="col-md-12">
         <div ngbDropdown class="d-inline-block float-left">
-            <button class="btn btn-primary" ngbDropdownToggle [disabled]="isSimilaritySearch()">
-               {{pagination.itemsPerPage}} Records Per Page
+            <button class="btn btn-sm btn-primary" ngbDropdownToggle [disabled]="isSimilaritySearch()">
+               {{pagination.itemsPerPage}} records per page
             </button>
             <div ngbDropdownMenu>
                 <button (click)="setPageSize(option)" *ngFor="let option of pagination.itemsPerPageOptions" ngbDropdownItem>{{option+' records/page'}}</button>
             </div>
         </div>
         <div class="float-right" *ngIf="authenticationService.isLoggedIn()">
-          <button class="btn btn-primary" type="button" (click)="queryUserSpectra()">My Submitted Spectra <fa-icon [icon]="faSearch"></fa-icon></button>
+          <button class="btn btn-primary" ngbTooltip="Query your submitted spectra" placement="bottom" type="button" (click)="queryUserSpectra()">My Submitted Spectra</button>
         </div>
     </div>
 </div>
 
 <div class="row top17">
-    <div class="col-md-12">
-      <p>
-        <ngb-alert type="warning" [dismissible]="false">
-          <strong>Click <a [routerLink]="['/documentation/query']">here</a> to learn more the changes to the querying system.</strong>
-        </ngb-alert>
-      </p>
-    </div>
     <!-- display spectra as list -->
     <div class="col-md-12" *ngIf="pagination.table !== true">
         <div *ngFor="let spectrum of spectra" class="m-md-3">
@@ -153,37 +161,57 @@
             <tbody>
             <tr *ngIf="spectra.length === 0"></tr>
 
-            <tr *ngFor="let spectrum of spectra" (click)="viewSpectrum(spectrum.id)">
+            <tr *ngFor="let spectrum of spectra" class="clickable" (click)="viewSpectrum(spectrum.id)">
                 <td>
                     <div>
-                        <div><a style="cursor: pointer" [routerLink]="[viewSpectrum(spectrum.id)]">{{spectrum.id}}</a></div>
+                        <div><a class="davis-blue text-decoration-none clickable"><b>{{spectrum.id}}</b></a></div>
                         <div *ngIf="spectrum.score">
-                            <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
+                        <label ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom">
+                          <span *ngFor="let star of stars(spectrum)" >
+                            <fa-icon size="xs" *ngIf="star === 1" [icon]="faStar"></fa-icon>
+                            <fa-icon size="xs" *ngIf="star === 0.5" [icon]="faStarHalf"></fa-icon>
+                            <fa-icon size="xs" *ngIf="star === 0" [icon]="faStarEmpty"></fa-icon>
+                          </span>
+                        </label>
                         </div>
                         <div *ngIf="spectrum.similarity !== undefined">
-                            <h4><span class="label label-primary" >Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}}</span></h4>
+                            <h6 class="label label-primary text-nowrap">Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}} / 1000</h6>
                         </div>
+                        <br/><br/><br/>
                         <div>
-                          <h6><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h6>
+                          <h6 class="text-nowrap"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h6>
                         </div>
                     </div>
                 </td>
                 <td>
                     <div>
-                        <ul class="list-unstyled">
+                      <br/>
+                        <ul *ngIf="spectrum.compound[0].names.length > 1" class="list-styled" style="margin-left:0 !important; padding-left: 10px !important;">
                             <li *ngFor="let name of spectrum.compound[0].names | slice:0:3">{{name.name}}</li>
+                        </ul>
+                        <ul *ngIf="spectrum.compound[0].names.length == 1" class="list-unstyled">
+                            <li *ngFor="let name of spectrum.compound[0].names | slice:0:3">{{name.name}}</li>
+                        </ul>
+                        <ul *ngIf="spectrum.compound[0].names.length == 0" class="list-unstyled">
+                          <br/><p></p>
+                            <li style="color: gray; font-size: .8rem">N/A</li>
                         </ul>
                     </div>
                 </td>
-                <td>
-                    <div class="text-center" style="width:150px;height:150px">
-                        <div [libChemdoodle]="spectrum.compound[0].molFile" class="center-block" readonly="true"
-                             [id]="'bioSketch_'+spectrum.id+'_true'" [width]="150" [height]="150"></div>
-                    </div>
+                <td class="d-flex justify-content-center">
+                        <div *ngIf="spectrum.compound[0].molFile && massChartReady" [libChemdoodle]="spectrum.compound[0].molFile" class="center-block" readonly="true" style="padding-top: 8px"
+                             [id]="'bioSketch_'+spectrum.id+'_true'" [width]="130" [height]="126">
+                        </div>
+                        <div *ngIf="!spectrum.compound[0].molFile">
+                          <br/><br/><p></p>
+                          <ul class="list-unstyled">
+                            <li style="color: gray; font-size: .8rem">N/A</li>
+                          </ul>
+                        </div>
                 </td>
                 <td>
                   <div class="masspec-mini text-center">
-                    <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.id" [miniPlot]="true" [spectrum]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
+                    <lib-ng-mass-spec-plotter *ngIf="massChartReady === true" [id]="'massSpec_'+spectrum.id" [miniPlot]="true" [spectrum]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
                   </div>
                 </td>
                 <td>
@@ -197,12 +225,14 @@
     </div>
 
     <!-- loading information -->
-    <div class="text-center" *ngIf="pagination.loading && !searchSplash">
+    <div class="w-100 text-center" *ngIf="pagination.loading && !searchSplash">
+      <br />
       <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading...</h4>
     </div>
 
-    <div class="text-center" *ngIf="!pagination.loading && spectra.length == 0">
-        <h4>No results found!</h4>
+    <div class="w-100 text-center" *ngIf="!pagination.loading && spectra.length == 0">
+        <br />
+        <h4>No results found</h4>
     </div>
 
     <!-- spacer -->
@@ -210,7 +240,7 @@
 </div>
 
 <!-- pagination -->
-<div *ngIf="!pagination.loading && pagination.totalSize > -1 && !isSimilaritySearch()" class="d-flex justify-content-center">
+<div *ngIf="!pagination.loading && pagination.totalSize > 0 && !isSimilaritySearch()" class="d-flex justify-content-center davis-blue">
   <ngb-pagination
     [collectionSize]="pagination.totalSize"
     [maxSize]="pagination.maxSize"

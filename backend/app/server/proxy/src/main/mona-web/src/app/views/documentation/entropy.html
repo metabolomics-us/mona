@@ -1,102 +1,120 @@
 <div class="row">
   <div class="col-md-12">
-    <h2> The spectral entropy and normalized entropy in MoNA</h2>
-    <p>We use the spectral entropy and normalized entropy to measure the spectra complexity of the spectra
-      in MoNA database and label the low-quality spectra.
-    </p>
-    <p>
-      When a spectrum has (normalized entropy)<sup>4</sup> higher than 0.8 and spectral entropy higher
-      than 3, we
-      label it as a low-quality spectrum. Note: GC-MS Spectra has an exception and has been evaluated as clean
-      regardless of (normalized entropy)<sup>4</sup> and spectral entropy.
-    </p>
-    <hr>
-    <div>
-      <h4 class="font-weight-bold">What is spectral entropy?</h4>
-      <p>
-        Spectral entropy is a measure of the total information content of an MS/MS spectrum. Many people use "peak number" to
-        measure spectral complexity, however, spectra with same number of peaks are not contains similar information. For
-        example, in the figure 1, all the three spectra have the same number of peaks, but they have different information
-        content. Therefore, we introduce spectral entropy to precisely measure the information content of a spectrum.
-      </p>
-      <div class="text-center">
-        <img src="../../../assets/figure_1.jpg"
-                 alt="Figure 1: Spectra have same number of peaks but different spectral entropy."
-                 width="400px">
-        <p class="center"><small>
-          Figure 1: Spectra have same number of peaks but different spectral entropy.
-        </small>
-        </p>
-      </div>
-      <h4 class="font-weight-bold">How to calculate spectral entropy?</h4>
-      <p>
-        The spectral entropy is similar to the Shannon entropy in the theory of information. The spectral entropy can be
-        calculated by the following formula:
-      </p>
-      <div class="text-center">
-        <img src="../../../assets/figure_2.jpg" alt="Figure 2. The formula of calculating spectral entropy."
-                 width="250px"
-                 class="center">
+    <h3>Spectral Entropy and Normalized Entropy in MoNA</h3>
+    <h6>MoNA uses spectral and normalized entropy to measure the quality and complexity of spectra in the database</h6>
+    <br/><br/><br/>
 
-        <p class="center"><small>
-          Figure 2. The formula of calculating spectral entropy.
-        </small>
-        </p>
-      </div>
-      <p>
-        On the other side, the spectral entropy can be seen as the intensity weighted spectral peak number.
+    <h4>Criteria for Spectrum Quality</h4>
+    <hr>
+    <p>
+      <span class="text-success"><b>CLEAN</b></span> = (Normalized entropy)<sup>4</sup> &le; 0.8 AND spectral entropy &le; 3.0<br/>
+      <span class="text-danger"><b>NOISY</b></span> = (Normalized entropy)<sup>4</sup> &gt; 0.8 AND spectral entropy &gt; 3.0<br/>
+    </p>
+
+    <p class="ml-3">
+      <b>Note:</b> GC-MS Spectra has an exception and is evaluated as clean
+      regardless of entropy levels.
+    </p>
+
+    <br/> <br/>
+    <div>
+      <h4>What is Spectral Entropy?</h4>
+    <hr>
+    <p>
+      Spectral entropy measures the total information content of an MS/MS spectrum.
+      Spectral entropy is much more robust and refined compared to the commonly used "peak number" measurement. See Figure 1.
+      <br/> <br/>
+    </p>
+    <div class="text-center">
+      <img src="../../../assets/figure_1.jpg"
+               alt="Figure 1: Spectra with the same number of peaks but different spectral entropy"
+               width="600px">
+      <p class="center">
+        <br/>
+        <b>Figure 1 -</b> Spectra with the same number of peaks but different spectral entropy
       </p>
-      <h4 class="font-weight-bold">The spectral entropy distribution in different database.</h4>
-      <p>
-        Most spectra of small molecule in the database have spectral entropy between 0 to 5. See the figure 3.
+    </div>
+
+    <br/> <br/> <br/> <br/> <br/>
+    <h4>How to Calculate Spectral Entropy</h4>
+  <hr>
+  <p>
+    The spectral entropy is similar to the <em>Shannon entropy</em> in the theory of information.
+    The spectral entropy can be calculated using the formula in Figure 2.
+    Spectral entropy can be seen as the intensity weighted spectral entropy.
+  </p>
+  <div class="text-center">
+    <img src="../../../assets/figure_2.jpg" alt="Figure 2. The formula of calculating spectral entropy"
+             width="450px"
+             class="center">
+
+    <p class="center">
+      <br/>
+      <b>Figure 2 -</b> The formula for calculating spectral entropy
+    </p>
+  </div>
+
+    <br/> <br/> <br/> <br/> <br/>
+    <h4>Spectral Entropy Across Different Databases</h4>
+    <hr>
+    <p>
+      Most small molecule spectra have a spectral entropy between 0 and 5. See Figure 3.
+    </p>
+    <div class="text-center">
+      <img src="../../../assets/figure_3.jpg"
+               alt="Figure 3: Distribution of spectral entropies in the NIST20, MassBank.us and GNPS databases."
+               width="600px" class="center">
+      <p class="center">
+        <br/>
+        <b>Figure 3 -</b> Distribution of spectral entropies in the NIST20, MassBank.us and GNPS databases.
       </p>
-      <div class="text-center">
-        <img src="../../../assets/figure_3.jpg"
-                 alt="Figure 3: Distribution of spectral entropies in the NIST20, MassBank.us and GNPS databases."
-                 width="400px" class="center">
-        <p class="center"><small>
-          Figure 3: Distribution of spectral entropies in the NIST20, MassBank.us and GNPS databases.
-        </small>
-        </p>
-      </div>
+    </div>
+
+    <br/><br/><br/><br/><br/>
+    <h4>How to Calculate Normalized Entropy</h4>
+    <hr>
+    <p>
+      The spectral entropy ranges from 0 to <code class="code-text">ln(peak number)</code>.
+      The spectral entropy can be normalized to <code class="code-text">[0,1]</code> by dividing the spectral entropy by <code class="code-text">ln(peak number)</code>.
+      Therefore, normalized entropy is calculated as follows:
+      <br/> <br/>
+    </p>
+    <div class="text-center">
+      <img src="../../../assets/figure_4.jpg" alt="Figure 4. The formula of calculating normalized entropy."
+               width="450px" class="center">
+      <p class="center">
+        <br/>
+        <b>Figure 4 -</b> The formula of calculating normalized entropy.
+      </p>
+    </div>
+
+    <br/><br/><br/><br/><br/>
+    <h4>Distribution of Normalized Entropy</h4>
+    <hr>
+    <p>
+      We injected 216 metabolites into 13 different concentrations, and collected in 3 different collision energies, which
+      resulted in 9,695 spectra. We then divided those spectra into two groups: high quality and low quality. The normalized
+      entropy of each group is shown in Figure 5.
+    </p>
+    <div class="text-center">
+      <img src="../../../assets/figure_5.jpg" alt="Figure 5. Distribution of normalized entropies in spectra with different quality."
+               width="450px" class="center">
+      <p class="center">
+        <br/>
+        <b>Figure 5 -</b> Distribution of normalized entropy in spectra with different quality
+      </p>
+    </div>
+
+      <br/>
       <hr>
-      <h4 class="font-weight-bold">How to calculate normalized entropy?</h4>
+      <h4>Reference</h4>
       <p>
-        The spectral entropy is ranged from 0 to ln(peak number). The spectral entropy can be normalized to 0 to 1 by dividing
-        the spectral entropy by ln(peak number). Therefore, we have normalized entropy as follows:
-      </p>
-      <div class="text-center">
-        <img src="../../../assets/figure_4.jpg" alt="Figure 4. The formula of calculating normalized entropy."
-                 width="300px" class="center">
-        <p class="center"><small>
-          Figure 4. The formula of calculating normalized entropy.
-        </small>
-        </p>
-      </div>
-      <h4 class="font-weight-bold">The distribution of normalized entropy.</h4>
-      <p>
-        We injected 216 metabolites in 13 different concentrations, and collecting in 3 different collision energy, which
-        resulting 9,695 spectra. We divided those spectra into two groups: high quality and low quality, the normalized
-        entropy of each group is shown in the figure 5.
-      </p>
-      <div class="text-center">
-        <img src="../../../assets/figure_5.jpg" alt="Figure 5. Distribution of normalized entropies in spectra with different quality."
-                 width="400px" class="center">
-        <p class="center"><small>
-          Figure 5. Distribution of normalized entropies in spectra with different quality.
-        </small>
-        </p>
-      </div>
-      <hr>
-      <h4 class="font-weight-bold">Reference:</h4>
-      <p>
-        Yuanyue Li, Tobias Kind, Jacob Folz, Arpana Vaniya, Sajjan Singh Mehta & Oliver Fiehn
+        Yuanyue Li, Tobias Kind, Jacob Folz, Arpana Vaniya, Sajjan Singh Mehta & Oliver Fiehn<br/>
 
         <a href="https://doi.org/10.1038/s41592-021-01331-z">Spectral entropy outperforms MS/MS dot
-          product similarity for small-molecule
-          compound identification.</a>
+          product similarity for small-molecule compound identification</a><br/>
 
-        Nat Methods 18, 1524–1531 (2021).
+        Nat Methods 18, 1524–1531 (2021)
       </p>
     </div>
   </div>

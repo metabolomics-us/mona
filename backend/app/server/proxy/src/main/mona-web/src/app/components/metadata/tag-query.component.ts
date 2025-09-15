@@ -7,7 +7,7 @@ import {SpectraQueryBuilderService} from '../../services/query/spectra-query-bui
 import {Input} from '@angular/core';
 import {Component} from '@angular/core';
 import {faFlask, faCaretRight} from '@fortawesome/free-solid-svg-icons';
-import {Tag} from "../../mocks/tag.model";
+import {Tag} from '../../mocks/tag.model';
 
 @Component({
     selector: 'tag-query',

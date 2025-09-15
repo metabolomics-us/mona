@@ -1,6 +1,6 @@
-<h3><fa-icon [icon]="faSearch"></fa-icon> Search</h3>
+<h3>Quick Search</h3>
 
-<form (ngSubmit)="submitQuery()">
+<form (ngSubmit)="submitQuery()" #searchForm="ngForm">
     <div class="row">
         <div class="col-md-6">
             <div class="table-responsive">
@@ -48,7 +48,8 @@
                                 <input type="number" [(ngModel)]="query.exactMassTolerance"
                                        name="queryMassTolerance"
                                        class="form-control"
-                                       value="0.5">
+                                       value="0.5"
+                                       placeholder="0.5">
                                 <div class="input-group-prepend"><span class="input-group-text">Da</span></div>
                             </div>
                         </td>
@@ -57,6 +58,7 @@
                 </table>
             </div>
 
+            <br/>
             <div class="form-group row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
@@ -69,7 +71,9 @@
                             <tbody>
                             <tr>
                                 <td *ngFor="let x of ionMode">
-                                    <input type="checkbox" name="ionSelected" [(ngModel)]="x.selected"> {{x.name}}
+                                    <label class="clickable">
+                                        <input type="checkbox" name="ionSelected" [(ngModel)]="x.selected"> {{x.name}}
+                                    </label>
                                 </td>
                             </tr>
                             </tbody>
@@ -92,10 +96,11 @@
                             <tbody>
                             <tr>
                                 <td>
-                                     <span *ngFor="let x of sourceIntroduction">
-                                         <input type="checkbox" name="sourceIntro" [(ngModel)]="x.selected"> {{x.name}} ({{x.abv}})
-                                         <br/>
-                                     </span>
+                                     <div *ngFor="let x of sourceIntroduction">
+                                        <label class="clickable">
+                                          <input type="checkbox" name="sourceIntro" [(ngModel)]="x.selected"> {{x.name}} ({{x.abv}})
+                                        </label>
+                                     </div>
                                 </td>
                             </tr>
                             </tbody>
@@ -111,13 +116,16 @@
                         <table class="table table-condensed">
                             <thead>
                             <tr>
-                                <th>MS Type</th>
+                                <th>MS Level</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td *ngFor="let x of msType">
-                                    <input type="checkbox" name="msSelected" [(ngModel)]="x.selected"> {{x.name}}
+                                <!-- Align ms levels with equal spacing (style.width...) -->
+                                <td *ngFor="let x of msType" [style.width.%]="100 / msType.length">
+                                    <label class="clickable">
+                                        <input type="checkbox" name="msSelected" [(ngModel)]="x.selected"> {{x.name}}
+                                    </label>
                                 </td>
                             </tr>
                             </tbody>
@@ -133,16 +141,21 @@
                         <table class="table table-condensed">
                             <thead>
                             <tr>
-                                <th>Library</th>
+                                <th>
+                                  Libraries
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
                                 <td>
-                                    <span *ngFor="let x of libraryTags">
-                                        <input type="checkbox" name="libraryTag" [(ngModel)]="x.selected" label> {{x.text}}
-                                        <br />
-                                    </span>
+                                    <!-- Show first 3 libraries or all based on expandedLibraries toggle -->
+                                    <div *ngFor="let x of (expandedLibraries ? libraryTags : (libraryTags | slice:0:3))">
+                                        <label class="clickable">
+                                            <input type="checkbox" name="libraryTag" [(ngModel)]="x.selected"> {{x.text}}
+                                        </label>
+                                    </div>
+                                    <button *ngIf="libraryTags.length > 3" type="button" class="btn btn-link btn-sm text-decoration-none davis-blue" (click)="toggleLibraryExpansion()">{{expandedLibraries ? 'Show less' : 'Show more'}}</button>
                                 </td>
                             </tr>
                             </tbody>
@@ -153,26 +166,36 @@
         </div>
     </div>
 
-    <div class="row mb-2">
-        <div class="col-md-12 h-auto">
-            <ngb-accordion #acc activeIds="additionalTags">
-                <ngb-panel id="additionalTags" title="Add Additional Tags to Query">
-                    <ng-template ngbPanelContent>
-                        <tag-display [tags]="queryTags"></tag-display>
-                    </ng-template>
-                </ngb-panel>
-            </ngb-accordion>
-        </div>
+  <!-- Additional tags -->
+  <div class="row mb-2">
+    <div class="col-md-12 h-auto">
+      <ngb-accordion #acc>
+        <ngb-panel id="additionalTags">
+          <ng-template ngbPanelTitle>
+          <span class="accordion-title">
+            Additional Tags
+            <fa-icon *ngIf="acc.isExpanded('additionalTags')" [icon]="faCaretDown" class="ml-2"></fa-icon>
+            <fa-icon *ngIf="!acc.isExpanded('additionalTags')" [icon]="faCaretRight" class="ml-2"></fa-icon>
+          </span>
+          </ng-template>
+          <ng-template ngbPanelContent>
+            <tag-display [tags]="queryTags"></tag-display>
+          </ng-template>
+        </ngb-panel>
+      </ngb-accordion>
     </div>
+  </div>
 
-    <div class="row">
+  <br />
+
+  <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
-                <div class="col-sm-2 mr-2">
+                <div class="col-sm-2">
                     <button type="submit" class="btn btn-primary">Search</button>
                 </div>
                 <div class="col-sm-2">
-                    <button type="reset" class="btn btn-secondary">Reset</button>
+                    <button type="button" class="btn btn-secondary" (click)="searchForm.resetForm(); resetForm();">Reset</button>
                 </div>
             </div>
         </div>

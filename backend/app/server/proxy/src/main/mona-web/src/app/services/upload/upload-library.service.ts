@@ -65,6 +65,9 @@ export class UploadLibraryService{
          */
         const resolveByName = (spec, resolve, reject) => {
             if (spec.name) {
+              // TODO: chemifyService is outdated, uses wrong URL (needs oldcts.fiehnlab...),
+              //  uses old nameToInChIKey function here, look at new version
+              //  written in compound-conversion.service.ts (8/28/25)
                 this.chemifyService.nameToInChIKey(spec.name, (key) => {
                     if (key === null) {
                         reject('sorry no InChI Key found for ' + spec.name + ', at name to InChI key!');
@@ -79,6 +82,9 @@ export class UploadLibraryService{
             // if we have a bunch of names
             else if (spec.names && spec.names.length > 0) {
 
+                // TODO: chemifyService is outdated, uses wrong URL (needs oldcts.fiehnlab...),
+                //  uses old nameToInChIKey function here, look at new version
+                //  written in compound-conversion.service.ts (8/28/25)
                 this.chemifyService.nameToInChIKey(spec.names[0], (key) => {
                     if (key === null) {
                         reject('sorry no InChI Key found for ' + spec.names[0] + ', at names to InChI key!');
@@ -92,7 +98,7 @@ export class UploadLibraryService{
 
             // we got nothing so we give up
             else {
-                reject('sorry given object was invalid, we need a name, or an InChI code, InChI Key or an array with names for this to work!');
+                reject('sorry, the given object was invalid. We need a name, InChI code, InChI Key, or an array with names for this to work!');
             }
         };
 
@@ -211,7 +217,9 @@ export class UploadLibraryService{
                 s.biologicalCompound.names = [];
 
                 if (typeof spectra.name !== 'undefined') {
-                    if (s.spectrum.name !== '') {
+                    // accessing s.spectrum.name here breaks uploading because s.spectrum is undefined
+                    // use spectra.name instead (9/3/25)
+                    if (spectra.name !== '') {
                       s.biologicalCompound.names.push({name: spectra.name});
                     }
                 }

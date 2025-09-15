@@ -6,26 +6,8 @@
         </div>
         <div class="col-sm-12">
           <p class="model-title" *ngIf="state === 'register'">
-            An account is required to download large queries and to submit spectra.
-            Please sign up for a free account!
-          </p>
-          <p class="modal-title">
-            <strong>Follow these password guidelines:</strong>
-          </p>
-          <p class="modal-title">
-            1) 1 Lower Case Letter
-          </p>
-          <p class="modal-title">
-            2) 1 Upper Case Letter
-          </p>
-          <p class="modal-title">
-            3) 1 Number
-          </p>
-          <p class="modal-title">
-            4) 1 Special Character
-          </p>
-          <p class="modal-title">
-            5) Minimum length of 6, Maximum of 30
+            An account is required to download large queries and submit spectra.
+            Signing up is free!
           </p>
         </div>
       </div>
@@ -55,14 +37,14 @@
     </div>
 
     <!--<div submitter-form ng-show="state == 'register'"></div>-->
-    <submitter-form (formStatus)="submitterFormStatus = $event" *ngIf="state ==='register'"></submitter-form>
+    <submitter-form [isAdminEdit]="false" (formStatus)="submitterFormStatus = $event" *ngIf="state ==='register'"></submitter-form>
 
     <div *ngIf="state === 'registering'">
         <h4><span class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Registering account...</span></h4>
     </div>
 
     <div *ngIf="state === 'success'" class="text-success text-center">
-        <div><span class="h2"><fa-icon [icon]="faCheck"></fa-icon></span> <span class="h4">Success! You may now log in.</span></div>
+        <div><span class="h2"><fa-icon [icon]="faCheck"></fa-icon></span> <span class="h4"> Success! You may now log in.</span></div>
         <br />
         <div><button class="btn btn-success btn-lg" (click)="logIn()">Log In</button></div>
     </div>
@@ -75,14 +57,12 @@
 </div>
 
 <div class="modal-footer" *ngIf="state !== 'success'">
-    <button class="btn btn-primary"
+    <button class="btn btn-primary btn-block"
             (click)="submitRegistration()"
-            [disabled]="!submitterFormStatus"
+            [disabled]="!submitterFormStatus || registrationService.newSubmitter.password !== registrationService.newSubmitter.passwordMatch"
             *ngIf="state === 'register'">Register</button>
-  <button class="btn btn-primary"
+  <button class="btn btn-primary btn-block"
           (click)="resetState()"
           *ngIf="state === 'fail'">Try Again</button>
-
-    <button class="btn btn-default" (click)="cancelDialog()">Close</button>
 </div>
 

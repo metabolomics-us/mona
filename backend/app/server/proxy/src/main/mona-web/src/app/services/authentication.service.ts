@@ -13,6 +13,7 @@ import {User} from '../mocks/user.model';
 import {distinctUntilChanged, first, map} from 'rxjs/operators';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
+import {ToasterService} from 'angular2-toaster';
 
 @Injectable()
 export class AuthenticationService{
@@ -28,7 +29,7 @@ export class AuthenticationService{
     private readonly ADMIN_ROLE_NAME;
     constructor(public submitter: Submitter, public cookie: CookieMain,
                 public logger: NGXLogger, public modalService: NgbModal,
-                public http: HttpClient) {
+                public http: HttpClient, public toaster: ToasterService) {
         this.ADMIN_ROLE_NAME = 'ADMIN';
     }
 
@@ -108,6 +109,10 @@ export class AuthenticationService{
         this.currentUserSubject.next(null);
         this.isAuthenticatedSubject.next(false);
         this.cookie.remove('AuthorizationToken');
+        this.toaster.pop({
+          type: 'success',
+          title: 'Logged out',
+        });
     }
 
 

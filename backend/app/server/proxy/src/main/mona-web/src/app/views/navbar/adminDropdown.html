@@ -1,10 +1,9 @@
 <li class="dropdown mr-4" ngbDropdown *ngIf="isAdmin()">
     <a role="button" class="dropdown-toggle" ngbDropdownToggle>
-        <fa-icon [icon]="faUserShield"></fa-icon> Administration
-        <fa-icon [icon]="faCaretDown"></fa-icon>
+        <fa-icon [icon]="faUserShield"></fa-icon> Admin
     </a>
     <ul class="dropdown-menu" ngbDropdownMenu>
-        <li><button ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['admin/submitters']">Manage Submitters</button></li>
-        <li><button ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['admin/manage-spectra']">Manage Spectra</button></li>
+        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['admin/submitters']">Manage Submitters</a></li>
+        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['admin/manage-spectra']">Manage Spectra</a></li>
     </ul>
 </li>

@@ -61,7 +61,7 @@ export class SimilaritySearchFormComponent implements OnInit{
                 this.pasteError = 'Spectrum does not have complete ion/intensity pairs!';
             }
         } else {
-            this.pasteError = 'Unrecognized spectrum format!';
+            this.pasteError = 'Unrecognized spectrum format';
         }
     }
 

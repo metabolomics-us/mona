@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
     <artifactId>jwt</artifactId>
-    <version>2.6.3-SNAPSHOT</version>
+    <version>3.0.0-RELEASE</version>
     <name>jwt</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
         <artifactId>auth</artifactId>
-        <version>2.6.3-SNAPSHOT</version>
+        <version>3.0.0-RELEASE</version>
     </parent>
 
     <dependencies>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
             <artifactId>api</artifactId>
-            <version>2.6.3-SNAPSHOT</version>
+            <version>3.0.0-RELEASE</version>
         </dependency>
 
         <dependency>
@@ -66,7 +66,7 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>postgresql</artifactId>
-            <version>2.6.3-SNAPSHOT</version>
+            <version>3.0.0-RELEASE</version>
         </dependency>
 
 

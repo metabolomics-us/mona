@@ -1,23 +1,23 @@
 <li class="dropdown mr-4" ngbDropdown>
     <a role="button" class="dropdown-toggle" ngbDropdownToggle>
-      <fa-icon [icon]="faQuestionCircle"></fa-icon> Help <fa-icon [icon]="faCaretDown"></fa-icon>
+      <fa-icon [icon]="faQuestionCircle"></fa-icon> Help
     </a>
     <ul class="dropdown-menu" ngbDropdownMenu>
+        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/documentation/query']">MoNA Query Guide</a></li>
+        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['documentation/uploadLibrary']">Create New Library Feature</a></li>
+        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['documentation/entropy']">Entropy Explained</a></li>
+        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/documentation/terms']">Useful Words & Terms</a></li>
+        <li><a ngbDropdownItem href="http://mona.fiehnlab.ucdavis.edu/swagger-ui.html" target="_blank">Swagger API Docs</a></li>
+        <li><a ngbDropdownItem href="https://github.com/metabolomics-us/mona" target="_blank">GitHub Repository</a></li>
+        <li><a ngbDropdownItem href="https://github.com/metabolomics-us/mona/issues" target="_blank">Report an Issue</a></li>
         <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/documentation/license']">License</a></li>
-        <li><a ngbDropdownItem href="http://mona.fiehnlab.ucdavis.edu/swagger-ui.html">Swagger API Docs</a></li>
-        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/documentation/query']">REST Service Query</a></li>
-        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['documentation/uploadLibrary']">Create New Library</a></li>
-        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['documentation/entropy']">Spectral and Normalized Entropy</a></li>
-        <li><a ngbDropdownItem
-                href="https://github.com/metabolomics-us/mona/wiki/REST-Authentication-and-Uploading"
-                target="_blank">REST API Authentication</a></li>
-        <li><a ngbDropdownItem
-                href="https://github.com/metabolomics-us/mona/wiki/webhooks-and-synchronization"
-                target="_blank">Webhooks and Synchronization</a></li>
-
-        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/documentation/terms']">Terms and Abbreviations</a></li>
-        <li><a ngbDropdownItem href="https://github.com/metabolomics-us/mona" target="_blank">Sourcecode</a></li>
-        <li><a ngbDropdownItem href="https://github.com/metabolomics-us/mona/wiki" target="_blank">Wiki</a></li>
-        <li><a ngbDropdownItem href="https://github.com/metabolomics-us/mona/issues" target="_blank">Bug Reports / Feature requests</a></li>
+<!--      Wiki no longer reachable?-->
+<!--        <li><a ngbDropdownItem-->
+<!--                href="https://github.com/metabolomics-us/mona/wiki/REST-Authentication-and-Uploading"-->
+<!--                target="_blank">REST API Authentication</a></li>-->
+<!--        <li><a ngbDropdownItem-->
+<!--                href="https://github.com/metabolomics-us/mona/wiki/webhooks-and-synchronization"-->
+<!--                target="_blank">Webhooks and Synchronization</a></li>-->
+<!--        <li><a ngbDropdownItem href="https://github.com/metabolomics-us/mona/wiki" target="_blank">Wiki</a></li>-->
     </ul>
 </li>

@@ -5,6 +5,7 @@ import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {NGXLogger} from 'ngx-logger';
 import {AuthenticationService} from '../../services/authentication.service';
+import {RegistrationService} from '../../services/registration.service';
 import {first} from 'rxjs/operators';
 import {faSpinner, faCheck} from '@fortawesome/free-solid-svg-icons';
 
@@ -21,7 +22,7 @@ export class AuthenticationModalComponent implements OnInit {
     faCheck = faCheck;
 
     constructor(public authenticationService: AuthenticationService, public activeModal: NgbActiveModal,
-                public logger: NGXLogger) {}
+                public logger: NGXLogger, public registrationService: RegistrationService) {}
 
     ngOnInit() {
         this.errors = [];
@@ -73,5 +74,10 @@ export class AuthenticationModalComponent implements OnInit {
 
     cancelDialog() {
         this.activeModal.dismiss('cancel');
+    }
+
+    register() {
+      this.activeModal.dismiss({$value: 'cancel'});
+      this.registrationService.requestModal();
     }
 }

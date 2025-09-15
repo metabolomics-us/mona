@@ -1,11 +1,10 @@
 <span class="dropdown" ngbDropdown>
-    <a role="button" class="dropdown-toggle" ngbDropdownToggle>
-        <fa-icon [icon]="faSearch"></fa-icon>
+    <a role="button" class="dropdown-toggle davis-blue text-decoration-none" style="font-family: Roboto, serif" ngbDropdownToggle>
         <ng-content></ng-content>
     </a>
 
     <ul class="uib-dropdown-menu" ngbDropdownMenu>
-        <li><a (click)="newQuery()">Create New Query</a></li>
-        <li><a (click)="addToQuery()">Add to Query</a></li>
+        <li><button class="query-btn" ngbDropdownItem (click)="newQuery()">Create New Query</button></li>
+        <li><button class="query-btn" ngbDropdownItem (click)="addToQuery()">Add to Query</button></li>
     </ul>
 </span>

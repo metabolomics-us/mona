@@ -5,21 +5,15 @@
 
             <p>
                 MassBank of North America (MoNA) is a metadata-centric, auto-curating repository designed for efficient storage and querying of mass spectral records.
-                It intends to serve as a the framework for a centralized, collaborative database of metabolite mass spectra, metadata and associated compounds.
-                MoNA currently contains {{totalCount}} mass spectral records from experimental and in-silico libraries as well as from user contributions.
+                It intends to serve as a the framework for a centralized, collaborative database of metabolite mass spectra, metadata, and associated compounds.
+                MoNA currently contains {{totalCount | number:'1.0-0'}} mass spectral records from experimental and in-silico libraries, as well as user contributions.
             </p>
 
-            <p>
-                MoNA has recently been redesigned, with significant improvements to server-side architecture, query structure, and search speed.
-                We are actively improving and adding features, so please be patient as functionality is added.
-                If you notice any major issues, feel free to report them using the issue tracker linked below.
-            </p>
             <br />
 
             <p style="text-align: center">
-                <a [routerLink]="['/spectra/search']" class="btn btn-info btn-lg mr-1"><fa-icon [icon]="faSearch"></fa-icon> Search Spectra</a>
-              <a [routerLink]="['/spectra/browse']" class="btn btn-info btn-lg mr-1 ml-1"><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</a>
-              <a href="https://github.com/metabolomics-us/mona/issues" class="btn btn-warning btn-lg ml-1"><fa-icon [icon]="faExclamationTriangle"></fa-icon> GitHub Issue Tracker</a>
+              <a [routerLink]="['/spectra/search']" class="btn btn-primary btn-lg mr-1"><fa-icon [icon]="faSearch"></fa-icon> Search Spectra</a>
+              <a [routerLink]="['/spectra/browse']" class="btn btn-primary btn-lg mr-1 ml-1"><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</a>
             </p>
         </div>
     </div>
@@ -32,13 +26,26 @@
             <hr/>
 
           <div class="news-cell">
+            <span class="news-title"><h4>MoNA Overhaul</h4></span>
+            <div class="news-date">September 15th, 2025</div>
+            <div class="content">
+              <p>
+                MoNA has received a major overhaul. Issues such as uploading spectra are finally fixed,
+                and almost every piece of the frontend has been updated with functionality and user experience in mind.
+                If you encounter any issues or have any suggestions, please report them to the <a href="https://github.com/metabolomics-us/mona/issues" target="_blank"> issue tracker</a>.
+                For a more complete list of changes, see the <a href="https://github.com/metabolomics-us/mona/releases/tag/v2025.09.15" target="_blank">release notes</a>.
+              </p>
+            </div>
+          </div>
+          <hr/>
+          <div class="news-cell">
             <span class="news-title"><h4>MoNA Backend Updates</h4></span>
             <div class="news-date">January 1st, 2023</div>
             <div class="content">
               <p>
                 MoNA has undergone substantial changes to its backend services. Frontend features work as they did before with an exception of
                 the RSQL query system which has been changed to the <a [routerLink]="['/documentation/query']">Spring Filtering system</a>.
-                For more detailed notes of the code changes, click <a href="https://github.com/metabolomics-us/mona/wiki/MoNA-2022-Spring-2.6.3-Update-and-Postgresql-Data-Migration">here</a>.
+                For more detailed notes of the code changes, click <a href="https://github.com/metabolomics-us/mona/releases/tag/v2023.02.13">here</a>.
                 To see new schema changes, see the updated <a href="http://mona.fiehnlab.ucdavis.edu/swagger-ui.html">Swagger API Docs</a>.
               </p>
             </div>
@@ -46,7 +53,7 @@
           <hr/>
           <div class="news-cell">
             <span class="news-title"><h4>Ability to Delete Your Submitted Spectra</h4></span>
-            <div class="news-date"><em>March 4th, 2022</em></div>
+            <div class="news-date">March 4th, 2022</div>
             <div class="content">
               <p>
                 A new feature has been introduced that allows signed in users to delete spectra that matches their submitter ID. This feature
@@ -59,7 +66,7 @@
           <hr/>
         </div>
         <div class="col-md-6 float-right">
-            <h3 class="font-weight-bold">Submitter High Scores</h3>
+            <h3 class="font-weight-bold">Top Submitters</h3>
 
             <spectra-top-scores-for-users limit="10">Please wait while we load the data for you...</spectra-top-scores-for-users>
         </div>
@@ -69,18 +76,18 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h3 class="font-weight-bold">Top Rated Spectral Records</h3>
+            <h3 class="font-weight-bold">Spectra Showcase</h3>
             <br />
 
-            <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="true">
+            <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="showcaseSpectra.length > 0">
+                <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">
+                    <div class="text-center">
+                      <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Spectra Showcase...</h4>
+                    </div>
+                </ng-template>
                 <ng-template ngbSlide *ngFor="let spectrum of showcaseSpectra">
                     <div class="picsum-img-wrapper">
                       <display-spectra-panel class="text-left" [spectrum]="spectrum"></display-spectra-panel>
-                    </div>
-                </ng-template>
-                <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">
-                    <div class="text-center">
-                      <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Showcase Spectra...</h4>
                     </div>
                 </ng-template>
             </ngb-carousel>

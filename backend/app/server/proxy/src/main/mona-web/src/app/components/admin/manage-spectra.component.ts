@@ -6,7 +6,7 @@ import {NGXLogger} from 'ngx-logger';
 import {Subscription} from 'rxjs';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Spectrum} from '../../services/persistence/spectrum.resource';
-import {ToasterConfig, ToasterService} from 'angular2-toaster';
+import {ToasterService} from 'angular2-toaster';
 import {AdminService} from '../../services/persistence/admin.resource';
 
 @Component({
@@ -24,19 +24,12 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
   currentUser;
   librarySubscription: Subscription;
   deleteSubscription: Subscription;
-  toasterOptions: ToasterConfig;
   removeIDs: string;
   constructor(public auth: AuthenticationService, public tagService: TagService,
               public logger: NGXLogger, public spectraQueryBuilderService: SpectraQueryBuilderService,
               public spectrum: Spectrum, public toaster: ToasterService, public adminService: AdminService) {}
 
   ngOnInit() {
-    this.toasterOptions = new ToasterConfig({
-      positionClass: 'toast-center',
-      timeout: -1000,
-      showCloseButton: true,
-      mouseoverTimerStop: true
-    });
     this.newPassword = {
       emailAddress: '',
       password: '',
@@ -124,7 +117,7 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
           this.toaster.pop({
             type: 'success',
             title: 'Deletion Successful!',
-            body: 'Deletion was successful, libraries will persist until they reload overnight. Please wait a few minutes then validate that the libraries were deleted.'
+            body: 'Deletion was successful, libraries associated with the deleted spectra will persist until they reload overnight. Please wait a few minutes then validate that the spectra were deleted.'
           });
           this.removeIDs = null;
         }, (error) => {
@@ -236,17 +229,17 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
         this.currentUser = x;
         this.toaster.pop({
           type: 'success',
-          title: 'Successfully Validated Email Address',
-          body: 'This email address is assigned to a current user'
+          title: 'Validated Email Address',
+          body: 'This email address was found in the database'
         });
       }, (error) => {
         this.hidePasswords = true;
         this.toaster.pop({
           type: 'error',
-          title: 'User Email Address Not Found',
+          title: 'Email Address Not Found',
           body: 'This user does not seem to exist'
         });
-      })
+      });
     }
   }
 
@@ -267,5 +260,9 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
         });
       });
     }
+  }
+
+  hasSelectedLibraries() {
+    return this.libraryTags?.some(tag => tag.selected) ?? false;
   }
 }

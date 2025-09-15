@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
     <artifactId>downloader</artifactId>
-    <version>2.6.3-SNAPSHOT</version>
+    <version>3.0.0-RELEASE</version>
     <name>downloader</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
         <artifactId>services</artifactId>
-        <version>2.6.3-SNAPSHOT</version>
+        <version>3.0.0-RELEASE</version>
     </parent>
 
     <description>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>postgresql</artifactId>
-            <version>2.6.3-SNAPSHOT</version>
+            <version>3.0.0-RELEASE</version>
         </dependency>
 
         <dependency>

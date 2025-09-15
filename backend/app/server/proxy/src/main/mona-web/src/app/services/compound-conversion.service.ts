@@ -19,18 +19,36 @@ export class CompoundConversionService{
     /**
      * Converts the given name to an InChIKey via Chemify
      */
+    // OLD FUNCTION THAT NO LONGER WORKED BECAUSE URL CHANGED TO 'oldcts.fiehnlab.ucdavis.edu'
+    // nameToInChIKey(name, callback, errorCallback) {
+    //     // Now uses oldCtsUrl env variable assigned in main.ts as CtsLibModule.forRoot
+    //     this.chemifyService.nameToInChIKey(name, callback, errorCallback);
+    // }
     nameToInChIKey(name, callback, errorCallback) {
-        this.chemifyService.nameToInChIKey(name, callback, errorCallback);
+      const oldCtsUrl = 'http://oldcts.fiehnlab.ucdavis.edu';
+
+      // Handle empty name provided
+      if (name.trim() === '') {
+        callback('');
+        return;
+      }
+
+      this.http.get(`${oldCtsUrl}/chemify/rest/identify/${name}`)
+        .subscribe(
+          (res: any) => callback(res[0].result),
+          (err) => errorCallback(err)
+        );
     }
 
     /**
      * Returns high ranking names for given InChIKey from the CTS
      */
     InChIKeyToName(inchiKey, callback, errorCallback) {
-        this.http.get(`${this.apiUrl}/service/convert/InChIKey/Chemical%20Name/${inchiKey}`).subscribe(
+        this.http.get(`${this.apiUrl}/rest/convert/InChIKey/Chemical%20Name/${inchiKey}`).subscribe(
             (res: any) => {
                 if (res.length > 0 && res[0].results.length > 0) {
-                    callback(res[0].results);
+                    // callback(res[0].results);
+                    callback(res[0].results.slice(0, 5));
                 } else {
                     errorCallback({status: 200});
                 }
@@ -43,10 +61,10 @@ export class CompoundConversionService{
      * Look up the InChI for given InChIKey from the CTS
      */
     getInChIByInChIKey(inchiKey, callback, errorCallback) {
-        this.http.get(`${this.apiUrl}/service/convert/InChIKey/InChI%20Code/${inchiKey}`).subscribe(
+        this.http.get(`${this.apiUrl}/rest/convert/InChIKey/InChI%20Code/${inchiKey}`).subscribe(
             (response: any) => {
-                if (response.length > 0 && response[0].result.length > 0) {
-                    callback(response[0].result);
+                if (response.length > 0 && response[0].results.length > 0) {
+                    callback(response[0].results);
                 } else {
                     errorCallback({status: 200});
                 }

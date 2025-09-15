@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
+import {ToasterConfig} from 'angular2-toaster';
 
 @Component({
     selector: 'app-mona',
@@ -13,10 +14,10 @@ import {Router, NavigationEnd} from '@angular/router';
             <div class="collapse navbar-collapse" role="navigation" id="navbarSupportedContent">
                 <ul class="nav navbar-nav mr-auto">
                     <browse-drop-down class="nav-item"></browse-drop-down>
-                    <admin-drop-down class="nav-item"></admin-drop-down>
                     <download-button class="nav-item"></download-button>
                     <upload-button class="nav-item"></upload-button>
                     <resource-drop-down class="nav-item"></resource-drop-down>
+                    <admin-drop-down class="nav-item"></admin-drop-down>
                 </ul>
                 <div class="form-inline my-2 my-lg-0">
                   <search-box class="nav-item"></search-box>
@@ -26,10 +27,12 @@ import {Router, NavigationEnd} from '@angular/router';
                 </div>
             </div>
         </nav>
+        <p></p>
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12 top17">
                     <router-outlet></router-outlet>
+                    <toaster-container [toasterconfig]="toasterOptions"></toaster-container>
                 </div>
             </div>
         </div>
@@ -37,6 +40,13 @@ import {Router, NavigationEnd} from '@angular/router';
 })
 export class AppRootComponent implements OnInit{
   constructor(private router: Router) {}
+
+  toasterOptions = new ToasterConfig( {
+    positionClass: 'toast-center',
+    timeout: -1000,
+    mouseoverTimerStop: true,
+    showCloseButton: true,
+  });
 
   ngOnInit() {
     // scroll to top of page on new page entry

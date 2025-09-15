@@ -1,10 +1,19 @@
 <div class="card">
     <div class="card-header">
         <div class="card-title">
-            <span class="float-left mr-2" *ngIf="(auth.isAdmin() && auth.isLoggedIn()) || (sameSubmitter())"><input type="checkbox" id="massDeleteToggle" [checked]="deletionMark.selected" (change)="massDeleteToggle($event)"> Mark for Deletion </span>
-            <span *ngIf="spectrum.compound[0].names.length > 0" class="float-left"><a style="cursor: pointer" [routerLink]="[viewSpectrum()]">{{spectrum.compound[0].names[0].name}}</a></span>
-            <span *ngIf="spectrum.compound[0].names.length === 0" class="float-left"><a style="cursor: pointer" [routerLink]="[viewSpectrum()]">{{spectrum.id}}</a></span>
-            <span class="float-right">Score: <ngb-rating *ngIf="spectrum.score" [(rate)]="spectrum.score.score" [max]="5" [readonly]="true"></ngb-rating></span>
+            <span *ngIf="spectrum.compound[0].names.length > 0" class="float-left">
+                <a class="davis-blue" style="cursor: pointer" [routerLink]="[viewSpectrum()]" target="_blank"><b>{{spectrum.compound[0].names[0].name}}</b></a>
+            </span>
+            <span *ngIf="spectrum.compound[0].names.length === 0" class="float-left">
+                <a class="davis-blue" style="cursor: pointer" [routerLink]="[viewSpectrum()]" target="_blank"><b>{{spectrum.id}}</b></a>
+            </span>
+            <span class="float-right" ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom">
+              <span *ngFor="let star of stars">
+                <fa-icon size="sm" *ngIf="star === 1" [icon]="faStar"></fa-icon>
+                <fa-icon size="sm" *ngIf="star === 0.5" [icon]="faStarHalf"></fa-icon>
+                <fa-icon size="sm" *ngIf="star === 0" [icon]="faStarEmpty"></fa-icon>
+              </span>
+            </span>
         </div>
     </div>
 
@@ -14,11 +23,11 @@
                 <div class="card-columns" *ngIf="spectrum.similarity">
                         <ul class="list-inline">
                             <li>
-                                <h4 class="text-md-left">
-                                    <label>
-                                        Similarity: {{1000 * spectrum.similarity | number:"1.0-0"}}
+                                <h6 class="text-md-left">
+                                    <label class="text-nowrap">
+                                        Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}} / 1000
                                     </label>
-                                </h4>
+                                </h6>
                             </li>
                         </ul>
                 </div>
@@ -39,15 +48,16 @@
                     </div>
                   </div>
                 </div>
-                <div class="card-text p-2 text-left" *ngIf="spectrum.library">
-                  <h6><display-library-reference [spectrum]="spectrum"></display-library-reference></h6>
-                </div>
                 <div class="card-text p-2 text-left">
                   <h5><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h5>
                 </div>
             </div>
 
             <div class="col-lg-6 col-md-5 col-sm-6">
+              <div class="card-text text-left" *ngIf="spectrum.library">
+                <p><display-library-reference [spectrum]="spectrum"></display-library-reference></p>
+                <hr>
+              </div>
                 <div class="row top5"
                      *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
 
@@ -69,7 +79,10 @@
           <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
         </div>
 
-      <a class="btn btn-success float-right" [routerLink]="[viewSpectrum()]">
+      <span *ngIf="(((auth.isAdmin() && auth.isLoggedIn()) || (sameSubmitter())) && spectrum.tags.length > 0)"><br/><br/></span>
+      <label class="clickable"><span class="float-left mr-2" style="padding-top: 9px" *ngIf="(auth.isAdmin() && auth.isLoggedIn()) || (sameSubmitter())"><input type="checkbox" id="massDeleteToggle" [checked]="deletionMark.selected" (change)="massDeleteToggle($event)"> Mark for Deletion</span></label>
+
+      <a class="btn btn-primary float-right" [routerLink]="[viewSpectrum()]" target="_blank">
         <fa-icon [icon]="faExternalLinkAlt"></fa-icon> Display Full Record
       </a>
     </div>

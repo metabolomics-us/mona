@@ -1,11 +1,12 @@
 <div>
     <div class="row">
         <div class="col-md-6">
-            <h4>Chemical Names</h4>
-            <div *ngIf="compound.names.length === 0 || !compound.names">
+            <h4>Chemical Names & Structure</h4>
+            <div>
                 <ul>
                     <li *ngFor="let name of compound.names; index as i;">{{name.name}}</li>
-                    <li *ngIf="!compound.names">No compound name provided!</li>
+                    <li *ngIf="compound.names.length == 0">No compound name provided</li>
+                    <li *ngIf="!compound.molFile">The spectrum's structure could not be visualized because the spectrum has no MOL content</li>
                 </ul>
             </div>
         </div>
@@ -14,27 +15,30 @@
             <div class="text-right">
                 <div class="h5">
                     <div ngbDropdown>
-                        <button ngbDropdownToggle class="btn btn-primary dropdown-toggle">
+                        <button ngbDropdownToggle class="btn btn-primary btn-sm dropdown-toggle">
                           <fa-icon [icon]="faCloudDownloadAlt"></fa-icon> Download Structure
                         </button>
 
                         <div ngbDropdownMenu>
                           <button ngbDropdownItem (click)="downloadAsMOL()" target="_blank">as MOL file</button>
-                          <button ngbDropdownItem (click)="downloadAsJSON()" target="_blank">as MoNA JSON Record</button>
+                          <button ngbDropdownItem (click)="downloadAsJSON()" target="_blank">as MoNA JSON</button>
                         </div>
                     </div>
-                </div>
-
-                <div style="width: 250px; height: 250px;">
-                    <div [libChemdoodle]="compound.molFile"  [id]="'big-'+pictureId+'-CompoundViewer_'+chemId"></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="row col-md-12 d-flex justify-content-center">
+      <div class="gray-background" style="padding-bottom: 3px !important;" *ngIf="compound.molFile">
+          <div [libChemdoodle]="compound.molFile"  [id]="'big-'+pictureId+'-CompoundViewer_'+chemId"></div>
+      </div>
+    </div>
+    <br/><br/><br/>
+
     <div class="row" *ngIf="classifications.length > 0">
         <div class="col-md-12">
-            <h4>Compound Classification (provided by <a [routerLink]="null" target="_blank">ClassyFire</a>) <sup><a [routerLink]=null (click)="showClassyFireInfo = !showClassyFireInfo"><fa-icon [icon]="faQuestionCircle"></fa-icon></a></sup></h4>
+            <h4>ClassyFire<sup><a [routerLink]=null (click)="showClassyFireInfo = !showClassyFireInfo" style="color: #1c1b1b"><fa-icon size="sm" ngbTooltip="What is ClassyFire?" [icon]="faQuestionCircle"></fa-icon></a></sup> Compound Classification</h4>
             <div *ngIf="showClassyFireInfo">
                 <a href="http://classyfire.wishartlab.com" target="_blank">ClassyFire</a>
                 is a freely accessible computational tool that uses the ChemOnt taxonomy to classify chemical
@@ -58,6 +62,7 @@
 
     <div class="row">
         <div class="col-md-12">
+          <br/><br/>
             <h4>Compound Metadata</h4>
 
             <table class="table">
@@ -69,6 +74,10 @@
                 </thead>
 
                 <tbody>
+                <tr *ngIf="compound.metaData.length == 0">
+                  <td class="col-lg-4 col-md-6">None</td>
+                  <td class="col-lg-8 col-md-6">None</td>
+                </tr>
                 <!-- Create New Pipes for this filtering -->
                 <tr *ngFor="let meta of compound.metaData | filterPipe:{category: '!external id', deleted : '!true', hidden: '!true'} ">
                     <td class="col-lg-4 col-md-6">

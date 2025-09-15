@@ -5,7 +5,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {TagService} from '../../services/persistence/tag.resource';
 import {NGXLogger} from 'ngx-logger';
-import {faSpinner, faSearch} from '@fortawesome/free-solid-svg-icons';
+import {faSpinner, faSearch, faCaretDown, faCaretRight} from '@fortawesome/free-solid-svg-icons';
 import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -24,6 +24,13 @@ export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
     test;
     faSpinner = faSpinner;
     faSearch = faSearch;
+    faCaretDown = faCaretDown;
+    faCaretRight = faCaretRight;
+
+    expandedLibraries = false;
+    toggleLibraryExpansion() {
+      this.expandedLibraries = !this.expandedLibraries;
+    }
 
     constructor(public spectraQueryBuilderService: SpectraQueryBuilderService,
                 public tagService: TagService, public logger: NGXLogger) {}
@@ -75,9 +82,9 @@ export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-      setTimeout(() => {
-        this.accordion.expand('additionalTags');
-      }, 1000);
+      // setTimeout(() => {
+      //   this.accordion.expand('additionalTags');
+      // }, 1000);
     }
 
   submitQuery() {
@@ -167,5 +174,16 @@ export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
 
         // Redirect to the spectra browser
         this.spectraQueryBuilderService.executeQuery();
+    }
+
+    resetForm() {
+      this.query.name = undefined;
+      this.query.classification = undefined;
+      this.query.formula = undefined;
+      this.query.exactMass = undefined;
+      this.query.exactMassTolerance = 0.5;
+      this.queryTags.forEach((tag) => {
+        tag.selected = undefined;
+      });
     }
 }

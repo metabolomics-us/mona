@@ -4,24 +4,20 @@
     <div class="col-md-12">
       <h3><fa-icon [icon]="faCloudUpload"></fa-icon> Basic Uploader</h3>
 
-        <div class="h5">Upload single mass spectra using a simple, guided wizard</div>
         <br />
 
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h4><fa-icon [icon]="faUser"></fa-icon> Please <button class="fakeRef" (click)="authenticationService.requestModal()">log in</button> before uploading spectra!</h4>
-            <h5>You can start using the uploader without an account, but you will not be able to submit your spectra without registering and logging in.</h5>
+            <h4><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h4>
         </div>
 
 
         <!-- Select files to upload -->
         <div *ngIf="page === 0" class="card">
-            <div class="card-header"><strong style="font-size: 1.2em;">Submit a Mass Spectrum to Upload</strong></div>
+            <div class="card-header"><strong style="font-size: 1.2em;">Upload a Single Mass Spectrum</strong></div>
 
             <div class="card-body">
                 <p class="lead">
-                    <small>Please choose a mass spectrum to upload.  You may choose to upload a file, which the uploader
-                    will parse and populate all available compound information and metadata, or you may paste a spectrum
-                    and fill in these data in the wizard.</small>
+                    <small>You may upload a file (the uploader will parse and populate all available compound information and metadata), or paste a spectrum.</small>
                 </p>
                 <br />
 
@@ -30,35 +26,36 @@
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" (change)="parseFiles($event)" #fileUpload />
+                            Browse&hellip; <input type="file" accept=".mgf, .msp, .txt" (change)="parseFiles($event)" #fileUpload />
                         </span>
                     </span>
 
-                    <input id="spectrumFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
+                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
                 </div>
 
-                <span class="help-block">Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files</span>
-
-                <br />
-                <br />
                 <br />
 
                 <div class="input-group" [ngClass]="{'has-error': pasteError}">
                   <div class="input-group">
                     <label><strong>Paste a Mass Spectrum:</strong></label>
-                    <p class="help-block" *ngIf="pasteError"><strong>{{pasteError}}</strong></p>
+                    <p class="help-block text-danger" *ngIf="pasteError">
+                      <strong>&ensp;{{pasteError}}</strong>
+                    </p>
                   </div>
-                  <textarea class="form-control" [rows]="10" [(ngModel)]="pastedSpectrum"></textarea>
-                  <div class="input-group">
-                    <span class="text-left">
-                      Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
-                      <code>[m/z] [intensity]</code><br />
-                      <code>[m/z] [intensity]</code><br />
-                      <code>...</code><br />
-                    </span>
-                  </div>
+                  <textarea placeholder="Supports single-line and multi-line spectra formats:
+
+[m/z]:[intensity] [m/z]:[intensity] ...
+
+OR
+
+[m/z] [intensity]
+[m/z] [intensity]
+..."
+
+                  class="form-control" [rows]="9" [(ngModel)]="pastedSpectrum"></textarea>
                 </div>
-              <button class="btn btn-primary" (click)="parsePastedSpectrum(pastedSpectrum)">Load Spectrum</button>
+                <br />
+              <button class="btn btn-primary" [disabled]="!pastedSpectrum" (click)="parsePastedSpectrum(pastedSpectrum)">Continue</button>
             </div>
         </div>
 
@@ -69,7 +66,7 @@
             <div class="card-body text-center">
                 <span class="spinner">
                   <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon>
-                    Please wait while your file is loaded and processed...
+                    Please wait while your file is loaded and processed... This shouldn't take long
                 </span>
             </div>
         </div>
@@ -88,32 +85,35 @@
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                     <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                      <li class="previous"><button class="fakeRef" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
+                      <li class="previous"><button class="fakeRef davis-blue" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
                     </ul>
                   </div>
                   <div class="mx-auto order-0">
                     <ul class="navbar-nav mx-auto">
-                      <li><strong style="font-size: 1.2em;">Spectrum Viewer</strong></li>
+                      <li><strong style="font-size: 1.2em;" class="text-nowrap">Spectrum Viewer</strong></li>
                     </ul>
                   </div>
                   <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                     <ul class="navbar-nav ml-auto">
-                      <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                      <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                     </ul>
                   </div>
                 </nav>
             </div>
 
             <div class="card-body">
-                <p class="lead">
-                    <small>Below is your submitted mass spectrum.  Please verify that it appears as
-                    you expect <br /> You may also add annotations to specific peaks in the ion table below.</small>
-                </p>
+                <p class="lead"><small>
+                      Below is your submitted mass spectrum. Please verify that it appears as you expect.
+                      <br />
+                      You may also add annotations to specific peaks in the ion table below.
+                    </small></p>
 
                 <p class="lead" *ngIf="fileHasMultipleSpectra">
-                    <small><strong>Note: </strong> The file you uploaded contains multiple mass spectral records.  The basic
-                    uploader is only designed to process a single spectrum, and so only the first spectrum in your file
-                    will be displayed.</small>
+                    <small><strong class="text-danger">WARNING: </strong>
+                    The file you uploaded contains multiple mass spectral records.
+                    The basic uploader is designed to handle only a single spectrum.
+                    Only the first spectrum in your file will be processed.
+                    To upload multiple spectra at once, use the advanced uploader.</small>
                 </p>
 
                 <div class="masspec-modal">
@@ -133,10 +133,10 @@
                         <thead>
                         <tr>
                             <th>&nbsp;</th>
-                            <th><button class="fakeRef" (click)="sortIonTable('ion')">Ion</button></th>
-                            <th><button class="fakeRef" (click)="sortIonTable('intensity')">Intensity</button></th>
-                            <th><button class="fakeRef" (click)="sortIonTable('relativeIntensity')">Relative Intensity</button></th>
-                            <th><button class="fakeRef" (click)="sortIonTable('annotation')">Annotation</button></th>
+                            <th><button class="fakeRef davis-blue font-weight-bold" (click)="sortIonTable('ion')">Ion</button></th>
+                            <th><button class="fakeRef davis-blue font-weight-bold" (click)="sortIonTable('intensity')">Intensity</button></th>
+                            <th><button class="fakeRef davis-blue font-weight-bold" (click)="sortIonTable('relativeIntensity')">Relative Intensity</button></th>
+                            <th><button class="fakeRef davis-blue font-weight-bold" (click)="sortIonTable('annotation')">Annotation</button></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -159,12 +159,12 @@
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                     <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                      <li class="previous"><button class="fakeRef" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
+                      <li class="previous"><button class="fakeRef davis-blue" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
                     </ul>
                   </div>
                   <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                     <ul class="navbar-nav ml-auto">
-                      <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                      <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                     </ul>
                   </div>
                 </nav>
@@ -178,17 +178,17 @@
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
                   <ul class="navbar-nav mx-auto">
-                    <li><strong style="font-size: 1.2em;">Compound Information</strong></li>
+                    <li><strong class="text-nowrap" style="font-size: 1.2em;">Compound Information</strong></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -211,43 +211,57 @@
                 </div>
 
                 <div class="alert alert-info" role="alert" *ngIf="compoundProcessing" style="text-align: center;">
-                  <h4>Pulling compound data...<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></h4>
+                  <h4><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Pulling compound data...</h4>
                 </div>
 
                 <div *ngIf="compoundError" class="alert alert-danger" role="alert">
-                  <h3><fa-icon [icon]="faExclamationTriangle"></fa-icon> Error!</h3>
-                    <h4>{{compoundError}}</h4>
+                  <h5><fa-icon [icon]="faExclamationTriangle"></fa-icon> Error</h5>
+                    <h6>{{compoundError}}</h6>
                 </div>
-                <br />
+
+                <div *ngIf="compoundMolError" class="alert alert-danger" role="alert">
+                    <h5><fa-icon [icon]="faExclamationTriangle"></fa-icon> Error</h5>
+                    <h6>{{compoundMolError}}</h6>
+                </div>
+                <br/>
 
                 <div class="row form-group">
-                    <div class="col-lg-3"><label>Names:</label></div>
-                    <div class="col-lg-9">
+                  <div class="col-lg-3">
+                    <label>Names:</label>
+                  </div>
+                  <div class="col-lg-9">
+                    <div *ngFor="let name of currentSpectrum.names; index as i; trackBy: trackByIndex" class="input-group mb-1">
+                      <input
+                        type="text"
+                        [(ngModel)]="currentSpectrum.names[i]"
+                        placeholder="Name"
+                        class="form-control" />
+                      <span class="input-group-btn">
+                        <button type="button" ngbTooltip="Remove name" class="btn btn-default" (click)="removeName(i)"><fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
+                      </span>
+                    </div>
+
+                    <!-- Add name button below -->
+                    <button type="button" ngbTooltip="Add a name" class="btn btn-default mt-2" (click)="addName()"><fa-icon size="xs" [icon]="faPlusSquare"></fa-icon></button>
+                  </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-3 col-lg-3"><label>SMILES:</label></div>
+                    <div class="col-md-9 col-lg-9">
                         <input type="text"
-                               *ngFor="let name of currentSpectrum.names; index as i"
-                               [(ngModel)]="currentSpectrum.names[i]"
-                               placeholder="Name"
-                               class="form-control" />
-                        <button type="button" class="btn btn-default btn-xs" (click)="addName()">+</button>
+                           [(ngModel)]="currentSpectrum.smiles"
+                           placeholder="SMILES"
+                           class="form-control" />
                     </div>
                 </div>
 
                 <div class="row form-group">
-                    <div class="col-md-3 col-lg-3"><label>InChI:</label></div>
+                    <div class="col-md-3 col-lg-3"><label>InChI Code:</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
                                [(ngModel)]="currentSpectrum.inchi"
-                               placeholder="InChI"
-                               class="form-control" />
-                    </div>
-                </div>
-
-                <div class="row form-group">
-                    <div class="col-md-3 col-lg-3"><label>SMILES</label></div>
-                    <div class="col-md-9 col-lg-9">
-                        <input type="text"
-                               [(ngModel)]="currentSpectrum.smiles"
-                               placeholder="SMILES"
+                               placeholder="InChI Code"
                                class="form-control" />
                     </div>
                 </div>
@@ -263,63 +277,57 @@
                 </div>
 
                 <div class="form-group text-center">
-                    <button type="button" class="btn btn-primary mr-1" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
+                    <button type="button" class="btn btn-primary mr-2" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
                         <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
-                        <span>Update Compound</span>
+                        <span> Update Compound</span>
                     </button>
-                    <button (click)="resetCompound()" class="btn btn-danger" [disabled]="compoundProcessing">Reset Compound</button>
+                    <button (click)="resetCompound()" class="btn btn-danger ml-2" [disabled]="compoundProcessing">Reset Compound</button>
                 </div>
 
                 <div class="row form-group">
                     <ngb-accordion class="col-sm-12 col-lg-12">
                         <ngb-panel>
-                            <ng-template ngbPanelTitle>Import MOL/SDF File</ng-template>
+                            <ng-template ngbPanelTitle><span class="davis-blue">Import MOL/SDF File</span></ng-template>
                             <ng-template ngbPanelContent>
                                 <div>
-                                    Load a MOL file to attach to this spectrum record.  Please note that the MOL data must contain explicit hydrogens to
-                                    Convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
+                                    Load a MOL file to attach to this spectrum record or copy and paste a molecular structure.  Please note that the MOL data must contain explicit hydrogens to
+                                    convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
                                     will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
                                     using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
                                 </div>
                                 <hr />
 
                                 <div class="form-group">
-                                    <label>Copy and paste a molecular structure:</label>
-                                    <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" rows="10"></textarea>
-                                </div>
-
-                                <div class="form-group text-center">
-                                    <button (click)="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
+                                  <label><b>Upload an MOL/SDF file:</b></label>
+                                  <div class="input-group">
+                                      <span class="input-group-btn">
+                                          <span class="btn btn-primary btn-file">
+                                              Browse&hellip; <input type="file" accept=".mol, .sdf" (change)="parseMolFile($event.target.files)" [disabled]="compoundProcessing" />
+                                          </span>
+                                      </span>
+                                    <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
+                                  </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Upload a MOL/SDF file.</label>
-
-                                    <div class="input-group">
-                                    <span class="input-group-btn">
-                                        <span class="btn btn-primary btn-file">
-                                            Browse&hellip; <input type="file" (change)="parseMolFile($event)" [disabled]="compoundProcessing" />
-                                        </span>
-                                    </span>
-
-                                        <input id="molFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
-                                    </div>
-                                    <div class="input-group">
-
-                                    </div>
+                                    <label><b>Copy and paste a molecular structure:</b></label>
+                                    <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" rows="7"></textarea>
                                 </div>
 
-                                <span class="help-block">Import a MOL or SDF file.  Note that if you upload an SDF
-                                file with multiple structures, only the first structure will be read.</span>
+                                <div class="form-group text-center">
+                                    <button (click)="convertMolToInChI()" class="btn btn-primary">Fetch Compound Info from MOL Data</button>
+                                </div>
                             </ng-template>
                         </ngb-panel>
 
                         <ngb-panel>
-                            <ng-template ngbPanelTitle>Draw a Molecular Structure</ng-template>
+                            <ng-template ngbPanelTitle><span class="davis-blue">Draw a Molecular Structure</span></ng-template>
                             <ng-template ngbPanelContent>
                                 <div>
-                                    Draw a structure with the ChemDoodle drawing tool to generate a MOL file.  If uploading to MoNA, the provided MOL file
-                                    will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
+                                    Draw a structure with <a href="https://www.chemdoodle.com/" target="_blank">ChemDoodle</a> to generate an MOL file,
+                                    then upload the file in the section above.
+                                    If uploading to MoNA, the provided MOL file will be attached;
+                                    however the full MOL file cannot be included in an MSP export.  Please note that
                                     using this tool will overwrite any existing MOL file, InChI code or InChIKey.
                                 </div>
                                 <hr />
@@ -329,7 +337,7 @@
                                 <div class="form-group text-center">
                                     <button type="button" class="btn btn-primary" (click)="convertMolToInChI()" [disabled]="compoundProcessing">
                                         <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
-                                        <span>Pull Compound Info from MOL Data</span>
+                                        <span>Fetch Compound Info from MOL Data</span>
                                     </button>
                                 </div>
                             </ng-template>
@@ -342,12 +350,12 @@
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -361,17 +369,17 @@
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
                   <ul class="navbar-nav mx-auto">
-                    <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
+                    <li><strong style="font-size: 1.2em;" class="text-nowrap">Spectrum Metadata</strong></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -392,7 +400,7 @@
                     <div>
                         <label>Source Introduction / Chromatography Type:</label> <br />
                         <select class="form-control" name="chromatography" [(ngModel)]="metadata.chromatography">
-                            <option value="" selected="selected">Select One</option>
+                            <option value="" selected="selected"></option>
                             <option value="Liquid Chromatography (LC)">Liquid Chromatography (LC)</option>
                             <option value="Gas Chromatography (GC)">Gas Chromatography (GC)</option>
                             <option value="Direct Infusion (DI)">Direct Injection/Infusion (DI)</option>
@@ -410,7 +418,7 @@
                     <div>
                         <label>MS Type / Level:</label> <br />
                         <select class="form-control" name="mslevel" [(ngModel)]="metadata.mslevel">
-                            <option value="" selected="selected">Select One</option>
+                            <option value="" selected="selected"></option>
                             <option value="MS">MS</option>
                             <option value="MS2">MS2</option>
                             <option value="MS3">MS3</option>
@@ -433,7 +441,7 @@
                     <div>
                         <label>Ionization Method:</label> <br />
                         <select class="form-control" name="ionization" [(ngModel)]="metadata.ionization">
-                            <option value="" selected="selected">Select One</option>
+                            <option value="" selected="selected"></option>
                             <option value="Atmospheric Pressure Chemical Ionization (APCI)">Atmospheric Pressure Chemical Ionization (APCI)</option>
                             <option value="Electron Impact (EI)">Electron Impact (EI)</option>
                             <option value="Chemical Ionization (CI)">Chemical Ionization (CI)</option>
@@ -447,7 +455,7 @@
                     <div>
                         <label>Polarity / Ion Mode:</label> <br />
                         <select class="form-control" name="ionmode" [(ngModel)]="metadata.ionmode">
-                            <option value="" selected="selected">Select One</option>
+                            <option value="" selected="selected"></option>
                             <option value="Positive">Positive</option>
                             <option value="Negative">Negative</option>
                         </select>
@@ -467,12 +475,12 @@
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -486,17 +494,17 @@
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
                   <ul class="navbar-nav mx-auto">
-                    <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
+                    <li><strong style="font-size: 1.2em;" class="text-nowrap">Spectrum Metadata II</strong></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -507,11 +515,11 @@
                     <small>
                         In addition to the recommended metadata, we encourage users to provide any other information
                         available about this mass spectral record including:
-
                         <ul>
                             <li>Sample properties</li>
                             <li>Instrument manufacturer and model</li>
                             <li>Analytical methods and conditions</li>
+                            <li>More...</li>
                         </ul>
                     </small>
                 </div>
@@ -531,20 +539,21 @@
                                  class="form-control" />
                         </div>
                         <div class="col-sm-5 form-group">
+                          <div class="input-group">
                           <input required type="text"
                                  [(ngModel)]="meta.value"
                                  [disabled]="!meta.name || meta.name === ''"
                                  placeholder="Metadata Value"
                                  class="form-control" />
-                        </div>
-                        <div class="col-sm-5 form-group">
-                          <button (click)="removeMetadataField(i)" class="btn btn-default"
-                                  ngbTooltip="Remove this metadata field"><fa-icon [icon]="faMinusSquare"></fa-icon></button>
+                            <button (click)="removeMetadataField(i)" class="btn btn-default"
+                                    ngbTooltip="Remove this metadata field"><fa-icon [icon]="faMinusSquare"></fa-icon>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                     <div class="col-sm-12">
-                        <button type="button" class="btn btn-default btn-xs" (click)="addMetadataField()" ngbTooltip="Add a new metadata field"><fa-icon [icon]="faPlusSquare"></fa-icon> </button>
+                        <button type="button" class="btn btn-default" (click)="addMetadataField()" ngbTooltip="Add a new metadata field"><fa-icon [icon]="faPlusSquare"></fa-icon> </button>
                     </div>
                 </div>
             </div>
@@ -554,12 +563,12 @@
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef" (click)="validateMetadata()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue" (click)="validateMetadata()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -572,7 +581,7 @@
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
@@ -582,9 +591,9 @@
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="fakeRef" (click)="uploadFile()">Upload to MoNA <fa-icon [icon]="faCloudUpload"></fa-icon></button></li>
+                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="btn btn-primary" (click)="uploadFile()"><fa-icon [icon]="faCloudUpload"></fa-icon> Upload to MoNA</button></li>
                     <li class="next"*ngIf="!authenticationService.isLoggedIn()">
-                      <button class="fakeRef" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
+                      <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
                     </li>
                   </ul>
                 </div>
@@ -593,7 +602,7 @@
 
             <div class="card-body">
                 <p class="lead">
-                    <small>Please verify the provided information before uploading:</small>
+                    <small>Please verify the provided information before uploading</small>
                 </p>
 
                 <div class="page-header"><h3>Mass Spectrum</h3></div>
@@ -601,6 +610,7 @@
                     <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions" [id]="'lastSpec'"></lib-ng-mass-spec-plotter>
                 </div>
 
+                <br/> <br/>
                 <div class="page-header"><h3>Compound Information</h3></div>
                 <div>
                     <ul>
@@ -645,6 +655,7 @@
                     </tbody>
                 </table>
 
+                <br/> <br/>
                 <div class="page-header"><h3>Spectrum Metadata</h3></div>
                 <table class="table table-striped">
                     <thead>
@@ -702,14 +713,14 @@
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="fakeRef" (click)="uploadFile()">Upload to MoNA <fa-icon [icon]="faCloudUpload"></fa-icon></button></li>
+                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="btn btn-primary" (click)="uploadFile()"><fa-icon [icon]="faCloudUpload"></fa-icon> Upload to MoNA</button></li>
                     <li class="next"*ngIf="!authenticationService.isLoggedIn()">
-                      <button class="fakeRef" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
+                      <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
                     </li>
                   </ul>
                 </div>

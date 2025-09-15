@@ -20,7 +20,7 @@ import scala.jdk.CollectionConverters._
 class FetchCTSCompoundData extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
   val ENABLED: Boolean = true
 
-  val URL: String = "http://cts.fiehnlab.ucdavis.edu/service/compound/"
+  val URL: String = "http://oldcts.fiehnlab.ucdavis.edu/service/compound/"
 
   @Autowired
   protected val restOperations: RestOperations = null

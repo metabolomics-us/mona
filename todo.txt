@@ -1,0 +1,196 @@
+Frontend:
+    - Refresh when doing similarity search hangs
+    - Reset query button sometimes doesn't work?
+    - Refresh under user profile gives 404, configure in sprint to reroute all unknowns to index.html
+    - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
+    - Forgot Username / Password feature
+    - Libraries with the same name but different ID show up as the same on admin page
+    - Sort spectra by score or most recently updated maybe? When searching
+        - Pagination, maybe query returns only up to 10 pages of results at a time?
+        - Browse is sorted alphabetically by ID right now
+    - Tag search logic is flawed
+        - If you search for spectra without the tag 'example', it will only show you spectra that have tags that are not example
+            - Even if the spectrum does have the example tag, it will still show up if it has another tag
+                - And it will not show spectra without tags in the results
+
+Backend:
+    - Debug the random error I had when starting out where it said there were 0 spectra and search wouldn't work
+        - Happens if you connect to the IP? Instead of the URL, nope
+        - Nope, happened again randomly 8/27, still going on 9/5
+        - Still down even after download export completed, don't think that's the issue
+        - Proxy service has interesting error logs
+    - DB Index querying under compound classes sometimes doesn't work
+    - Database Index & Statistic page
+        - Are M-H and [M-H]- the same precursor type? Merge them maybe?
+        - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
+            - Happens from custom metadata inputted by users, maybe change on DB level?
+    - Updating a user's email doesn't work
+        - Creates a new submitter that can't log in with that new email (fails to create a new user)
+    - What is "Additional Downloads" and what are they used for? It's empty on prod
+        - AKA static_download in the db, table is empty on prod, fixed length display issue
+        - Make additional downloads on Download page a clickable dropdown (frontend)
+    - Links to "Originally submitted to..." like eu MassBank shows error404 page not found
+        - Just old libraries whose links are outdated?
+    - Are relative_score and scaled_score useless in the score db table? All values are set to 0
+    - Error in downloader service 2025-09-06, empty string. Failed the 'All Spectra' download
+        - Error logs in YouTrack
+
+Done:
+    - Display full record button does not open a new page like it says it will - should be fixed
+    - Right caret on buttons like dipeptide_neg - should be fixed
+    - Space between comment bubbles on "Review Spectrum Quality" - should be fixed
+    - Download button size on single spectra
+    - Search icons next to:
+        - Submitter name on a display full record - should be fixed
+        - Mass spectral metadata in display full record - should be fixed
+    - Typo in "Upload an spectral library file and dynamically modify the mass spectra and metadata"
+    - How is the submitter high scores table calculated? Needs to be adjusted
+        - Submitter high scores now ordered by count with minimum avg score of 3
+    - Admin manage submitters page cleaned up
+    - Make the checkboxes highlight blue instead of current green
+    - Adjust navbar padding and font weight
+    - Reformat the "Please log in before uploading spectra" box to be smaller, adjust message below it
+    - Change MoNA browser tab logo (favicon)
+    - Reformat similarity search instructions: "Supports spectra in the single-line format... etc."
+        - Same for the upload page
+    - Reformat advanced uploader page, looks MUCH cleaner all around now
+    - Create small MoNA logo for browser Mo on top of NA in yellow
+    - Add "Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files" to parenthesis after "Upload a file"
+        - Achieved with placeholders in submission boxes, much nicer
+    - Similarity search page: change "Load Spectrum" button to "Search"
+    - Move the "Create New Library" info icon one space to the right (advanced uploader page)
+        - "Select a file clean" ? Does it mean upload file
+    - Remove the "Click here to learn more the changes to the query system popup"
+    - Can't see users' uploaded spectra on admin page?
+        - Removed column for now
+    - (provided by ClassyFire) info icon should not be clicked by default
+    - Admin page Filter query term formatting
+    - Remove "Download" word from download button on Download page (queryTree.html and queryTreeView.html)
+    - Make folder icons show clickable on hover in Download page
+    - Hover should turn cursor clickable when over "Similar Spectra" in display full record mode
+    - Database Index & Statistic page
+        - "Database Content" box is chopped
+        - Change the "MS Level, Ion Mode, Precursor Type" Dropdown to a cleaner 3 box selection
+        - Have Spectrum vs Compound count be highlighted based on current selection
+        - Search icon Query button doesn't highlight on hover (compound classes page)
+        - Change "Database Content" "Metadata" and "Compound Classes" headers to be more visible and defined
+        - Remove outline box from all three subtabs, looks weird
+        - Make the Database Content table more compact, numbers are too far apart from their attributes
+            - Decided against the change
+        - Ionization modes for pie chart goes out of bounds - should be fixed
+    - Additional Tags in quick search should not be expanded by default
+    - Make checkbox buttons more clickable on search page
+    - Library drop down in search, show top 3 and a "show more" button - wasn't able to test on dev
+    - Search "Additional Tags" feature
+        - Do not make Add Additional Tags to Query a clickable name, turn into a header style font
+    - Searchbox highlight darker on hover
+    - Admin page
+    - Remove clunky search fa-icons next to:
+        - Submitter High Scores names on homepage
+        - Admin page of submitters next to first name
+        - Spectra attributes on browse page
+        - Display Full Record page:
+            - Both metadata fields in display full record
+            - Compound Classification hierarchy
+            - Next to submitter name on "display full record"
+    - Create new query / Add to query button box is formatted incorrectly for the spectra attributes when browsing for example
+        - Change the highlight color, it's too dark
+        - Also same formatting issue on the compound metadata parts
+    - Think about changing the yellow grayed out "Searching...." page/animation/splash
+        - Changed to Loading... for now
+    - In spectra view
+        - Make buttons nicer, remove btn-link class
+    - Made code blocks much cleaner and better looking
+    - Admin dropdown options highlight differently than other navbars
+    - Clean up all resource pages
+    - Clean up basic uploader guided wizard
+        - Formatting, functionality, buttons, etc.
+    - Admin page made all users appear under one header
+    - Delete user button actually works now
+        - Deletes both user and submitter from db
+        - Added confirmation before deleting
+    - Fixed manage submitters admin page completely
+    - Change log in buttons to davis blu
+    - Fix formatting and functionality of 'manage spectra' admin page
+    - metadata buttons on advanced uploader
+    - redo manage spectra admin page buttons
+    - advanced uploader formatting
+    - Update Compound is sending wrong API call to TCS:
+        - Just need to fix name one now, uses 'oldcts' endpoint instead of cts
+        - Sending: http://cts.fiehnlab.ucdavis.edu/service/convert/InChIKey/Chemical%20Name/XLYOFNOQVPJJNP-UHFFFAOYSA-N
+        - Needs:   http://cts.fiehnlab.ucdavis.edu/rest/convert/InChIKey/Chemical%20Name/XLYOFNOQVPJJNP-UHFFFAOYSA-N
+    - Basic uploader "Update compound" button when fields are empty just hangs
+    - Upload MOL/SDF file doesn't work in advanced uploader
+    - Fix advanced uploader's 'convertMolToInChI' function, integrate the basic one
+    - Spectra browser and compound classes page navbar colors - should be fixed
+        - Check browse spectra page navbar, I changed the minimum value to 1 instead of 0
+    - Fix home page spectra showcase loading visual bug
+    - Disallow files other than the accepted formats on basic/advanced uploader
+        - Should only accept MSP, MGF, and TXT
+    - Advanced uploader 'identifiers' tab broken
+        - no 'update compound' button
+        - uploading SDF files works but can't press the buttons to convert the data
+    - Error, please provide compound details should not immediately pop up in basic uploader
+        - Maybe put a required pop up first (if it is required?)
+        - Please provide compound details error stays up when uploading mol/sdf
+    - Show "email" already taken error, 409 conflict on add new submitter admin page
+    - Passwords do not have to match during user registration or user password update
+    - Add "Successfully logged out" toast message
+        - Fixed all toaster configuration globally
+    - Fixed admin's 'edit user' page to not require password and disable the email field while its not working
+    - Have a "Create an Account" button on the log in pop up
+    - Manage submitters page does not load when refreshed
+    - User profile page fails when refreshed, test on prod
+    - Fix spectrum viewer structure visualizer formatting
+    - Fix compound names list in spectrum viewer
+    - Compound metadata table now shows 'none' if there are no metadata
+    - Mark for deletion button adjusted on browser
+    - Completely overhaul the compact spectra browser view
+        - Make whole row clickable and open a new tab with spectrum full view
+        - Show score rating on hover
+        - Fix similarity formatting
+        - Fix spectrum quality wrapping on smaller displays
+        - Show names appropriately depending on how many are available
+        - Adjust size of structure image and formatting
+        - Show N/A when no structure info is available.
+    - Page navigator colors didn't change to davis blue
+    - Re-review spectrum quality goes out of bounds on smaller screen (laptop)
+    - Tooltip for exact score in browser
+    - Adjust expanded spectra browser formatting
+    - Similarity search is broken error 401 unauthorized
+        - Test the compact view similarity score feature when similarity search works again
+        - Works on Prod, it's an issue with the proxy link I think for dev
+        - Pretty sure it was the issue that Diego fixed two years ago, test was using the old outdated docker image
+    - DB Index legends are formatted wrong
+        - Try new updates with a large set of precursor types since they are easy to make
+        - MS5 color in the legend is too similar to MS2
+            - Not hardcoded, part of db3 colors?
+    - Blue hyperlink texts change color to davis blue or something nicer, no underlines
+    - Originally submitted to:
+        - Why does it use the library description for mona ones? Weird
+    - Border highlights on accordion in spectrum full view
+    - Reorganize the spectra full view so that all dropdowns are under "compound information"
+        - Give the spectra metadata its own dropdown too
+    - Database Index & Statistic page
+        - Metadata pie chart shows decimals for spectral count
+    - Can't upload to dev or prod
+    - Upload progress bar is buggy?
+    - Fixed exact mass search queries by removing dangling "'"
+    - Allow for half-scores to be visualized by the star rating system
+        - Can do it with custom ng template on the ngbrating bootstrap component, use fa icons
+        - Ended up doing it with custom methods
+    - Delete Libraries button needs to be updated on spectra management page
+    - Text decoration on user first name on manage submitters
+    - Change news italics mismatch
+    - Either change similarity / 1000 to text-nowrap or remove the / 1000
+    - Tag sizes in additional tags search
+        - Now shows # of spectra on hover
+        - Fixed caret on panel title to move from right to down on accordion expansion
+    - Similar spectra should open a new tab
+        - Reformatted whole table
+    - Reset button in search sets everything to null, giving error when searching
+        - Completely fixed
+    - Mass Spectrum graphs do not load until you refresh page in compact view
+    - Similarity scores have too many decimals, no decimals needed at all
+    - Browse doesn't work on prod, e.score is not a property?
+        - TypeError: can't access property "score", e.score is undefined

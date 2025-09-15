@@ -3,10 +3,14 @@ import {NewSubmitter} from '../mocks/newSubmitter.model';
 import {environment} from '../../environments/environment';
 import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
 export class RegistrationService {
     newSubmitter: NewSubmitter;
+
+    modalRequestSubject = new BehaviorSubject<boolean>(false);
+    modalRequest = this.modalRequestSubject.asObservable();
 
     constructor(public http: HttpClient) {
         this.newSubmitter = new NewSubmitter();
@@ -51,5 +55,9 @@ export class RegistrationService {
 
     resetSubmitter() {
       this.newSubmitter = new NewSubmitter();
+    }
+
+    requestModal() {
+      this.modalRequestSubject.next(true);
     }
 }

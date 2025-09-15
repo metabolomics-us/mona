@@ -33,6 +33,8 @@ export class MainComponent implements OnInit, OnDestroy{
         this.popupOpenSubscription = this.ccService.popupOpen$.subscribe(() => {
 
         });
+
+        //this.showcaseSpectraIds = ['MoNA_0000001', 'MoNA_0000004']; // FOR DEV
         this.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
         this.showcaseSpectra = [];
 

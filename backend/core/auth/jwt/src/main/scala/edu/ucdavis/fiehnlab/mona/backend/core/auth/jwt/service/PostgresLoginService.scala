@@ -35,9 +35,9 @@ class PostgresLoginService extends LoginService with LazyLogging {
     val user: Users = userRepository.findByEmailAddress(request.emailAddress)
 
     if (user == null) {
-      throw new UsernameNotFoundException(s"sorry user ${request.emailAddress} was not found")
+      throw new UsernameNotFoundException(s"sorry, user ${request.emailAddress} was not found")
     } else if (!new BCryptPasswordEncoder().matches(request.password, user.getPassword)) {
-      throw new BadCredentialsException("sorry the provided credentials were invalid!")
+      throw new BadCredentialsException("sorry, the provided credentials were invalid")
     } else {
       logger.debug("login was successful")
       LoginResponse(tokenService.generateToken(user))

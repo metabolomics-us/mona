@@ -1,19 +1,13 @@
 <div class="row">
     <div class="col-md-12">
         <h3><fa-icon [icon]="faDatabase"></fa-icon> Database Index &amp; Statistics</h3>
+          <br />
 
         <ul ngbNav #nav="ngbNav" [destroyOnHide]="false">
             <li [ngbNavItem]="0">
-                <a ngbNavLink class="search-heading"> Database Content</a>
+                <a ngbNavLink class="search-heading btn btn-primary">Database Content</a>
                 <ng-template ngbNavContent>
                     <table class="table table-striped" *ngIf="globalData">
-                        <thead>
-                        <tr>
-                            <th>
-                                <h2 style="margin-top: 0;"><small>Database Content:</small></h2>
-                            </th>
-                        </tr>
-                        </thead>
                         <tbody>
                         <tr>
                             <td>Submitters:</td>
@@ -36,11 +30,11 @@
                             <td>{{globalData.metaDataValueCount | number}}</td>
                         </tr>
                         <tr>
-                            <td>Tags Types:</td>
+                            <td>Tag Types:</td>
                             <td>{{globalData.tagCount | number}}</td>
                         </tr>
                         <tr>
-                            <td>Total Tags:</td>
+                            <td>Applied Tags:</td>
                             <td>{{globalData.tagValueCount | number}}</td>
                         </tr>
                         </tbody>
@@ -52,22 +46,23 @@
             </li>
 
             <li [ngbNavItem]="1">
-                <a ngbNavLink class="search-heading">MetaData</a>
+                <a ngbNavLink class="search-heading btn btn-primary">Metadata</a>
                 <ng-template ngbNavContent>
                     <div class="h5">
-                        The pie chart below shows the distribution of metadata values for the selected metadata type.
+                        This pie chart shows the distribution of metadata values for the selected metadata type.
                         Clicking on the elements in the legend will show/hide chart sections, and clicking on a section in
                         the pie chart will execute a query for the selected value.
                     </div>
                     <br />
 
-                    <div>
-                        <select [(ngModel)]="selectedMetadataField" (ngModelChange)="selectMetadataField($event)" >
+                    <div class="text-center">
+                        <select class="btn btn-primary" [(ngModel)]="selectedMetadataField" (ngModelChange)="selectMetadataField($event)" >
                             <option [ngValue]="f" *ngFor="let f of metadataFields">{{f.title}}</option>
                         </select>
+                        <p>Metadata Type</p>
+                        <p></p>
                     </div>
 
-                    <div class="text-center"><h4>{{selectedMetadataField.title}}</h4></div>
                     <div style="height: 600px; width: 100%" class="text-center">
                       <nvd3 [options]="metadataChartOptions"
                             [data]="selectedMetadataField.data"></nvd3>
@@ -78,30 +73,41 @@
             </li>
 
             <li [ngbNavItem]="2">
-                <a ngbNavLink class="search-heading">Compound Classes</a>
+                <a ngbNavLink class="search-heading btn btn-primary">Compound Classes</a>
                 <ng-template ngbNavContent>
                     <div class="h5">
-                        This sunburst chart displays the breakdown of compound classifications, which were obtained using
-                        <a href="http://classyfire.wishartlab.com/">ClassyFire</a> by Wishart Lab. ClassyFire
-                        is a freely accessible computational tool that uses the ChemOnt taxonomy to classify chemical
-                        entities based on their structure. ClassyFire combines structure search, IUPAC name parsing, and evaluation
-                        of logical expressions to retrieve structural features, which are then mapped to the corresponding ChemOnt classes.
+                        This sunburst chart displays the breakdown of compound classifications, which are obtained using
+                        <a href="http://classyfire.wishartlab.com/" target="_blank">ClassyFire</a>.
                         <br /><br />
-
                         Clicking on a partition
                         will zoom into it and display a finer-grained view of its child partitions.  Clicking on the center
                         circle will zoom out to the parent partition.
                     </div>
 
+                    <br />
+
+                  <div class="text-center">
                     <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="sunburstDataMode">
-                        <label ngbButtonLabel class="btn-primary">
-                            <input ngbButton type="radio" [value]=true (click)="changeSunburstDataMode('spectrum')">Spectrum Count
+                        <label ngbButtonLabel class="btn btn-primary">
+                            <input ngbButton type="radio" [value]="'spectrum'" (click)="changeSunburstDataMode('spectrum')">Spectrum Count
                         </label>
-                        <label ngbButtonLabel class="btn-primary">
-                            <input ngbButton type="radio" (click)="changeSunburstDataMode('compound')">Compound Count
+                        <label ngbButtonLabel class="btn btn-primary">
+                            <input ngbButton type="radio" [value]="'compound'" (click)="changeSunburstDataMode('compound')">Compound Count
                         </label>
                     </div>
-                    <br />
+                  </div>
+<!--                  <div class="text-center">-->
+<!--                    <div class="btn-group btn-group-toggle" ngbRadioGroup name="sunburstMode" [(ngModel)]="sunburstDataMode">-->
+<!--                      <label ngbButtonLabel class="btn btn-primary">-->
+<!--                        <input ngbButton type="radio" [value]="'spectrum'"> Spectrum Count-->
+<!--                      </label>-->
+<!--                      <label ngbButtonLabel class="btn btn-primary">-->
+<!--                        <input ngbButton type="radio" [value]="'compound'"> Compound Count-->
+<!--                      </label>-->
+<!--                    </div>-->
+<!--                  </div>-->
+
+                  <br />
                     <div class="text-center">
                       <nvd3 [options]="sunburstOptions"
                             [data]="activeCompoundClassData"
@@ -111,14 +117,14 @@
 
                     <h3>
                         Sub-Classifications <br />
-                        <small>Please click on the sunburst to refine your queries</small>
+                        <small>Click on the sunburst chart to refine your queries</small>
                     </h3>
                     <table class="table table-hover">
                         <thead>
                         <tr>
-                            <th style="width: 35%;"><a [routerLink]="" (click)="tableDataSort('name')">Classification</a></th>
-                            <th style="width: 25%;"><a [routerLink]="" (click)="tableDataSort('spectra')">Spectra</a></th>
-                            <th style="width: 25%;"><a [routerLink]="" (click)="tableDataSort('compounds')">Compounds</a></th>
+                            <th style="width: 35%;"><a [routerLink]="" (click)="tableDataSort('name')" class="davis-blue text-decoration-none">Classification</a></th>
+                            <th style="width: 25%;"><a [routerLink]="" (click)="tableDataSort('spectra')" class="davis-blue text-decoration-none">Spectra</a></th>
+                            <th style="width: 25%;"><a [routerLink]="" (click)="tableDataSort('compounds')" class="davis-blue text-decoration-none">Compounds</a></th>
                             <th style="width: 15%;">&nbsp;</th>
                         </tr>
                         </thead>
@@ -132,7 +138,7 @@
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-center">
-                      <ngb-pagination *ngIf="activeTableData" [collectionSize]="activeTableData.length" [(page)]="tableDataPage" [pageSize]="5" class="pagination-sm" boundaryLinks="true"></ngb-pagination>
+                      <ngb-pagination *ngIf="activeTableData" [collectionSize]="activeTableData.length" [(page)]="tableDataPage" [pageSize]="5" class="pagination-sm davis-blue" boundaryLinks="true"></ngb-pagination>
                     </div>
                 </ng-template>
             </li>

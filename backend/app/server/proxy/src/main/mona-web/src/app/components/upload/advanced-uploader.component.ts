@@ -17,11 +17,14 @@ import {Component, EventEmitter, OnInit} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
-import {faSpinner, faExclamationTriangle, faMinusSquare, faPlusSquare,
-        faSave, faCloudUploadAlt, faUser, faArrowLeft, faArrowRight,
-        faSignInAlt, faFolderOpen, faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
+import {
+  faSpinner, faExclamationTriangle, faMinusSquare, faPlusSquare,
+  faSave, faCloudUploadAlt, faUser, faArrowLeft, faArrowRight,
+  faSignInAlt, faFolderOpen, faQuestionCircle, faTrash, faInfoCircle, faFileExport,
+} from '@fortawesome/free-solid-svg-icons';
 import {first} from 'rxjs/operators';
-import {ToasterConfig, ToasterService} from 'angular2-toaster';
+import {ToasterService} from 'angular2-toaster';
+import {CompoundConversionService} from '../../services/compound-conversion.service';
 
 @Component({
   selector: 'advanced-uploader',
@@ -47,6 +50,9 @@ export class AdvancedUploaderComponent implements OnInit{
   convMolUpload;
   files;
   showLibraryForm;
+  compoundProcessing;
+  compoundMolError;
+  compoundError;
 
   // library variables
   library = {
@@ -77,8 +83,6 @@ export class AdvancedUploaderComponent implements OnInit{
   // Parameters provided for trimming spectra
   ionCuts;
 
-  toasterOptions;
-
   // Icons
   faSpinner = faSpinner;
   faExclamationTriangle = faExclamationTriangle;
@@ -92,12 +96,16 @@ export class AdvancedUploaderComponent implements OnInit{
   faSignInAlt = faSignInAlt;
   faFolderOpen = faFolderOpen;
   faQuestionCircle = faQuestionCircle;
+  faTrash = faTrash;
+  faInfoCircle = faInfoCircle;
+  faFileExport = faFileExport;
 
 	constructor( public authenticationService: AuthenticationService,  public location: Location,
 				          public uploadLibraryService: UploadLibraryService,  public ctsService: CtsService,
 				          public tagService: TagService,  public asyncService: AsyncService,  public logger: NGXLogger,
 				          public element: ElementRef, public filterPipe: FilterPipe,  public http: HttpClient,
-              public router: Router, public modalService: NgbModal, public toaster: ToasterService){}
+              public router: Router, public modalService: NgbModal, public toaster: ToasterService,
+              public compoundConversionService: CompoundConversionService){}
 
 	ngOnInit() {
 		this.spectraLoaded = 0;
@@ -137,12 +145,6 @@ export class AdvancedUploaderComponent implements OnInit{
 				this.logger.error('failed: ' + error);
 			}
 		);
-		this.toasterOptions = new ToasterConfig({
-      positionClass: 'toast-top-center',
-      timeout: 0,
-      showCloseButton: true,
-      mouseoverTimerStop: true
-    });
 	}
 
   sortIonTable(column) {
@@ -234,11 +236,18 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
+  removeName(index: number) {
+    this.currentSpectrum.names.splice(index, 1);
+  }
 
-	/**
+  trackByIndex(index: number, item: any) {
+    return index;
+  }
+
+
+  /**
 	 * Handle metadata functionality
 	 */
-
 	addMetadataField() {
 		this.currentSpectrum.meta.push({name: '', value: ''});
 		this.element.nativeElement.getElementById('metadata_editor').scrollTop = 0;
@@ -311,10 +320,10 @@ export class AdvancedUploaderComponent implements OnInit{
               this.library.link = 'http://massbank.us';
             }
             spectrum.library = this.library;
-            spectrum.tags = []
+            spectrum.tags = [];
             if (this.batchTagList.length > 0) {
-              for(const tag of this.batchTagList) {
-                spectrum.tags.push({ruleBased: false, text: tag.text})
+              for (const tag of this.batchTagList) {
+                spectrum.tags.push({ruleBased: false, text: tag.text});
               }
             }
             spectrum.tags.push(this.library.tag);
@@ -362,10 +371,10 @@ export class AdvancedUploaderComponent implements OnInit{
               this.library.link = 'http://massbank.us';
             }
             spectrum.library = this.library;
-            spectrum.tags = []
+            spectrum.tags = [];
             if (this.batchTagList.length > 0) {
-              for(const tag of this.batchTagList) {
-                spectrum.tags.push({ruleBased: false, text: tag.text})
+              for (const tag of this.batchTagList) {
+                spectrum.tags.push({ruleBased: false, text: tag.text});
               }
             }
             spectrum.tags.push(this.library.tag);
@@ -546,24 +555,214 @@ export class AdvancedUploaderComponent implements OnInit{
 				}
 
 				this.currentSpectrum.molFile = data;
+        this.convertMolToInChI();
 			};
 
 			fileReader.readAsText(event.target.files[0]);
 		}
 	}
 
-	convertMolToInChI() {
-		if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
-		  this.ctsService.convertToInchiKey(this.currentSpectrum.molFile, (result) => {
-				this.currentSpectrum.inchiKey = result.inchikey;
-			}, undefined);
-		}
-	}
+  // Was not working anymore 8/29/2025
+	// convertMolToInChI() {
+	// 	if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
+	// 	  this.ctsService.convertToInchiKey(this.currentSpectrum.molFile, (result) => {
+	// 			this.currentSpectrum.inchiKey = result.inchikey;
+	// 		}, undefined);
+	// 	}
+	// }
+
+  /**
+   * Pull names from CTS given an InChIKey and update the currentSpectrum
+   */
+  pullNames(inchiKey) {
+    // Only pull if there are no names provided
+    if (this.currentSpectrum.names.length === 0 || (this.currentSpectrum.names.length === 1 && this.currentSpectrum.names[0] === '')) {
+      this.compoundConversionService.InChIKeyToName(
+        inchiKey,
+        (data) => {
+          this.currentSpectrum.names = this.currentSpectrum.names.filter((x) => {
+            return x !== '';
+          });
+
+          Array.prototype.push.apply(this.currentSpectrum.names, data);
+
+          this.compoundProcessing = false;
+        },
+        () => {
+          this.compoundProcessing = false;
+        }
+      );
+    } else {
+      this.compoundProcessing = false;
+    }
+  }
 
 
-	/**
-	 * Export a file as MSP
-	 */
+  convertMolToInChI() {
+    if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
+      this.compoundProcessing = false;
+
+      this.compoundConversionService.parseMOL(
+        this.currentSpectrum.molFile,
+        (response) => {
+          this.currentSpectrum.inchi = response.inchi;
+          this.currentSpectrum.smiles = response.smiles;
+          this.currentSpectrum.inchiKey = response.inchiKey;
+
+          this.pullNames(response.inchiKey);
+        },
+        (response) => {
+          this.compoundMolError = 'Unable to process provided MOL data!';
+          this.compoundProcessing = false;
+        }
+      );
+    } else {
+      this.compoundMolError = '';
+      this.compoundError = '';
+    }
+  }
+
+
+  /**
+   * Pull compound summary given an InChI
+   */
+  processInChI(inchi) {
+    this.compoundConversionService.parseInChI(
+      this.currentSpectrum.inchi,
+      (response) => {
+        this.logger.debug('Parse Inchi response: ' + response);
+        this.currentSpectrum.smiles = response.smiles;
+        this.currentSpectrum.inchiKey = response.inchiKey;
+        this.currentSpectrum.molFile = response.molData;
+
+        this.pullNames(response.inchiKey);
+      },
+      (response) => {
+        this.compoundError = 'Unable to process provided InChI!';
+        this.compoundProcessing = false;
+      }
+    );
+  }
+
+  /**
+   * Pull compound summary given an InChIKey
+   */
+  processInChIKey(inchiKey) {
+    this.compoundConversionService.getInChIByInChIKey(
+      inchiKey,
+      (data) => {
+        this.logger.info('InChi By InchiKey Reponse: ' + data);
+        this.currentSpectrum.inchi = data[0];
+        this.processInChI(data[0]);
+      },
+      (response) => {
+        if (response.status === 200) {
+          this.compoundError = 'No results found for provided InChIKey!';
+        } else {
+          this.compoundError = 'Unable to process provided InChIKey!';
+        }
+
+        this.compoundProcessing = false;
+      }
+    );
+  }
+
+  /**
+   * Convert an array of names to an InChIKey based on the first result
+   * @param names array of compound names
+   * @param callback callback function to get name
+   */
+  namesToInChIKey(names, callback) {
+    if (names.length === 0) {
+      callback(null);
+    } else {
+      this.compoundConversionService.nameToInChIKey(names[0], (molecule) => {
+        if (molecule !== null) {
+          callback(molecule);
+        } else {
+          this.namesToInChIKey(names.slice(1), callback);
+        }
+      }, (error) => {
+        this.namesToInChIKey(names.slice(1), callback);
+      });
+    }
+  }
+
+  /**
+   * Generate MOL file from available compound information
+   */
+  retrieveCompoundData() {
+    this.logger.info('Retrieving MOL data...');
+
+    this.compoundError = undefined;
+    this.compoundMolError = undefined;
+    this.compoundProcessing = true;
+
+
+    // Process InChI
+    if (this.currentSpectrum.inchi) {
+      this.processInChI(this.currentSpectrum.inchi);
+    }
+
+    // Process SMILES
+    else if (this.currentSpectrum.smiles) {
+      this.compoundConversionService.parseSMILES(
+        this.currentSpectrum.smiles,
+        (response) => {
+          this.logger.debug('Parse smiles response ' + response);
+          this.currentSpectrum.inchi = response.inchi;
+          this.currentSpectrum.inchiKey = response.inchiKey;
+          this.currentSpectrum.molFile = response.molData;
+
+          this.pullNames(response.inchiKey);
+        },
+        (response) => {
+          this.compoundError = 'Unable to process provided SMILES!';
+          this.compoundProcessing = false;
+        }
+      );
+    }
+
+    // Process InChIKey
+    else if (this.currentSpectrum.inchiKey) {
+      this.processInChIKey(this.currentSpectrum.inchiKey);
+    }
+
+    // Process names
+    else if (this.currentSpectrum.names.length > 0) {
+      this.namesToInChIKey(this.currentSpectrum.names, (inchiKey) => {
+        this.logger.debug('Name to inchikey response: ' + inchiKey);
+        if (inchiKey !== null) {
+          this.logger.info('Found InChIKey: ' + inchiKey);
+          this.currentSpectrum.inchiKey = inchiKey;
+          this.processInChIKey(inchiKey);
+        } else {
+          this.compoundError = 'Unable to find a match for provided name!';
+          this.compoundProcessing = false;
+        }
+      });
+    }
+
+    else {
+      this.compoundError = 'Please provide compound details';
+      this.compoundProcessing = false;
+    }
+  }
+
+  resetCompound() {
+    this.currentSpectrum.molFile = '';
+    this.currentSpectrum.inchi = '';
+    this.currentSpectrum.inchiKey = '';
+    this.currentSpectrum.smiles = '';
+    this.currentSpectrum.names = [''];
+    this.compoundError = undefined;
+    this.compoundMolError = undefined;
+  }
+
+
+  /**
+   * Export a file as MSP
+   */
 	exportFile() {
 		let msp = '';
 

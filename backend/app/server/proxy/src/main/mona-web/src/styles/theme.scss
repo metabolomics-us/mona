@@ -112,8 +112,10 @@ body {
 .btn.btn-primary{
   background-color: #355B85 !important;
   border-color: #355B85 !important;
-
+  outline: none;
+  box-shadow: 0 0 0;
 }
+
 .news-title > h4, h2 {
   font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
   color: #022851;
@@ -157,7 +159,9 @@ body {
 
 .navbar-expand-xl .navbar-header .navbar-brand {
     color: #FFBF00;
-    font-size: large;
+    font-size: x-large;
+    font-weight: bold;
+    padding-right: 3rem;
 }
 
 .navbar-expand-xl .navbar-header .navbar-brand:hover,
@@ -168,7 +172,6 @@ body {
 .navbar-expand-xl {
     background-color: #1a3e68;
     border-bottom: 5px solid #FFBF00;
-
 }
 
 .dropdown-toggle, .dropdown-menu {
@@ -179,12 +182,15 @@ body {
     color: white;
     font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
     font-size: medium;
+    font-weight: bold;
+    padding: 1rem;
 }
 
 .navbar-expand-xl .navbar-nav > * > li > a:hover,
 .navbar-expand-xl .navbar-nav > * > li > a:focus {
     color: #FFBF00;
     background-color: transparent;
+    text-decoration: none;
 }
 
 .navbar-expand-xl .navbar-nav > * > .open > a,
@@ -342,6 +348,18 @@ body {
     color: #428bca;
 }
 
+.btn.btn-primary:hover,
+.btn.btn-primary:focus,
+.btn.btn-primary:active,
+.btn.btn-primary.active {
+  background-color: #0b3f6c !important;
+  border-color: #0b3f6c !important;
+}
+
+.btn-search:hover {
+  background-color: #dca207 !important;
+}
+
 .btn-success.btn-outline {
     color: #5cb85c;
 }
@@ -356,6 +374,11 @@ body {
 
 .btn-danger.btn-outline {
     color: #d9534f;
+}
+
+button.btn-link:focus {
+  outline: none;
+  box-shadow: 0 0 0;
 }
 
 .btn-primary.btn-outline:hover,
@@ -495,4 +518,108 @@ table.dataTable thead .sorting:after {
     margin: 15px 0;
 }
 
+input[type="checkbox"] {
+  accent-color: #0b3f6c;
+  cursor: pointer;
+}
 
+.clickable {
+  cursor: pointer;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+}
+
+.accordion-title {
+  color: #232222;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+}
+
+.gryclr:hover {
+  color: #605e5e !important;
+}
+
+.gryclr {
+  color: #353434 !important;
+}
+
+.gray-background {
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.code-block {
+  background-color: #ececec;
+  padding: 10px;
+  border-radius: 10px;
+  color: darkslategray;
+  font-family: CourierNew, Courier, monospace;
+  font-size: 15px;
+}
+
+.code-text {
+  background-color: #ececec;
+  padding: 3px;
+  border-radius: 5px;
+  color: darkslategray;
+  font-family: CourierNew, Courier, monospace;
+  font-size: 15px;
+}
+
+.davis-blue {
+  color: #0b3f6c !important;
+}
+
+.davis-blue:hover {
+  color: #276db3 !important;
+}
+
+/* override accordion headers to not have underlines on hover */
+.card-header .btn:hover,
+.card-header a:hover {
+  text-decoration: none !important;
+}
+
+.toast-centered {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 2000 !important; /* make sure it sits above the table */
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3) !important;
+  border-radius: 0.5rem !important;
+}
+
+.btn-xs {
+  padding: .15rem .3rem !important;
+  font-size: .675rem !important;
+  line-height: 1.5 !important;
+  border-radius: .2rem !important;
+}
+
+.davis-blue .pagination .page-item.active .page-link {
+  background-color: #0b3f6c !important;
+  border-color: #0b3f6c !important;
+  color: white !important;
+}
+
+.page-link {
+  color: #0b3f6c !important;
+}
+
+.query-btn:active {
+  background-color: #0b3f6c !important;
+}
+
+.search-heading:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 !important;
+}
+
+.custom-progress .progress-bar {
+  background-color: #0b3f6c !important;
+}
