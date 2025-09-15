@@ -1,4 +1,6 @@
 Frontend:
+    - Refresh when doing similarity search hangs
+    - Reset query button sometimes doesn't work?
     - Refresh under user profile gives 404, configure in sprint to reroute all unknowns to index.html
     - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
     - Forgot Username / Password feature
