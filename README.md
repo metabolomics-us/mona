@@ -11,10 +11,9 @@ The MoNA application can be found at https://mona.fiehnlab.ucdavis.edu/ or https
   - AWS CLI (for ECR to pull docker images)
   - NVM (Node Version Manager)
   - NPM (Node Package Manager)
-  - Corsproxy (npm install -g corsproxy with npm version 8)
+  - Corsproxy (`npm install -g corsproxy` while using npm version 8)
   - Java 17 
   - Scala 2.13 (Installed in IntelliJ)
-  - Add Scala Framework Support to the project
 - Gain Access to the following
   - Private mona-config repo
     - You'll need a GitHub Personal Access Token with access to the repo (https://github.com/settings/tokens)
@@ -99,4 +98,5 @@ The MoNA application can be found at https://mona.fiehnlab.ucdavis.edu/ or https
 - postgresql db: 5432
 
 <br/><br/>
+
 <b>Note:</b> More documentation for team members can be found in the YouTrack Knowledge Base
