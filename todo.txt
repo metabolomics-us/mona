@@ -1,4 +1,12 @@
 Frontend:
+    - Top Submitters headers need more space on smaller screens, nowrap
+        - Go through website on laptop to find more of these details
+    - Correct the clean/noisy criteria under the entropy help page
+    - Fix oldCTS Url from http to https
+    - Make compound information required when uploading spectra
+    - Curate user spectra button not working
+    - Add a curate non-curated data button to admin page (find spectra with no entry for last_curated column)
+    - Temporarily remove searchbox
     - Refresh when doing similarity search hangs
     - Reset query button sometimes doesn't work?
     - Refresh under user profile gives 404, configure in sprint to reroute all unknowns to index.html
@@ -14,10 +22,12 @@ Frontend:
                 - And it will not show spectra without tags in the results
 
 Backend:
-    - Debug the random error I had when starting out where it said there were 0 spectra and search wouldn't work
-        - Happens if you connect to the IP? Instead of the URL, nope
-        - Nope, happened again randomly 8/27, still going on 9/5
-        - Still down even after download export completed, don't think that's the issue
+    - Remove noisy spectra from predefined downloads
+        - Maybe remove noisy spectra from search results too? Unless user enables checkbox for "show noisy spectra"
+    - Re-curate all spectra did not work on all spectra, Fanzhou's still not curated
+        - Give a button to recurate all non-curated data, since all data takes too long
+    - New spectra are not being ran through curation on prod, but they are on dev
+    - Debug the random 500 error on prod (temporarily fixed after redeploying from gose?)
         - Proxy service has interesting error logs
     - DB Index querying under compound classes sometimes doesn't work
     - Database Index & Statistic page
