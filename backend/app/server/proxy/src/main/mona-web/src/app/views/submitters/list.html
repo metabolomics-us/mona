@@ -24,8 +24,6 @@
                     <th>Last</th>
                     <th>Institution</th>
                     <th>Email</th>
-<!--                    <th>Avg Score</th>-->
-<!--                    <th>Uploaded Spectra</th>-->
                     <th></th>
                 </tr>
                 </thead>
@@ -35,7 +33,7 @@
                     <td>{{sub.lastName}}</td>
                     <td>{{sub.institution}}</td>
                     <td>{{sub.emailAddress}}</td>
-                    <td>
+                    <td class="text-nowrap">
                         <button (click)="displayEditDialog(sub)" class="btn btn-default" ngbTooltip="Edit user">
                           <fa-icon [icon]="faEdit"></fa-icon>
                         </button>
