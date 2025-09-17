@@ -4,8 +4,8 @@
     <tr>
         <th>&nbsp;</th>
         <th>Name</th>
-        <th>Avg. Score</th>
-        <th>Spectra</th>
+        <th class="text-nowrap">Avg. Score</th>
+        <th class="text-nowrap">Spectra</th>
     </tr>
     </thead>
 
@@ -26,7 +26,7 @@
             <td>
               <submitter-query [submitter]="score">{{score.firstName}} {{score.lastName}}</submitter-query>
             </td>
-            <td>
+            <td class="text-nowrap">
               <label ngbTooltip="{{0.0 + score.score | number:'1.2-2'}} / 5.00" placement="bottom">
                 <span *ngFor="let star of stars(score)">
                   <fa-icon size="sm" *ngIf="star === 1" [icon]="faStar"></fa-icon>
@@ -35,7 +35,7 @@
                 </span>
               </label>
             </td>
-            <td>{{score.count | number: "1.0-0"}}</td>
+            <td class="text-nowrap">{{score.count | number: "1.0-0"}}</td>
         </tr>
     </tbody>
 </table>
