@@ -188,7 +188,8 @@ OR
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li *ngIf="compoundInfoProvided" class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li *ngIf="!compoundInfoProvided" class="text-danger"><button class="fakeRef" [disabled]="true" style="color: #e46161; cursor: not-allowed" ngbTooltip="SMILES, InChI Code, or InChIKey required">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -197,7 +198,7 @@ OR
             <div class="card-body">
                 <p class="lead">
                     <small>
-                        MoNA requires that every spectrum has an associated compound.  Please enter an InChI, InChIKey,
+                        MoNA requires that every spectrum has an associated compound.  Please enter an InChI Code, InChIKey,
                         SMILES, compound name, a MOL/SDF file, or draw a structure yourself.  Then, click on
                         "Update Compound" to automatically pull the remaining fields from the
                         <a href="http://cts.fiehnlab.ucdavis.edu" target="_blank">Chemical Translation Service</a>.
@@ -251,6 +252,7 @@ OR
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
                            [(ngModel)]="currentSpectrum.smiles"
+                           (blur)="currentSpectrum.smiles = currentSpectrum.smiles?.trim()"
                            placeholder="SMILES"
                            class="form-control" />
                     </div>
@@ -261,6 +263,7 @@ OR
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
                                [(ngModel)]="currentSpectrum.inchi"
+                               (blur)="currentSpectrum.inchi = currentSpectrum.inchi?.trim()"
                                placeholder="InChI Code"
                                class="form-control" />
                     </div>
@@ -271,6 +274,7 @@ OR
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
                                [(ngModel)]="currentSpectrum.inchiKey"
+                               (blur)="currentSpectrum.inchiKey = currentSpectrum.inchiKey?.trim()"
                                placeholder="InChIKey"
                                class="form-control" />
                     </div>
@@ -660,7 +664,7 @@ OR
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th>Name</th>
+                        <th class="text-nowrap">Name</th>
                         <th>Value</th>
                     </tr>
                     </thead>
@@ -702,7 +706,7 @@ OR
                     </tr>
 
                     <tr *ngFor="let meta of currentSpectrum.meta">
-                        <td>{{meta.name}}</td>
+                        <td class="text-nowrap">{{meta.name}}</td>
                         <td>{{meta.value}}</td>
                     </tr>
                     </tbody>

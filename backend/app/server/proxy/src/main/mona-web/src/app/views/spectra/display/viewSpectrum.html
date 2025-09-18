@@ -181,8 +181,8 @@
                                           <metadata-query [metaData]="meta">{{meta.name}}</metadata-query>
                                         </td>
                                         <td class="col-lg-8 col-md-8" style="font-family: Roboto, serif">
-                                          <span *ngIf="checkNumber(meta.value)">{{meta.value | number:'1.0-4'}} {{meta.unit}}</span>
-                                          <span *ngIf="!checkNumber(meta.value)">{{meta.value}} {{meta.unit}}</span>
+                                          <span *ngIf="checkNumber(meta.value)">{{meta.value | number:'1.0-4'}} {{meta.unit}} </span>
+                                          <span *ngIf="!checkNumber(meta.value)">{{meta.value}} {{meta.unit}} </span>
                                           <fa-icon [icon]="faFlask"
                                                    *ngIf="meta.computed === true"
                                                    ngbTooltip="Calculated by MoNA Auto Curation"

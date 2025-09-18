@@ -681,4 +681,13 @@ export class BasicUploaderComponent implements OnInit{
         this.nextPage();
       }
     }
+
+    get compoundInfoProvided(): boolean {
+      return !!(
+          (this.currentSpectrum?.smiles && this.currentSpectrum.smiles.trim()) ||
+          (this.currentSpectrum?.inchi && this.currentSpectrum.inchi.trim()) ||
+          (this.currentSpectrum?.inchiKey && this.currentSpectrum.inchiKey.trim())
+      );
+    }
+
 }

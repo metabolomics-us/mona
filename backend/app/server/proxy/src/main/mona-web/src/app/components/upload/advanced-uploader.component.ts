@@ -989,4 +989,16 @@ export class AdvancedUploaderComponent implements OnInit{
 	  this.router.navigate(['/documentation/uploadLibrary']).then();
   }
 
+  get compoundInfoProvided(): boolean {
+    if (!this.spectra || this.spectra.length === 0) {
+      return false;
+    }
+
+    return this.spectra.every(spectrum =>
+      (spectrum?.smiles && spectrum.smiles.trim()) ||
+      (spectrum?.inchi && spectrum.inchi.trim()) ||
+      (spectrum?.inchiKey && spectrum.inchiKey.trim())
+    );
+  }
+
 }

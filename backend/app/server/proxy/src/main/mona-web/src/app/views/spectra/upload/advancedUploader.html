@@ -250,6 +250,7 @@
                                     <div class="col-md-9 col-lg-9">
                                         <input type="text"
                                            [(ngModel)]="currentSpectrum.smiles"
+                                           (blur)="currentSpectrum.smiles = currentSpectrum.smiles?.trim()"
                                            ngDefaultControl
                                            placeholder="SMILES"
                                            class="form-control" />
@@ -261,6 +262,7 @@
                                     <div class="col-md-9 col-lg-9">
                                         <input type="text"
                                                [(ngModel)]="currentSpectrum.inchi"
+                                               (blur)="currentSpectrum.inchi = currentSpectrum.inchi?.trim()"
                                                ngDefaultControl
                                                placeholder="InChI Code"
                                                class="form-control" />
@@ -272,6 +274,7 @@
                                     <div class="col-md-9 col-lg-9">
                                         <input type="text"
                                              [(ngModel)]="currentSpectrum.inchiKey"
+                                             (blur)="currentSpectrum.inchiKey = currentSpectrum.inchiKey?.trim()"
                                              ngDefaultControl
                                              placeholder="InChIKey"
                                              class="form-control" />
@@ -523,7 +526,7 @@
                     </div>
                     <div class="mx-auto order-0">
                         <ul class="navbar-nav mx-auto ">
-                            <li><strong>Spectrum {{spectraIndex + 1}} / {{spectra.length}}</strong></li>
+                            <li class="text-nowrap"><strong>Spectrum {{spectraIndex + 1}} / {{spectra.length}}</strong></li>
                         </ul>
                     </div>
                     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
@@ -537,7 +540,9 @@
                     <button class="btn btn-danger mr-1" (click)="resetFile()">Restart</button>
                     <button class="btn btn-primary ml-1 mr-1" (click)="exportFile()"><fa-icon [icon]="faFileExport"></fa-icon> Export as MSP</button>
                     <button *ngIf="!authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="waitForLogin(); authenticationService.requestModal()">Login to Upload to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
-                    <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="uploadFile()"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload to MoNA</button>
+                    <span [ngbTooltip]="!compoundInfoProvided ? 'Each spectrum requires either a SMILES, InChI Code, or InChIKey before uploading' : null" placement="right">
+                      <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="uploadFile()" [disabled]="!compoundInfoProvided"><fa-icon [icon]="faCloudUploadAlt" ></fa-icon> Upload to MoNA</button>
+                    </span>
                 </div>
             </div>
         </div>

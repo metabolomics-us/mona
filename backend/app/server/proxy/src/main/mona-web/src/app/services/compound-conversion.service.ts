@@ -19,13 +19,8 @@ export class CompoundConversionService{
     /**
      * Converts the given name to an InChIKey via Chemify
      */
-    // OLD FUNCTION THAT NO LONGER WORKED BECAUSE URL CHANGED TO 'oldcts.fiehnlab.ucdavis.edu'
-    // nameToInChIKey(name, callback, errorCallback) {
-    //     // Now uses oldCtsUrl env variable assigned in main.ts as CtsLibModule.forRoot
-    //     this.chemifyService.nameToInChIKey(name, callback, errorCallback);
-    // }
     nameToInChIKey(name, callback, errorCallback) {
-      const oldCtsUrl = 'http://oldcts.fiehnlab.ucdavis.edu';
+      const oldCtsUrl = 'https://oldcts.fiehnlab.ucdavis.edu';
 
       // Handle empty name provided
       if (name.trim() === '') {
