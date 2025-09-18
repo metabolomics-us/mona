@@ -252,6 +252,7 @@ OR
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
                            [(ngModel)]="currentSpectrum.smiles"
+                           (blur)="currentSpectrum.smiles = currentSpectrum.smiles?.trim()"
                            placeholder="SMILES"
                            class="form-control" />
                     </div>
@@ -262,6 +263,7 @@ OR
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
                                [(ngModel)]="currentSpectrum.inchi"
+                               (blur)="currentSpectrum.inchi = currentSpectrum.inchi?.trim()"
                                placeholder="InChI Code"
                                class="form-control" />
                     </div>
@@ -272,6 +274,7 @@ OR
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
                                [(ngModel)]="currentSpectrum.inchiKey"
+                               (blur)="currentSpectrum.inchiKey = currentSpectrum.inchiKey?.trim()"
                                placeholder="InChIKey"
                                class="form-control" />
                     </div>

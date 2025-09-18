@@ -250,6 +250,7 @@
                                     <div class="col-md-9 col-lg-9">
                                         <input type="text"
                                            [(ngModel)]="currentSpectrum.smiles"
+                                           (blur)="currentSpectrum.smiles = currentSpectrum.smiles?.trim()"
                                            ngDefaultControl
                                            placeholder="SMILES"
                                            class="form-control" />
@@ -261,6 +262,7 @@
                                     <div class="col-md-9 col-lg-9">
                                         <input type="text"
                                                [(ngModel)]="currentSpectrum.inchi"
+                                               (blur)="currentSpectrum.inchi = currentSpectrum.inchi?.trim()"
                                                ngDefaultControl
                                                placeholder="InChI Code"
                                                class="form-control" />
@@ -272,6 +274,7 @@
                                     <div class="col-md-9 col-lg-9">
                                         <input type="text"
                                              [(ngModel)]="currentSpectrum.inchiKey"
+                                             (blur)="currentSpectrum.inchiKey = currentSpectrum.inchiKey?.trim()"
                                              ngDefaultControl
                                              placeholder="InChIKey"
                                              class="form-control" />
