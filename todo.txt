@@ -1,14 +1,14 @@
 Frontend:
-    - Top Submitters headers need more space on smaller screens, nowrap
-        - Go through website on laptop to find more of these details
-    - Correct the clean/noisy criteria under the entropy help page
-    - Fix oldCTS Url from http to https
-    - Make compound information required when uploading spectra
-    - Curate user spectra button not working
+    - Fix 'Curate user spectra' admin button not working
     - Add a curate non-curated data button to admin page (find spectra with no entry for last_curated column)
-    - Temporarily remove searchbox
     - Refresh when doing similarity search hangs
+    - Or in query system is not working properly:
+        - exists(metaData.name:'deleteme' or metaData.value:'true' or compound.names.name:'deleteme' or compound.metaData.name:'deleteme' or compound.metaData.value:'deleteme')
+            - returns nothing
+        - exists(metaData.name:'deleteme' or metaData.value:'true')
+            - returns properly
     - Reset query button sometimes doesn't work?
+        - When you use searchbox and then go into browse tab
     - Refresh under user profile gives 404, configure in sprint to reroute all unknowns to index.html
     - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
     - Forgot Username / Password feature
@@ -22,6 +22,10 @@ Frontend:
                 - And it will not show spectra without tags in the results
 
 Backend:
+    - Improve error handling of CTS queries, trim fields before processing, if we get an error still curate the spectra
+        - That's why Fanzhou's samples failed for example, we couldn't process this SMILES:
+            - NC(Cc1ccc(O)cc1)C(=O)NC(CO)C(=O)O
+            - Unsupported bond type
     - Remove noisy spectra from predefined downloads
         - Maybe remove noisy spectra from search results too? Unless user enables checkbox for "show noisy spectra"
     - Re-curate all spectra did not work on all spectra, Fanzhou's still not curated
@@ -204,3 +208,11 @@ Done:
     - Similarity scores have too many decimals, no decimals needed at all
     - Browse doesn't work on prod, e.score is not a property?
         - TypeError: can't access property "score", e.score is undefined
+    - Fix oldCTS Url from http to https
+    - Correct the clean/noisy criteria under the entropy help page
+    - Fix wrapping on manage users page
+    - Top Submitters headers need more space on smaller screens, nowrap
+        - Go through website on laptop to find more of these details
+    - Temporarily remove searchbox
+    - Make compound information required when uploading spectra
+    - Trim compound information fields, right now ' O' instead of 'O' would fail CTS and cause the spectra to not be curated
