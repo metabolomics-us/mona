@@ -68,6 +68,16 @@ export class AdminService {
     return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/curation`, config);
   }
 
+  reCurateUserData(token: any, query: string): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      responseType: 'text' as 'json'
+    };
+    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/curation/`, { ...config, params: {query} } );
+  }
 
   fetchUser(token: any, emailAddress: string): Observable<any> {
     const config = {
@@ -86,6 +96,6 @@ export class AdminService {
         Authorization: 'Bearer ' + token
       }
     };
-    return this.http.put(`${environment.REST_BACKEND_SERVER}/rest/users/${user.emailAddress}`, user, config)
+    return this.http.put(`${environment.REST_BACKEND_SERVER}/rest/users/${user.emailAddress}`, user, config);
   }
 }

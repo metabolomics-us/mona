@@ -59,10 +59,10 @@ export class SpectraQueryBuilderService {
     constructFinalString(): String {
       let finalString = '';
       this.query.forEach((x, index) => {
-        if(index < this.query.length - 1) {
-          finalString+=`exists(${x}) and `
+        if (index < this.query.length - 1) {
+          finalString += `exists(${x}) and `;
         } else {
-          finalString+=`exists(${x})`
+          finalString += `exists(${x})`;
         }
       });
       return finalString;
@@ -248,6 +248,6 @@ export class SpectraQueryBuilderService {
   }
 
   addGenericSearch(query): void {
-      this.query.push(`metaData.name:\'${query}\' or metaData.value:\'${query}\' or compound.names.name:\'${query}\' or compound.metaData.name:\'${query}\' or compound.metaData.value:\'${query}\'`)
+      this.query.push(`metaData.name:\'${query}\' or metaData.value:\'${query}\' or compound.names.name:\'${query}\' or compound.metaData.name:\'${query}\' or compound.metaData.value:\'${query}\'`);
   }
 }
