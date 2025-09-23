@@ -1,10 +1,7 @@
 Frontend:
-    - Fix 'Curate user spectra' admin button not working
     - Add more specific curation buttons for admin
-        - Fix "Curate user spectra" button
         - Add "Curate non-curated spectra" button (find spectra with no entry for last_curated column)
         - Add "Curate this spectrum" button
-    - Refreshing the page when browsing similarity search results hangs
     - "Or" operator in query system is not working properly:
         - exists(metaData.name:'deleteme' or metaData.value:'true' or compound.names.name:'deleteme' or compound.metaData.name:'deleteme' or compound.metaData.value:'deleteme')
             - returns nothing
@@ -12,25 +9,21 @@ Frontend:
             - returns properly
     - Reset query button sometimes doesn't work?
         - When you use searchbox and then go into browse tab
-    - Refresh under user profile gives 404, configure in sprint to reroute all unknowns to index.html
+    - Refreshing the page when viewing user profile gives 404, configure in sprint to reroute all unknowns to index.html
+    - Refreshing the page when browsing similarity search results hangs
     - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
     - Forgot Username / Password feature
     - Libraries with the same name but different ID show up as the same on admin page
     - Sort spectra by score or most recently updated maybe? When searching
-        - Pagination, maybe query returns only up to 10 pages of results at a time?
         - Browse is sorted alphabetically by ID right now
-    - Tag search logic is flawed (not just tags)
+        - Add pagination, maybe query returns only up to 10 pages of results at a time?
+    - Query logic is flawed
         - If you search for spectra without the tag 'example', it will only show you spectra that have tags that are not example
             - Even if the spectrum does have the example tag, it will still show up if it has another tag
                 - And it will not show spectra without tags in the results
     - Add a footer for the website?
 
 Backend:
-    - Why does in-silico download have 3,017,304 spectra? We only have 2,080,145 total
-        - The in-silico query returns 3,128,951 results, keep track of this number
-            - The query: "tags.text:'In-Silico'"
-        - The proper query when you query the tag from the browser returns 1,844,353 (correct #)
-            - That query is: "exists(tags.text:'In-Silico')"
     - Switch from CTS to NIH's CIR?
     - Improve error handling of CTS queries, if we get an error still curate the spectra
         - That's why Fanzhou's samples failed for example, we couldn't process this SMILES:
@@ -39,11 +32,10 @@ Backend:
             - This SMILES does get converted by CIR from the NIH though
     - Remove noisy spectra from predefined downloads and default search results
         - Maybe remove noisy spectra from search results too? Unless user enables checkbox for "show noisy spectra"
-    - Give a button to recurate all non-curated data, since all data takes too long
     - New spectra are not being run through curation on prod, but they are on dev
         - It did get curated after 4 days for some reason, along with many other spectra (did it recurate everything?)
         - Scheduler never mentioned there were new spectra scheduled, maybe it was leftover from the total recuration ran on 9/16
-    - Debug the random 500 error on prod (temporarily fixed after redeploying from gose?)
+    - Debug the random 500 error on prod (temporarily fixed after redeploying)
         - Proxy service has interesting error logs that could be related
     - DB Index querying under compound classes sometimes doesn't work
         - It's the logic issues of the "OR" and "AND" operators,
@@ -227,3 +219,13 @@ Done:
     - Make compound information required when uploading spectra
     - Trim compound information fields, right now ' O' instead of 'O' would fail CTS and cause the spectra to not be curated
     - Removed 'additional downloads' section from downloads, was empty on prod
+    - Why does in-silico download have 3,017,304 spectra? We only have 2,080,145 total - SOLVED
+        - Now waiting for predefined queries to update
+        - Issue was indeed due to duplicate tags, removed them on a db level
+            - As suspected, I'm 95% sure it comes from spectra that have duplicate in-silico tags, like 2 for one sample
+                - 'Cer 24:0;2O/22:0;O(FA 16:2)' AKA 'LipidBlast2022_335097' for example
+            - The in-silico query returns 3,128,951 results, keep track of this number
+                - The query: "tags.text:'In-Silico'"
+            - The proper query when you query the tag from the browser returns 1,844,353 (correct #)
+                - That query is: "exists(tags.text:'In-Silico')"
+    - Fix "Curate user spectra" button
