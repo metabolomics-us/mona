@@ -1,8 +1,11 @@
 Frontend:
     - Fix 'Curate user spectra' admin button not working
-    - Add a curate non-curated data button to admin page (find spectra with no entry for last_curated column)
-    - Refresh when doing similarity search hangs
-    - Or in query system is not working properly:
+    - Add more specific curation buttons for admin
+        - Fix "Curate user spectra" button
+        - Add "Curate non-curated spectra" button (find spectra with no entry for last_curated column)
+        - Add "Curate this spectrum" button
+    - Refreshing the page when browsing similarity search results hangs
+    - "Or" operator in query system is not working properly:
         - exists(metaData.name:'deleteme' or metaData.value:'true' or compound.names.name:'deleteme' or compound.metaData.name:'deleteme' or compound.metaData.value:'deleteme')
             - returns nothing
         - exists(metaData.name:'deleteme' or metaData.value:'true')
@@ -16,35 +19,42 @@ Frontend:
     - Sort spectra by score or most recently updated maybe? When searching
         - Pagination, maybe query returns only up to 10 pages of results at a time?
         - Browse is sorted alphabetically by ID right now
-    - Tag search logic is flawed
+    - Tag search logic is flawed (not just tags)
         - If you search for spectra without the tag 'example', it will only show you spectra that have tags that are not example
             - Even if the spectrum does have the example tag, it will still show up if it has another tag
                 - And it will not show spectra without tags in the results
+    - Add a footer for the website?
 
 Backend:
-    - Improve error handling of CTS queries, trim fields before processing, if we get an error still curate the spectra
+    - Why does in-silico download have 3,017,304 spectra? We only have 2,080,145 total
+        - The in-silico query returns 3,128,951 results, keep track of this number
+            - The query: "tags.text:'In-Silico'"
+        - The proper query when you query the tag from the browser returns 1,844,353 (correct #)
+            - That query is: "exists(tags.text:'In-Silico')"
+    - Switch from CTS to NIH's CIR?
+    - Improve error handling of CTS queries, if we get an error still curate the spectra
         - That's why Fanzhou's samples failed for example, we couldn't process this SMILES:
             - NC(Cc1ccc(O)cc1)C(=O)NC(CO)C(=O)O
             - Unsupported bond type
-    - Remove noisy spectra from predefined downloads
+            - This SMILES does get converted by CIR from the NIH though
+    - Remove noisy spectra from predefined downloads and default search results
         - Maybe remove noisy spectra from search results too? Unless user enables checkbox for "show noisy spectra"
-    - Re-curate all spectra did not work on all spectra, Fanzhou's still not curated
-        - Give a button to recurate all non-curated data, since all data takes too long
-    - New spectra are not being ran through curation on prod, but they are on dev
+    - Give a button to recurate all non-curated data, since all data takes too long
+    - New spectra are not being run through curation on prod, but they are on dev
+        - It did get curated after 4 days for some reason, along with many other spectra (did it recurate everything?)
+        - Scheduler never mentioned there were new spectra scheduled, maybe it was leftover from the total recuration ran on 9/16
     - Debug the random 500 error on prod (temporarily fixed after redeploying from gose?)
-        - Proxy service has interesting error logs
+        - Proxy service has interesting error logs that could be related
     - DB Index querying under compound classes sometimes doesn't work
+        - It's the logic issues of the "OR" and "AND" operators,
+            - Actually not necessarily, I think it's the value names like intermediate parent 1
     - Database Index & Statistic page
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
         - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
             - Happens from custom metadata inputted by users, maybe change on DB level?
     - Updating a user's email doesn't work
+        - Disabled field for now in user editor
         - Creates a new submitter that can't log in with that new email (fails to create a new user)
-    - What is "Additional Downloads" and what are they used for? It's empty on prod
-        - AKA static_download in the db, table is empty on prod, fixed length display issue
-        - Make additional downloads on Download page a clickable dropdown (frontend)
-    - Links to "Originally submitted to..." like eu MassBank shows error404 page not found
-        - Just old libraries whose links are outdated?
     - Are relative_score and scaled_score useless in the score db table? All values are set to 0
     - Error in downloader service 2025-09-06, empty string. Failed the 'All Spectra' download
         - Error logs in YouTrack
@@ -216,3 +226,4 @@ Done:
     - Temporarily remove searchbox
     - Make compound information required when uploading spectra
     - Trim compound information fields, right now ' O' instead of 'O' would fail CTS and cause the spectra to not be curated
+    - Removed 'additional downloads' section from downloads, was empty on prod
