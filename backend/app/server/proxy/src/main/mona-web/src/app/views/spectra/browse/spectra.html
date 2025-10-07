@@ -40,9 +40,9 @@
                     downloads to avoid putting unnecessary strain on the servers
                   </div>
 
-                  <br />
-                  Current query
-                  <button class="btn btn-primary btn-xs" (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
+                  <br/> <br/>
+                  Current Query
+                  <button class="btn btn-primary btn-xs mb-1" (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
                   <pre *ngIf="!editQuery" class="input-group-text">{{query !== '' && query !== undefined ? query : "[Empty]"}}</pre>
                   <div *ngIf="editQuery">
                     <form (submit)="updateQuery(query)">
@@ -57,18 +57,21 @@
 
                   <div>
                     <br/>
-                    cURL command to download all spectral records matching the current query (JSON):
-                    <pre class="input-group-text">{{{query: query} | curlPipe}}</pre>
+                    Current query as a cURL command (JSON)
+                    <pre class="input-group-text" id="curlCommand">
+                      <button class="btn btn-link btn-sm" style="color: slategray; margin-left: -10px" (click)="copyCurlCommand()"><fa-icon [icon]="faCopy"></fa-icon></button>
+                      {{{query: query} | curlPipe}}
+                    </pre>
+                    <span id="copiedMsg" style="opacity: 0; color: forestgreen">Copied!</span>
                   </div>
 
-                  <p></p>
-                  <div>To download results as an MSP file, add the header: <code class="code-text"> Accept: text/msp</code></div>
+                  <div>To query results in MSP format, add <code class="code-text">&nbsp;--header "Accept: text/msp"</code> to the end of your cURL command</div>
 
-                  <div>
-                    <br/>
+                  <div style="width: 300px">
+                    <br/> <br/>
                     <p>
                       <ngb-alert type="warning" [dismissible]="false">
-                        <a [routerLink]="['/documentation/query']">Learn more</a> about the query system
+                        <a [routerLink]="['/documentation/query']" target="_blank">Learn more</a> about the query system
                       </ngb-alert>
                     </p>
                   </div>
