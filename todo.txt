@@ -1,4 +1,8 @@
 Frontend:
+    - Add copy to clipboard button next to generated curl query
+    - Clarify "add the header accept text/msp"
+    - Nowrap on user profile info
+    - Take away comma from 1,000 / 1000 in full view similarity score
     - Add more specific curation buttons for admin
         - Add "Curate non-curated spectra" button (find spectra with no entry for last_curated column)
         - Add "Curate this spectrum" button
@@ -25,6 +29,9 @@ Frontend:
 
 Backend:
     - Switch from CTS to NIH's CIR?
+    - Equals signs (=) in the queries cause these huge error logs to be produced in the persistence server
+        - what is producing these equal signs to be in queries?
+    - Update to spring-filter version 3.0.0? (Requires springboot 3+)
     - Improve error handling of CTS queries, if we get an error still curate the spectra
         - That's why Fanzhou's samples failed for example, we couldn't process this SMILES:
             - NC(Cc1ccc(O)cc1)C(=O)NC(CO)C(=O)O
