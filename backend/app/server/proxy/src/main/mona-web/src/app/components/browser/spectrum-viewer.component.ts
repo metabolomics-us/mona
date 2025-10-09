@@ -24,7 +24,7 @@ import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
 import {SpectrumModel} from '../../mocks/spectrum.model';
-import {Observable} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 
@@ -283,10 +283,11 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     }
 
     reCurateSpectrum(id: string): Observable<any> {
-      if (id === '') {
-        // TODO: right now this curates all spectra, fix that
-
+      if (!id || id.trim() === '') {
+        console.error('reCurateSpectrum(): empty spectrum ID — aborting request.');
+        return throwError(() => new Error('Empty spectrum ID'));
       }
+
       const token = this.authenticationService.getCurrentUser().accessToken;
       const config = {
         headers: {
