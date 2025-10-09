@@ -1,22 +1,19 @@
 Frontend:
     - Add more specific curation buttons for admin
-        - Add "Curate non-curated spectra" button (find spectra with no entry for last_curated column)
+        - Add "Curate non-curated spectra" button (find spectra with no entry for last_curated column in db)
         - Add "Curate this spectrum" button
     - "Or" operator in query system is not working properly:
         - exists(metaData.name:'deleteme' or metaData.value:'true' or compound.names.name:'deleteme' or compound.metaData.name:'deleteme' or compound.metaData.value:'deleteme')
             - returns nothing
         - exists(metaData.name:'deleteme' or metaData.value:'true')
             - returns properly
-    - Reset query button sometimes doesn't work?
-        - When you use searchbox and then go into browse tab
     - Refreshing the page when viewing user profile gives 404, configure in sprint to reroute all unknowns to index.html
     - Refreshing the page when browsing similarity search results hangs
     - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
     - Forgot Username / Password feature
-    - Libraries with the same name but different ID show up as the same on admin page
+        - Create email sending API
     - Sort spectra by score or most recently updated maybe? When searching
         - Browse is sorted alphabetically by ID right now
-        - Add pagination, maybe query returns only up to 10 pages of results at a time?
     - Query logic is flawed
         - If you search for spectra without the tag 'example', it will only show you spectra that have tags that are not example
             - Even if the spectrum does have the example tag, it will still show up if it has another tag
@@ -24,7 +21,10 @@ Frontend:
     - Add a footer for the website?
 
 Backend:
-    - Switch from CTS to NIH's CIR?
+    - Add PubChemLite curation / matching
+        - Simple API that matches against PubChemLite, gives spectrum a tag if matched
+    - REST queries time out in standard format, need to use format from Query Guide help page
+        - Page parameter is indexed starting at 0
     - Similarity service:
         - Spectrum A says it has 1000 similarity with spectrum B, open spectrum B, spectrum B has no similar spectra
     - Equals signs (=) in the queries cause these huge error logs to be produced in the persistence server
@@ -238,3 +238,8 @@ Done:
     - Clarify "add the header accept text/msp"
     - Nowrap on user profile info
     - Take away comma from 1,000 / 1000 in full view similarity score
+    - If search fields are blank, clear them before query
+    - Reset query button sometimes doesn't work?
+        - When you use searchbox and then go into browse tab
+    - Libraries with the same name but different ID show up as the same on admin page
+        - Decided against changing this, it is useful when you want to add more spectra to a library. Give it the same name but different ID
