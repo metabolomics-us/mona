@@ -24,6 +24,9 @@ import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
 import {SpectrumModel} from '../../mocks/spectrum.model';
+import {Observable} from 'rxjs';
+import {environment} from '../../../environments/environment';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
     selector: 'spectrum-viewer',
@@ -61,7 +64,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
                  public spectrumService: Spectrum,  public authenticationService: AuthenticationService,
                  public location: Location,  public spectrumCache: SpectrumCacheService,
                  public route: ActivatedRoute,  public router: Router, public orderbyPipe: OrderbyPipe,
-                 public feedbackCache: FeedbackCacheService){
+                 public feedbackCache: FeedbackCacheService, public http: HttpClient){
       this.currentFeedback = [];
     }
 
@@ -273,5 +276,25 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
         rounded -= 1;
       }
       return result;
+    }
+
+    isAdmin() {
+      return this.authenticationService.isAdmin();
+    }
+
+    reCurateSpectrum(id: string): Observable<any> {
+      if (id === '') {
+        // TODO: right now this curates all spectra, fix that
+
+      }
+      const token = this.authenticationService.getCurrentUser().accessToken;
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
+        },
+        responseType: 'text' as 'json'
+      };
+      return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/curation/${id}`, config);
     }
 }
