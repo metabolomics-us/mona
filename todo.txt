@@ -1,6 +1,7 @@
 Frontend:
     - Add more specific curation buttons for admin
         - Add "Curate non-curated spectra" button (find spectra with no entry for last_curated column in db)
+        - A little trickier than expected, might be able to get away with manually triggering re-curation of user spectra, since there aren't many users with non-curated spectra
     - "Or" operator in query system is not working properly:
         - exists(metaData.name:'deleteme' or metaData.value:'true' or compound.names.name:'deleteme' or compound.metaData.name:'deleteme' or compound.metaData.value:'deleteme')
             - returns nothing
@@ -243,3 +244,5 @@ Done:
     - Libraries with the same name but different ID show up as the same on admin page
         - Decided against changing this, it is useful when you want to add more spectra to a library. Give it the same name but different ID
     - Add "Curate this spectrum" button
+    - Lower next button not disabled on uploading when no compound info provided
+    - Whitespace trimming in quick search
