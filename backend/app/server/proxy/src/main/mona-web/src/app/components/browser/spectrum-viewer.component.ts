@@ -283,19 +283,21 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     }
 
     reCurateSpectrum(id: string): Observable<any> {
-      if (!id || id.trim() === '') {
-        console.error('reCurateSpectrum(): empty spectrum ID — aborting request.');
-        return throwError(() => new Error('Empty spectrum ID'));
-      }
+      if (this.isAdmin()) {
+        if (!id || id.trim() === '') {
+          console.error('reCurateSpectrum(): empty spectrum ID — aborting request.');
+          return throwError(() => new Error('Empty spectrum ID'));
+        }
 
-      const token = this.authenticationService.getCurrentUser().accessToken;
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token
-        },
-        responseType: 'text' as 'json'
-      };
-      return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/curation/${id}`, config);
+        const token = this.authenticationService.getCurrentUser().accessToken;
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token
+          },
+          responseType: 'text' as 'json'
+        };
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/curation/${id}`, config);
+      }
     }
 }
