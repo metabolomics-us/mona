@@ -14,7 +14,7 @@
                     <tr>
                         <td colspan="2">
                             <input type="text" [(ngModel)]="query.name"
-                                   (ngModelChange)="query.name = $event.trim() === '' ? undefined : $event"
+                                   (ngModelChange)="query.name = $event.trim() === '' ? undefined : $event.trim()"
                                    name="queryName"
                                    class="form-control"
                                    placeholder="Name or InChIKey">
@@ -23,7 +23,7 @@
                     <tr>
                         <td colspan="2">
                             <input type="text" [(ngModel)]="query.classification"
-                                   (ngModelChange)="query.classification = $event.trim() === '' ? undefined : $event"
+                                   (ngModelChange)="query.classification = $event.trim() === '' ? undefined : $event.trim()"
                                    name="queryClassification"
                                    class="form-control"
                                    placeholder="Compound Class"/>
@@ -32,7 +32,7 @@
                     <tr>
                         <td colspan="2">
                             <input type="text" [(ngModel)]="query.formula"
-                                   (ngModelChange)="query.formula = $event.trim() === '' ? undefined : $event"
+                                   (ngModelChange)="query.formula = $event.trim() === '' ? undefined : $event.trim()"
                                    name="queryFormula"
                                    class="form-control"
                                    placeholder="Molecular Formula">
@@ -41,7 +41,7 @@
                     <tr>
                         <td>
                             <input type="text" [(ngModel)]="query.exactMass"
-                                   (ngModelChange)="query.exactMass = $event.trim() === '' ? undefined : $event"
+                                   (ngModelChange)="query.exactMass = $event.trim() === '' ? undefined : $event.trim()"
                                    name="queryExactMass"
                                    class="form-control"
                                    placeholder="Exact Mass">
