@@ -27,6 +27,7 @@ import {SpectrumModel} from '../../mocks/spectrum.model';
 import {Observable, throwError} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
+import {ToasterService} from 'angular2-toaster';
 
 @Component({
     selector: 'spectrum-viewer',
@@ -64,7 +65,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
                  public spectrumService: Spectrum,  public authenticationService: AuthenticationService,
                  public location: Location,  public spectrumCache: SpectrumCacheService,
                  public route: ActivatedRoute,  public router: Router, public orderbyPipe: OrderbyPipe,
-                 public feedbackCache: FeedbackCacheService, public http: HttpClient){
+                 public feedbackCache: FeedbackCacheService, public http: HttpClient, public toaster: ToasterService){
       this.currentFeedback = [];
     }
 
@@ -282,7 +283,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
       return this.authenticationService.isAdmin();
     }
 
-    reCurateSpectrum(id: string): Observable<any> {
+    reCurateSpectrum(id: string) {
       if (this.isAdmin()) {
         if (!id || id.trim() === '') {
           console.error('reCurateSpectrum(): empty spectrum ID — aborting request.');
@@ -297,7 +298,20 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
           },
           responseType: 'text' as 'json'
         };
-        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/curation/${id}`, config);
+
+        this.http.get(`${environment.REST_BACKEND_SERVER}/rest/curation/${id}`, config).subscribe( () => {
+          this.toaster.pop({
+            type: 'success',
+            title: 'Re-Curation for Spectrum Scheduled Successfully',
+            body: 'Spectrum has been scheduled for re-curation, this can be a lengthy process depending on the number of spectra already queued.'
+          });
+        }, (error) => {
+          this.toaster.pop({
+            type: 'error',
+            title: 'There was a problem scheduling the spectrum for re-curation.',
+            body: `${error.message}`
+          });
+        });
       }
     }
 }
