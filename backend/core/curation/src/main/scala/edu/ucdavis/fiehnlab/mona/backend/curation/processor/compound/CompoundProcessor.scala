@@ -174,7 +174,7 @@ class CompoundSMILESProcessor extends AbstractCompoundProcessor with LazyLogging
       val molecule: IAtomContainer = compoundConversion.smilesToMolecule(smiles.get.getValue.toString)
 
       if (molecule != null) {
-        logger.info(s"$id: Converting SMILES to MOL definition")
+        logger.info(s"$id: Generating MOL definition from molecule")
         (compoundConversion.generateMolDefinition(molecule), molecule)
       } else {
         logger.info(s"$id: SMILES conversion failed")
