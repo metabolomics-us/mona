@@ -21,10 +21,12 @@ Frontend:
     - Add a footer for the website?
 
 Backend:
+    - pgDexter for automatic indexing
+        - https://github.com/ankane/dexter
     - Add PubChemLite curation / matching
         - Simple API that matches against PubChemLite, gives spectrum a tag if matched
-    - REST queries time out in standard format, need to use format from Query Guide help page
-        - Page parameter is indexed starting at 0
+    - REST queries time out in standard format, need to give size parameter
+        - Note: Page parameter is indexed starting at 0
     - Similarity service:
         - Spectrum A says it has 1000 similarity with spectrum B, open spectrum B, spectrum B has no similar spectra
     - Equals signs (=) in the queries cause these huge error logs to be produced in the persistence server
@@ -40,8 +42,6 @@ Backend:
     - New spectra are not being run through curation on prod, but they are on dev
         - It did get curated after 4 days for some reason, along with many other spectra (did it recurate everything?)
         - Scheduler never mentioned there were new spectra scheduled, maybe it was leftover from the total recuration ran on 9/16
-    - Debug the random 500 error on prod (temporarily fixed after redeploying)
-        - Proxy service has interesting error logs that could be related
     - DB Index querying under compound classes sometimes doesn't work
         - It's the logic issues of the "OR" and "AND" operators,
             - Actually not necessarily, I think it's the value names like intermediate parent 1
@@ -246,3 +246,5 @@ Done:
     - Add "Curate this spectrum" button
     - Lower next button not disabled on uploading when no compound info provided
     - Whitespace trimming in quick search
+    - Fix cURL by adding size default at the end of the command
+        - Tell users to adjust it as needed
