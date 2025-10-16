@@ -1,19 +1,21 @@
 Frontend:
     - Add more specific curation buttons for admin
         - Add "Curate non-curated spectra" button (find spectra with no entry for last_curated column in db)
-        - A little trickier than expected, might be able to get away with manually triggering re-curation of user spectra, since there aren't many users with non-curated spectra
+            - A little trickier than expected, might be able to get away with manually triggering re-curation of user spectra, since there aren't many users with non-curated spectra
     - "Or" operator in query system is not working properly:
         - exists(metaData.name:'deleteme' or metaData.value:'true' or compound.names.name:'deleteme' or compound.metaData.name:'deleteme' or compound.metaData.value:'deleteme')
             - returns nothing
         - exists(metaData.name:'deleteme' or metaData.value:'true')
             - returns properly
     - Refreshing the page when viewing user profile gives 404, configure in sprint to reroute all unknowns to index.html
-    - Refreshing the page when browsing similarity search results hangs
+    - Fix searchbox querying so that they don't time out
+        - Replicate prod db locally for accurate query times
     - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
+        - Made it so that you can't edit the email of a user for now
     - Forgot Username / Password feature
-        - Create email sending API
+        - Create email sending API?
     - Sort spectra by score or most recently updated maybe? When searching
-        - Browse is sorted alphabetically by ID right now
+        - Browse is sorted alphabetically by ID right now, not sure where to change it
     - Query logic is flawed
         - If you search for spectra without the tag 'example', it will only show you spectra that have tags that are not example
             - Even if the spectrum does have the example tag, it will still show up if it has another tag
@@ -21,6 +23,8 @@ Frontend:
     - Add a footer for the website?
 
 Backend:
+    - Require compound information when uploading in the backend too, not just frontend
+        - SMILES, InChIKey, or InChICode
     - pgDexter for automatic indexing
         - https://github.com/ankane/dexter
     - Add PubChemLite curation / matching
@@ -248,3 +252,5 @@ Done:
     - Whitespace trimming in quick search
     - Fix cURL by adding size default at the end of the command
         - Tell users to adjust it as needed
+    - Refreshing the page when browsing similarity search results hangs
+        - Fixed itself? Now refreshing routes you back to the quick search page
