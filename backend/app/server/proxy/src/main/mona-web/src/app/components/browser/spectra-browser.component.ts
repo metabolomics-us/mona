@@ -19,7 +19,7 @@ import {MassDeletionService} from '../../services/persistence/mass-deletion.serv
 import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {first} from 'rxjs/operators';
-import {faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faChartBar} from '@fortawesome/free-solid-svg-icons';
+import {faExclamationTriangle, faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faChartBar, faCopy} from '@fortawesome/free-solid-svg-icons';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import {faBookmark} from '@fortawesome/free-regular-svg-icons';
@@ -64,6 +64,8 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     faStar = faStar;
     faStarEmpty = faStarEmpty;
     faStarHalf = faStarHalfAlt;
+    faCopy = faCopy;
+    faExclamationTriangle = faExclamationTriangle;
 
     constructor(public spectrum: Spectrum, public spectraQueryBuilderService: SpectraQueryBuilderService,  public location: Location,
                 public spectrumCache: SpectrumCacheService,  public metadata: Metadata,  public cookie: CookieMain,
@@ -544,5 +546,14 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
         rounded -= 1;
       }
       return result;
+    }
+
+    copyCurlCommand() {
+      const text = document.getElementById('curlCommand').innerText;
+      navigator.clipboard.writeText(text);
+
+      const msg = document.getElementById('copiedMsg');
+      msg.style.opacity = '1';
+      setTimeout(() => msg.style.opacity = '0', 2500);
     }
 }

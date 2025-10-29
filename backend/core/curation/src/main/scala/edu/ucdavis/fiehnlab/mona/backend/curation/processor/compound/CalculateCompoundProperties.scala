@@ -103,21 +103,24 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
       val providedInChIKey: Option[MetaData] = (compound.getMetaData.asScala ++ metaData)
         .find(x => x.getName.toLowerCase == CommonMetaData.INCHI_KEY.toLowerCase && !x.getComputed)
 
-      if (providedInChI.isEmpty || providedInChI.get.getValue.toString != computedInChI) {
-        metaData.append(new MetaData(null, CommonMetaData.INCHI_CODE, computedInChI, false, "computed", true, null))
+      // Add computed values if they are not null
+      if (computedInChI != null && computedInChIKey != null) {
+        if (providedInChI.isEmpty || providedInChI.get.getValue.toString != computedInChI) {
+          metaData.append(new MetaData(null, CommonMetaData.INCHI_CODE, computedInChI, false, "computed", true, null))
+        }
+
+        if (providedInChIKey.isEmpty || providedInChIKey.get.getValue.toString != computedInChIKey) {
+          metaData.append(new MetaData(null, CommonMetaData.INCHI_KEY, computedInChIKey, false, "computed", true, null))
+        }
+
+        // Check whether computed InChIKey matches the one given
+        if (providedInChIKey.isDefined && providedInChIKey.get.getValue.toString.split('-')(0) != computedInChIKey.split('-')(0)) {
+          logger.info(s"$id: Discrepancy between provided and computed InChIKeys (${providedInChIKey.get.getValue}, $computedInChIKey)")
+          impacts.append(new Impacts(-1, "Discrepancy between first blocks of the provided and computed InChIKeys"))
+        }
+      } else {
+        logger.warn(s"$id: Could not compute InChI or InChIKey for molecule, skipping comparison")
       }
-
-      if (providedInChIKey.isEmpty || providedInChIKey.get.getValue.toString != computedInChIKey) {
-        metaData.append(new MetaData(null, CommonMetaData.INCHI_KEY, computedInChIKey, false, "computed", true, null))
-      }
-
-
-      // Check whether computed InChIKey matches the one given
-      if (providedInChIKey.isDefined && providedInChIKey.get.getValue.toString.split('-')(0) != computedInChIKey.split('-')(0)) {
-        logger.info(s"$id: Discrepancy between provided and computed InChIKeys (${providedInChIKey.get.getValue}, $computedInChIKey)")
-        impacts.append(new Impacts(-1, "Discrepancy between first blocks of the provided and computed InChIKeys"))
-      }
-
 
       // Add positive score impact
       impacts.append(new Impacts(2, s"Valid molecular structure(s) provided for ${compound.getKind} compound"))

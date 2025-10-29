@@ -1,50 +1,61 @@
 Frontend:
-    - Fix 'Curate user spectra' admin button not working
-    - Add a curate non-curated data button to admin page (find spectra with no entry for last_curated column)
-    - Refresh when doing similarity search hangs
-    - Or in query system is not working properly:
+    - Add more specific curation buttons for admin
+        - Add "Curate non-curated spectra" button (find spectra with no entry for last_curated column in db)
+            - A little trickier than expected, might be able to get away with manually triggering re-curation of user spectra, since there aren't many users with non-curated spectra
+    - "Or" operator in query system is not working properly:
         - exists(metaData.name:'deleteme' or metaData.value:'true' or compound.names.name:'deleteme' or compound.metaData.name:'deleteme' or compound.metaData.value:'deleteme')
             - returns nothing
         - exists(metaData.name:'deleteme' or metaData.value:'true')
             - returns properly
-    - Reset query button sometimes doesn't work?
-        - When you use searchbox and then go into browse tab
-    - Refresh under user profile gives 404, configure in sprint to reroute all unknowns to index.html
+    - Refreshing the page when viewing user profile gives 404, configure in sprint to reroute all unknowns to index.html
+    - Fix searchbox querying so that they don't time out
+        - Replicate prod db locally for accurate query times
     - Changing email in 'edit user' admin page creates a new submitter, but not a new user, can't log in with updated email
+        - Made it so that you can't edit the email of a user for now
     - Forgot Username / Password feature
-    - Libraries with the same name but different ID show up as the same on admin page
+        - Create email sending API?
     - Sort spectra by score or most recently updated maybe? When searching
-        - Pagination, maybe query returns only up to 10 pages of results at a time?
-        - Browse is sorted alphabetically by ID right now
-    - Tag search logic is flawed
+        - Browse is sorted alphabetically by ID right now, not sure where to change it
+    - Query logic is flawed
         - If you search for spectra without the tag 'example', it will only show you spectra that have tags that are not example
             - Even if the spectrum does have the example tag, it will still show up if it has another tag
                 - And it will not show spectra without tags in the results
+    - Add a footer for the website?
 
 Backend:
-    - Improve error handling of CTS queries, trim fields before processing, if we get an error still curate the spectra
+    - Require compound information when uploading in the backend too, not just frontend
+        - SMILES, InChIKey, or InChICode
+    - pgDexter for automatic indexing
+        - https://github.com/ankane/dexter
+    - Add PubChemLite curation / matching
+        - Simple API that matches against PubChemLite, gives spectrum a tag if matched
+    - REST queries time out in standard format, need to give size parameter
+        - Note: Page parameter is indexed starting at 0
+    - Similarity service:
+        - Spectrum A says it has 1000 similarity with spectrum B, open spectrum B, spectrum B has no similar spectra
+    - Equals signs (=) in the queries cause these huge error logs to be produced in the persistence server
+        - what is producing these equal signs to be in queries?
+    - Update to spring-filter version 3.0.0? (Requires springboot 3+)
+    - Improve error handling of CTS queries, if we get an error still curate the spectra
         - That's why Fanzhou's samples failed for example, we couldn't process this SMILES:
             - NC(Cc1ccc(O)cc1)C(=O)NC(CO)C(=O)O
             - Unsupported bond type
-    - Remove noisy spectra from predefined downloads
+            - This SMILES does get converted by CIR from the NIH though
+    - Remove noisy spectra from predefined downloads and default search results
         - Maybe remove noisy spectra from search results too? Unless user enables checkbox for "show noisy spectra"
-    - Re-curate all spectra did not work on all spectra, Fanzhou's still not curated
-        - Give a button to recurate all non-curated data, since all data takes too long
-    - New spectra are not being ran through curation on prod, but they are on dev
-    - Debug the random 500 error on prod (temporarily fixed after redeploying from gose?)
-        - Proxy service has interesting error logs
+    - New spectra are not being run through curation on prod, but they are on dev
+        - It did get curated after 4 days for some reason, along with many other spectra (did it recurate everything?)
+        - Scheduler never mentioned there were new spectra scheduled, maybe it was leftover from the total recuration ran on 9/16
     - DB Index querying under compound classes sometimes doesn't work
+        - It's the logic issues of the "OR" and "AND" operators,
+            - Actually not necessarily, I think it's the value names like intermediate parent 1
     - Database Index & Statistic page
         - Are M-H and [M-H]- the same precursor type? Merge them maybe?
         - Duplicate Ionization modes on pie chart? (3 positive, 2 negative types)
             - Happens from custom metadata inputted by users, maybe change on DB level?
     - Updating a user's email doesn't work
+        - Disabled field for now in user editor
         - Creates a new submitter that can't log in with that new email (fails to create a new user)
-    - What is "Additional Downloads" and what are they used for? It's empty on prod
-        - AKA static_download in the db, table is empty on prod, fixed length display issue
-        - Make additional downloads on Download page a clickable dropdown (frontend)
-    - Links to "Originally submitted to..." like eu MassBank shows error404 page not found
-        - Just old libraries whose links are outdated?
     - Are relative_score and scaled_score useless in the score db table? All values are set to 0
     - Error in downloader service 2025-09-06, empty string. Failed the 'All Spectra' download
         - Error logs in YouTrack
@@ -216,3 +227,30 @@ Done:
     - Temporarily remove searchbox
     - Make compound information required when uploading spectra
     - Trim compound information fields, right now ' O' instead of 'O' would fail CTS and cause the spectra to not be curated
+    - Removed 'additional downloads' section from downloads, was empty on prod
+    - Why does in-silico download have 3,017,304 spectra? We only have 2,080,145 total - SOLVED
+        - Now waiting for predefined queries to update
+        - Issue was indeed due to duplicate tags, removed them on a db level
+            - As suspected, I'm 95% sure it comes from spectra that have duplicate in-silico tags, like 2 for one sample
+                - 'Cer 24:0;2O/22:0;O(FA 16:2)' AKA 'LipidBlast2022_335097' for example
+            - The in-silico query returns 3,128,951 results, keep track of this number
+                - The query: "tags.text:'In-Silico'"
+            - The proper query when you query the tag from the browser returns 1,844,353 (correct #)
+                - That query is: "exists(tags.text:'In-Silico')"
+    - Fix "Curate user spectra" button
+    - Add copy to clipboard button next to generated curl query
+    - Clarify "add the header accept text/msp"
+    - Nowrap on user profile info
+    - Take away comma from 1,000 / 1000 in full view similarity score
+    - If search fields are blank, clear them before query
+    - Reset query button sometimes doesn't work?
+        - When you use searchbox and then go into browse tab
+    - Libraries with the same name but different ID show up as the same on admin page
+        - Decided against changing this, it is useful when you want to add more spectra to a library. Give it the same name but different ID
+    - Add "Curate this spectrum" button
+    - Lower next button not disabled on uploading when no compound info provided
+    - Whitespace trimming in quick search
+    - Fix cURL by adding size default at the end of the command
+        - Tell users to adjust it as needed
+    - Refreshing the page when browsing similarity search results hangs
+        - Fixed itself? Now refreshing routes you back to the quick search page

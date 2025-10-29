@@ -74,13 +74,13 @@
                                     </div>
                                 </li>
 
-                                <hr>
-
                                 <li *ngIf="spectrum.library !== null">
                                     <div class="h6">
                                         <display-library-reference [spectrum]="spectrum"></display-library-reference>
                                     </div>
                                 </li>
+
+                                <hr>
 
                                 <li *ngIf="spectrum.tags.length > 0">
                                     <div class="h6 d-flex align-items-center">
@@ -94,6 +94,7 @@
                         </div>
 
                         <div class="col-md-3 text-right">
+                            <button *ngIf="isAdmin()" class="btn btn-primary btn-sm mb-1" (click)="reCurateSpectrum(this.spectrum.id).subscribe()"><fa-icon [icon]="faFlask"></fa-icon> Re-Curate Spectrum</button>
                             <spectra-download [spectrum]="spectrum"></spectra-download>
                             <spectrum-review [spectrum]="spectrum" *ngIf="authenticationService.isLoggedIn()"></spectrum-review>
                         </div>
@@ -273,7 +274,7 @@
                                               </div>
                                             </td>
                                             <td>
-                                              <p class="text-center">{{s.similarity * 1000 | number:'1.0-0'}} / 1000</p>
+                                              <p class="text-center">{{s.similarity * 1000}} / 1000</p>
                                             </td>
                                           </tr>
                                           </tbody>

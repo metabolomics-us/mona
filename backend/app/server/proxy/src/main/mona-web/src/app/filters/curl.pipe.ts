@@ -4,7 +4,7 @@
 
 import {Pipe, PipeTransform} from '@angular/core';
 import {environment} from '../../environments/environment';
-import {Spectrum} from "../services/persistence/spectrum.resource";
+import {Spectrum} from '../services/persistence/spectrum.resource';
 
 @Pipe({
     name: 'curlPipe',
@@ -24,14 +24,15 @@ export class CurlPipe implements PipeTransform {
 
             if (query !== '') {
               const cleaned = this.spectrum.cleanParameters({query});
-                cmd += cleaned;
+              cmd += cleaned;
             }
 
-            cmd += '"';
+            // Add default size and page parameters, as well as closing quote "
+            cmd += '&size=1000&page=0"';
 
             return cmd;
         } else {
-            return 'curl "' + host + '/rest/spectra"';
+            return 'curl "' + host + '/rest/spectra?size=1000&page=0"';
         }
     }
 }

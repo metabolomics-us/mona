@@ -3,7 +3,7 @@
         <li class="" *ngFor="let tag of tags">
 
             <div class="btn-group" ngbDropdown placement="right">
-                <button type="button" class="btn dropdown-toggle" ngbTooltip="{{tag.count}} spectra" placement="left" ngbDropdownToggle [ngClass]="tagClass(tag)">
+                <button type="button" class="btn dropdown-toggle" ngbTooltip="{{tag.count | number: '1.0-0'}} spectra" placement="left" ngbDropdownToggle [ngClass]="tagClass(tag)">
                     <fa-icon [icon]="faTag"></fa-icon>
                     {{tag.text}}
                     <fa-icon [icon]="faFlask" *ngIf="tag.ruleBased"></fa-icon>

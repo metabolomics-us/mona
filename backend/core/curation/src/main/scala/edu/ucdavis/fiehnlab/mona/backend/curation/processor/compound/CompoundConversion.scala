@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import java.io.{StringReader, StringWriter}
-
 import com.typesafe.scalalogging.LazyLogging
 import net.sf.jniinchi.INCHI_RET
-import org.openscience.cdk.exception.InvalidSmilesException
+import org.openscience.cdk.exception.{CDKException, InvalidSmilesException}
 import org.openscience.cdk.graph.ConnectivityChecker
 import org.openscience.cdk.inchi.{InChIGeneratorFactory, InChIToStructure}
 import org.openscience.cdk.interfaces.{IAtomContainer, IAtomContainerSet}
@@ -193,11 +192,19 @@ class CompoundConversion extends LazyLogging {
     * @return
     */
   def moleculeToInChIAndInChIKey(molecule: IAtomContainer): (String, String) = {
-    val inchiGenerator = InChIGeneratorFactory.getInstance().getInChIGenerator(molecule)
+    try {
+      val inchiGenerator = InChIGeneratorFactory.getInstance().getInChIGenerator(molecule)
+      logger.info(s"InChI conversion is: ${inchiGenerator.getReturnStatus} - ${inchiGenerator.getMessage}")
+      (inchiGenerator.getInchi, inchiGenerator.getInchiKey)
+    } catch {
+      case e: CDKException =>
+        logger.error(s"CDK InChIGenerator failed for molecule: ${e.getMessage}", e)
+        (null, null)
 
-    logger.debug(s"InChI conversion is: ${inchiGenerator.getReturnStatus} - ${inchiGenerator.getMessage}")
-
-    (inchiGenerator.getInchi, inchiGenerator.getInchiKey)
+      case e: Exception =>
+        logger.error(s"Unexpected exception during InChIGenerator execution: ${e.getMessage}", e)
+        (null, null)
+    }
   }
 
   /**

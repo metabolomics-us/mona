@@ -36,13 +36,12 @@
                 <ng-template ngbPanelContent>
 
                   <div>
-                    <strong>Note:</strong> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query
-                    downloads to avoid putting unnecessary strain on the servers
+                    <fa-icon [icon]="faExclamationTriangle"></fa-icon> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query downloads
                   </div>
 
-                  <br />
-                  Current query
-                  <button class="btn btn-primary btn-xs" (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
+                  <br/>
+                  Current Query
+                  <button class="btn btn-primary btn-xs mb-1" (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
                   <pre *ngIf="!editQuery" class="input-group-text">{{query !== '' && query !== undefined ? query : "[Empty]"}}</pre>
                   <div *ngIf="editQuery">
                     <form (submit)="updateQuery(query)">
@@ -57,18 +56,23 @@
 
                   <div>
                     <br/>
-                    cURL command to download all spectral records matching the current query (JSON):
-                    <pre class="input-group-text">{{{query: query} | curlPipe}}</pre>
+                    Current Query (as cURL command)
+                    <pre class="input-group-text" id="curlCommand">
+                      <button class="btn btn-link btn-sm" style="color: slategray; margin-left: -10px" (click)="copyCurlCommand()"><fa-icon [icon]="faCopy"></fa-icon></button>
+                      {{{query: query} | curlPipe}}
+                    </pre>
+                    <span id="copiedMsg" style="opacity: 0; color: forestgreen">Copied!</span>
                   </div>
 
-                  <p></p>
-                  <div>To download results as an MSP file, add the header: <code class="code-text"> Accept: text/msp</code></div>
+                    <div class="ml-4"><b><u>cURL Notes</u></b></div>
+                    <div class="ml-4">- To query results in MSP format, add <code class="code-text">&nbsp;--header "Accept: text/msp"</code> to the end of your cURL command</div>
+                    <div class="ml-4">- Default size and page parameters are specified to increase query speeds. Adjust them as needed</div>
 
-                  <div>
+                  <div style="width: 300px">
                     <br/>
                     <p>
                       <ngb-alert type="warning" [dismissible]="false">
-                        <a [routerLink]="['/documentation/query']">Learn more</a> about the query system
+                        <a [routerLink]="['/documentation/query']" target="_blank">Learn more</a> about the query system
                       </ngb-alert>
                     </p>
                   </div>
@@ -175,7 +179,7 @@
                         </label>
                         </div>
                         <div *ngIf="spectrum.similarity !== undefined">
-                            <h6 class="label label-primary text-nowrap">Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}} / 1000</h6>
+                            <h6 class="label label-primary text-nowrap">Similarity: {{spectrum.similarity * 1000}} / 1000</h6>
                         </div>
                         <br/><br/><br/>
                         <div>
