@@ -1,4 +1,5 @@
 Frontend:
+    - Trimming spectra during upload process doesn't actually trim them once uploaded
     - Add more specific curation buttons for admin
         - Add "Curate non-curated spectra" button (find spectra with no entry for last_curated column in db)
             - A little trickier than expected, might be able to get away with manually triggering re-curation of user spectra, since there aren't many users with non-curated spectra
@@ -254,3 +255,4 @@ Done:
         - Tell users to adjust it as needed
     - Refreshing the page when browsing similarity search results hangs
         - Fixed itself? Now refreshing routes you back to the quick search page
+    - Similarity results show too many decimals
