@@ -1,19 +1,17 @@
 /**
  * Updated by nolanguzman on 10/31/2021
  */
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {TagService} from '../../services/persistence/tag.resource';
 import {NGXLogger} from 'ngx-logger';
 import {faSpinner, faSearch, faCaretDown, faCaretRight} from '@fortawesome/free-solid-svg-icons';
-import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'keyword-search-form',
     templateUrl: '../../views/spectra/query/keywordSearchForm.html'
 })
-export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
-    @ViewChild('acc') accordion: NgbAccordion;
+export class KeywordSearchFormComponent implements OnInit {
     query;
     sourceIntroduction;
     ionizationMethod;
@@ -28,6 +26,7 @@ export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
     faCaretRight = faCaretRight;
 
     expandedLibraries = false;
+    additionalTagsExpanded = false;
     toggleLibraryExpansion() {
       this.expandedLibraries = !this.expandedLibraries;
     }
@@ -79,12 +78,6 @@ export class KeywordSearchFormComponent implements OnInit, AfterViewInit {
                 this.logger.error('Tag pull failed: ' + error);
             }
         );
-    }
-
-    ngAfterViewInit() {
-      // setTimeout(() => {
-      //   this.accordion.expand('additionalTags');
-      // }, 1000);
     }
 
   submitQuery() {
