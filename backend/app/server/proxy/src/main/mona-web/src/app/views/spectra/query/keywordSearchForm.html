@@ -44,7 +44,12 @@
                                    (ngModelChange)="query.exactMass = $event.trim() === '' ? undefined : $event.trim()"
                                    name="queryExactMass"
                                    class="form-control"
-                                   placeholder="Exact Mass">
+                                   placeholder="Exact Mass"
+                                   pattern="^\s*[0-9]*\.?[0-9]*\s*$"
+                                   #exactMassInput="ngModel">
+                            <div *ngIf="exactMassInput.invalid && exactMassInput.dirty" class="text-danger small mt-1">
+                                Please enter a valid number
+                            </div>
                         </td>
                         <td>
                             <div class="input-group">
@@ -196,7 +201,10 @@
         <div class="col-md-6">
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <button type="submit" class="btn btn-primary" style="min-height: 44px;">Search</button>
+                    <button type="submit" class="btn" style="min-height: 44px;"
+                            [disabled]="exactMassInput.invalid && exactMassInput.dirty"
+                            [class.btn-primary]="!exactMassInput.invalid || !exactMassInput.dirty"
+                            [class.btn-danger]="exactMassInput.invalid && exactMassInput.dirty">Search</button>
                 </div>
                 <div class="col-sm-2 ml-1">
                     <button type="button" class="btn btn-secondary" (click)="searchForm.resetForm(); resetForm();" style="min-height: 44px;">Reset</button>
