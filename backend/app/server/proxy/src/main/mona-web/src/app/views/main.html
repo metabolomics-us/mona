@@ -1,8 +1,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-          <span class="news-title fon"><h2 class="font-weight-bold">Welcome to MoNA!</h2></span>
-
+          <span class="news-title fon"><h1 class="font-weight-bold" style="margin-bottom: 15px;">Welcome to MoNA!</h1></span>
             <p>
                 MassBank of North America (MoNA) is a metadata-centric, auto-curating repository designed for efficient storage and querying of mass spectral records.
                 It intends to serve as a framework for a centralized, collaborative database of metabolite mass spectra, metadata, and associated compounds.
@@ -12,8 +11,8 @@
             <br />
 
             <p style="text-align: center">
-              <a [routerLink]="['/spectra/search']" class="btn btn-primary btn-lg mr-1"><fa-icon [icon]="faSearch"></fa-icon> Search Spectra</a>
-              <a [routerLink]="['/spectra/browse']" class="btn btn-primary btn-lg mr-1 ml-1"><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</a>
+              <a [routerLink]="['/spectra/search']" class="btn btn-primary btn-lg mr-1" style="margin-bottom: 10px;"><fa-icon [icon]="faSearch"></fa-icon> Search Spectra</a>
+              <a [routerLink]="['/spectra/browse']" class="btn btn-primary btn-lg mr-1 ml-1" style="margin-bottom: 10px;"><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</a>
             </p>
         </div>
     </div>
@@ -22,11 +21,11 @@
 
     <div class="row">
         <div class="col-md-6 float-left">
-            <h3 class="font-weight-bold">News</h3>
+            <h2 class="font-weight-bold h3">News</h2>
             <hr/>
 
           <div class="news-cell">
-            <span class="news-title"><h4>MoNA Overhaul</h4></span>
+            <span class="news-title"><h3 class="h4">MoNA Overhaul</h3></span>
             <div class="news-date">September 15th, 2025</div>
             <div class="content">
               <p>
@@ -39,7 +38,7 @@
           </div>
           <hr/>
           <div class="news-cell">
-            <span class="news-title"><h4>MoNA Backend Updates</h4></span>
+            <span class="news-title"><h3 class="h4">MoNA Backend Updates</h3></span>
             <div class="news-date">January 1st, 2023</div>
             <div class="content">
               <p>
@@ -52,7 +51,7 @@
           </div>
           <hr/>
           <div class="news-cell">
-            <span class="news-title"><h4>Ability to Delete Your Submitted Spectra</h4></span>
+            <span class="news-title"><h3 class="h4">Ability to Delete Your Submitted Spectra</h3></span>
             <div class="news-date">March 4th, 2022</div>
             <div class="content">
               <p>
@@ -66,7 +65,7 @@
           <hr/>
         </div>
         <div class="col-md-6 float-right">
-            <h3 class="font-weight-bold">Top Submitters</h3>
+            <h2 class="font-weight-bold h3">Top Submitters</h2>
 
             <spectra-top-scores-for-users limit="10">Please wait while we load the data for you...</spectra-top-scores-for-users>
         </div>
@@ -76,13 +75,13 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h3 class="font-weight-bold">Spectra Showcase</h3>
+            <h2 class="font-weight-bold h3">Spectra Showcase</h2>
             <br />
 
             <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="showcaseSpectra.length > 0">
                 <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">
                     <div class="text-center">
-                      <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Spectra Showcase...</h4>
+                      <h3 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Spectra Showcase...</h3>
                     </div>
                 </ng-template>
                 <ng-template ngbSlide *ngFor="let spectrum of showcaseSpectra">
