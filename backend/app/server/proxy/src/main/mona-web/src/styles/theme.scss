@@ -438,9 +438,14 @@ body {
     color: #d9534f;
 }
 
-button.btn-link:focus {
+button.btn-link:focus:not(:focus-visible) {
   outline: none;
   box-shadow: 0 0 0;
+}
+
+button.btn-link:focus-visible {
+  outline: 2px solid #0b3f6c;
+  box-shadow: none;
 }
 
 .btn-primary.btn-outline:hover,
