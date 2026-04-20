@@ -1,7 +1,7 @@
 <ul class="nav navbar-nav navbar-top-links navbar-right">
     <!-- User Login -->
     <li class="dropdown" ngbDropdown>
-        <a role="button" class="dropdown-toggle" ngbDropdownToggle>
+        <a role="button" class="dropdown-toggle" ngbDropdownToggle aria-label="User menu">
           <fa-icon [icon]="faUser"></fa-icon>
         </a>
         <ul class="uib-dropdown-menu dropdown-user" ngbDropdownMenu>
@@ -12,7 +12,7 @@
 
             <li>
               <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleLogin()"><fa-icon [icon]="faSignOutAlt"></fa-icon> {{isLoggedIn() ?
-                    "Logout" : "Login"}}</a>
+                    "Log Out" : "Log In"}}</a>
             </li>
             <li *ngIf="!isLoggedIn()">
               <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleRegistration()"><fa-icon [icon]="faUsers"></fa-icon> Register</a>
