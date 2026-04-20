@@ -1,5 +1,9 @@
 /* Global Styles */
 
+:focus-visible {
+    outline: 2px solid #0b3f6c;
+}
+
 /* ------------------------------- */
 
 body a {
@@ -182,8 +186,28 @@ body {
     border-bottom: 5px solid #FFBF00;
 }
 
+.navbar-nav {
+    align-items: center;
+}
+
 .dropdown-toggle, .dropdown-menu {
     cursor: pointer;
+}
+
+.navbar button.dropdown-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
+    font-size: medium;
+    font-weight: bold;
+    padding: 15px;
+}
+
+.navbar button.dropdown-toggle:hover,
+.navbar button.dropdown-toggle:focus {
+    color: #FFBF00;
+    outline: none;
 }
 
 .navbar-expand-xl .navbar-nav > * > li > a {
@@ -225,7 +249,6 @@ body {
 .navbar-nav > * > li > .dropdown-menu {
     margin-top: 5px;
     border-radius: 10px;
-
 }
 
 .dropdown-menu:after {

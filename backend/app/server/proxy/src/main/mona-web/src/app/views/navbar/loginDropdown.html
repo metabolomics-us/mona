@@ -1,9 +1,9 @@
 <ul class="nav navbar-nav navbar-top-links navbar-right">
     <!-- User Login -->
     <li class="dropdown" ngbDropdown>
-        <a role="button" class="dropdown-toggle" ngbDropdownToggle aria-label="User menu">
+        <button class="dropdown-toggle" ngbDropdownToggle aria-label="User menu">
           <fa-icon [icon]="faUser"></fa-icon>
-        </a>
+        </button>
         <ul class="uib-dropdown-menu dropdown-user" ngbDropdownMenu>
             <li *ngIf="isLoggedIn()">
               <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/profile']"><fa-icon [icon]="faUser"></fa-icon> User Profile</a>
