@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-md-6">
             <div class="table-responsive">
-                <table class="table header-fixed table-borderless">
+                <table class="table header-fixed table-borderless" role="presentation">
                     <thead>
                     <tr>
                         <th>Compound</th>
@@ -49,7 +49,7 @@
                         <td>
                             <div class="input-group">
                               <div class="input-group-prepend"><span class="input-group-text" style="color: #3d4247;">&#177;</span></div>
-                                <input type="number" [(ngModel)]="query.exactMassTolerance"
+                                <input type="number" [(ngModel)]="query.exactMassTolerance" aria-label="Mass Tolerance"
                                        name="queryMassTolerance"
                                        class="form-control"
                                        value="0.5"
@@ -66,7 +66,7 @@
             <div class="form-group row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table" role="presentation">
                             <thead>
                             <tr>
                                 <th>Ion Mode</th>
@@ -117,7 +117,7 @@
             <div class="form-group row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
-                        <table class="table table-condensed">
+                        <table class="table table-condensed" role="presentation">
                             <thead>
                             <tr>
                                 <th>MS Level</th>
