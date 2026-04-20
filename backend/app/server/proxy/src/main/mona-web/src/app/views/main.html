@@ -80,7 +80,7 @@
             <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="showcaseSpectra.length > 0">
                 <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">
                     <div class="text-center">
-                      <h3 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Spectra Showcase...</h3>
+                      <p class="spinner" style="font-size: 1.5rem;"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading...</p>
                     </div>
                 </ng-template>
                 <ng-template ngbSlide *ngFor="let spectrum of showcaseSpectra">
