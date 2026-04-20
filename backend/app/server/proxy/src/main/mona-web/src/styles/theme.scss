@@ -174,12 +174,15 @@ body {
     font-size: x-large;
     font-weight: bold;
     padding-right: 3rem;
+    padding-left: 1rem;
 }
 
 .navbar-expand-xl .navbar-header .navbar-brand:hover,
 .navbar-expand-xl .navbar-header .navbar-brand:focus {
-    color: #FFBF00;
+    border-radius: 10px;
+    color: #FFEB7D;
 }
+
 
 .navbar-expand-xl {
     background-color: #1a3e68;
@@ -236,12 +239,22 @@ body {
   display: none !important;
 }
 
-.dropdown-menu > li > a {
+.dropdown-menu > li > a,
+.dropdown-menu > li > button {
     font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
     color: black;
 }
 
-.dropdown-menu > li > a:hover {
+.dropdown-menu > li > button {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 3px 20px;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > button:hover {
     color: white;
     background-color: #1a3e68;
 }
