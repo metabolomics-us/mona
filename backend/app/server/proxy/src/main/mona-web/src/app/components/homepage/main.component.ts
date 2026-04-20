@@ -34,7 +34,7 @@ export class MainComponent implements OnInit, OnDestroy{
 
         });
 
-        //this.showcaseSpectraIds = ['MoNA_0000001', 'MoNA_0000004']; // FOR DEV
+        // this.showcaseSpectraIds = ['MoNA_0000013', 'MoNA_0000014']; // FOR DEV
         this.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
         this.showcaseSpectra = [];
 
