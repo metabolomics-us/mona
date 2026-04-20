@@ -28,7 +28,7 @@ import {ToasterConfig} from 'angular2-toaster';
             </div>
         </nav>
         <p></p>
-        <div id="page-wrapper">
+        <div id="page-wrapper" role="main">
             <div class="row">
                 <div class="col-lg-12 top17">
                     <router-outlet></router-outlet>
