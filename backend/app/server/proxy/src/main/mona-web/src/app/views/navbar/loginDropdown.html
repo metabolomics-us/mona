@@ -11,11 +11,11 @@
             <li *ngIf="isLoggedIn()" class="divider"></li>
 
             <li>
-              <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleLogin()"><fa-icon [icon]="faSignOutAlt"></fa-icon> {{isLoggedIn() ?
-                    "Log Out" : "Log In"}}</a>
+              <button ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleLogin()"><fa-icon [icon]="faSignOutAlt"></fa-icon> {{isLoggedIn() ?
+                    "Log Out" : "Log In"}}</button>
             </li>
             <li *ngIf="!isLoggedIn()">
-              <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleRegistration()"><fa-icon [icon]="faUsers"></fa-icon> Register</a>
+              <button ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleRegistration()"><fa-icon [icon]="faUsers"></fa-icon> Register</button>
             </li>
         </ul>
         <!-- /.dropdown-user -->
