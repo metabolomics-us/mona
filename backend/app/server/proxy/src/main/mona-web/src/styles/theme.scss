@@ -128,6 +128,17 @@ body {
   box-shadow: 0 0 0;
 }
 
+.btn.btn-secondary {
+  background-color: #545454;
+}
+
+.btn.btn-secondary:hover,
+.btn.btn-secondary:focus,
+.btn.btn-secondary.active {
+  background-color: #919191;
+  border-color: #919191;
+}
+
 .news-title > h3 {
   font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
   color: #022851;
