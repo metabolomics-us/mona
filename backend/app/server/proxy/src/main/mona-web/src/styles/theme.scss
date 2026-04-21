@@ -275,7 +275,9 @@ body {
 }
 
 .dropdown-menu > li > a:hover,
-.dropdown-menu > li > button:hover {
+.dropdown-menu > li > a:active,
+.dropdown-menu > li > button:hover,
+.dropdown-menu > li > button:active {
     color: white;
     background-color: #1a3e68;
 }
