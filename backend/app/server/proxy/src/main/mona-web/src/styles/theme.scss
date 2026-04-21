@@ -753,6 +753,18 @@ input[type="checkbox"] {
   color: white !important;
 }
 
+.dropdown-menu {
+  cursor: default;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item:active,
+.dropdown-item.active {
+  background-color: #0b3f6c !important;
+  color: white !important;
+}
+
 .page-link {
   color: #0b3f6c !important;
   min-width: 44px;
