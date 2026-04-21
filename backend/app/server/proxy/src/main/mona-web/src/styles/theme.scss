@@ -431,6 +431,45 @@ body {
     cursor: pointer;
 }
 
+// DB Index tabs
+.dbindex-tabs {
+    background-color: #18385D;
+    border: none;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.dbindex-tabs .nav-link {
+    color: white;
+    font-weight: bold;
+    font-style: normal;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 1.25rem;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    transition: color 0.15s, border-bottom-color 0.15s;
+}
+
+.dbindex-tabs .nav-link:hover {
+    color: #FFBF00;
+    border-bottom-color: rgba(255, 191, 0, 0.4);
+}
+
+.dbindex-tabs .nav-link.active {
+    color: #FFBF00;
+    background-color: transparent;
+    border-bottom: 3px solid #FFBF00;
+}
+
+.dbindex-tabs .nav-link:focus-visible {
+    outline: 2px solid #FFBF00;
+    outline-offset: -2px;
+    border-radius: 2px;
+}
+
 /* Buttons */
 
 /* ------------------------------- */
@@ -717,8 +756,12 @@ input[type="checkbox"] {
   background-color: #0b3f6c !important;
 }
 
+.search-heading {
+  /* margin-right: 2px; */
+}
+
 .search-heading:focus {
-  outline: none !important;
+  outline: 2px solid #FFBF00 !important;
   box-shadow: 0 0 0 !important;
 }
 

@@ -4,9 +4,9 @@
         <h3><fa-icon [icon]="faDatabase"></fa-icon> Database Index &amp; Statistics</h3>
           <br />
 
-        <ul ngbNav #nav="ngbNav" [destroyOnHide]="false">
+        <ul ngbNav #nav="ngbNav" [destroyOnHide]="false" class="dbindex-tabs">
             <li [ngbNavItem]="0">
-                <a ngbNavLink class="search-heading btn btn-primary">Database Content</a>
+                <a ngbNavLink>Database Content</a>
                 <ng-template ngbNavContent>
                     <table class="table table-striped" *ngIf="globalData">
                         <tbody>
@@ -47,7 +47,7 @@
             </li>
 
             <li [ngbNavItem]="1">
-                <a ngbNavLink class="search-heading btn btn-primary">Metadata</a>
+                <a ngbNavLink>Metadata</a>
                 <ng-template ngbNavContent>
                     <div class="h5">
                         This pie chart shows the distribution of metadata values for the selected metadata type.
@@ -74,7 +74,7 @@
             </li>
 
             <li [ngbNavItem]="2">
-                <a ngbNavLink class="search-heading btn btn-primary">Compound Classes</a>
+                <a ngbNavLink>Compound Classes</a>
                 <ng-template ngbNavContent>
                     <div class="h5">
                         This sunburst chart displays the breakdown of compound classifications, which are obtained using
