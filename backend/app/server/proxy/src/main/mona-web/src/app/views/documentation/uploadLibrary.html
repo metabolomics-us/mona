@@ -1,18 +1,17 @@
 <div class="row">
   <div class="col-md-12">
     <br>
-    <h3>How to Use the "Create New Library" Feature in Advanced Uploader</h3>
-    <br />
-    <p></p>
+    <h1 class="h2">Using the "Create New Library" Feature in Advanced Uploader</h1>
+    <br>
 
-    <div>
-      <h4>What is the Purpose of a Library?</h4>
+    <div class="ml-3">
+      <h2 class="h4">What is the Purpose of a Library?</h2>
       <hr/>
 
       <p>There are a few reasons why you would want to create a library for your uploaded spectra:</p>
 
       <p class="ml-4">1) Creating a library for your spectra will allow you and other users to access the library in the
-        <a [routerLink]="['/downloads']">Downloads</a> section and easily download the entire library.</p>
+        <a [routerLink]="['/downloads']" style="text-decoration: underline;">Downloads</a> section and easily download the entire library.</p>
       <p class="ml-4">
         2) Creating a library will automatically tag all uploaded spectra with the Library name. This allows for
         easier searching when using MoNA advanced metadata querying system and search capabilities.</p>
@@ -22,7 +21,7 @@
 
 
       <br /><br /><br />
-      <h4 class="font-weight-bold">Library: <i class="text-danger">Required Section</i></h4>
+      <h2 class="h4">Library: <i class="text-danger">Required Section</i></h2>
       <hr/>
       <strong style="font-size: 1.2rem">Library ID Prefix: </strong> <span class="text-danger"><i>Required Field</i></span>
       <p>
@@ -40,9 +39,9 @@
         we want to upload the <strong>Lipid Blast</strong> library. <strong>LipidBlast</strong> already works as a proper library name so
         we can fill the Library Name field with <strong>LipidBlast</strong>. The Library Name <strong>LipidBlast</strong>
         will now be displayed on each panel in the spectra browser and will be given a tag with the <strong>LipidBlast</strong> name for easy
-        metadata searching and querying. Additionally, when you look in the <a [routerLink]="['/downloads']">Downloads</a> section
+        metadata searching and querying. Additionally, when you look in the <a [routerLink]="['/downloads']" style="text-decoration: underline;">Downloads</a> section
         you will see the library with the <strong>LipidBlast</strong> name. This Library Name will also
-        be displayed on the spectrum panel in the <a [routerLink]="['/spectra/browse']">Spectra Browser</a> and will be formatted as such:
+        be displayed on the spectrum panel in the <a [routerLink]="['/spectra/browse']" style="text-decoration: underline;">Spectra Browser</a> and will be formatted as such:
         <strong>"Originally submitted to the..."</strong> followed by the provided Library Name.
       </p>
       <br/>
@@ -58,13 +57,13 @@
       <p>
         Lastly, some spectra libraries are hosted outside of MoNA on external websites. The <strong>Link</strong> field allows you to attach
         a URL that will direct users to the site where the spectra library originates from or a site that will provide additional information
-        regarding the library. In the case of <strong>LipidBlast</strong>,  <a href="https://fiehnlab.ucdavis.edu/projects/LipidBlast">https://fiehnlab.ucdavis.edu/projects/LipidBlast</a> is attached to the spectra library.
-        The provided <strong>Link</strong> is hyperlinked to the <strong>Library Name</strong> on the <a [routerLink]="['/spectra/browse']">Spectra Browser</a> page.
-        This is an optional field, so if there is no information to provide, <a href="https://massbank.us">https://massbank.us</a> will be provided by default.
+        regarding the library. In the case of <strong>LipidBlast</strong>,  <a href="https://fiehnlab.ucdavis.edu/projects/LipidBlast" style="text-decoration: underline;">https://fiehnlab.ucdavis.edu/projects/LipidBlast</a> is attached to the spectra library.
+        The provided <strong>Link</strong> is hyperlinked to the <strong>Library Name</strong> on the <a [routerLink]="['/spectra/browse']" style="text-decoration: underline;">Spectra Browser</a> page.
+        This is an optional field, so if there is no information to provide, <a href="https://massbank.us" style="text-decoration: underline;">https://massbank.us</a> will be provided by default.
       </p>
 
       <br /><br /><br />
-      <h4 class="font-weight-bold">Submitter: <i class="text-info">Optional Section</i></h4>
+      <h2 class="h4">Submitter: <i class="text-info">Optional Section</i></h2>
       <hr/>
       <p>
         In order to submit spectra on MoNA, a user must have a registered account and be logged in. When signed in, this allows MoNA to automatically use
@@ -75,7 +74,7 @@
       </p>
 
       <br /><br /><br />
-      <h4 class="font-weight-bold">Additional Tags: <i class="text-info">Optional Section</i></h4>
+      <h2 class="h4">Additional Tags: <i class="text-info">Optional Section</i></h2>
       <hr/>
       <p>
         In some cases, you may want to add additional identifiers to your library spectra. This can typically be done on the editor page, but in cases where
@@ -84,13 +83,13 @@
       </p>
 
       <br /><br /><br />
-      <h4 class="font-weight-bold" style="color: #0b3f6c">Example: </h4>
+      <h2 class="h4" style="color: #0b3f6c">Example: </h2>
       <hr />
       <form id="libForm" class="form-horizontal" novalidate role="form">
         <div class="form-group row">
           <label for="libraryLink" class="col-sm-3 col-form-label"><strong>Library</strong></label>
         </div>
-        <hr/>
+        <hr style="margin-top: -1rem;"/>
         <div class="form-group row">
           <label for="libraryPre" class="col-sm-2 col-form-label" ngbTooltip="The unique prefix used to create a unique ID for every spectrum. Accepts numbers and letters.">Library ID Prefix: </label>
           <div class="col-sm-9">
@@ -126,7 +125,7 @@
         <div class="form-group row">
           <label class="col-sm-3 col-form-label"><strong>Submitter</strong></label>
         </div>
-        <hr/>
+        <hr style="margin-top: -1rem;"/>
         <div class="form-group row">
           <label class="col-sm-2 col-form-label" for="librarySubmitterEmail" ngbTooltip="Fill out if original submitter is not yourself">Email Address: </label>
           <div class="col-sm-9">
@@ -158,18 +157,10 @@
         <div class="form-group row">
           <label class="col-sm-3 col-form-label"><strong>Additional Tags</strong></label>
         </div>
-        <hr/>
-        <div class="row">
-          <div class="col-md">
-            <tag-input [(ngModel)]="batchTagList"  id="batchTags" name="batchTags"
-                       [identifyBy]="'text'"
-                       [displayBy]="'text'"
-                       [trimTags]="false"
-                       [maxItems]="1"
-                        [removable]="false">
-            </tag-input>
-          </div>
-        </div>
+        <hr style="margin-top: -1rem;"/>
+        <ul>
+          <li>In-Silico</li>
+        </ul>
       </form>
     </div>
   </div>
