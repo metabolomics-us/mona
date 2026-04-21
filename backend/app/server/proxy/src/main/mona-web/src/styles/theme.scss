@@ -303,6 +303,17 @@ body {
 }
 
 // Mobile Navigation
+@media (max-width: 1199px) {
+    .navbar-nav {
+        align-items: flex-start;
+    }
+
+    .navbar button.dropdown-toggle,
+    .navbar-expand-xl .navbar-nav > * > li > a {
+        padding: 10px 15px;
+    }
+}
+
 @media (max-width: 767px) {
     .navbar-expand-xl .navbar-nav .open .dropdown-menu > * > li > a {
         color: white;
