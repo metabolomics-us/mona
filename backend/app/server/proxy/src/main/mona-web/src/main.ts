@@ -129,7 +129,10 @@ const cookieConfig: NgcCookieConsentConfig = {
     }
   },
   theme: 'classic',
-  type: 'info'
+  type: 'info',
+  content: {
+    dismiss: 'Dismiss cookie message'
+  }
 };
 
 @NgModule({
