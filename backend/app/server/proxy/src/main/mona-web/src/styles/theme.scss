@@ -186,7 +186,8 @@ body {
 /* Navigation */
 /* ------------------------------- */
 
-.navbar-expand-xl .navbar-header .navbar-brand {
+.navbar-expand-xl .navbar-header .navbar-brand,
+.navbar-expand-xl .navbar-header .navbar-brand:visited {
     color: #FFBF00;
     font-size: x-large;
     font-weight: bold;
@@ -195,7 +196,7 @@ body {
 }
 
 .navbar-expand-xl .navbar-header .navbar-brand:hover,
-.navbar-expand-xl .navbar-header .navbar-brand:focus {
+.navbar-expand-xl .navbar-header .navbar-brand:focus-visible {
     border-radius: 10px;
     color: #FFEB7D;
 }
