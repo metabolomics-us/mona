@@ -29,11 +29,14 @@ body {
     font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
 }
 
-@media (min-width: 768px) and (max-width: 1017px) {
+@media (max-width: 767px) {
     .title-full {
-        //padding-top: 80px;
         display: none;
     }
+}
+
+body {
+    padding-top: 56px;
 }
 
 @media (min-width: 1108px) {
