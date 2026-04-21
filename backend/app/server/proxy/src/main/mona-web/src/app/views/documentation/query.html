@@ -2,20 +2,19 @@
 
 <div class="row">
     <div class="col-md-12">
-      <br>
-        <h3>MoNA Query Guide</h3>
-        <br />
-        <p></p>
+        <br>
+        <h1 class="h2">MoNA Query Guide</h1>
+        <br>
 
-        <div>
-            <h4>General Query Format</h4>
+        <div class="ml-3">
+            <h2 class="h4">General Query Format</h2>
             <hr/>
             <div>
               <p>
-                MoNA utilizes the <a href="https://github.com/turkraft/spring-filter">Spring Filter</a> library to create dynamic queries. Below is an example query with all its parts explained.
+                MoNA utilizes the <a href="https://github.com/turkraft/spring-filter" style="text-decoration: underline;">Spring Filter</a> library to create dynamic queries. Below is an example query with all its parts explained.
               </p>
               <br />
-              <h6>Example query:</h6>
+              <p style="font-size: 1.25em; font-weight: bold;">Example query:</p>
               <p class="code-block">
                 curl -G -H "Content-Type: application/json" --data-urlencode "query=exists(metaData.name:'ionization mode' and metaData.value:'positive')" --data-urlencode "size=10" --data-urlencode "page=0" https://mona.fiehnlab.ucdavis.edu/rest/spectra/search
               </p>
@@ -52,37 +51,37 @@
             </div>
 
             <br /><br /><br /><br />
-            <h4>Spring Filter Query Format</h4>
+            <h2 class="h4">Spring Filter Query Format</h2>
             <hr/>
             <div>
               <p>
                 MoNA uses <strong>Spring Filter</strong> for all of its querying.
-                Please take some time to view the <a href="https://github.com/turkraft/spring-filter/blob/main/README.md">README</a> from the Spring Filter project.
+                Please take some time to view the <a href="https://github.com/turkraft/spring-filter/blob/main/README.md" style="text-decoration: underline;">README</a> from the Spring Filter project.
                 The library allows for nested querying and provides an
                 extensive amount of functions and operations to create custom queries.
               </p>
               <br />
-              <h5>Referencing Spectrum Objects</h5>
+              <h3 class="h5">Referencing Spectrum Objects</h3>
               <p>
                 Spring Filter uses dot notation to reference nested objects. Below is a simplified spectrum object as an example
               </p>
-              <pre class="code-block">
-                  {{ '{' }}
-                    "id": "MoNA000001",
-                    "compound": [
-                      {{ '{' }}
-                        "metaData": {{ '{' }}"name": "InChIKey", value: "BRMWTNUJHUMWMS-LURJTMIESA-N"{{ '}' }}
-                      {{ '}' }}
-                    ],
-                    "metaData": {{ '{' }}"name": "ionization mode", value: "positive"{{ '}' }},
-                  {{ '}' }}</pre>
+              <pre class="code-block" code>
+    <code>{{ '{' }}
+      "id": "MoNA000001",
+      "compound": [
+        {{ '{' }}
+          "metaData": {{ '{' }}"name": "InChIKey", value: "BRMWTNUJHUMWMS-LURJTMIESA-N"{{ '}' }}
+        {{ '}' }}
+      ],
+      "metaData": {{ '{' }}"name": "ionization mode", value: "positive"{{ '}' }},
+    {{ '}' }}</code></pre>
               <p>
                 - To reference the <em>ID</em>, use <code class="code-text">id</code> <br />
                 - To reference the <em>compound metadata name</em>, use <code class="code-text">compound.metaData.name</code> <br />
                 - To reference the <em>spectrum metadata value</em>, use <code class="code-text">metaData.value</code>
               </p>
               <br /> <br />
-              <h5>Operators</h5>
+              <h3 class="h5">Operators</h3>
               <table class="table">
                 <tr> <th>Literal</th> <th>Description</th> <th>Example</th> </tr>
                 <tr> <td>and<td>AND condition between two expressions</td> <td>id : 'MoNA000001' <b>and</b> metaData.name : 'positive'</td> </tr>
@@ -90,7 +89,7 @@
                 <tr> <td>not<td>NOT condition for given expressions</td> <td> <b>not</b> (metaData.name : 'positive') </td> </tr>
               </table>
               <br /> <br />
-              <h5>Comparators</h5>
+              <h3 class="h5">Comparators</h3>
               <table class="table text-nowrap">
                 <tr> <th>Literal</th> <th>Description</th> <th>Example</th> </tr>
                 <tr> <td>~<td>checks if the left (string) expression is similar to the right (string) expression</td> <td>metaData.name <b>~</b> '*ionization'</td> </tr>
@@ -107,7 +106,7 @@
                 <tr> <td>in<td>checks if an expression is present in the right expressions</td> <td>metaData.value <b>in (</b>'positive'<b>,</b> 'negative'<b>)</b></td> </tr>
               </table>
               <br /> <br />
-              <h5>Subqueries</h5>
+              <h3 class="h5">Subqueries</h3>
               <table class="table" style="word-break: keep-all">
                 <tr> <th>Name<th>Description</th> <th>Example</th> <th>Explanation</th> </tr>
                 <tr> <td> exists<td> returns the existence of a subquery result </td> <td> <b>exists(</b>metaData.value: 'positive' and metaData.name: 'ionization mode'<b>)</b> </td> <td> returns true if metadata name is ionization mode and the value is positive</td> </tr>
@@ -126,10 +125,10 @@
               </p>
 
               <br /> <br /> <br />
-              <h4>Spectra Browser Query Format</h4>
+              <h2 class="h4">Spectra Browser Query Format</h2>
               <hr/>
               <p>
-                The queries that you construct for cURL commands work exactly the same as they do in the <a [routerLink]="['/spectra/browse']">Spectra Browser</a>.
+                The queries that you construct for cURL commands work exactly the same as they do in the <a [routerLink]="['/spectra/browse']" style="text-decoration: underline;">Spectra Browser</a>.
                 Simply do the following:
               </p>
               <p class="ml-2">
