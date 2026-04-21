@@ -1,10 +1,10 @@
-<h3>Quick Search</h3>
+<h2 class="h3">Quick Search</h2>
 
 <form (ngSubmit)="submitQuery()" #searchForm="ngForm">
     <div class="row">
         <div class="col-md-6">
             <div class="table-responsive">
-                <table class="table header-fixed table-borderless">
+                <table class="table header-fixed table-borderless" role="presentation">
                     <thead>
                     <tr>
                         <th>Compound</th>
@@ -44,17 +44,22 @@
                                    (ngModelChange)="query.exactMass = $event.trim() === '' ? undefined : $event.trim()"
                                    name="queryExactMass"
                                    class="form-control"
-                                   placeholder="Exact Mass">
+                                   placeholder="Exact Mass"
+                                   pattern="^\s*[0-9]*\.?[0-9]*\s*$"
+                                   #exactMassInput="ngModel">
+                            <div *ngIf="exactMassInput.invalid && exactMassInput.dirty" class="text-danger small mt-1">
+                                * Please enter a valid number
+                            </div>
                         </td>
                         <td>
                             <div class="input-group">
-                              <div class="input-group-prepend"><span class="input-group-text">&#177;</span></div>
-                                <input type="number" [(ngModel)]="query.exactMassTolerance"
+                              <div class="input-group-prepend"><span class="input-group-text" style="color: #3d4247;">&#177;</span></div>
+                                <input type="number" [(ngModel)]="query.exactMassTolerance" aria-label="Mass Tolerance"
                                        name="queryMassTolerance"
                                        class="form-control"
                                        value="0.5"
                                        placeholder="0.5">
-                                <div class="input-group-prepend"><span class="input-group-text">Da</span></div>
+                                <div class="input-group-prepend"><span class="input-group-text" style="color: #3d4247;">Da</span></div>
                             </div>
                         </td>
                     </tr>
@@ -66,7 +71,7 @@
             <div class="form-group row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table" role="presentation">
                             <thead>
                             <tr>
                                 <th>Ion Mode</th>
@@ -117,7 +122,7 @@
             <div class="form-group row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
-                        <table class="table table-condensed">
+                        <table class="table table-condensed" role="presentation">
                             <thead>
                             <tr>
                                 <th>MS Level</th>
@@ -173,20 +178,24 @@
   <!-- Additional tags -->
   <div class="row mb-2">
     <div class="col-md-12 h-auto">
-      <ngb-accordion #acc>
-        <ngb-panel id="additionalTags">
-          <ng-template ngbPanelTitle>
-          <span class="accordion-title">
-            Additional Tags
-            <fa-icon *ngIf="acc.isExpanded('additionalTags')" [icon]="faCaretDown" class="ml-2"></fa-icon>
-            <fa-icon *ngIf="!acc.isExpanded('additionalTags')" [icon]="faCaretRight" class="ml-2"></fa-icon>
-          </span>
-          </ng-template>
-          <ng-template ngbPanelContent>
+      <div class="card">
+        <div class="card-header p-0">
+          <button type="button" class="btn btn-link w-100 text-left" style="min-height: 44px;"
+                  (click)="additionalTagsExpanded = !additionalTagsExpanded"
+                  [attr.aria-expanded]="additionalTagsExpanded"
+                  aria-controls="additionalTagsContent">
+            <span class="accordion-title">
+              Additional Tags
+              <fa-icon [icon]="additionalTagsExpanded ? faCaretDown : faCaretRight" class="ml-2"></fa-icon>
+            </span>
+          </button>
+        </div>
+        <div id="additionalTagsContent" [ngbCollapse]="!additionalTagsExpanded">
+          <div class="card-body">
             <tag-display [tags]="queryTags"></tag-display>
-          </ng-template>
-        </ngb-panel>
-      </ngb-accordion>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -196,10 +205,13 @@
         <div class="col-md-6">
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button type="submit" class="btn" style="min-height: 44px;"
+                            [disabled]="exactMassInput.invalid && exactMassInput.dirty"
+                            [class.btn-primary]="!exactMassInput.invalid || !exactMassInput.dirty"
+                            [class.btn-danger]="exactMassInput.invalid && exactMassInput.dirty">Search</button>
                 </div>
-                <div class="col-sm-2 ml-3">
-                    <button type="button" class="btn btn-secondary" (click)="searchForm.resetForm(); resetForm();">Reset</button>
+                <div class="col-sm-2 ml-1">
+                    <button type="button" class="btn btn-secondary" (click)="searchForm.resetForm(); resetForm();" style="min-height: 44px;">Reset</button>
                 </div>
             </div>
         </div>

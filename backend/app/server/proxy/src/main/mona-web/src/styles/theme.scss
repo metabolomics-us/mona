@@ -1,6 +1,17 @@
 /* Global Styles */
 
-/* ------------------------------- */
+
+:focus-visible {
+    outline: 2px solid #0b3f6c;
+}
+
+body a {
+  color: #0b3f6c;
+}
+
+body a:hover {
+  color: #276db3;
+}
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak],
 [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -116,7 +127,25 @@ body {
   box-shadow: 0 0 0;
 }
 
-.news-title > h4, h2 {
+.btn.btn-secondary {
+  background-color: #545454;
+}
+
+.btn.btn-secondary:hover,
+.btn.btn-secondary:focus,
+.btn.btn-secondary.active {
+  background-color: #919191;
+  border-color: #919191;
+}
+
+.news-title > h3 {
+  font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
+  color: #022851;
+  font-weight: bold;
+  margin: 0 0 2px 0;
+}
+
+.title-header {
   font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
   color: #022851;
   font-weight: bold;
@@ -162,20 +191,43 @@ body {
     font-size: x-large;
     font-weight: bold;
     padding-right: 3rem;
+    padding-left: 1rem;
 }
 
 .navbar-expand-xl .navbar-header .navbar-brand:hover,
 .navbar-expand-xl .navbar-header .navbar-brand:focus {
-    color: #FFBF00;
+    border-radius: 10px;
+    color: #FFEB7D;
 }
+
 
 .navbar-expand-xl {
     background-color: #1a3e68;
     border-bottom: 5px solid #FFBF00;
 }
 
+.navbar-nav {
+    align-items: center;
+}
+
 .dropdown-toggle, .dropdown-menu {
     cursor: pointer;
+}
+
+.navbar button.dropdown-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
+    font-size: medium;
+    font-weight: bold;
+    padding: 15px;
+}
+
+.navbar button.dropdown-toggle:hover,
+.navbar button.dropdown-toggle:focus {
+    color: #FFBF00;
+    outline: none;
 }
 
 .navbar-expand-xl .navbar-nav > * > li > a {
@@ -204,12 +256,22 @@ body {
   display: none !important;
 }
 
-.dropdown-menu > li > a {
+.dropdown-menu > li > a,
+.dropdown-menu > li > button {
     font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
     color: black;
 }
 
-.dropdown-menu > li > a:hover {
+.dropdown-menu > li > button {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 3px 20px;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > button:hover {
     color: white;
     background-color: #1a3e68;
 }
@@ -217,7 +279,6 @@ body {
 .navbar-nav > * > li > .dropdown-menu {
     margin-top: 5px;
     border-radius: 10px;
-
 }
 
 .dropdown-menu:after {
@@ -376,9 +437,14 @@ body {
     color: #d9534f;
 }
 
-button.btn-link:focus {
+button.btn-link:focus:not(:focus-visible) {
   outline: none;
   box-shadow: 0 0 0;
+}
+
+button.btn-link:focus-visible {
+  outline: 2px solid #0b3f6c;
+  box-shadow: none;
 }
 
 .btn-primary.btn-outline:hover,
@@ -622,4 +688,8 @@ input[type="checkbox"] {
 
 .custom-progress .progress-bar {
   background-color: #0b3f6c !important;
+}
+
+:root .text-danger {
+    color: #AA1F2D !important;
 }

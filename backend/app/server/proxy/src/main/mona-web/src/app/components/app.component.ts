@@ -12,13 +12,13 @@ import {ToasterConfig} from 'angular2-toaster';
               <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" role="navigation" id="navbarSupportedContent">
-                <ul class="nav navbar-nav mr-auto">
+                <div class="nav navbar-nav mr-auto">
                     <browse-drop-down class="nav-item"></browse-drop-down>
                     <download-button class="nav-item"></download-button>
                     <upload-button class="nav-item"></upload-button>
                     <resource-drop-down class="nav-item"></resource-drop-down>
                     <admin-drop-down class="nav-item"></admin-drop-down>
-                </ul>
+                </div>
                 <div class="form-inline my-2 my-lg-0">
                   <search-box class="nav-item"></search-box>
                 </div>
@@ -28,7 +28,7 @@ import {ToasterConfig} from 'angular2-toaster';
             </div>
         </nav>
         <p></p>
-        <div id="page-wrapper">
+        <div id="page-wrapper" role="main">
             <div class="row">
                 <div class="col-lg-12 top17">
                     <router-outlet></router-outlet>

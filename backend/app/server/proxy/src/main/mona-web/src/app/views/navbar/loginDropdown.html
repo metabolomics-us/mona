@@ -1,9 +1,9 @@
 <ul class="nav navbar-nav navbar-top-links navbar-right">
     <!-- User Login -->
     <li class="dropdown" ngbDropdown>
-        <a role="button" class="dropdown-toggle" ngbDropdownToggle>
+        <button class="dropdown-toggle" ngbDropdownToggle aria-label="User menu">
           <fa-icon [icon]="faUser"></fa-icon>
-        </a>
+        </button>
         <ul class="uib-dropdown-menu dropdown-user" ngbDropdownMenu>
             <li *ngIf="isLoggedIn()">
               <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/profile']"><fa-icon [icon]="faUser"></fa-icon> User Profile</a>
@@ -11,11 +11,11 @@
             <li *ngIf="isLoggedIn()" class="divider"></li>
 
             <li>
-              <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleLogin()"><fa-icon [icon]="faSignOutAlt"></fa-icon> {{isLoggedIn() ?
-                    "Logout" : "Login"}}</a>
+              <button ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleLogin()"><fa-icon [icon]="faSignOutAlt"></fa-icon> {{isLoggedIn() ?
+                    "Log Out" : "Log In"}}</button>
             </li>
             <li *ngIf="!isLoggedIn()">
-              <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleRegistration()"><fa-icon [icon]="faUsers"></fa-icon> Register</a>
+              <button ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleRegistration()"><fa-icon [icon]="faUsers"></fa-icon> Register</button>
             </li>
         </ul>
         <!-- /.dropdown-user -->
