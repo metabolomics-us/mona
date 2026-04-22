@@ -121,9 +121,8 @@
             <button class="btn btn-danger mr-1 accessibility" *ngIf="authenticationService.isLoggedIn() && !pagination.table" type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
               <fa-icon [icon]="faTrash"></fa-icon> Batch Delete
             </button>
-            <button class="btn btn-primary accessibility" (click)="acc.isExpanded('display-panel')? acc.collapse('display-panel'): acc.expand('display-panel')" placement="right"
-                    ngbTooltip="Number of spectra results from this query">
-
+            <button class="btn btn-primary accessibility" placement="right" ngbTooltip="Number of spectra results from this query"
+            (click)="queryInfoCollapsed = !queryInfoCollapsed">
               <fa-icon [icon]="faBookmark"></fa-icon>
               <strong *ngIf="pagination.totalSize > -1"> {{pagination.totalSize|number}}</strong>
               <strong *ngIf="pagination.totalSize <= -1"> Loading...</strong>
