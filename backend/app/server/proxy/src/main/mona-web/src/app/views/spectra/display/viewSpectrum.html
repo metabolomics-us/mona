@@ -83,7 +83,7 @@
                                 <hr>
 
                                 <li *ngIf="spectrum.tags.length > 0">
-                                    <div class="h6 d-flex align-items-center">
+                                    <div class="h6 d-flex flex-wrap align-items-center">
                                       <span *ngFor="let tag of spectrum.tags" class="mr-2">
                                         <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
                                       </span>
