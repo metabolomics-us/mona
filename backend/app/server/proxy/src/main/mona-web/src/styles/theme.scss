@@ -795,12 +795,21 @@ input[type="checkbox"] {
   color: #9D1D2A !important;
 }
 
+:root .bg-danger {
+  background-color: #9D1D2A !important;
+}
+
+
 :root .text-info {
   color: #0E57AB !important;
 }
 
 :root .text-success {
   color: #2D5C0F !important;
+}
+
+:root .bg-success {
+  background-color: #2D5C0F !important;
 }
 
 .input-group-text {
