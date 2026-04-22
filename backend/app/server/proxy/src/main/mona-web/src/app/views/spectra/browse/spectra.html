@@ -28,14 +28,18 @@
     <br>
       <h1 class="h2"><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</h1>
       <br>
-        <ngb-accordion closeOthers="true" #acc="ngbAccordion">
-          <ngb-panel id="display-panel">
-                <ng-template ngbPanelTitle>
-                    <span style="padding: 0" class="btn davis-blue text-decoration-none">
-                        <fa-icon [icon]="faSearch" aria-hidden="true"></fa-icon> Query Information
-                    </span>
-                </ng-template>
-                <ng-template ngbPanelContent>
+        <div class="card">
+          <div class="card-header p-0">
+            <button type="button"
+                    class="accessibility btn btn-link davis-blue text-decoration-none w-100 text-left"
+                    [attr.aria-expanded]="!queryInfoCollapsed"
+                    aria-controls="queryInfoPanel"
+                    (click)="queryInfoCollapsed = !queryInfoCollapsed">
+              <fa-icon [icon]="faSearch" aria-hidden="true"></fa-icon> Query Information
+            </button>
+          </div>
+          <div id="queryInfoPanel" [ngbCollapse]="queryInfoCollapsed">
+            <div class="card-body">
 
                   <div>
                     <fa-icon [icon]="faExclamationTriangle"></fa-icon> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query downloads
@@ -78,9 +82,10 @@
                       </ngb-alert>
                     </p>
                   </div>
-                </ng-template>
-            </ngb-panel>
-        </ngb-accordion>
+
+            </div>
+          </div>
+        </div>
     </div>
 </div>
 <br/>
