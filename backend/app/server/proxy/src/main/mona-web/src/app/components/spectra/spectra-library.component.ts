@@ -25,7 +25,7 @@ export class SpectraLibraryComponent implements AfterViewInit {
         }
 
         // Base library string
-        this.libraryString = 'Originally submitted to the ';
+        this.libraryString = 'Originally submitted to the \'';
 
         const library: Library = this.spectrum.library;
 
@@ -34,7 +34,7 @@ export class SpectraLibraryComponent implements AfterViewInit {
             // Link to library but no identifier
             if (typeof library.library === 'undefined') {
                 this.libraryString += '<a class="davis-blue" style="text-decoration: underline;" href="' + library.link + '" target="_blank">' +
-                    library.library + ' </a> library';
+                    library.library + ' </a>\' library';
             }
 
             // Link to library and identifier and link placeholder for identifier
@@ -42,19 +42,19 @@ export class SpectraLibraryComponent implements AfterViewInit {
                 const link = library.link.replace('%s', library.library);
 
                 this.libraryString += '<a class="davis-blue" style="text-decoration: underline;" href="' + link + '" target="_blank">' +
-                    library.library + '</a> library';
+                    library.library + '</a>\' library';
             }
 
             // Link to library and identifier but no link placeholder for identifier
             else {
                 this.libraryString += '<a class="davis-blue" style="text-decoration: underline;" href="'
-                  + library.link + '" target="_blank">' + library.library + '</a> library';
+                  + library.link + '" target="_blank">' + library.library + '</a>\' library';
             }
         }
 
         // With no library link
         else {
-            this.libraryString += library.library + ' library';
+            this.libraryString += library.library + '\' library';
         }
         this.elementRef.nativeElement.innerHTML = this.libraryString;
     }
