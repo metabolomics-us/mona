@@ -86,26 +86,26 @@
 <div class="row">
     <div class="col-md-12">
         <div class="float-left">
-            <button class="btn btn-primary mr-1 accessibility"
+            <button class="btn btn-primary mr-1 accessibility" aria-label="Enable compact view"
                     *ngIf="pagination.table === false" (click)="pagination.table = true; setTable()"
                     placement="right"
                     ngbTooltip="Enable compact view">
               <fa-icon [icon]="faList"></fa-icon>
             </button>
 
-            <button class="btn btn-primary mr-1 accessibility"
+            <button class="btn btn-primary mr-1 accessibility" aria-label="Enable expanded view"
                     *ngIf="pagination.table === true" (click)="pagination.table = false; setTable()"
                     placement="right"
                     ngbTooltip="Enable expanded view">
               <fa-icon [icon]="faTable"></fa-icon>
             </button>
 
-            <button class="btn btn-primary accessibility" (click)="searchSpectra()" placement="right"
+            <button class="btn btn-primary accessibility" (click)="searchSpectra()" placement="right" aria-label="Start a new query"
                     ngbTooltip="Start a new query">
               <fa-icon [icon]="faSearch"></fa-icon>
             </button>
 
-            <button class="btn btn-primary ml-1 accessibility" (click)="resetQuery()" placement="right"
+            <button class="btn btn-primary ml-1 accessibility" (click)="resetQuery()" placement="right" aria-label="Reset the current query"
                     ngbTooltip="Reset the current query">
               <fa-icon [icon]="faSync"></fa-icon>
             </button>
