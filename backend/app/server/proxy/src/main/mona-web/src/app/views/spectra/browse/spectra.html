@@ -26,13 +26,14 @@
 <div class="row">
     <div class="col-md-12">
     <br>
-      <h3><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</h3>
+      <h1 class="h2"><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</h1>
+      <br>
         <ngb-accordion closeOthers="true" #acc="ngbAccordion">
           <ngb-panel id="display-panel">
                 <ng-template ngbPanelTitle>
-                    <div style="padding: 0" class="btn davis-blue text-decoration-none">
-                        <fa-icon [icon]="faSearch"></fa-icon> Query Information
-                    </div>
+                    <span style="padding: 0" class="btn davis-blue text-decoration-none">
+                        <fa-icon [icon]="faSearch" aria-hidden="true"></fa-icon> Query Information
+                    </span>
                 </ng-template>
                 <ng-template ngbPanelContent>
 
@@ -42,8 +43,8 @@
 
                   <br/>
                   Current Query
-                  <button class="btn btn-primary btn-xs mb-1" (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
-                  <pre *ngIf="!editQuery" class="input-group-text">{{query !== '' && query !== undefined ? query : "[Empty]"}}</pre>
+                  <button class="btn btn-primary btn-xs mb-1" (click)="editQuery = !editQuery" aria-label="Edit query"><fa-icon [icon]="faEdit"></fa-icon></button>
+                  <pre *ngIf="!editQuery" class="input-group-text"><code>{{query !== '' && query !== undefined ? query : "[Empty]"}}</code></pre>
                   <div *ngIf="editQuery">
                     <form (submit)="updateQuery(query)">
                       <div class="input-group">
@@ -58,10 +59,10 @@
                   <div>
                     <br/>
                     Current Query (as cURL command)
-                    <pre class="input-group-text" id="curlCommand">
-                      <button class="btn btn-link btn-sm" style="color: slategray; margin-left: -10px" (click)="copyCurlCommand()"><fa-icon [icon]="faCopy"></fa-icon></button>
+                    <pre class="input-group-text" id="curlCommand"><code>
+                      <button class="btn btn-link btn-sm" style="color: slategray; margin-left: -10px" (click)="copyCurlCommand()" aria-label="Copy query"><fa-icon [icon]="faCopy"></fa-icon></button>
                       {{{query: query} | curlPipe}}
-                    </pre>
+                    </code></pre>
                     <span id="copiedMsg" style="opacity: 0; color: forestgreen">Copied!</span>
                   </div>
 
@@ -72,8 +73,8 @@
                   <div style="width: 300px">
                     <br/>
                     <p>
-                      <ngb-alert type="warning" [dismissible]="false">
-                        <a [routerLink]="['/documentation/query']" target="_blank">Learn more</a> about the query system
+                      <ngb-alert type="warning" [dismissible]="false" style="color: #674F05;">
+                        <a [routerLink]="['/documentation/query']" target="_blank" style="text-decoration: underline">Learn more</a> about the query system
                       </ngb-alert>
                     </p>
                   </div>

@@ -33,7 +33,7 @@ export class SpectraLibraryComponent implements AfterViewInit {
         if (typeof library.link !== 'undefined' && library.link !== '') {
             // Link to library but no identifier
             if (typeof library.library === 'undefined') {
-                this.libraryString += '<a class="davis-blue text-decoration-none" href="' + library.link + '" target="_blank">' +
+                this.libraryString += '<a class="davis-blue" style="text-decoration: underline;" href="' + library.link + '" target="_blank">' +
                     library.library + ' </a> library';
             }
 
@@ -41,13 +41,13 @@ export class SpectraLibraryComponent implements AfterViewInit {
             else if (typeof library.library !== 'undefined' && library.link.indexOf('%s') > -1) {
                 const link = library.link.replace('%s', library.library);
 
-                this.libraryString += '<a class="davis-blue text-decoration-none" href="' + link + '" target="_blank">' +
+                this.libraryString += '<a class="davis-blue" style="text-decoration: underline;" href="' + link + '" target="_blank">' +
                     library.library + '</a> library';
             }
 
             // Link to library and identifier but no link placeholder for identifier
             else {
-                this.libraryString += '<a class="davis-blue text-decoration-none" href="'
+                this.libraryString += '<a class="davis-blue" style="text-decoration: underline;" href="'
                   + library.link + '" target="_blank">' + library.library + '</a> library';
             }
         }
