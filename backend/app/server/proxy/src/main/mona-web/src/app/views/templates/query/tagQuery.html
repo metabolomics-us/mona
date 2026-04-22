@@ -4,7 +4,7 @@
        (keydown.enter)="$event.preventDefault(); $event.target.click()"
        (keydown.space)="$event.preventDefault(); $event.target.click()">
         <span *ngIf="tag.ruleBased">
-          <fa-icon [icon]="faFlask"></fa-icon>
+          <fa-icon [icon]="faFlask" ngbTooltip="Auto-tagged"></fa-icon>
         </span>
       <fa-icon [icon]="faTag"></fa-icon>&nbsp;{{tag.text}}
     </a>

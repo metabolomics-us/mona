@@ -84,7 +84,6 @@
 
                                 <li *ngIf="spectrum.tags.length > 0">
                                     <div class="h6 d-flex align-items-center">
-                                      <span>Tags:&ensp;</span>
                                       <span *ngFor="let tag of spectrum.tags" class="mr-2">
                                         <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
                                       </span>
