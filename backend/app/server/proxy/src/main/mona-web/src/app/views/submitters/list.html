@@ -1,5 +1,6 @@
 <div>
-  <h3>Manage Submitters</h3>
+  <br>
+  <h1 class="h2"><fa-icon [icon]="faUser"></fa-icon> Manage Submitters</h1>
   <br/>
 </div>
 
@@ -24,7 +25,7 @@
                     <th>Last</th>
                     <th>Institution</th>
                     <th>Email</th>
-                    <th></th>
+                    <th>Edit/Delete</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -34,11 +35,11 @@
                     <td>{{sub.institution}}</td>
                     <td>{{sub.emailAddress}}</td>
                     <td class="text-nowrap">
-                        <button (click)="displayEditDialog(sub)" class="btn btn-default" ngbTooltip="Edit user">
+                        <button (click)="displayEditDialog(sub)" class="btn btn-default" ngbTooltip="Edit user" aria-label="Edit user">
                           <fa-icon [icon]="faEdit"></fa-icon>
                         </button>
 
-                        <button (click)="askToDelete(sub)" class="btn btn-default" ngbTooltip="Delete user">
+                        <button (click)="askToDelete(sub)" class="btn btn-default" ngbTooltip="Delete user" aria-label="Delete user">
                           <fa-icon [icon]="faMinusSquare"></fa-icon>
                         </button>
 
@@ -58,7 +59,7 @@
         </div>
       </ngb-toast>
 
-        <button (click)="displayCreateDialog()" class="btn btn-primary btn-sm"><fa-icon
+        <button (click)="displayCreateDialog()" class="btn btn-primary accessibility"><fa-icon
                 [icon]="faUser"></fa-icon> Add New Submitter
         </button>
     </form>
