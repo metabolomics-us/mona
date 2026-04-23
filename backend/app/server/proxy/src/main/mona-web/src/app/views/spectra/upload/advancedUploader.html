@@ -383,9 +383,11 @@
                                     </div>
                                     <div class="col-sm-2 form-group">
                                         <button (click)="removeMetadataField(i)" class="btn btn-default accessibility"
-                                                ngbTooltip="Remove this metadata field" placement="right" ngDefaultControl><fa-icon [icon]="faTrash"></fa-icon></button>
+                                                ngbTooltip="Remove this metadata field" placement="right" ngDefaultControl aria-label="Remove this metadata field">
+                                                <fa-icon [icon]="faTrash"></fa-icon></button>
                                         <button (click)="applyMetadataToAll(i)" class="btn btn-default accessibility"
-                                                ngbTooltip="Copy this metadata value to all spectra" placement="right" ngDefaultControl><fa-icon [icon]="faSave"></fa-icon></button>
+                                                ngbTooltip="Copy this metadata value to all spectra" placement="right" ngDefaultControl aria-label="Copy this metadata value to all spectra">
+                                                <fa-icon [icon]="faSave"></fa-icon></button>
                                     </div>
                                   <hr>
                                 </div>
@@ -424,7 +426,7 @@
                     <li ngbNavItem="Trim Spectra">
                         <a ngbNavLink class="davis-blue accessibility">Trim Spectra</a>
                         <ng-template ngbNavContent>
-                            <h5>Remove low intensity ions from a mass spectrum</h5>
+                            <p class="h5" style="line-height: 1.5;">Remove low intensity ions from a mass spectrum</p>
                             <p></p>
                             <div style="margin-top: 10px;">
                                 <div>
@@ -434,6 +436,7 @@
                                                [(ngModel)]="ionCuts.nIons"
                                                ngDefaultControl
                                                placeholder="Number of ions"
+                                               aria-label="Number of ions"
                                                class="form-control" />
                                         <span class="help-block ml-2">Keeps the top <code class="code-text">n</code> ions with the highest intensity</span>
                                     </div>
@@ -447,6 +450,7 @@
                                                [(ngModel)]="ionCuts.basePeak"
                                                ngDefaultControl
                                                placeholder="Percentage of base peak"
+                                               aria-label="Percentage of base peak"
                                                class="form-control" />
 
                                         <span class="help-block ml-2 text-nowrap">
@@ -463,6 +467,7 @@
                                                [(ngModel)]="ionCuts.absAbundance"
                                                ngDefaultControl
                                                placeholder="Absolute abundance"
+                                               aria-label="Absolute abundance"
                                                class="form-control" />
                                         <span class="help-block ml-2">Removes ions below the given absolute abundance/intensity</span>
                                     </div>
@@ -492,7 +497,7 @@
                                     </thead>
                                     <tbody>
                                     <tr *ngFor="let ion of currentSpectrum.ions|orderBy: ionTableSort">
-                                        <td><input type="checkbox" [(ngModel)]="ion.selected" /></td>
+                                        <td><input type="checkbox" [(ngModel)]="ion.selected" aria-label="Select ion"/></td>
                                         <td>{{ion.ion | number : '1.0-4'}}</td>
                                         <td>{{ion.intensity | number : '1.0-4'}}</td>
                                         <td>
