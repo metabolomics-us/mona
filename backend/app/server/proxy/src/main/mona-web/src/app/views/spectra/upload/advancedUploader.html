@@ -210,8 +210,8 @@
                 </div>
                 <br />
 
-                <ul ngbNav #nav='ngbNav' class="nav-tabs">
-                    <li ngbNavItem="Identifiers">
+                <nav ngbNav #nav='ngbNav' class="nav-tabs">
+                    <div ngbNavItem="Identifiers">
                         <a ngbNavLink class="davis-blue accessibility">Identifiers</a>
                         <ng-template ngbNavContent>
 
@@ -295,71 +295,92 @@
                                 </div>
 
                               <div class="row form-group">
-                                    <ngb-accordion class="col-sm-12 col-lg-12">
-                                        <ngb-panel>
-                                            <ng-template ngbPanelTitle><span class="davis-blue">Import MOL/SDF File</span></ng-template>
+                                    <div class="col-sm-12 col-lg-12 accordion-stack">
+                                        <div class="card">
+                                            <div class="card-header p-0">
+                                                <button type="button" class="btn btn-link container-fluid text-left px-3 py-3 text-decoration-none davis-blue"
+                                                        [attr.aria-expanded]="accordionStatus.isMolImportOpen"
+                                                        (click)="accordionStatus.isMolImportOpen = !accordionStatus.isMolImportOpen">
+                                                    Import MOL/SDF File
+                                                    <fa-icon [icon]="faAngleDown" pull="right" aria-hidden="true" *ngIf="accordionStatus.isMolImportOpen"></fa-icon>
+                                                    <fa-icon [icon]="faAngleRight" pull="right" aria-hidden="true" *ngIf="!accordionStatus.isMolImportOpen"></fa-icon>
+                                                </button>
+                                            </div>
+                                            <div [ngbCollapse]="!accordionStatus.isMolImportOpen">
+                                                <div class="card-body">
+                                                    <div>
+                                                        Load a MOL file to attach to this spectrum record or copy and paste a molecular structure.  Please note that the MOL data must contain explicit hydrogens to
+                                                        convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
+                                                        will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
+                                                        using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
+                                                    </div>
+                                                    <hr />
 
-                                            <ng-template ngbPanelContent>
-                                              Load a MOL file to attach to this spectrum record or copy and paste a molecular structure.  Please note that the MOL data must contain explicit hydrogens to
-                                              convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
-                                              will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
-                                              using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
-                                                <hr />
+                                                    <div class="form-group">
+                                                        <label><b>Upload an MOL/SDF file:</b></label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-primary btn-file accessibility"
+                                                                        (keydown.enter)="fileUpload.click(); $event.preventDefault()"
+                                                                        (keydown.space)="fileUpload.click(); $event.preventDefault()">
+                                                                    Browse...
+                                                                    <input type="file" accept=".mol, .sdf" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseMolFile($event)" tabindex="-1" #fileUpload />
+                                                                </button>
+                                                            </span>
+                                                            <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="convMolUpload" ngDefaultControl readonly tabindex="-1" style="min-height: 44px;"/>
+                                                        </div>
+                                                    </div>
 
-                                                <div class="form-group">
-                                                  <label><b>Upload an MOL/SDF file:</b></label>
-                                                  <div class="input-group">
-                                                    <span class="input-group-btn">
-                                                        <button class="btn btn-primary btn-file accessibility"
-                                                        (keydown.enter)="fileUpload.click(); $event.preventDefault()"
-                                                        (keydown.space)="fileUpload.click(); $event.preventDefault()">
-                                                           Browse...
-                                                           <input type="file" accept=".mol, .sdf" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseMolFile($event)" tabindex="-1" #fileUpload />
-                                                        </button>
-                                                    </span>
-                                                    <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="convMolUpload" ngDefaultControl readonly tabindex="-1" style="min-height: 44px;"/>
-                                                  </div>
+                                                    <div class="form-group">
+                                                        <label><b>Copy and paste a molecular structure:</b></label>
+                                                        <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" ngDefaultControl rows="7"></textarea>
+                                                    </div>
+
+                                                    <div class="form-group text-center">
+                                                        <button (click)="convertMolToInChI()" class="btn btn-primary accessibility" ngDefaultControl>Fetch Compound Info from MOL Data</button>
+                                                    </div>
                                                 </div>
+                                            </div>
+                                        </div>
 
-                                                <div class="form-group">
-                                                  <label><b>Copy and paste a molecular structure:</b></label>
-                                                  <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" ngDefaultControl rows="7"></textarea>
+                                        <div class="card">
+                                            <div class="card-header p-0">
+                                                <button type="button" class="btn btn-link container-fluid text-left px-3 py-3 text-decoration-none davis-blue"
+                                                        [attr.aria-expanded]="accordionStatus.isMolDrawOpen"
+                                                        (click)="accordionStatus.isMolDrawOpen = !accordionStatus.isMolDrawOpen">
+                                                    Draw a Molecular Structure
+                                                    <fa-icon [icon]="faAngleDown" pull="right" aria-hidden="true" *ngIf="accordionStatus.isMolDrawOpen"></fa-icon>
+                                                    <fa-icon [icon]="faAngleRight" pull="right" aria-hidden="true" *ngIf="!accordionStatus.isMolDrawOpen"></fa-icon>
+                                                </button>
+                                            </div>
+                                            <div [ngbCollapse]="!accordionStatus.isMolDrawOpen">
+                                                <div class="card-body">
+                                                    <div>
+                                                        Draw a structure with <a href="https://www.chemdoodle.com/" target="_blank">ChemDoodle</a> to generate an MOL file,
+                                                        then upload the file in the section above.
+                                                        If uploading to MoNA, the provided MOL file will be attached;
+                                                        however the full MOL file cannot be included in an MSP export.  Please note that
+                                                        using this tool will overwrite any existing MOL file, InChI code or InChIKey.
+                                                    </div>
+                                                    <hr />
+
+                                                    <div style="width: 100%; height: 100%">
+                                                        <div class="text-center" [libChemdoodle]="currentSpectrum.molFile" id="molSketcher" ngDefaultControl></div>
+                                                    </div>
+
+                                                    <div class="form-group text-center">
+                                                        <button (click)="convertMolToInChI()" class="btn btn-primary accessibility" ngDefaultControl>Fetch Compound Info from MOL Data</button>
+                                                    </div>
                                                 </div>
-
-                                              <div class="form-group text-center">
-                                                    <button (click)="convertMolToInChI()" class="btn btn-primary accessibility" ngDefaultControl>Fetch Compound Info from MOL Data</button>
-                                                </div>
-                                            </ng-template>
-                                        </ngb-panel>
-
-                                        <ngb-panel>
-                                            <ng-template ngbPanelTitle><span class="davis-blue">Draw a Molecular Structure</span></ng-template>
-
-                                            <ng-template ngbPanelContent>
-                                                Draw a structure with <a href="https://www.chemdoodle.com/" target="_blank">ChemDoodle</a> to generate an MOL file,
-                                                then upload the file in the section above.
-                                                If uploading to MoNA, the provided MOL file will be attached;
-                                                however the full MOL file cannot be included in an MSP export.  Please note that
-                                                using this tool will overwrite any existing MOL file, InChI code or InChIKey.
-                                                <hr />
-
-                                                <div style="width: 100%; height: 100%">
-                                                    <div class="text-center" [libChemdoodle]="currentSpectrum.molFile"  id="molSketcher" ngDefaultControl></div>
-                                                </div>
-
-
-                                                <div class="form-group text-center">
-                                                    <button (click)="convertMolToInChI()" class="btn btn-primary accessibility" ngDefaultControl>Fetch Compound Info from MOL Data</button>
-                                                </div>
-                                            </ng-template>
-                                        </ngb-panel>
-                                    </ngb-accordion>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </ng-template>
-                    </li>
+                    </div>
 
-                    <li ngbNavItem="Metadata">
+                    <div ngbNavItem="Metadata">
                         <a ngbNavLink class="davis-blue accessibility">Metadata</a>
                         <ng-template ngbNavContent>
                             <div id="metadata_editor" style="height: 500px; overflow: auto; margin-top: 10px;">
@@ -397,9 +418,9 @@
                                 </div>
                             </div>
                         </ng-template>
-                    </li>
+                    </div>
 
-                    <li ngbNavItem="Tags">
+                    <div ngbNavItem="Tags">
                         <a ngbNavLink class="davis-blue accessibility">Tags</a>
                         <ng-template ngbNavContent>
                             <p>
@@ -421,9 +442,9 @@
                               <button (click)="applyTagsToAll()"  ngDefaultControl class="btn btn-primary btn-sm accessibility"><fa-icon [icon]="faSave"></fa-icon> Apply these tags to all spectra</button>
                             </div>
                         </ng-template>
-                    </li>
+                    </div>
 
-                    <li ngbNavItem="Trim Spectra">
+                    <div ngbNavItem="Trim Spectra">
                         <a ngbNavLink class="davis-blue accessibility">Trim Spectra</a>
                         <ng-template ngbNavContent>
                             <p class="h5" style="line-height: 1.5;">Remove low intensity ions from a mass spectrum</p>
@@ -480,9 +501,9 @@
                                 </div>
                             </div>
                         </ng-template>
-                    </li>
+                    </div>
 
-                    <li ngbNavItem="Ion Table">
+                    <div ngbNavItem="Ion Table">
                         <a ngbNavLink class="davis-blue accessibility">Ion Table</a>
                         <ng-template ngbNavContent>
                             <div style="height: 500px; overflow: auto; margin-top: 10px;" *ngIf="showIonTable">
@@ -517,16 +538,16 @@
                                 <p class="text-center"><a [routerLink]="" class="btn btn-primary" (click)="showIonTable = true">Build Ion Table</a></p>
                             </div>
                         </ng-template>
-                    </li>
+                    </div>
 
-                    <li ngbNavItem="Discard Spectrum">
+                    <div ngbNavItem="Discard Spectrum">
                         <a ngbNavLink class="davis-blue accessibility">Discard Spectrum</a>
                         <ng-template ngbNavContent>
                             <p>Are you sure you want to remove this spectrum?</p>
                             <button class="btn btn-danger accessibility" (click)="removeCurrentSpectrum()">Remove</button>
                         </ng-template>
-                    </li>
-                </ul>
+                    </div>
+                </nav>
                 <div [ngbNavOutlet]="nav" class = "mt-2"></div>
             </div>
 

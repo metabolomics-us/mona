@@ -21,6 +21,7 @@ import {
   faSpinner, faExclamationTriangle, faMinusSquare, faPlusSquare,
   faSave, faCloudUploadAlt, faUser, faArrowLeft, faArrowRight,
   faSignInAlt, faFolderOpen, faQuestionCircle, faTrash, faInfoCircle, faFileExport,
+  faAngleDown, faAngleRight,
 } from '@fortawesome/free-solid-svg-icons';
 import {first} from 'rxjs/operators';
 import {ToasterService} from 'angular2-toaster';
@@ -99,6 +100,13 @@ export class AdvancedUploaderComponent implements OnInit{
   faTrash = faTrash;
   faInfoCircle = faInfoCircle;
   faFileExport = faFileExport;
+  faAngleDown = faAngleDown;
+  faAngleRight = faAngleRight;
+
+  accordionStatus = {
+    isMolImportOpen: false,
+    isMolDrawOpen: false
+  };
 
 	constructor( public authenticationService: AuthenticationService,  public location: Location,
 				          public uploadLibraryService: UploadLibraryService,  public ctsService: CtsService,
