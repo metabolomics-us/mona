@@ -431,7 +431,7 @@ OR
                 <div style="margin-top: 10px;">
                     <div>
                         <label>Source Introduction / Chromatography Type:</label> <br />
-                        <select class="form-control" name="chromatography" [(ngModel)]="metadata.chromatography">
+                        <select class="form-control accessibility" name="chromatography" [(ngModel)]="metadata.chromatography" aria-label="Source Introduction / Chromatography Type">
                             <option value="" selected="selected"></option>
                             <option value="Liquid Chromatography (LC)">Liquid Chromatography (LC)</option>
                             <option value="Gas Chromatography (GC)">Gas Chromatography (GC)</option>
@@ -443,13 +443,13 @@ OR
 
                     <div *ngIf="metadata.chromatography && metadata.chromatography !== 'Select One' && metadata.chromatography === 'Gas Chromatography (GC)'">
                         <label>Derivatization:</label> <br />
-                        <input type="text" class="form-control" name="derivatization" [(ngModel)]="metadata.derivatization" />
+                        <input type="text" class="form-control accessibility" name="derivatization" [(ngModel)]="metadata.derivatization" aria-label="Derivatization"/>
                         <br />
                     </div>
 
                     <div>
                         <label>MS Type / Level:</label> <br />
-                        <select class="form-control" name="mslevel" [(ngModel)]="metadata.mslevel">
+                        <select class="form-control accessibility" name="mslevel" [(ngModel)]="metadata.mslevel" aria-label="MS Type / Level">
                             <option value="" selected="selected"></option>
                             <option value="MS">MS</option>
                             <option value="MS2">MS2</option>
@@ -462,17 +462,17 @@ OR
 
                     <div *ngIf="metadata.mslevel && metadata.mslevel !== 'Select One' && metadata.mslevel !== 'MS'">
                         <label>Precursor m/z:</label> <br />
-                        <input type="text" class="form-control" name="precursormz" [(ngModel)]="metadata.precursormz" />
+                        <input type="text" class="form-control accessibility" name="precursormz" [(ngModel)]="metadata.precursormz" aria-label="Precursor m/z"/>
                         <br />
 
                         <label>Precursor Type:</label> <br />
-                        <input type="text" class="form-control" name="precursortype" [(ngModel)]="metadata.precursortype"  />
+                        <input type="text" class="form-control accessibility" name="precursortype" [(ngModel)]="metadata.precursortype" aria-label="Precursor type" />
                         <br />
                     </div>
 
                     <div>
                         <label>Ionization Method:</label> <br />
-                        <select class="form-control" name="ionization" [(ngModel)]="metadata.ionization">
+                        <select class="form-control accessibility" name="ionization" [(ngModel)]="metadata.ionization" aria-label="Ionization method">
                             <option value="" selected="selected"></option>
                             <option value="Atmospheric Pressure Chemical Ionization (APCI)">Atmospheric Pressure Chemical Ionization (APCI)</option>
                             <option value="Electron Impact (EI)">Electron Impact (EI)</option>
@@ -486,7 +486,7 @@ OR
 
                     <div>
                         <label>Polarity / Ion Mode:</label> <br />
-                        <select class="form-control" name="ionmode" [(ngModel)]="metadata.ionmode">
+                        <select class="form-control accessibility" name="ionmode" [(ngModel)]="metadata.ionmode" aria-label="Polarity / Ion mode">
                             <option value="" selected="selected"></option>
                             <option value="Positive">Positive</option>
                             <option value="Negative">Negative</option>
@@ -497,7 +497,7 @@ OR
 
                     <div>
                         <label>Authors (comma-separated):</label> <br />
-                        <input type="text" class="form-control" [(ngModel)]="metadata.authors" />
+                        <input type="text" class="form-control accessibility" [(ngModel)]="metadata.authors" aria-label="Authors" />
                     </div>
                 </div>
             </div>
@@ -577,15 +577,17 @@ OR
                                  [disabled]="!meta.name || meta.name === ''"
                                  placeholder="Metadata Value"
                                  class="form-control" />
-                            <button (click)="removeMetadataField(i)" class="btn btn-default"
-                                    ngbTooltip="Remove this metadata field"><fa-icon [icon]="faMinusSquare"></fa-icon>
+                            <button (click)="removeMetadataField(i)" class="btn btn-default accessibility" style="margin-left: 3px;"
+                                    ngbTooltip="Remove this metadata field" aria-label="Remove this metadata field">
+                                    <fa-icon [icon]="faMinusSquare"></fa-icon>
                             </button>
                           </div>
                         </div>
                       </div>
                     </div>
                     <div class="col-sm-12">
-                        <button type="button" class="btn btn-default" (click)="addMetadataField()" ngbTooltip="Add a new metadata field"><fa-icon [icon]="faPlusSquare"></fa-icon> </button>
+                        <button type="button" class="btn btn-default accessibility" (click)="addMetadataField()" ngbTooltip="Add a new metadata field" aria-label="Add a new metadata field">
+                        <fa-icon [icon]="faPlusSquare"></fa-icon> </button>
                     </div>
                 </div>
             </div>
@@ -623,7 +625,7 @@ OR
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="btn btn-primary" (click)="uploadFile()"><fa-icon [icon]="faCloudUpload"></fa-icon> Upload to MoNA</button></li>
+                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="btn btn-primary accessibility" (click)="uploadFile()"><fa-icon [icon]="faCloudUpload"></fa-icon> Upload to MoNA</button></li>
                     <li class="next"*ngIf="!authenticationService.isLoggedIn()">
                       <button class="fakeRef davis-blue accessibility" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
                     </li>
@@ -637,15 +639,15 @@ OR
                     <small>Please verify the provided information before uploading</small>
                 </p>
 
-                <div class="page-header"><h3>Mass Spectrum</h3></div>
+                <div class="page-header"><h2 class="h3">Mass Spectrum</h2></div>
                 <div class="masspec-modal">
                     <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions" [truncate]="true" [id]="'lastSpec'"></lib-ng-mass-spec-plotter>
                 </div>
 
                 <br/> <br/>
-                <div class="page-header"><h3>Compound Information</h3></div>
+                <div class="page-header"><h2 class="h3">Compound Information</h2></div>
                 <div>
-                    <ul>
+                    <ul *ngIf="currentSpectrum.names.length > 0">
                         <li *ngFor="let name of currentSpectrum.names">{{name}}</li>
                     </ul>
                 </div>
@@ -688,7 +690,7 @@ OR
                 </table>
 
                 <br/> <br/>
-                <div class="page-header"><h3>Spectrum Metadata</h3></div>
+                <div class="page-header"><h2 class="h3">Spectrum Metadata</h2></div>
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -750,7 +752,7 @@ OR
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="btn btn-primary" (click)="uploadFile()"><fa-icon [icon]="faCloudUpload"></fa-icon> Upload to MoNA</button></li>
+                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="btn btn-primary accessibility" (click)="uploadFile()"><fa-icon [icon]="faCloudUpload"></fa-icon> Upload to MoNA</button></li>
                     <li class="next"*ngIf="!authenticationService.isLoggedIn()">
                       <button class="fakeRef davis-blue accessibility" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
                     </li>
