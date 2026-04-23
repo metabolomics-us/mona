@@ -8,7 +8,7 @@
         <br />
 
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h4><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h4>
+            <h2 class="h4"><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h2>
         </div>
 
 

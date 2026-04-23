@@ -1,13 +1,13 @@
 <div>
   <div class="modal-header">
-    <h3 class="modal-title">Warning! The submitted file is larger than 10 MB</h3>
+    <h1 class="h3 modal-title">Warning! The submitted file is larger than 10 MB</h1>
     <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
     <div class="modal-content" *ngIf="!authenticationService.isLoggedIn()" class="alert alert-primary">
-      <h4> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to spectra</h4>
+      <h2 class="h4"> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to spectra</h2>
     </div>
     <p><strong>
       This file is too large and will not be able to utilize the advanced uploader edit screen. However, this
