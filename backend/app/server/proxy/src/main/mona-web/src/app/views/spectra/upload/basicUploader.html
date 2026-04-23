@@ -87,7 +87,7 @@ OR
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                     <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                      <li class="previous"><button class="fakeRef davis-blue" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
+                      <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
                     </ul>
                   </div>
                   <div class="mx-auto order-0">
@@ -97,7 +97,7 @@ OR
                   </div>
                   <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                     <ul class="navbar-nav ml-auto">
-                      <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                      <li class="next"><button class="fakeRef davis-blue accessibility" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                     </ul>
                   </div>
                 </nav>
@@ -134,7 +134,7 @@ OR
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>&nbsp;</th>
+                            <th>Select</th>
                             <th><button class="fakeRef davis-blue font-weight-bold" (click)="sortIonTable('ion')">Ion</button></th>
                             <th><button class="fakeRef davis-blue font-weight-bold" (click)="sortIonTable('intensity')">Intensity</button></th>
                             <th><button class="fakeRef davis-blue font-weight-bold" (click)="sortIonTable('relativeIntensity')">Relative Intensity</button></th>
@@ -144,7 +144,7 @@ OR
                         <tbody>
                         <!-- seperate orderBy pipe -->
                         <tr *ngFor="let ion of currentSpectrum.ions| orderBy: ionTableSort">
-                            <td><input type="checkbox" [(ngModel)]="ion.selected" /></td>
+                            <td><input type="checkbox" [(ngModel)]="ion.selected" aria-label="Select ion"/></td>
                             <td>{{ion.ion}}</td>
                             <td>{{ion.intensity}}</td>
                             <td>{{ion.relativeIntensity | number:'1.0-0'}}</td>
@@ -161,12 +161,12 @@ OR
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                     <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                      <li class="previous"><button class="fakeRef davis-blue" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
+                      <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
                     </ul>
                   </div>
                   <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                     <ul class="navbar-nav ml-auto">
-                      <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                      <li class="next"><button class="fakeRef davis-blue accessibility" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                     </ul>
                   </div>
                 </nav>
@@ -180,7 +180,7 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
@@ -190,8 +190,8 @@ OR
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li *ngIf="compoundInfoProvided" class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
-                    <li *ngIf="!compoundInfoProvided" class="text-danger"><button class="fakeRef" [disabled]="true" style="color: #e46161; cursor: not-allowed" ngbTooltip="SMILES, InChI Code, or InChIKey required">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li *ngIf="compoundInfoProvided" class="next"><button class="fakeRef davis-blue accessibility" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li *ngIf="!compoundInfoProvided" class="text-danger"><button class="fakeRef accessibility" [disabled]="true" style="color: #e46161; cursor: not-allowed" ngbTooltip="SMILES, InChI Code, or InChIKey required">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -240,12 +240,14 @@ OR
                         placeholder="Name"
                         class="form-control" />
                       <span class="input-group-btn">
-                        <button type="button" ngbTooltip="Remove name" class="btn btn-default" (click)="removeName(i)"><fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
+                        <button type="button" ngbTooltip="Remove name" class="btn btn-default accessibility" (click)="removeName(i)" aria-label="Remove name">
+                        <fa-icon size="sm" [icon]="faMinusSquare"></fa-icon></button>
                       </span>
                     </div>
 
                     <!-- Add name button below -->
-                    <button type="button" ngbTooltip="Add a name" class="btn btn-default mt-2" (click)="addName()"><fa-icon size="xs" [icon]="faPlusSquare"></fa-icon></button>
+                    <button type="button" ngbTooltip="Add a name" class="btn btn-default mt-2 accessibility" (click)="addName()" aria-label="Add name">
+                    <fa-icon size="sm" [icon]="faPlusSquare"></fa-icon></button>
                   </div>
                 </div>
 
@@ -283,11 +285,11 @@ OR
                 </div>
 
                 <div class="form-group text-center">
-                    <button type="button" class="btn btn-primary mr-2" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
+                    <button type="button" class="btn btn-primary mr-2 accessibility" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
                         <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
                         <span> Update Compound</span>
                     </button>
-                    <button (click)="resetCompound()" class="btn btn-danger ml-2" [disabled]="compoundProcessing">Reset Compound</button>
+                    <button (click)="resetCompound()" class="btn btn-danger ml-2 accessibility" [disabled]="compoundProcessing">Reset Compound</button>
                 </div>
 
                 <div class="row form-group">
@@ -324,7 +326,7 @@ OR
                                 </div>
 
                                 <div class="form-group text-center">
-                                    <button (click)="convertMolToInChI()" class="btn btn-primary">Fetch Compound Info from MOL Data</button>
+                                    <button (click)="convertMolToInChI()" class="btn btn-primary accessibility">Fetch Compound Info from MOL Data</button>
                                 </div>
                             </ng-template>
                         </ngb-panel>
@@ -359,13 +361,13 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li *ngIf="compoundInfoProvided" class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
-                    <li *ngIf="!compoundInfoProvided" class="text-danger"><button class="fakeRef" [disabled]="true" style="color: #e46161; cursor: not-allowed" ngbTooltip="SMILES, InChI Code, or InChIKey required">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li *ngIf="compoundInfoProvided" class="next"><button class="fakeRef davis-blue accessibility" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li *ngIf="!compoundInfoProvided" class="text-danger"><button class="fakeRef accessibility" [disabled]="true" style="color: #e46161; cursor: not-allowed" ngbTooltip="SMILES, InChI Code, or InChIKey required">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -379,7 +381,7 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
@@ -389,7 +391,7 @@ OR
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue accessibility" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -485,12 +487,12 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue accessibility" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -504,7 +506,7 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
@@ -514,7 +516,7 @@ OR
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef davis-blue" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue accessibility" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -573,12 +575,12 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
-                    <li class="next"><button class="fakeRef davis-blue" (click)="validateMetadata()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li class="next"><button class="fakeRef davis-blue accessibility" (click)="validateMetadata()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -591,7 +593,7 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="mx-auto order-0">
@@ -603,7 +605,7 @@ OR
                   <ul class="navbar-nav ml-auto">
                     <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="btn btn-primary" (click)="uploadFile()"><fa-icon [icon]="faCloudUpload"></fa-icon> Upload to MoNA</button></li>
                     <li class="next"*ngIf="!authenticationService.isLoggedIn()">
-                      <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
+                      <button class="fakeRef davis-blue accessibility" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
                     </li>
                   </ul>
                 </div>
@@ -723,14 +725,14 @@ OR
               <nav class="navbar navbar-expand-md" style="width: 100%;">
                 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                   <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                    <li class="previous"><button class="fakeRef davis-blue" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                    <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                   </ul>
                 </div>
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
                     <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="btn btn-primary" (click)="uploadFile()"><fa-icon [icon]="faCloudUpload"></fa-icon> Upload to MoNA</button></li>
                     <li class="next"*ngIf="!authenticationService.isLoggedIn()">
-                      <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
+                      <button class="fakeRef davis-blue accessibility" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
                     </li>
                   </ul>
                 </div>

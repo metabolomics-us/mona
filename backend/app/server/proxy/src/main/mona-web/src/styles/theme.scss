@@ -811,6 +811,15 @@ input[type="checkbox"] {
   background-color: #2D5C0F !important;
 }
 
+.btn-danger {
+  background-color: #AB1F2D !important;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+  background-color: #77141E !important;
+}
+
 .input-group-text {
   color: #484F56 !important;
 }

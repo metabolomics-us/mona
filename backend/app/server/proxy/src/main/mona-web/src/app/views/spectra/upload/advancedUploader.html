@@ -242,10 +242,12 @@
                                                  placeholder="Name"
                                                  class="form-control" />
                                           <span class="input-group-btn">
-                                            <button type="button" ngbTooltip="Remove name" placement="left" class="btn btn-default" (click)="removeName(i)"><fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
+                                            <button type="button" ngbTooltip="Remove name" placement="left" class="btn btn-default" (click)="removeName(i)" aria-label="Remove name">
+                                            <fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
                                           </span>
                                         </div>
-                                        <button type="button" class="btn btn-default" (click)="addName()"><fa-icon size="xs" placement="bottom" ngbTooltip="Add a name" [icon]="faPlusSquare"></fa-icon></button>
+                                        <button type="button" class="btn btn-default" (click)="addName()" aria-label="Add a name">
+                                        <fa-icon size="xs" placement="bottom" ngbTooltip="Add a name" [icon]="faPlusSquare"></fa-icon></button>
                                     </div>
                                 </div>
 
