@@ -62,7 +62,7 @@
                      *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
 
                     <div class="col-lg-5 col-md-5 col-sm-6" style="min-width: 0;">
-                        <metadata-query [metaData]="meta" [ngbTooltip]="meta.name" placement="top" container="body">
+                        <metadata-query [metaData]="meta" [tooltipText]="meta.name">
                             {{meta.name}}
                         </metadata-query>
                     </div>

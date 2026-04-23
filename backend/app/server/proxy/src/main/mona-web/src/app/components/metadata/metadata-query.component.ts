@@ -18,6 +18,7 @@ export class MetadataQueryComponent {
     @Input() compound: Boolean;
     @Input() metaData: Metadata;
     @Input() classification: Boolean;
+    @Input() tooltipText: string;
     faSearch = faSearch;
 
     constructor( public spectraQueryBuilderService: SpectraQueryBuilderService,
