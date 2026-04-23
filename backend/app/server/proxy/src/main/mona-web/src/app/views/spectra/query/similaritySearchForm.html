@@ -21,8 +21,8 @@
                         <button class="btn btn-primary btn-file accessibility"
                             (keydown.enter)="fileUpload.click(); $event.preventDefault()"
                             (keydown.space)="fileUpload.click(); $event.preventDefault()">
-                            Browse&hellip; <input type="file" accept=".mgf, .msp, .txt" (change)="parseFiles($event)" #fileUpload
-                            tabindex="-1"/>
+                            Browse&hellip;
+                            <input type="file" accept=".mgf, .msp, .txt" (change)="parseFiles($event)" #fileUpload tabindex="-1"/>
                         </button>
                     </span>
                     <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" name="filenames" [(ngModel)]="filenames" readonly style="min-height: 44px;" tabindex="-1"/>

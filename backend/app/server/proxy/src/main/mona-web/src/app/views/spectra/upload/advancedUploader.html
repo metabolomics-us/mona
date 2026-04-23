@@ -20,16 +20,19 @@
 
         <!-- Select files to upload -->
         <div *ngIf="spectraLoaded === 0" class="card">
-            <div class="card-header"><strong>Upload a File</strong></div>
+            <div class="card-header"><strong>Upload File(s)</strong></div>
             <div class="card-body">
                 <div class="input-group">
                     <span class="input-group-btn">
-                        <span class="btn btn-primary btn-file">
-                           Browse&hellip; <input type="file" accept=".msp, .mgf, .txt" name="upload" multiple [(ngModel)]="fileUpload" (change)="setFiles($event)"/>
-                        </span>
+                        <button class="btn btn-primary btn-file accessibility"
+                        (keydown.enter)="fileInput.click(); $event.preventDefault()"
+                        (keydown.space)="fileInput.click(); $event.preventDefault()">
+                           Browse&hellip;
+                           <input type="file" accept=".msp, .mgf, .txt" name="upload" multiple [(ngModel)]="fileUpload" #fileInput (change)="setFiles($event)" tabindex="-1"/>
+                        </button>
                     </span>
 
-                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" [(ngModel)]="fileUpload" readonly/>
+                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" [(ngModel)]="fileUpload" readonly style="min-height: 44px;" tabindex="-1"/>
                 </div>
 
                 <br />
