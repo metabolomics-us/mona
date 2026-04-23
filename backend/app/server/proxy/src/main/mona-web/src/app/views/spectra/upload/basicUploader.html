@@ -118,7 +118,7 @@ OR
                 </p>
 
                 <div class="masspec-modal">
-                    <lib-ng-mass-spec-plotter [id]="'masspec-plot'" [spectrum]="currentSpectrum.ions"></lib-ng-mass-spec-plotter>
+                    <lib-ng-mass-spec-plotter [id]="'masspec-plot'" [spectrum]="currentSpectrum.ions" [truncate]="true"></lib-ng-mass-spec-plotter>
                 </div>
                 <br />
 
@@ -613,7 +613,7 @@ OR
 
                 <div class="page-header"><h3>Mass Spectrum</h3></div>
                 <div class="masspec-modal">
-                    <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions" [id]="'lastSpec'"></lib-ng-mass-spec-plotter>
+                    <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions" [truncate]="true" [id]="'lastSpec'"></lib-ng-mass-spec-plotter>
                 </div>
 
                 <br/> <br/>
