@@ -15,7 +15,7 @@
             <div class="text-right">
                 <div class="h5">
                     <div ngbDropdown>
-                        <button ngbDropdownToggle class="btn btn-primary btn-sm dropdown-toggle">
+                        <button ngbDropdownToggle class="btn btn-primary dropdown-toggle accessibility">
                           <fa-icon [icon]="faCloudDownloadAlt"></fa-icon> Download Structure
                         </button>
 
@@ -38,7 +38,7 @@
 
     <div class="row" *ngIf="classifications.length > 0">
         <div class="col-md-12">
-            <h4>ClassyFire<sup><a [routerLink]=null (click)="showClassyFireInfo = !showClassyFireInfo" style="color: #1c1b1b"><fa-icon size="sm" ngbTooltip="What is ClassyFire?" [icon]="faQuestionCircle"></fa-icon></a></sup> Compound Classification</h4>
+            <h4>ClassyFire<sup><a [routerLink]=null (click)="showClassyFireInfo = !showClassyFireInfo" style="color: #1c1b1b"><fa-icon size="sm" ngbTooltip="What is ClassyFire?" aria-label="What is ClassyFire?" [icon]="faQuestionCircle"></fa-icon></a></sup> Compound Classification</h4>
             <div *ngIf="showClassyFireInfo">
                 <a href="http://classyfire.wishartlab.com" target="_blank">ClassyFire</a>
                 is a freely accessible computational tool that uses the ChemOnt taxonomy to classify chemical
@@ -47,10 +47,12 @@
                 <hr />
             </div>
             <ng-template #classyfireTree let-classy="classy">
-              <ul *ngFor="let node of classy">
-                <li *ngIf="node.nodes" class="tree-node">
+              <ul>
+                <li *ngFor="let node of classy" class="tree-node">
                   <span class="tree-label"><i class="icon-folder-open"></i> <metadata-query [metaData]="node" [classification]="true">{{ node.name | titlecase }}</metadata-query></span> <span> {{ node.value }}</span>
-                  <ng-container *ngTemplateOutlet="classyfireTree; context: {classy: node.nodes}"></ng-container>
+                  <ng-container *ngIf="node.nodes">
+                    <ng-container *ngTemplateOutlet="classyfireTree; context: {classy: node.nodes}"></ng-container>
+                  </ng-container>
                 </li>
               </ul>
             </ng-template>
@@ -91,7 +93,7 @@
 
                         <!-- display this, if it's a computed value -->
                         <fa-icon *ngIf="meta.computed == true" [icon]="faFlask" placement="top"
-                           ngbTooltip="Calculated by MoNA Auto Curation"></fa-icon>
+                           ngbTooltip="Calculated by MoNA auto curation"></fa-icon>
                     </td>
                 </tr>
                 </tbody>
@@ -140,7 +142,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div *ngIf="compound.tags">
+            <div *ngIf="compound.tags?.length > 0">
                 <ul class="list-inline">
                     <li *ngFor="let tag of compound.tags">
                       <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="compound"></tag-query>

@@ -26,15 +26,20 @@
 <div class="row">
     <div class="col-md-12">
     <br>
-      <h3><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</h3>
-        <ngb-accordion closeOthers="true" #acc="ngbAccordion">
-          <ngb-panel id="display-panel">
-                <ng-template ngbPanelTitle>
-                    <div style="padding: 0" class="btn davis-blue text-decoration-none">
-                        <fa-icon [icon]="faSearch"></fa-icon> Query Information
-                    </div>
-                </ng-template>
-                <ng-template ngbPanelContent>
+      <h1 class="h2"><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</h1>
+      <br>
+        <div class="card">
+          <div class="card-header p-0">
+            <button type="button"
+                    class="accessibility btn btn-link davis-blue text-decoration-none w-100 text-left"
+                    [attr.aria-expanded]="!queryInfoCollapsed"
+                    aria-controls="queryInfoPanel"
+                    (click)="queryInfoCollapsed = !queryInfoCollapsed">
+              <fa-icon [icon]="faSearch" aria-hidden="true"></fa-icon> Query Information
+            </button>
+          </div>
+          <div id="queryInfoPanel" [ngbCollapse]="queryInfoCollapsed">
+            <div class="card-body">
 
                   <div>
                     <fa-icon [icon]="faExclamationTriangle"></fa-icon> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query downloads
@@ -42,8 +47,8 @@
 
                   <br/>
                   Current Query
-                  <button class="btn btn-primary btn-xs mb-1" (click)="editQuery = !editQuery"><fa-icon [icon]="faEdit"></fa-icon></button>
-                  <pre *ngIf="!editQuery" class="input-group-text">{{query !== '' && query !== undefined ? query : "[Empty]"}}</pre>
+                  <button class="btn btn-primary btn-xs mb-1" (click)="editQuery = !editQuery" aria-label="Edit query"><fa-icon [icon]="faEdit"></fa-icon></button>
+                  <pre *ngIf="!editQuery" class="input-group-text"><code>{{query !== '' && query !== undefined ? query : "[Empty]"}}</code></pre>
                   <div *ngIf="editQuery">
                     <form (submit)="updateQuery(query)">
                       <div class="input-group">
@@ -58,10 +63,10 @@
                   <div>
                     <br/>
                     Current Query (as cURL command)
-                    <pre class="input-group-text" id="curlCommand">
-                      <button class="btn btn-link btn-sm" style="color: slategray; margin-left: -10px" (click)="copyCurlCommand()"><fa-icon [icon]="faCopy"></fa-icon></button>
+                    <pre class="input-group-text" id="curlCommand"><code>
+                      <button class="btn btn-link btn-sm" style="color: slategray; margin-left: -10px" (click)="copyCurlCommand()" aria-label="Copy query"><fa-icon [icon]="faCopy"></fa-icon></button>
                       {{{query: query} | curlPipe}}
-                    </pre>
+                    </code></pre>
                     <span id="copiedMsg" style="opacity: 0; color: forestgreen">Copied!</span>
                   </div>
 
@@ -72,52 +77,52 @@
                   <div style="width: 300px">
                     <br/>
                     <p>
-                      <ngb-alert type="warning" [dismissible]="false">
-                        <a [routerLink]="['/documentation/query']" target="_blank">Learn more</a> about the query system
+                      <ngb-alert type="warning" [dismissible]="false" style="color: #674F05;">
+                        <a [routerLink]="['/documentation/query']" target="_blank" style="text-decoration: underline">Learn more</a> about the query system
                       </ngb-alert>
                     </p>
                   </div>
-                </ng-template>
-            </ngb-panel>
-        </ngb-accordion>
+
+            </div>
+          </div>
+        </div>
     </div>
 </div>
 <br/>
 <div class="row">
     <div class="col-md-12">
         <div class="float-left">
-            <button class="btn btn-primary mr-1"
+            <button class="btn btn-primary mr-1 accessibility" aria-label="Enable compact view"
                     *ngIf="pagination.table === false" (click)="pagination.table = true; setTable()"
                     placement="right"
                     ngbTooltip="Enable compact view">
               <fa-icon [icon]="faList"></fa-icon>
             </button>
 
-            <button class="btn btn-primary mr-1"
+            <button class="btn btn-primary mr-1 accessibility" aria-label="Enable expanded view"
                     *ngIf="pagination.table === true" (click)="pagination.table = false; setTable()"
                     placement="right"
                     ngbTooltip="Enable expanded view">
               <fa-icon [icon]="faTable"></fa-icon>
             </button>
 
-            <button class="btn btn-primary" (click)="searchSpectra()" placement="right"
+            <button class="btn btn-primary accessibility" (click)="searchSpectra()" placement="right" aria-label="Start a new query"
                     ngbTooltip="Start a new query">
               <fa-icon [icon]="faSearch"></fa-icon>
             </button>
 
-            <button class="btn btn-primary ml-1" (click)="resetQuery()" placement="right"
+            <button class="btn btn-primary ml-1 accessibility" (click)="resetQuery()" placement="right" aria-label="Reset the current query"
                     ngbTooltip="Reset the current query">
               <fa-icon [icon]="faSync"></fa-icon>
             </button>
         </div>
 
         <div class="float-right">
-            <button class="btn btn-danger mr-1" *ngIf="authenticationService.isLoggedIn() && !pagination.table" type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
+            <button class="btn btn-danger mr-1 accessibility" *ngIf="authenticationService.isLoggedIn() && !pagination.table" type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
               <fa-icon [icon]="faTrash"></fa-icon> Batch Delete
             </button>
-            <button class="btn btn-primary" (click)="acc.isExpanded('display-panel')? acc.collapse('display-panel'): acc.expand('display-panel')" placement="right"
-                    ngbTooltip="Number of spectra results from this query">
-
+            <button class="btn btn-primary accessibility" placement="right" ngbTooltip="Number of spectra results from this query"
+            (click)="queryInfoCollapsed = !queryInfoCollapsed">
               <fa-icon [icon]="faBookmark"></fa-icon>
               <strong *ngIf="pagination.totalSize > -1"> {{pagination.totalSize|number}}</strong>
               <strong *ngIf="pagination.totalSize <= -1"> Loading...</strong>
@@ -130,7 +135,7 @@
 <div class="row top7">
     <div class="col-md-12">
         <div ngbDropdown class="d-inline-block float-left">
-            <button class="btn btn-sm btn-primary" ngbDropdownToggle [disabled]="isSimilaritySearch()">
+            <button class="btn btn-sm btn-primary accessibility" ngbDropdownToggle [disabled]="isSimilaritySearch()">
                {{pagination.itemsPerPage}} records per page
             </button>
             <div ngbDropdownMenu>
@@ -138,7 +143,7 @@
             </div>
         </div>
         <div class="float-right" *ngIf="authenticationService.isLoggedIn()">
-          <button class="btn btn-primary" ngbTooltip="Query your submitted spectra" placement="bottom" type="button" (click)="queryUserSpectra()">My Submitted Spectra</button>
+          <button class="btn btn-primary accessibility" ngbTooltip="Query your submitted spectra" placement="bottom" type="button" (click)="queryUserSpectra()">My Submitted Spectra</button>
         </div>
     </div>
 </div>
@@ -169,7 +174,10 @@
             <tr *ngFor="let spectrum of spectra" class="clickable" (click)="viewSpectrum(spectrum.id)">
                 <td>
                     <div>
-                        <div><a class="davis-blue text-decoration-none clickable"><b>{{spectrum.id}}</b></a></div>
+                        <div><a class="davis-blue text-decoration-none clickable" tabindex=0
+                        (keydown.enter)="$event.preventDefault(); $event.target.click()"
+                        (keydown.space)="$event.preventDefault(); $event.target.click()"
+                        ><b>{{spectrum.id}}</b></a></div>
                         <div *ngIf="spectrum.score">
                         <label ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom">
                           <span *ngFor="let star of stars(spectrum)" >
@@ -184,7 +192,7 @@
                         </div>
                         <br/><br/><br/>
                         <div>
-                          <h6 class="text-nowrap"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h6>
+                          <p class="text-nowrap"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></p>
                         </div>
                     </div>
                 </td>
@@ -199,7 +207,7 @@
                         </ul>
                         <ul *ngIf="spectrum.compound[0].names.length == 0" class="list-unstyled">
                           <br/><p></p>
-                            <li style="color: gray; font-size: .8rem">N/A</li>
+                            <li style="color: #515151; font-size: .8rem">N/A</li>
                         </ul>
                     </div>
                 </td>
@@ -210,13 +218,13 @@
                         <div *ngIf="!spectrum.compound[0].molFile">
                           <br/><br/><p></p>
                           <ul class="list-unstyled">
-                            <li style="color: gray; font-size: .8rem">N/A</li>
+                            <li style="color: #515151; font-size: .8rem">N/A</li>
                           </ul>
                         </div>
                 </td>
                 <td>
                   <div class="masspec-mini text-center">
-                    <lib-ng-mass-spec-plotter *ngIf="massChartReady === true" [id]="'massSpec_'+spectrum.id" [miniPlot]="true" [spectrum]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
+                    <lib-ng-mass-spec-plotter *ngIf="massChartReady === true" [id]="'massSpec_'+spectrum.id" [miniPlot]="true" [spectrum]="spectrum.spectrum" [truncate]="true"></lib-ng-mass-spec-plotter>
                   </div>
                 </td>
                 <td>

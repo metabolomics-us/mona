@@ -1,11 +1,11 @@
-<div class="btn-group top5" ngbDropdown>
-    <button type="button" class="btn dropdown-toggle btn-sm" ngbDropdownToggle
+<div class="btn-group w-100" ngbDropdown>
+    <button type="button" class="btn dropdown-toggle accessibility w-100" ngbDropdownToggle
             [ngClass]="{'btn-primary': !submitted, 'btn-success': submitted}"
             [disabled]="submitting || submitted">
         <fa-icon *ngIf ="!submitted" [icon]="faComments"></fa-icon>
         <fa-icon *ngIf="submitted" [icon]="faCheck"></fa-icon>
         <span *ngIf="hasSubmitted"> Change Your Review</span>
-        <span *ngIf="!hasSubmitted"> Review Spectrum Quality</span>
+        <span *ngIf="!hasSubmitted"> Review Spectrum</span>
     </button>
 
     <div ngbDropdownMenu>

@@ -36,6 +36,7 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     pagination;
     searchSplash;
     editQuery;
+    queryInfoCollapsed = true;
     startTime;
     query;
     duration;

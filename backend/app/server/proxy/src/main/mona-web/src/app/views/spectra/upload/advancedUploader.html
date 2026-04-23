@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col-md-12">
-        <h3><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Advanced Uploader</h3>
+      <br>
+        <h1 class="h2"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Advanced Uploader</h1>
 
         <div class="h5">
             Upload a spectral library file and dynamically modify the mass spectra and metadata
@@ -8,7 +9,7 @@
         <br />
 
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h4><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h4>
+            <h2 class="h4"><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h2>
         </div>
 
         <!-- Message indicating loading in background -->
@@ -19,16 +20,19 @@
 
         <!-- Select files to upload -->
         <div *ngIf="spectraLoaded === 0" class="card">
-            <div class="card-header"><strong>Upload a File</strong></div>
+            <div class="card-header"><strong>Upload File(s)</strong></div>
             <div class="card-body">
                 <div class="input-group">
                     <span class="input-group-btn">
-                        <span class="btn btn-primary btn-file">
-                           Browse&hellip; <input type="file" accept=".msp, .mgf, .txt" name="upload" multiple [(ngModel)]="fileUpload" (change)="setFiles($event)"/>
-                        </span>
+                        <button class="btn btn-primary btn-file accessibility"
+                        (keydown.enter)="fileInput.click(); $event.preventDefault()"
+                        (keydown.space)="fileInput.click(); $event.preventDefault()">
+                           Browse&hellip;
+                           <input type="file" accept=".msp, .mgf, .txt" name="upload" multiple [(ngModel)]="fileUpload" #fileInput (change)="setFiles($event)" tabindex="-1"/>
+                        </button>
                     </span>
 
-                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" [(ngModel)]="fileUpload" readonly/>
+                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" [(ngModel)]="fileUpload" readonly style="min-height: 44px;" tabindex="-1"/>
                 </div>
 
                 <br />
@@ -38,7 +42,7 @@
                 </div>
                 <div *ngIf="showLibraryForm">
                   <p></p>
-                  <h6 class="text-info font-weight-bold"><a class="text-decoration-none" ngbTooltip="How to create a new library" placement="right" target="_blank" [routerLink]="['/documentation/uploadLibrary']">Help <fa-icon [icon]="faQuestionCircle" size="sm"></fa-icon></a></h6>
+                  <p class="font-weight-bold"><a class="text-decoration-none" ngbTooltip="How to create a new library" placement="right" target="_blank" [routerLink]="['/documentation/uploadLibrary']">Help <fa-icon [icon]="faQuestionCircle" size="sm"></fa-icon></a></p>
                   <br/>
                   <form #libForm="ngForm"  id="libForm" class="form-horizontal" novalidate role="form">
                     <div class="form-group row">
@@ -136,18 +140,17 @@
                                    [identifyBy]="'text'"
                                    [displayBy]="'text'"
                                    [trimTags]="false"
-                                   [maxItems]="3"
-                                   [separatorKeyCodes]="[9]">
+                                   [maxItems]="3">
                           <tag-input-dropdown [autocompleteItems]="tags"></tag-input-dropdown>
                         </tag-input>
                       </div>
                     </div>
                     <br />
-                    <button class="btn btn-primary float-right" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles()">Continue</button>
+                    <button class="btn btn-primary float-right accessibility" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles()">Continue</button>
                   </form>
                 </div>
                 <br *ngIf="!showLibraryForm"/>
-                <button class="btn btn-primary float-right" *ngIf="!showLibraryForm" [disabled]="fileUpload === null" (click)="parseFiles()">Continue</button>
+                <button class="btn btn-primary float-right accessibility" *ngIf="!showLibraryForm" [disabled]="fileUpload === null" (click)="parseFiles()">Continue</button>
             </div>
         </div>
 
@@ -173,18 +176,18 @@
                     <div class="navbar-collapse collapse w-auto order-1 order-md-0 dual-collapse2">
                         <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
                             <li class="nav-item">
-                              <button class="fakeRef davis-blue" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button>
+                              <button class="fakeRef davis-blue accessibility" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button>
                             </li>
                         </ul>
                     </div>
                     <div class="mx-auto w-auto order-0">
                         <ul class="navbar-nav mx-auto list-inline d-flex justify-content-center">
-                            <li class="list-inline-item"><strong><h5>Spectrum: {{spectraIndex + 1}} / {{spectra.length}} &nbsp;&nbsp; | &nbsp;&nbsp;  Origin: <em>{{getFileOriginName(currentSpectrum)}}</em></h5></strong></li>
+                            <li class="list-inline-item"><strong><h2 class="h5">Spectrum: {{spectraIndex + 1}} / {{spectra.length}} &nbsp;&nbsp; | &nbsp;&nbsp;  Origin: <em>{{getFileOriginName(currentSpectrum)}}</em></h2></strong></li>
                         </ul>
                     </div>
                    <div class="navbar-collapse collapse w-auto order-3 dual-collapse2">
                        <ul class="navbar-nav ml-auto">
-                           <li class="nav-item"><button class="fakeRef davis-blue" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                           <li class="nav-item"><button class="fakeRef davis-blue accessibility" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                        </ul>
                    </div>
                 </nav>
@@ -203,13 +206,13 @@
                 </ng-container>
 
                 <div class="masspec-modal">
-                    <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions" id="masspec"></lib-ng-mass-spec-plotter>
+                    <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions" [truncate]="true" id="masspec"></lib-ng-mass-spec-plotter>
                 </div>
                 <br />
 
-                <ul ngbNav #nav='ngbNav' class="nav-tabs">
-                    <li ngbNavItem="Identifiers">
-                        <a ngbNavLink class="davis-blue">Identifiers</a>
+                <nav ngbNav #nav='ngbNav' class="nav-tabs">
+                    <div ngbNavItem="Identifiers">
+                        <a ngbNavLink class="davis-blue accessibility">Identifiers</a>
                         <ng-template ngbNavContent>
 
                             <div class="container-fluid" style="height: 500px; overflow: auto; margin-top: 10px;">
@@ -238,10 +241,12 @@
                                                  placeholder="Name"
                                                  class="form-control" />
                                           <span class="input-group-btn">
-                                            <button type="button" ngbTooltip="Remove name" placement="left" class="btn btn-default" (click)="removeName(i)"><fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
+                                            <button type="button" ngbTooltip="Remove name" placement="left" class="btn btn-default accessibility" (click)="removeName(i)" aria-label="Remove name">
+                                            <fa-icon size="xs" [icon]="faMinusSquare"></fa-icon></button>
                                           </span>
                                         </div>
-                                        <button type="button" class="btn btn-default" (click)="addName()"><fa-icon size="xs" placement="bottom" ngbTooltip="Add a name" [icon]="faPlusSquare"></fa-icon></button>
+                                        <button type="button" class="btn btn-default accessibility" (click)="addName()" aria-label="Add a name">
+                                        <fa-icon size="xs" placement="bottom" ngbTooltip="Add a name" [icon]="faPlusSquare"></fa-icon></button>
                                     </div>
                                 </div>
 
@@ -282,77 +287,101 @@
                                 </div>
 
                                 <div class="form-group text-center">
-                                    <button type="button" class="btn btn-primary mr-2" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
+                                    <button type="button" class="btn btn-primary mr-2 accessibility" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
                                         <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
                                         <span> Update Compound</span>
                                     </button>
-                                    <button (click)="resetCompound()" class="btn btn-danger ml-2" [disabled]="compoundProcessing">Reset Compound</button>
+                                    <button (click)="resetCompound()" class="btn btn-danger ml-2 accessibility" [disabled]="compoundProcessing">Reset Compound</button>
                                 </div>
 
                               <div class="row form-group">
-                                    <ngb-accordion class="col-sm-12 col-lg-12">
-                                        <ngb-panel>
-                                            <ng-template ngbPanelTitle><span class="davis-blue">Import MOL/SDF File</span></ng-template>
+                                    <div class="col-sm-12 col-lg-12 accordion-stack">
+                                        <div class="card">
+                                            <div class="card-header p-0">
+                                                <button type="button" class="btn btn-link container-fluid text-left px-3 py-3 text-decoration-none davis-blue"
+                                                        [attr.aria-expanded]="accordionStatus.isMolImportOpen"
+                                                        (click)="accordionStatus.isMolImportOpen = !accordionStatus.isMolImportOpen">
+                                                    Import MOL/SDF File
+                                                    <fa-icon [icon]="faAngleDown" pull="right" aria-hidden="true" *ngIf="accordionStatus.isMolImportOpen"></fa-icon>
+                                                    <fa-icon [icon]="faAngleRight" pull="right" aria-hidden="true" *ngIf="!accordionStatus.isMolImportOpen"></fa-icon>
+                                                </button>
+                                            </div>
+                                            <div [ngbCollapse]="!accordionStatus.isMolImportOpen">
+                                                <div class="card-body">
+                                                    <div>
+                                                        Load a MOL file to attach to this spectrum record or copy and paste a molecular structure.  Please note that the MOL data must contain explicit hydrogens to
+                                                        convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
+                                                        will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
+                                                        using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
+                                                    </div>
+                                                    <hr />
 
-                                            <ng-template ngbPanelContent>
-                                              Load a MOL file to attach to this spectrum record or copy and paste a molecular structure.  Please note that the MOL data must contain explicit hydrogens to
-                                              convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
-                                              will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
-                                              using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
-                                                <hr />
+                                                    <div class="form-group">
+                                                        <label><b>Upload an MOL/SDF file:</b></label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-primary btn-file accessibility"
+                                                                        (keydown.enter)="fileUpload.click(); $event.preventDefault()"
+                                                                        (keydown.space)="fileUpload.click(); $event.preventDefault()">
+                                                                    Browse...
+                                                                    <input type="file" accept=".mol, .sdf" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseMolFile($event)" tabindex="-1" #fileUpload />
+                                                                </button>
+                                                            </span>
+                                                            <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="convMolUpload" ngDefaultControl readonly tabindex="-1" style="min-height: 44px;"/>
+                                                        </div>
+                                                    </div>
 
-                                                <div class="form-group">
-                                                  <label><b>Upload an MOL/SDF file:</b></label>
-                                                  <div class="input-group">
-                                                    <span class="input-group-btn">
-                                                        <span class="btn btn-primary btn-file">
-                                                           Browse...<input type="file" accept=".mol, .sdf" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseMolFile($event)"/>
-                                                        </span>
-                                                    </span>
-                                                    <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="convMolUpload" ngDefaultControl readonly />
-                                                  </div>
+                                                    <div class="form-group">
+                                                        <label><b>Copy and paste a molecular structure:</b></label>
+                                                        <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" ngDefaultControl rows="7"></textarea>
+                                                    </div>
+
+                                                    <div class="form-group text-center">
+                                                        <button (click)="convertMolToInChI()" class="btn btn-primary accessibility" ngDefaultControl>Fetch Compound Info from MOL Data</button>
+                                                    </div>
                                                 </div>
+                                            </div>
+                                        </div>
 
-                                                <div class="form-group">
-                                                  <label><b>Copy and paste a molecular structure:</b></label>
-                                                  <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" ngDefaultControl rows="7"></textarea>
+                                        <div class="card">
+                                            <div class="card-header p-0">
+                                                <button type="button" class="btn btn-link container-fluid text-left px-3 py-3 text-decoration-none davis-blue"
+                                                        [attr.aria-expanded]="accordionStatus.isMolDrawOpen"
+                                                        (click)="accordionStatus.isMolDrawOpen = !accordionStatus.isMolDrawOpen">
+                                                    Draw a Molecular Structure
+                                                    <fa-icon [icon]="faAngleDown" pull="right" aria-hidden="true" *ngIf="accordionStatus.isMolDrawOpen"></fa-icon>
+                                                    <fa-icon [icon]="faAngleRight" pull="right" aria-hidden="true" *ngIf="!accordionStatus.isMolDrawOpen"></fa-icon>
+                                                </button>
+                                            </div>
+                                            <div [ngbCollapse]="!accordionStatus.isMolDrawOpen">
+                                                <div class="card-body">
+                                                    <div>
+                                                        Draw a structure with <a href="https://www.chemdoodle.com/" target="_blank">ChemDoodle</a> to generate an MOL file,
+                                                        then upload the file in the section above.
+                                                        If uploading to MoNA, the provided MOL file will be attached;
+                                                        however the full MOL file cannot be included in an MSP export.  Please note that
+                                                        using this tool will overwrite any existing MOL file, InChI code or InChIKey.
+                                                    </div>
+                                                    <hr />
+
+                                                    <div style="width: 100%; height: 100%">
+                                                        <div class="text-center" [libChemdoodle]="currentSpectrum.molFile" id="molSketcher" ngDefaultControl></div>
+                                                    </div>
+
+                                                    <div class="form-group text-center">
+                                                        <button (click)="convertMolToInChI()" class="btn btn-primary accessibility" ngDefaultControl>Fetch Compound Info from MOL Data</button>
+                                                    </div>
                                                 </div>
-
-                                              <div class="form-group text-center">
-                                                    <button (click)="convertMolToInChI()" class="btn btn-primary" ngDefaultControl>Fetch Compound Info from MOL Data</button>
-                                                </div>
-                                            </ng-template>
-                                        </ngb-panel>
-
-                                        <ngb-panel>
-                                            <ng-template ngbPanelTitle><span class="davis-blue">Draw a Molecular Structure</span></ng-template>
-
-                                            <ng-template ngbPanelContent>
-                                                Draw a structure with <a href="https://www.chemdoodle.com/" target="_blank">ChemDoodle</a> to generate an MOL file,
-                                                then upload the file in the section above.
-                                                If uploading to MoNA, the provided MOL file will be attached;
-                                                however the full MOL file cannot be included in an MSP export.  Please note that
-                                                using this tool will overwrite any existing MOL file, InChI code or InChIKey.
-                                                <hr />
-
-                                                <div style="width: 100%; height: 100%">
-                                                    <div class="text-center" [libChemdoodle]="currentSpectrum.molFile"  id="molSketcher" ngDefaultControl></div>
-                                                </div>
-
-
-                                                <div class="form-group text-center">
-                                                    <button (click)="convertMolToInChI()" class="btn btn-primary" ngDefaultControl>Fetch Compound Info from MOL Data</button>
-                                                </div>
-                                            </ng-template>
-                                        </ngb-panel>
-                                    </ngb-accordion>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </ng-template>
-                    </li>
+                    </div>
 
-                    <li ngbNavItem="Metadata">
-                        <a ngbNavLink class="davis-blue">Metadata</a>
+                    <div ngbNavItem="Metadata">
+                        <a ngbNavLink class="davis-blue accessibility">Metadata</a>
                         <ng-template ngbNavContent>
                             <div id="metadata_editor" style="height: 500px; overflow: auto; margin-top: 10px;">
                                 <div *ngFor="let meta of currentSpectrum.meta; index as i">
@@ -374,10 +403,12 @@
                                                class="form-control" />
                                     </div>
                                     <div class="col-sm-2 form-group">
-                                        <button (click)="removeMetadataField(i)" class="btn btn-default"
-                                                ngbTooltip="Remove this metadata field" placement="right" ngDefaultControl><fa-icon [icon]="faTrash"></fa-icon></button>
-                                        <button (click)="applyMetadataToAll(i)" class="btn btn-default"
-                                                ngbTooltip="Copy this metadata value to all spectra" placement="right" ngDefaultControl><fa-icon [icon]="faSave"></fa-icon></button>
+                                        <button (click)="removeMetadataField(i)" class="btn btn-default accessibility"
+                                                ngbTooltip="Remove this metadata field" placement="right" ngDefaultControl aria-label="Remove this metadata field">
+                                                <fa-icon [icon]="faTrash"></fa-icon></button>
+                                        <button (click)="applyMetadataToAll(i)" class="btn btn-default accessibility"
+                                                ngbTooltip="Copy this metadata value to all spectra" placement="right" ngDefaultControl aria-label="Copy this metadata value to all spectra">
+                                                <fa-icon [icon]="faSave"></fa-icon></button>
                                     </div>
                                   <hr>
                                 </div>
@@ -387,10 +418,10 @@
                                 </div>
                             </div>
                         </ng-template>
-                    </li>
+                    </div>
 
-                    <li ngbNavItem="Tags">
-                        <a ngbNavLink class="davis-blue">Tags</a>
+                    <div ngbNavItem="Tags">
+                        <a ngbNavLink class="davis-blue accessibility">Tags</a>
                         <ng-template ngbNavContent>
                             <p>
                                 Please add any tags you might consider useful to other people. <br />
@@ -408,15 +439,15 @@
                             <br />
 
                             <div class="text-center">
-                              <button (click)="applyTagsToAll()"  ngDefaultControl class="btn btn-primary btn-sm"><fa-icon [icon]="faSave"></fa-icon> Apply these tags to all spectra</button>
+                              <button (click)="applyTagsToAll()"  ngDefaultControl class="btn btn-primary btn-sm accessibility"><fa-icon [icon]="faSave"></fa-icon> Apply these tags to all spectra</button>
                             </div>
                         </ng-template>
-                    </li>
+                    </div>
 
-                    <li ngbNavItem="Trim Spectra">
-                        <a ngbNavLink class="davis-blue">Trim Spectra</a>
+                    <div ngbNavItem="Trim Spectra">
+                        <a ngbNavLink class="davis-blue accessibility">Trim Spectra</a>
                         <ng-template ngbNavContent>
-                            <h5>Remove low intensity ions from a mass spectrum</h5>
+                            <p class="h5" style="line-height: 1.5;">Remove low intensity ions from a mass spectrum</p>
                             <p></p>
                             <div style="margin-top: 10px;">
                                 <div>
@@ -426,6 +457,7 @@
                                                [(ngModel)]="ionCuts.nIons"
                                                ngDefaultControl
                                                placeholder="Number of ions"
+                                               aria-label="Number of ions"
                                                class="form-control" />
                                         <span class="help-block ml-2">Keeps the top <code class="code-text">n</code> ions with the highest intensity</span>
                                     </div>
@@ -439,6 +471,7 @@
                                                [(ngModel)]="ionCuts.basePeak"
                                                ngDefaultControl
                                                placeholder="Percentage of base peak"
+                                               aria-label="Percentage of base peak"
                                                class="form-control" />
 
                                         <span class="help-block ml-2 text-nowrap">
@@ -455,28 +488,29 @@
                                                [(ngModel)]="ionCuts.absAbundance"
                                                ngDefaultControl
                                                placeholder="Absolute abundance"
+                                               aria-label="Absolute abundance"
                                                class="form-control" />
                                         <span class="help-block ml-2">Removes ions below the given absolute abundance/intensity</span>
                                     </div>
                                 </div>
 
                                 <div class="text-center">
-                                    <button class="btn btn-primary mr-1" (click)="performIonCuts(undefined)">Trim Spectrum</button>
-                                    <button class="btn btn-primary mr-1 ml-1" (click)="performAllIonCuts()">Trim <strong>All</strong> Spectra</button>
-                                    <button class="btn btn-warning ml-1" (click)="resetIonCuts()">Reset Spectrum</button>
+                                    <button class="btn btn-primary mr-1 accessibility" (click)="performIonCuts(undefined)">Trim Spectrum</button>
+                                    <button class="btn btn-primary mr-1 ml-1 accessibility" (click)="performAllIonCuts()">Trim <strong>All</strong> Spectra</button>
+                                    <button class="btn btn-warning ml-1 accessibility" (click)="resetIonCuts()">Reset Spectrum</button>
                                 </div>
                             </div>
                         </ng-template>
-                    </li>
+                    </div>
 
-                    <li ngbNavItem="Ion Table">
-                        <a ngbNavLink class="davis-blue">Ion Table</a>
+                    <div ngbNavItem="Ion Table">
+                        <a ngbNavLink class="davis-blue accessibility">Ion Table</a>
                         <ng-template ngbNavContent>
                             <div style="height: 500px; overflow: auto; margin-top: 10px;" *ngIf="showIonTable">
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>&nbsp;</th>
+                                        <th>Select</th>
                                         <th><a class="davis-blue text-decoration-none" [routerLink]="" (click)="sortIonTable('ion')">Ion</a></th>
                                         <th><a class="davis-blue text-decoration-none" [routerLink]="" (click)="sortIonTable('intensity')">Intensity</a></th>
                                         <th><a class="davis-blue text-decoration-none" [routerLink]="" (click)="sortIonTable('annotation')">Annotation</a></th>
@@ -484,7 +518,7 @@
                                     </thead>
                                     <tbody>
                                     <tr *ngFor="let ion of currentSpectrum.ions|orderBy: ionTableSort">
-                                        <td><input type="checkbox" [(ngModel)]="ion.selected" /></td>
+                                        <td><input type="checkbox" [(ngModel)]="ion.selected" aria-label="Select ion"/></td>
                                         <td>{{ion.ion | number : '1.0-4'}}</td>
                                         <td>{{ion.intensity | number : '1.0-4'}}</td>
                                         <td>
@@ -504,16 +538,16 @@
                                 <p class="text-center"><a [routerLink]="" class="btn btn-primary" (click)="showIonTable = true">Build Ion Table</a></p>
                             </div>
                         </ng-template>
-                    </li>
+                    </div>
 
-                    <li ngbNavItem="Discard Spectrum">
-                        <a ngbNavLink class="davis-blue">Discard Spectrum</a>
+                    <div ngbNavItem="Discard Spectrum">
+                        <a ngbNavLink class="davis-blue accessibility">Discard Spectrum</a>
                         <ng-template ngbNavContent>
                             <p>Are you sure you want to remove this spectrum?</p>
-                            <button class="btn btn-danger" (click)="removeCurrentSpectrum()">Remove</button>
+                            <button class="btn btn-danger accessibility" (click)="removeCurrentSpectrum()">Remove</button>
                         </ng-template>
-                    </li>
-                </ul>
+                    </div>
+                </nav>
                 <div [ngbNavOutlet]="nav" class = "mt-2"></div>
             </div>
 
@@ -521,7 +555,7 @@
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                         <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                            <li class="nav-item"><button class="fakeRef davis-blue" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                            <li class="nav-item"><button class="fakeRef davis-blue accessibility" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                         </ul>
                     </div>
                     <div class="mx-auto order-0">
@@ -531,17 +565,17 @@
                     </div>
                     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                         <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"><button class="fakeRef davis-blue" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon> </button></li>
+                            <li class="nav-item"><button class="fakeRef davis-blue accessibility" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon> </button></li>
                         </ul>
                     </div>
                 </nav>
                 <hr />
                 <div class="text-center">
-                    <button class="btn btn-danger mr-1" (click)="resetFile()">Restart</button>
-                    <button class="btn btn-primary ml-1 mr-1" (click)="exportFile()"><fa-icon [icon]="faFileExport"></fa-icon> Export as MSP</button>
+                    <button class="btn btn-danger mr-1 accessibility" (click)="resetFile()">Restart</button>
+                    <button class="btn btn-primary ml-1 mr-1 accessibility" (click)="exportFile()"><fa-icon [icon]="faFileExport"></fa-icon> Export as MSP</button>
                     <button *ngIf="!authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="waitForLogin(); authenticationService.requestModal()">Login to Upload to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
                     <span [ngbTooltip]="!compoundInfoProvided ? 'Each spectrum requires either a SMILES, InChI Code, or InChIKey before uploading' : null" placement="right">
-                      <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="uploadFile()" [disabled]="!compoundInfoProvided"><fa-icon [icon]="faCloudUploadAlt" ></fa-icon> Upload to MoNA</button>
+                      <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary ml-1 accessibility" (click)="uploadFile()" [disabled]="!compoundInfoProvided"><fa-icon [icon]="faCloudUploadAlt" ></fa-icon> Upload to MoNA</button>
                     </span>
                 </div>
             </div>

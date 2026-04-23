@@ -51,6 +51,7 @@ The MoNA application can be found at https://mona.fiehnlab.ucdavis.edu/ or https
   - Bring down the application with `docker compose -f docker-compose-prod.yml down`
   - Bring the application back up with `docker compose -f docker-compose-prod.yml up -d`
   - Pull the newest images from ECR with `docker-compose -f docker-compose-prod.yml pull`
+    - Ensure you have ran the AWS ECR login command before attempting to pull images
     - Pulling the newest images does not affect the current deployment until `docker compose up` is run again
     - Once you have the new image(s) tagged as 'prod' on Gose, you can run `docker compose -f docker-compose-prod.yml up -d` to recreate the containers with updated images
 

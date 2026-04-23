@@ -15,6 +15,7 @@ export class SpectrumFeedbackResultsCommunityComponent implements OnInit, OnChan
   feedbackResults;
   feedbackResultsChartOptions;
   totalReviews;
+  feedbackCollapsed = true;
   faAngleDown = faAngleDown;
   faAngleRight = faAngleRight;
 

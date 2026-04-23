@@ -1,6 +1,6 @@
 <div class="row" *ngIf="!auth.isLoggedIn()">
   <div class="col-md-12">
-    <h3><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="auth.requestModal()" class="davis-blue text-decoration-none">log in</a>!</h3>
+    <h1 class="h3"><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="auth.requestModal()" class="davis-blue text-decoration-none">log in</a>!</h1>
   </div>
 </div>
 <div *ngIf="auth.isLoggedIn() && auth.isAdmin()" class="container">
@@ -8,7 +8,7 @@
     <div class="col">
       <br/>
       <div class="row justify-content-center">
-        <h3>Delete Libraries</h3>
+        <h1 class="h3">Delete Libraries</h1>
       </div>
       <hr/>
       <div class="row justify-content-start" *ngIf="libraryTags && libraryTags.length > 0">
@@ -20,10 +20,10 @@
           </div>
           <div class="row mt-2">
             <div class="col-sm">
-              <button type="submit" class="btn btn-danger" [disabled]="!hasSelectedLibraries()">Delete Selected Libraries</button>
+              <button type="submit" class="btn btn-danger accessibility" [disabled]="!hasSelectedLibraries()">Delete Selected Libraries</button>
             </div>
             <div class="col-sm">
-              <button type="button" (click)="refreshTags()" class="btn btn-primary">Refresh Libraries</button>
+              <button type="button" (click)="refreshTags()" class="btn btn-primary accessibility">Refresh Libraries</button>
             </div>
           </div>
         </form>
@@ -32,23 +32,23 @@
     <div class="col">
       <br/>
       <div class="row justify-content-center">
-        <h3>Admin Buttons (Force Updates)</h3>
+        <h1 class="h3">Admin Buttons (Force Updates)</h1>
       </div>
       <hr/>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2" (click)="updateStatistics()">Update Statistics</button>
+        <button class="btn btn-primary mr-2 accessibility" (click)="updateStatistics()">Update Statistics</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2" (click)="refreshSimilarity()">Refresh Similarity Service</button>
+        <button class="btn btn-primary mr-2 accessibility" (click)="refreshSimilarity()">Refresh Similarity Service</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2" (click)="updatePredefinedQueries()">Update Predefined Queries</button>
+        <button class="btn btn-primary mr-2 accessibility" (click)="updatePredefinedQueries()">Update Predefined Queries</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2" (click)="updateStaticQueries()">Update Static Queries</button>
+        <button class="btn btn-primary mr-2 accessibility" (click)="updateStaticQueries()">Update Static Queries</button>
       </div>
       <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2" (click)="reCurateAllData()">Re-Curate All Data</button>
+        <button class="btn btn-primary mr-2 accessibility" (click)="reCurateAllData()">Re-Curate All Data</button>
       </div>
     </div>
   </div>
@@ -56,7 +56,7 @@
     <div class="col">
       <br/> <br/> <br/> <br/> <br/>
       <div class="row justify-content-center">
-        <h3>Force Delete Spectra by ID</h3>
+        <h1 class="h3">Force Delete Spectra by ID</h1>
       </div>
       <hr/>
       <div class="row justify-content-center">
@@ -64,7 +64,7 @@
           <span>Spectra IDs:</span>
           <input class="form-control col-sm-3" placeholder="Comma separated, no spaces" type="text" [(ngModel)]="removeIDs"/>
           <p></p>
-          <button type="button" class="btn btn-danger" [disabled]="!removeIDs" (click)="deleteByIds()">Delete Spectra</button>
+          <button type="button" class="btn btn-danger accessibility" [disabled]="!removeIDs" (click)="deleteByIds()">Delete Spectra</button>
         </div>
       </div>
     </div>
@@ -73,7 +73,7 @@
     <div class="col">
       <br/> <br/> <br/>
       <div class="row justify-content-center">
-        <h3>Change a User's Password</h3>
+        <h1 class="h3">Change a User's Password</h1>
       </div>
       <hr/>
       <div class="row justify-content-center">
@@ -89,7 +89,7 @@
                   Please enter a valid email</p>
               </div>
               <div class="col-sm-3">
-                <button class="btn btn-primary" type="button" (click)="validateUser()" [disabled]="!email.valid">Validate Email</button>
+                <button class="btn btn-primary accessibility" type="button" (click)="validateUser()" [disabled]="!email.valid">Validate Email</button>
               </div>
             </div>
 
@@ -119,7 +119,7 @@
             </div>
 
             <div class="form-group">
-              <button class="btn btn-primary"
+              <button class="btn btn-primary accessibility"
                 (click)="submitPasswordChange()"
                 [disabled]="!passwordChangeForm.valid" [hidden]="hidePasswords">
                 Change Password

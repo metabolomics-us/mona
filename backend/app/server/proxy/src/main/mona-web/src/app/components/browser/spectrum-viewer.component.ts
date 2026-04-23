@@ -12,7 +12,7 @@ import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {NGXLogger} from 'ngx-logger';
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {OrderbyPipe} from '../../filters/orderby.pipe';
@@ -22,7 +22,6 @@ import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
-import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
 import {SpectrumModel} from '../../mocks/spectrum.model';
 import {Observable, throwError} from 'rxjs';
 import {environment} from '../../../environments/environment';
@@ -34,7 +33,6 @@ import {ToasterService} from 'angular2-toaster';
     templateUrl: '../../views/spectra/display/viewSpectrum.html'
 })
 export class SpectrumViewerComponent implements OnInit, AfterViewInit{
-    @ViewChild('acc') accordion: NgbAccordion;
     delayedspectrum: SpectrumModel;
     spectrum: SpectrumModel;
     score;
@@ -78,6 +76,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
         this.accordionStatus = {
           isSpectraOpen: false,
           isIonTableOpen: false,
+          isMetadataOpen: false,
           isSimilarSpectraOpen: false,
           isCompoundOpen: []
         };
@@ -129,7 +128,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     }
 
   setAccordionStatus() {
-      this.accordion.expand('masspecPanel');
+      this.accordionStatus.isSpectraOpen = true;
     }
 
     setSpectrum() {
@@ -210,7 +209,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
 
       if (typeof this.spectrum.compound !== 'undefined') {
         for (let i = 0; i < this.spectrum.compound.length; i++) {
-          this.accordionStatus.isCompoundOpen.push(i === 0);
+          this.accordionStatus.isCompoundOpen.push(false);
         }
       }
     }
@@ -252,7 +251,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
      * @param id string containing spectrum id
      */
     viewSpectrum(id) {
-        this.accordion.collapse('similarityPanel');
+        this.accordionStatus.isSimilarSpectraOpen = false;
         this.router.navigate([`/spectra/display/${id}`]).then();
     }
 

@@ -18,11 +18,14 @@
                 <p class="help-block" *ngIf="uploadError"><strong>{{uploadError}}</strong></p>
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
                     <span class="input-group-btn">
-                        <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" accept=".msp, .mgf, .txt" name="upload" [(ngModel)]="fileUpload" (change)="parseFiles($event)" />
-                        </span>
+                        <button class="btn btn-primary btn-file accessibility"
+                            (keydown.enter)="fileUpload.click(); $event.preventDefault()"
+                            (keydown.space)="fileUpload.click(); $event.preventDefault()">
+                            Browse&hellip;
+                            <input type="file" accept=".mgf, .msp, .txt" (change)="parseFiles($event)" #fileUpload tabindex="-1"/>
+                        </button>
                     </span>
-                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" name="filenames" [(ngModel)]="filenames" readonly />
+                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" name="filenames" [(ngModel)]="filenames" readonly style="min-height: 44px;" tabindex="-1"/>
                 </div>
 
                 <br />
@@ -44,7 +47,7 @@ OR
                     class="form-control" [rows]="9" name="pastedSpectrum" [(ngModel)]="pastedSpectrum"></textarea>
                 </div>
                 <br />
-                <button class="btn btn-primary" (click)="parsePastedSpectrum(pastedSpectrum)">Search</button>
+                <button class="btn btn-primary accessibility" (click)="parsePastedSpectrum(pastedSpectrum)">Search</button>
             </div>
 
             <!-- Loading page -->
@@ -66,7 +69,7 @@ OR
                 <br />
 
                 <div class="masspec-modal">
-                    <lib-ng-mass-spec-plotter [spectrum]="spectrum" [id]="'massspec-plot'"></lib-ng-mass-spec-plotter>
+                    <lib-ng-mass-spec-plotter [spectrum]="spectrum" [id]="'massspec-plot'" [truncate]="true"></lib-ng-mass-spec-plotter>
                 </div>
                 <br />
 

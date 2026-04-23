@@ -5,6 +5,7 @@ import {ToasterConfig} from 'angular2-toaster';
 @Component({
     selector: 'app-mona',
     template: `<div id="wrapper">
+        <a href="#page-wrapper" class="skip-to-content" (click)="skipToContent($event)">Skip to main content</a>
         <nav class="navbar navbar-expand-xl fixed-top navbar-dark">
             <!-- navbar dropdowns -->
             <title-header></title-header>
@@ -28,7 +29,7 @@ import {ToasterConfig} from 'angular2-toaster';
             </div>
         </nav>
         <p></p>
-        <div id="page-wrapper" role="main">
+        <div id="page-wrapper" role="main" tabindex="-1">
             <div class="row">
                 <div class="col-lg-12 top17">
                     <router-outlet></router-outlet>
@@ -47,6 +48,11 @@ export class AppRootComponent implements OnInit{
     mouseoverTimerStop: true,
     showCloseButton: true,
   });
+
+  skipToContent(event: Event) {
+    event.preventDefault();
+    document.getElementById('page-wrapper')?.focus();
+  }
 
   ngOnInit() {
     // scroll to top of page on new page entry

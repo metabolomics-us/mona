@@ -49,7 +49,7 @@
                   </div>
                 </div>
                 <div class="card-text p-2 text-left">
-                  <a><spectrum-feedback-results-curation [spectrum]="spectrum" style="font-size: 1.5rem; padding: 10px 0;"></spectrum-feedback-results-curation></a>
+                  <a><spectrum-feedback-results-curation [spectrum]="spectrum" style="font-size: 1.5rem;"></spectrum-feedback-results-curation></a>
                 </div>
             </div>
 
@@ -61,8 +61,8 @@
                 <div class="row top5"
                      *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
 
-                    <div class="col-lg-5 col-md-5 col-sm-6">
-                        <metadata-query [metaData]="meta">
+                    <div class="col-lg-5 col-md-5 col-sm-6" style="min-width: 0;">
+                        <metadata-query [metaData]="meta" [tooltipText]="meta.name">
                             {{meta.name}}
                         </metadata-query>
                     </div>
@@ -75,15 +75,33 @@
     </div>
 
     <div class="card-footer">
-        <div class="float-left mr-1" *ngFor="let tag of spectrum.tags">
-          <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
+      <ng-container *ngIf="(auth.isAdmin() && auth.isLoggedIn()) || sameSubmitter(); else tagsWithButton">
+        <div class="d-flex flex-wrap mb-1">
+          <div class="mr-1" *ngFor="let tag of spectrum.tags">
+            <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
+          </div>
         </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <label class="clickable mb-0">
+            <input type="checkbox" id="massDeleteToggle" [checked]="deletionMark.selected" (change)="massDeleteToggle($event)"> Mark for deletion
+          </label>
+          <a class="btn btn-primary" style="height: 44px; display: flex; align-items: center;" [routerLink]="[viewSpectrum()]" target="_blank">
+            <fa-icon [icon]="faExternalLinkAlt"></fa-icon>&nbsp;Display Full Record
+          </a>
+        </div>
+      </ng-container>
 
-      <span *ngIf="(((auth.isAdmin() && auth.isLoggedIn()) || (sameSubmitter())) && spectrum.tags.length > 0)"><br/><br/></span>
-      <label class="clickable"><span class="float-left mr-2" style="padding-top: 9px" *ngIf="(auth.isAdmin() && auth.isLoggedIn()) || (sameSubmitter())"><input type="checkbox" id="massDeleteToggle" [checked]="deletionMark.selected" (change)="massDeleteToggle($event)"> Mark for Deletion</span></label>
-
-      <a class="btn btn-primary float-right" style="height: 44px; display: flex; align-items: center;" [routerLink]="[viewSpectrum()]" target="_blank">
-        <fa-icon [icon]="faExternalLinkAlt"></fa-icon>&nbsp;Display Full Record
-      </a>
+      <ng-template #tagsWithButton>
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex flex-wrap">
+            <div class="mr-1" *ngFor="let tag of spectrum.tags">
+              <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
+            </div>
+          </div>
+          <a class="btn btn-primary flex-shrink-0" style="height: 44px; display: flex; align-items: center;" [routerLink]="[viewSpectrum()]" target="_blank">
+            <fa-icon [icon]="faExternalLinkAlt"></fa-icon>&nbsp;Display Full Record
+          </a>
+        </div>
+      </ng-template>
     </div>
 </div>

@@ -1,12 +1,11 @@
 <div class="row">
     <div class="col-md-12">
     <br>
-      <h1 class="h3"><fa-icon [icon]="faCloudDownloadAlt"></fa-icon> Download Spectra</h1>
+      <h1 class="h2"><fa-icon [icon]="faCloudDownloadAlt"></fa-icon> Download Spectra</h1>
 
-        <div class="h5">
-            A set of commonly referenced predefined queries. Click on a query to view its associated spectra
-            in the spectra browser. Queries are available to download in JSON (MoNA internal) format
-            or as NIST MS Search compatible MSP/SDF files.
+        <div style="font-size: 1.2rem">
+            Click on a query to trigger a dropdown where you can browse or download the associated spectra.<br>
+            Queries can be downloaded as JSON (MoNA internal), or MSP/SDF (NIST Compatible) files.
         </div>
 
         <query-tree-view [treeId]="tree" [treeModel]="queryTree"></query-tree-view>
