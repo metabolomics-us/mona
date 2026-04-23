@@ -307,11 +307,14 @@ OR
                                   <label><b>Upload an MOL/SDF file:</b></label>
                                   <div class="input-group">
                                       <span class="input-group-btn">
-                                          <span class="btn btn-primary btn-file">
-                                              Browse&hellip; <input type="file" accept=".mol, .sdf" (change)="parseMolFile($event.target.files)" [disabled]="compoundProcessing" />
-                                          </span>
+                                          <button class="btn btn-primary btn-file accessibility"
+                                          (keydown.enter)="fileUpload.click(); $event.preventDefault()"
+                                          (keydown.space)="fileUpload.click(); $event.preventDefault()">
+                                              Browse&hellip;
+                                              <input type="file" accept=".mol, .sdf" (change)="parseMolFile($event.target.files)" [disabled]="compoundProcessing" #fileUpload tabindex="-1"/>
+                                          </button>
                                       </span>
-                                    <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
+                                    <input placeholder="MOL or SDF file. Only the first structure will be read from an SDF file containing multiple structures" id="molFile" type="text" class="form-control" [(ngModel)]="filenames" readonly tabindex="-1" style="min-height: 44px;"/>
                                   </div>
                                 </div>
 
