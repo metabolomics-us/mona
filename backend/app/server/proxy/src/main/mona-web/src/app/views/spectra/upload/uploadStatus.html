@@ -1,12 +1,14 @@
 <div class="row">
     <div class="col-md-12">
     <br>
+    <h1 class="h2"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload Status</h1>
+    <br>
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h4><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h4>
+            <h2 class="h4"><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h2>
         </div>
 
         <div *ngIf="uploadLibraryService.uploadedSpectraCount > 0">
-            <h3>Thank you for your submission!</h3>
+            <h2 class="h4">Thank you for your submission!</h2>
 
             <p>The bar below displays the upload progress. Please <b>do not close your browser</b> while your upload is
                 being processed, otherwise your submission will not be sent to the server.</p>
@@ -16,15 +18,15 @@
 
             <spectra-upload-progress-bar></spectra-upload-progress-bar>
             <hr/>
-            <a class="btn btn-primary" [routerLink]="['/upload']">Upload More Mass Spectra</a>
+            <a class="btn btn-primary btn-lg" [routerLink]="['/upload']"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload More Mass Spectra</a>
 
             <br /><br />
             <hr/>
             <div>
-                <h4>Your uploaded spectra will appear below as they are processed:</h4>
+                <h2 class="h4">Your uploaded spectra will appear below as they are processed:</h2>
 
                 <div *ngIf="uploadLibraryService.uploadedSpectraCount == 0">
-                    <h4>Loading...<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> </h4>
+                    <h3 class="h4">Loading...<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> </h3>
                 </div>
 
                 <div *ngIf="uploadLibraryService.uploadedSpectra && !uploadLibraryService.isSTP" class="overflow-auto" style="max-height: 405px">
@@ -38,8 +40,8 @@
         </div>
 
         <div *ngIf="uploadLibraryService.uploadedSpectraCount === 0">
-            <h3 *ngIf="!uploadLibraryService.isSTP">The upload queue is empty!</h3>
-            <h3 *ngIf="uploadLibraryService.isSTP">Straight Through Processing Is Enabled, Please Wait For Batch Load...<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></h3>
+            <h2 class="h4" *ngIf="!uploadLibraryService.isSTP">The upload queue is empty!</h2>
+            <h2 class="h4" *ngIf="uploadLibraryService.isSTP">Straight Through Processing Is Enabled, Please Wait For Batch Load...<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></h2>
             <br/>
 
             <a class="btn btn-primary btn-lg" [routerLink]="['/upload']"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload Mass Spectra</a>

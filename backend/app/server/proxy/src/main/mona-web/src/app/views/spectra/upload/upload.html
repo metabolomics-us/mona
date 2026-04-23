@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
     <br>
-        <h1 class="h3"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload Spectra</h1>
+        <h1 class="h2"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload Spectra</h1>
 
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
             <h2 class="h4"><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h2>
