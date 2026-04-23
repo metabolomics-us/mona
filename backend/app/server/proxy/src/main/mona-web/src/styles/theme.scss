@@ -815,3 +815,15 @@ input[type="checkbox"] {
 .input-group-text {
   color: #484F56 !important;
 }
+
+.accordion-stack {
+  border: 0px solid rgba(0, 0, 0, .125);
+  border-radius: 0.375rem;
+  overflow: hidden;
+
+  > .card,
+  > div > .card {
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

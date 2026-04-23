@@ -1,19 +1,23 @@
 <div *ngIf="currentFeedback.length !== 0">
-    <ngb-accordion #ac="ngbAccordion" [closeOthers]="false">
-      <ngb-panel id="feedbackPanel">
-        <ng-template ngbPanelHeader>
-          <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0 text-decoration-none gryclr">
+    <div>
+      <div class="card accordion-stack-item">
+        <div class="card-header p-0">
+          <button type="button" class="btn btn-link container-fluid text-left px-3 py-3 text-decoration-none gryclr"
+                  [attr.aria-expanded]="!feedbackCollapsed"
+                  (click)="feedbackCollapsed = !feedbackCollapsed">
             <strong>Community Feedback ({{totalReviews | number:'1.0-0':'en-US'}} {{totalReviews == 1 ? "user review" : "user reviews"}})</strong>
-            <fa-icon [icon]="faAngleDown" pull="right" *ngIf="ac.isExpanded('feedbackPanel')"></fa-icon>
-            <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!ac.isExpanded('feedbackPanel')"></fa-icon>
+            <fa-icon [icon]="faAngleDown" pull="right" aria-hidden="true" *ngIf="!feedbackCollapsed"></fa-icon>
+            <fa-icon [icon]="faAngleRight" pull="right" aria-hidden="true" *ngIf="feedbackCollapsed"></fa-icon>
           </button>
-        </ng-template>
-        <ng-template ngbPanelContent>
-          <div style="height: 500px; width: 100%" class="float-center">
-            <nvd3 [options]="feedbackResultsChartOptions"
-              [data]="feedbackResults"></nvd3>
+        </div>
+        <div *ngIf="!feedbackCollapsed">
+          <div class="card-body">
+            <div style="height: 500px; width: 100%" class="float-center">
+              <nvd3 [options]="feedbackResultsChartOptions"
+                [data]="feedbackResults"></nvd3>
+            </div>
           </div>
-        </ng-template>
-      </ngb-panel>
-    </ngb-accordion>
+        </div>
+      </div>
+    </div>
 </div>
