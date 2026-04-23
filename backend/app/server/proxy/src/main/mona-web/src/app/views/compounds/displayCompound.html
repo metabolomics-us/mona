@@ -47,10 +47,12 @@
                 <hr />
             </div>
             <ng-template #classyfireTree let-classy="classy">
-              <ul *ngFor="let node of classy">
-                <li *ngIf="node.nodes" class="tree-node">
+              <ul>
+                <li *ngFor="let node of classy" class="tree-node">
                   <span class="tree-label"><i class="icon-folder-open"></i> <metadata-query [metaData]="node" [classification]="true">{{ node.name | titlecase }}</metadata-query></span> <span> {{ node.value }}</span>
-                  <ng-container *ngTemplateOutlet="classyfireTree; context: {classy: node.nodes}"></ng-container>
+                  <ng-container *ngIf="node.nodes">
+                    <ng-container *ngTemplateOutlet="classyfireTree; context: {classy: node.nodes}"></ng-container>
+                  </ng-container>
                 </li>
               </ul>
             </ng-template>
@@ -140,7 +142,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div *ngIf="compound.tags">
+            <div *ngIf="compound.tags?.length > 0">
                 <ul class="list-inline">
                     <li *ngFor="let tag of compound.tags">
                       <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="compound"></tag-query>
