@@ -174,7 +174,10 @@
             <tr *ngFor="let spectrum of spectra" class="clickable" (click)="viewSpectrum(spectrum.id)">
                 <td>
                     <div>
-                        <div><a class="davis-blue text-decoration-none clickable"><b>{{spectrum.id}}</b></a></div>
+                        <div><a class="davis-blue text-decoration-none clickable" tabindex=0
+                        (keydown.enter)="$event.preventDefault(); $event.target.click()"
+                        (keydown.space)="$event.preventDefault(); $event.target.click()"
+                        ><b>{{spectrum.id}}</b></a></div>
                         <div *ngIf="spectrum.score">
                         <label ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom">
                           <span *ngFor="let star of stars(spectrum)" >
