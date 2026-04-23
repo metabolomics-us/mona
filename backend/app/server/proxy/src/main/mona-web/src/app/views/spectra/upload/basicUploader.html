@@ -322,7 +322,7 @@ OR
 
                                 <div class="form-group">
                                     <label><b>Copy and paste a molecular structure:</b></label>
-                                    <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" rows="7"></textarea>
+                                    <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" rows="7" aria-label="Molecular structure textbox"></textarea>
                                 </div>
 
                                 <div class="form-group text-center">
@@ -346,7 +346,7 @@ OR
                                     <div class="text-center" [libChemdoodle]="currentSpectrum.molFile" id="molSketcher"></div>
                                 </div>
                                 <div class="form-group text-center">
-                                    <button type="button" class="btn btn-primary" (click)="convertMolToInChI()" [disabled]="compoundProcessing">
+                                    <button type="button" class="btn btn-primary accessibility" (click)="convertMolToInChI()" [disabled]="compoundProcessing">
                                         <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
                                         <span>Fetch Compound Info from MOL Data</span>
                                     </button>
