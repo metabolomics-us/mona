@@ -17,7 +17,8 @@ import {SlicePipe} from '@angular/common';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {faCloudUploadAlt, faSpinner, faExclamationTriangle, faUser,
-        faMinusSquare, faPlusSquare, faArrowLeft, faArrowRight, faSignInAlt} from '@fortawesome/free-solid-svg-icons';
+        faMinusSquare, faPlusSquare, faArrowLeft, faArrowRight, faSignInAlt,
+        faAngleDown, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import {Router} from '@angular/router';
 import {SpectrumModel} from "../../mocks/spectrum.model";
 import {Metadata} from "../../mocks/metadata.model";
@@ -57,6 +58,13 @@ export class BasicUploaderComponent implements OnInit{
     faArrowRight = faArrowRight;
     faSignInAlt = faSignInAlt;
     faUser = faUser;
+    faAngleDown = faAngleDown;
+    faAngleRight = faAngleRight;
+
+    accordionStatus = {
+        isMolImportOpen: false,
+        isMolDrawOpen: false
+    };
 
     constructor( public location: Location,  public uploadLibraryService: UploadLibraryService,
                  public compoundConversionService: CompoundConversionService,  public asyncService: AsyncService,
