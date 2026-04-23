@@ -25,13 +25,13 @@
               <label><strong>Upload a File:</strong></label>
                 <p class="help-block" *ngIf="uploadError" [ngClass]="{'has-error': uploadError}"><strong>{{uploadError}}</strong></p>
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
-                    <span class="input-group-btn">
-                        <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" accept=".mgf, .msp, .txt" (change)="parseFiles($event)" #fileUpload />
-                        </span>
-                    </span>
+                        <button class="btn btn-primary btn-file"
+                                (keydown.enter)="fileUpload.click()"
+                                (keydown.space)="fileUpload.click(); $event.preventDefault()">
+                            Browse&hellip; <input type="file" accept=".mgf, .msp, .txt" (change)="parseFiles($event)" #fileUpload tabindex="-1"/>
+                        </button>
 
-                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
+                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" [(ngModel)]="filenames" readonly tabindex="-1"/>
                 </div>
 
                 <br />
