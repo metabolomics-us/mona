@@ -25,13 +25,14 @@
               <label><strong>Upload a File:</strong></label>
                 <p class="help-block" *ngIf="uploadError" [ngClass]="{'has-error': uploadError}"><strong>{{uploadError}}</strong></p>
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
-                        <button class="btn btn-primary btn-file"
-                                (keydown.enter)="fileUpload.click()"
-                                (keydown.space)="fileUpload.click(); $event.preventDefault()">
-                            Browse&hellip; <input type="file" accept=".mgf, .msp, .txt" (change)="parseFiles($event)" #fileUpload tabindex="-1"/>
+                        <button class="btn btn-primary accessibility btn-file"
+                            (keydown.enter)="fileUpload.click()"
+                            (keydown.space)="fileUpload.click(); $event.preventDefault()">
+                            Browse&hellip; <input type="file" accept=".mgf, .msp, .txt" (change)="parseFiles($event)" #fileUpload
+                            tabindex="-1"/>
                         </button>
 
-                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" [(ngModel)]="filenames" readonly tabindex="-1"/>
+                    <input placeholder="Supports MSP, MGF, and MassBank Records Format (.txt)" id="spectrumFile" type="text" class="form-control" [(ngModel)]="filenames" readonly tabindex="-1" style="min-height: 44px;"/>
                 </div>
 
                 <br />
@@ -56,7 +57,7 @@ OR
                   class="form-control" [rows]="9" [(ngModel)]="pastedSpectrum"></textarea>
                 </div>
                 <br />
-              <button class="btn btn-primary" [disabled]="!pastedSpectrum" (click)="parsePastedSpectrum(pastedSpectrum)">Continue</button>
+              <button class="btn btn-primary accessibility" [disabled]="!pastedSpectrum" (click)="parsePastedSpectrum(pastedSpectrum)">Continue</button>
             </div>
         </div>
 
