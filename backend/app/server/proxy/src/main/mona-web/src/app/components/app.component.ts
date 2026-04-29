@@ -5,8 +5,8 @@ import {ToasterConfig} from 'angular2-toaster';
 @Component({
     selector: 'app-mona',
     template: `<div id="wrapper">
-        <a href="#page-wrapper" class="skip-to-content" (click)="skipToContent($event)">Skip to main content</a>
         <nav class="navbar navbar-expand-xl fixed-top navbar-dark">
+          <a href="#page-wrapper" class="skip-to-content" (click)="skipToContent($event)">Skip to main content</a>
             <!-- navbar dropdowns -->
             <title-header></title-header>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
