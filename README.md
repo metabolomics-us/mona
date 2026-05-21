@@ -121,6 +121,12 @@ MoNA is a microservices application. All services run as Docker containers.
 
 ---
 
+## Backups
+
+The `generate_backup.sh` script is used to generate backups of the postgres database on Gose. It is run monthly with cron. See the script for more details.
+
+---
+
 ## Running Tests
 
 **Maven profiles required:** `nexus`, `scala`, `scala-test`
