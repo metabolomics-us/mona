@@ -1,103 +1,199 @@
-# MassBank of North America
+# MassBank of North America (MoNA)
+
 The MoNA application can be found at https://mona.fiehnlab.ucdavis.edu/ or https://massbank.us/
 
-## Getting Started:
-- It is highly recommended to use Linux for development (Preferably Ubuntu LTS 18.04 or later)
-- Ensure you have the following installed:
-  - IntelliJ IDEA Ultimate
-  - Maven 3 (Should come with IntelliJ)
-  - Angular CLI 10.2.3
-  - Docker and Docker Compose
-  - AWS CLI (for ECR to pull docker images)
-  - NVM (Node Version Manager)
-  - NPM (Node Package Manager)
-  - Corsproxy (`npm install -g corsproxy` while using npm version 8)
-  - Java 17 
-  - Scala 2.13 (Installed in IntelliJ)
-- Gain Access to the following
-  - Private mona-config repo
-    - You'll need a GitHub Personal Access Token with access to the repo (https://github.com/settings/tokens)
-    - Then open your `~/.bash_rc` and set 'GIT_USER' and 'GIT_PASS' to your GitHub username and
-      new personal access token. This allows the discovery service to work as intended
-    - Note: You'll need to re-configure this token every time it expires (yearly)
-  - An AWS account with permissions to push and pull from ECR. Store credentials under `~/.aws/`
-  - Admin access to this public mona repo
-  - You'll need a settings.xml file for your maven 'User Settings File' this will include the nexus profile
-    and all the necessary repos for pulling down libraries. Ask a developer on the team for this config
-    and store the file under `~/.m2`
+---
 
-## Starting Development:
-- There are three scripts in the root of the project to easily start development
-  - `./start_docker_dev.sh`
-    - Starts all necessary docker microservices
-  - `./start_corsproxy.sh`
-    - Solves CORS issues between the frontend and the microservices
-  - `./start_frontend.sh`
-    - Starts the Angular 10 frontend with ng serve for live development at localhost:9090
-  - Note: To use the awslogging driver in the docker compose files, you need to configure your system's docker installation with proper AWS credentials that have cloudwatch permissions
-    - For example, if you have Docker installed with apt, you would run `sudo systemctl edit docker`
-    - For Docker installed with snap, you would run `sudo systemctl edit snap.docker.dockerd.service`
-    - Then enter the credentials as:  
-      1 `[Service]`  
-      2 `Environment="AWS_ACCESS_KEY_ID=<id>"`  
-      3 `Environment="AWS_SECRET_ACCESS_KEY=<secret>"`  
+## Table of Contents
 
-## Production Deployment:
-- MoNA's production instance is hosted on the Gose server using Docker Compose
-  - Ask a team member for access to Gose
-- Ensure you have your AWS credentials and GitHub PAT set up on Gose 
-- Find where the docker compose file is located using `docker compose ls`
-  - Navigate to the directory
-  - Bring down the application with `docker compose -f docker-compose-prod.yml down`
-  - Bring the application back up with `docker compose -f docker-compose-prod.yml up -d`
-  - Pull the newest images from ECR with `docker-compose -f docker-compose-prod.yml pull`
-    - Ensure you have ran the AWS ECR login command before attempting to pull images
-    - Pulling the newest images does not affect the current deployment until `docker compose up` is run again
-    - Once you have the new image(s) tagged as 'prod' on Gose, you can run `docker compose -f docker-compose-prod.yml up -d` to recreate the containers with updated images
+1. [Getting Started](#getting-started)
+2. [Starting Development](#starting-development)
+3. [Architecture & Services](#architecture--services)
+4. [Running Tests](#running-tests)
+5. [Building Docker Images](#building-docker-images)
+6. [Production Deployment](#production-deployment)
+7. [Deploying to Gose Repository](#deploying-to-gose-repository)
+8. [Development Notes](#development-notes)
 
-## Generate New Docker Images:
-- Make sure the following Maven profiles are selected (and only those): nexus, scala, docker
-- The following services can be built into docker images: discovery, bootstrap, webhooks-server, curation-scheduler,
-  repository, persistence-server, auth-server, similarity, proxy, download-scheduler, curation-runner, and statistics-server
-  - The proxy image is what handles the frontend, so any frontend changes only need the proxy image to be rebuilt and redeployed
-- Select the module you would like to build an image of by clicking the folder dropdown in the top right of the maven build wizard in IntelliJ (execute maven goal)
-- `mvn clean install` will build a local docker image for the corresponding service
-    - the default image tag is 'test' but can be easily configured in the root pom.xml file as <docker.tag>
-    - the image will be built with the 'latest' and 'version' tags as well
-- `mvn clean deploy` will build the docker image and deploy it to ECR (make sure you signed in to AWS CLI)
-- You can also deploy to ECR by running `./deploy_to_docker.sh` or just pushing the single image using `docker push <image_name>:<tag>`
+---
 
-## Running Tests with IntelliJ and Maven:
-- Using the built-in Maven tab (right-hand side by default), we can run the full scala test suite
-  - Make sure the following Maven profiles are selected (and only those): nexus, scala, scala-test
-  - Run the following docker-compose file: `docker-compose -f docker-compose-test.yml up -d`
-  - Finally, run `mvn clean install` on the 'backend' folder
+## Getting Started
 
-## Important Development Notes:
-- Make sure project sdk/jdk is set to Java 17 inside IntelliJ
-- Make sure Maven in IntelliJ is using the same project jdk (Java 17)
-- Make sure you added framework support for scala 2.13 in IntelliJ for the mona project 
-- When making a new branch for git, the naming convention is to follow YouTrack or GitHub Issue numbers (i.e. FIEHNLAB-3825)
-- If you're having issues pulling packages with maven, you can troubleshoot by deleting your `~/.m2/repository` directory.
-  Additionally, ensure you have the correct 'settings.xml' file in `~/.m2`. If problems still persist, try the 'Invalidate
-  Caches' under the File tab in IntelliJ
+It is highly recommended to use Linux for development (preferably Ubuntu LTS 18.04 or later).
 
-## Deploying to Gose Repository:
-- Make sure you have the following profiles selected: nexus, scala, scala-test
-- Ensure you have the proper settings.xml file stored at `~/.m2` or selected in IntelliJ
-- Run `mvn clean deploy` on each service as you would when building docker images
-  - This will not deploy or create docker images, since the docker profile is not selected
+### Prerequisites
 
-### ports for cluster service nodes:
-- persistence svr: 2222
-- configuration svr: 1111
-- discovery service: 8761
-- auth server: 3333
-- proxy service: 8080 (entry point)
+| Tool | Version | Notes |
+|---|---|---|
+| Java (JDK) | 17 | Set as project SDK in IntelliJ |
+| Scala | 2.13 | Install via IntelliJ plugin |
+| Maven | 3.x | Should come with IntelliJ; requires custom `settings.xml` |
+| IntelliJ IDEA | Ultimate | Required for Scala support |
+| Angular CLI | 10.2.3 | — |
+| NVM | — | Node Version Manager |
+| NPM | — | Node Package Manager |
+| Docker & Docker Compose | — | — |
+| AWS CLI | — | Required for ECR image push/pull |
+| corsproxy | — | `npm install -g corsproxy` (npm v8) |
 
-### ports for in-memory node:
-- postgresql db: 5432
+### Access Requirements
 
-<br/><br/>
+**Private `mona-config` repo**
 
-<b>Note:</b> More documentation for team members can be found in the YouTrack Knowledge Base
+You'll need a GitHub Personal Access Token with access to the repo (https://github.com/settings/tokens). Then open your `~/.bashrc` and set `GIT_USER` and `GIT_PASS` to your GitHub username and personal access token — this allows the discovery service to work as intended. Tokens expire yearly and will need to be reconfigured each time.
+
+**AWS credentials**
+
+You'll need an AWS account with permissions to push and pull from ECR. Store credentials under `~/.aws/`.
+
+**Maven `settings.xml`**
+
+You'll need a `settings.xml` for your Maven User Settings File — this includes the Nexus profile and all necessary repos for pulling down libraries. Ask a developer on the team for this config and store it under `~/.m2/`.
+
+---
+
+## Starting Development
+
+There are three scripts in the root of the project to easily start development:
+
+**1. Start all necessary Docker microservices:**
+```bash
+./start_docker_dev.sh
+```
+
+**2. Solve CORS issues between the frontend and microservices:**
+```bash
+./start_corsproxy.sh
+```
+
+**3. Start the Angular frontend with live reload at `localhost:9090`:**
+```bash
+./start_frontend.sh
+```
+
+### AWS CloudWatch logging
+
+To use the `awslogs` driver in the Docker Compose files, configure your Docker installation with AWS credentials that have CloudWatch permissions.
+
+For Docker installed with apt:
+```bash
+sudo systemctl edit docker
+```
+
+For Docker installed with snap:
+```bash
+sudo systemctl edit snap.docker.dockerd.service
+```
+
+Then add the credentials:
+```ini
+[Service]
+Environment="AWS_ACCESS_KEY_ID=<id>"
+Environment="AWS_SECRET_ACCESS_KEY=<secret>"
+```
+
+---
+
+## Architecture & Services
+
+MoNA is a microservices application. All services run as Docker containers.
+
+| Service | ECR image | Port | Notes |
+|---|---|---|---|
+| proxy | mona-proxy | 8080 | Entry point; also serves the frontend build |
+| discovery | mona-discovery | 8761 | Eureka service registry |
+| config-server | mona-config | 1111 | Spring Cloud Config; reads from GitHub |
+| webhooks | mona-webhooks-server | 4444 | — |
+| curationScheduler | mona-curation-scheduler | 5555 | — |
+| similarity | mona-similarity | 9999 | — |
+| downloader | mona-download-scheduler | 7777 | — |
+| postgresql | postgres:13.4 | 5432 | Primary database |
+| rabbitmq | rabbitmq:3.10-management | 15672 / 5672 | Management UI / AMQP |
+| bootstrap | mona-bootstrap | internal | Data initialization |
+| persistence | mona-persistence-server | internal | Core data persistence |
+| auth | mona-auth-server | internal | Authentication & token issuance |
+| statistics | mona-statistics-server | internal | — |
+| curationRunner | mona-curation-runner | internal | — |
+
+> **Frontend changes** only require rebuilding and redeploying the `proxy` image.
+
+> In production, an `nginx` service handles SSL termination on ports 80/443. In dev, `postgresql-hero` (PgHero) is available on port 8081.
+
+---
+
+## Running Tests
+
+**Maven profiles required:** `nexus`, `scala`, `scala-test`
+
+1. Start the test environment:
+   ```bash
+   docker compose -f docker-compose-test.yml up -d
+   ```
+
+2. Using the built-in Maven tab in IntelliJ (right-hand side by default), run `mvn clean install` on the `backend` folder.
+
+---
+
+## Building Docker Images
+
+**Maven profiles required:** `nexus`, `scala`, `docker`
+
+The following services can be built into Docker images: `discovery`, `bootstrap`, `webhooks-server`, `curation-scheduler`, `repository`, `persistence-server`, `auth-server`, `similarity`, `proxy`, `download-scheduler`, `curation-runner`, and `statistics-server`.
+
+Select the module to build using the folder dropdown in IntelliJ's Maven build wizard.
+
+| Command | What it does |
+|---|---|
+| `mvn clean install` | Builds a local Docker image tagged `test` (configurable via `<docker.tag>` in root `pom.xml`); also builds with `latest` and version tags |
+| `./deploy_to_docker.sh` | Pushes the production images to ECR |
+| `docker push <image_name>:<tag>` | Pushes a single image to ECR |
+
+Ensure you have logged in to the AWS CLI before pushing to ECR.
+
+---
+
+## Production Deployment
+
+MoNA's production instance is hosted on the Gose server using Docker Compose. Ask a team member for access to Gose.
+
+Ensure your AWS credentials and GitHub PAT are set up on Gose before proceeding (details on YouTrack).
+
+```bash
+# Find where the docker compose file is located
+docker compose ls
+
+# Navigate to that directory, then pull the newest images from ECR
+docker compose -f docker-compose-prod.yml pull
+
+# Bring down the application
+docker compose -f docker-compose-prod.yml down
+
+# Bring the application back up
+docker compose -f docker-compose-prod.yml up -d
+```
+
+> Pulling new images does not affect the current deployment — changes only take effect after `up -d`.
+
+---
+
+## Deploying to Gose Repository
+
+This deploys compiled JARs to the internal Nexus/Maven repository
+
+**Maven profiles required:** `nexus`, `scala`, `scala-test`
+
+Ensure you have the proper `settings.xml` stored at `~/.m2/` or selected in IntelliJ, then run `mvn clean deploy` on each service.
+
+---
+
+## Development Notes
+
+- Make sure the project SDK/JDK is set to Java 17 inside IntelliJ
+- Make sure Maven in IntelliJ is using the same project JDK (Java 17)
+- Make sure you have added framework support for Scala 2.13 in IntelliJ for the MoNA project
+- Branch naming convention: follow YouTrack or GitHub issue numbers (e.g. `FIEHNLAB-3825`)
+- If you're having issues pulling packages with Maven, try deleting your `~/.m2/repository/` directory. Ensure you have the correct `settings.xml` in `~/.m2/`. If problems persist, try **File → Invalidate Caches** in IntelliJ.
+
+---
+
+More documentation for team members can be found in the YouTrack Knowledge Base.
