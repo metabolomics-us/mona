@@ -199,6 +199,22 @@ Ensure you have the proper `settings.xml` stored at `~/.m2/` or selected in Inte
 - Make sure you have added framework support for Scala 2.13 in IntelliJ for the MoNA project
 - Branch naming convention: follow YouTrack or GitHub issue numbers (e.g. `FIEHNLAB-3825`)
 - If you're having issues pulling packages with Maven, try deleting your `~/.m2/repository/` directory. Ensure you have the correct `settings.xml` in `~/.m2/`. If problems persist, try **File → Invalidate Caches** in IntelliJ.
+- The JWT token used for curation expires every 10 years. It can be found in the private `mona-config` repo in `application-prod.yml`. The current one expires May 23rd 2036. Curation will throw a 401 error if the token expires. It is planned to refactor the implementation so that manually refreshing the token is no longer required. If it was not refactored, generate a new token by following the steps below:
+```
+  # Step 1: Login to get a short-lived token
+  TOKEN=$(curl -s -X POST https://mona.fiehnlab.ucdavis.edu/rest/auth/login \
+    -H 'Content-Type: application/json' \
+    -d '{"emailAddress":"<admin-email>","password":"<admin-password>"}' | python3 -c "import sys,json;
+  print(json.load(sys.stdin)['token'])")
+
+  # Step 2: Extend it to a 10-year token (this will print another token, this is the one we need)
+  curl -s -X POST https://mona.fiehnlab.ucdavis.edu/rest/auth/extend \
+    -H 'Content-Type: application/json' \
+    -H "Authorization: Bearer $TOKEN" \
+    -d "{\"token\":\"$TOKEN\"}"
+
+  # Step 3: Replace the token in the config file and restart the curationRunner container
+```
 
 ---
 
