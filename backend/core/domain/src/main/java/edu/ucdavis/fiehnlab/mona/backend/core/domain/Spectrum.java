@@ -53,7 +53,10 @@ public class Spectrum implements Serializable {
     @Column(name = "annotations")
     private List<MetaData> annotations = new ArrayList<>();
 
+    // Tolerate a missing satellite row left by an interrupted upload (resolves to null
+    // instead of throwing EntityNotFoundException) so loads and deletes never break
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "score_id")
     private Score score;
 
@@ -73,10 +76,12 @@ public class Spectrum implements Serializable {
     private Date lastCurated = null;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "splash_id")
     private Splash splash;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "submitter_id")
     @NotNull
     private SpectrumSubmitter submitter;
