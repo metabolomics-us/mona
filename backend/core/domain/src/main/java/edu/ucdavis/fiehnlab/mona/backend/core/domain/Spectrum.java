@@ -3,6 +3,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Sequence.SpectrumSequenceIdGenerator;
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.validators.NullOrNotBlank;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Type;
 import org.springframework.context.annotation.Profile;
 
@@ -84,7 +86,10 @@ public class Spectrum implements Serializable {
     @JoinColumn(name = "spectrum_id")
     private List<Tag> tags;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    // Tolerate a missing library row. A dangling library_id (e.g. left by an interrupted upload)
+    // resolves to null instead of throwing EntityNotFoundException, so loads and deletes never break
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "library_id")
     private Library library;
 
