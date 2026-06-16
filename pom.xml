@@ -539,7 +539,7 @@
                             <forceTags>true</forceTags>
 
                             <imageTags>
-                                <imageTag>${project.version}</imageTag>
+                                <!-- <imageTag>${project.version}</imageTag> -->
                                 <imageTag>${docker.tag}</imageTag>
                             </imageTags>
 
