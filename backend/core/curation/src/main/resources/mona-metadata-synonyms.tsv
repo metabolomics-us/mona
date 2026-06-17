@@ -62,6 +62,8 @@ ionmode	ionization mode
 Scan Duration	dwell time
 scan function	scan law
 rt	retention time
+rtinseconds	retention time
+rtseconds	retention time
 analyzer	mass analyzer
 derivative type	derivatization type
 derivative formula	derivatization formula
@@ -70,5 +72,6 @@ derivative mass	derivatization mass
 derivative mw	derivatization mass
 accuratemass	exact mass
 collisionenergy	collision energy
+collision energies	collision energy
 ce	collision energy
 ces	collision energy spread
