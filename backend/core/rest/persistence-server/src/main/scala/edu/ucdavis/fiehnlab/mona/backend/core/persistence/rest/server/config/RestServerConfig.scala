@@ -4,6 +4,7 @@ import java.util
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.deletion.DeletionQueueConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -19,7 +20,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
   * this class configures all our controller and also prepares security measures for these mentioned controllers
   */
 @Configuration
-@Import(Array(classOf[PostgresqlConfiguration], classOf[SwaggerConfig], classOf[SerializationConfig]))
+@Import(Array(classOf[PostgresqlConfiguration], classOf[DeletionQueueConfig], classOf[SwaggerConfig], classOf[SerializationConfig]))
 @EnableAutoConfiguration
 @ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller"))
 @Order(1)

@@ -12,13 +12,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.EventScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.synchronization.CountListener
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.deletion.DeletionQueueConfig
 
+// DeletionQueueConfig is intentionally NOT scanned here. It declares a durable deletion queue and a
+// SpectrumDeletionListener that must run in exactly one place (the persistence-server, where the delete
+// controller lives). Scanning it from this shared config would start a competing consumer in every
+// persistence service and collide its Queue bean with curation's queue. RestServerConfig @Import-s it instead
 @EntityScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.domain"))
 @Configuration
 @Import(Array(classOf[DomainConfig], classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration]))
 @ComponentScan(basePackageClasses = Array(classOf[SpectrumPersistenceService],  classOf[CountListener],
-  classOf[EventScheduler[Spectrum]], classOf[DeletionQueueConfig]))
+  classOf[EventScheduler[Spectrum]]))
 @EnableJpaRepositories(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository"))
 @Profile(Array("mona.persistence"))
 class PostgresqlConfiguration {
