@@ -6,8 +6,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, SpectrumDelet
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.DeletionJobRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Component
 
 import java.util.Date
 import scala.jdk.CollectionConverters._
@@ -16,10 +14,11 @@ import scala.jdk.CollectionConverters._
   * Consumes spectrum deletion requests off the durable deletion queue and runs the batched,
   * progress-tracked delete in the background. The DeletionJob row carries the work payload and
   * progress, so the actual deletion is decoupled from the original HTTP request and survives a
-  * service restart
+  * service restart.
+  *
+  * Registered as a bean by DeletionQueueConfig (not a scanned component) so that importing that
+  * one config wires both the listener and its queue container, in production and under test alike
   */
-@Component
-@Profile(Array("mona.persistence"))
 class SpectrumDeletionListener extends GenericMessageListener[SpectrumDeletionRequest] with LazyLogging {
 
   @Autowired

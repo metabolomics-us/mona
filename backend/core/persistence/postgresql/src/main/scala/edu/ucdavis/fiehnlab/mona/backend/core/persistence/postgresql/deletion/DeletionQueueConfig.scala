@@ -22,6 +22,11 @@ class DeletionQueueConfig {
   @Bean(name = Array("spectra-deletion-queue-instance"))
   def deletionQueue: Queue = new Queue(deletionQueueName, true)
 
+  // Registered here as a bean (rather than a scanned @Component) so a single @Import of this config
+  // wires the listener together with its queue and container. Spring still injects its @Autowired fields
+  @Bean
+  def spectrumDeletionListener: SpectrumDeletionListener = new SpectrumDeletionListener
+
   @Bean
   @Qualifier("message-listener-spectra-deletion")
   def spectraDeletionListenerContainer(connectionFactory: ConnectionFactory,
