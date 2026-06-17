@@ -18,3 +18,5 @@ release.txt
 dependencies.md
 .project
 .settings/
+.bloop
+.metals
