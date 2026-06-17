@@ -19,6 +19,17 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
   val NEGATIVE_TERMS: Array[String] = Array("negative", "neg", "n", "-")
   val ALL_TERMS: Array[String] = POSITIVE_TERMS ++ NEGATIVE_TERMS
 
+  // Full polarity words safe to match as substrings, catching values like "ESI Positive"
+  val POSITIVE_WILDCARDS: Array[String] = Array("positive")
+  val NEGATIVE_WILDCARDS: Array[String] = Array("negative")
+
+  // Matches an exact short term or a value containing a full polarity word
+  def isPositive(value: String): Boolean =
+    POSITIVE_TERMS.contains(value) || POSITIVE_WILDCARDS.exists(value.contains)
+
+  def isNegative(value: String): Boolean =
+    NEGATIVE_TERMS.contains(value) || NEGATIVE_WILDCARDS.exists(value.contains)
+
   /**
     * processes the given spectrum
     *
@@ -44,7 +55,7 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
 
         val value: String = matches.head.getValue.toString.toLowerCase.trim
 
-        if (POSITIVE_TERMS.contains(value)) {
+        if (isPositive(value)) {
           logger.info(s"${spectrum.getId}: Identified ionization type 'value' as positive mode")
 
           matches.head.setValue("positive")
@@ -53,7 +64,7 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
           spectrum
         }
 
-        else if (NEGATIVE_TERMS.contains(value)) {
+        else if (isNegative(value)) {
           logger.info(s"${spectrum.getId}: Identified ionization type 'value' as negative mode")
 
           matches.head.setValue("negative")
