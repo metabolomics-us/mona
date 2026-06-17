@@ -127,5 +127,17 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
         given().contentType("application/json; charset=UTF-8").when().get("/spectra/test").`then`().statusCode(200)
       }
     }
+
+    "we expect DELETE requests" should {
+      "reject deletion of a spectrum the user does not own" in {
+        authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").when().delete("/spectra/test").`then`().statusCode(403)
+        assert(spectrumRepository.count() == 2)
+      }
+
+      "allow the owner to delete their own spectrum" in {
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().delete("/spectra/test").`then`().statusCode(200)
+        assert(spectrumRepository.count() == 1)
+      }
+    }
   }
 }

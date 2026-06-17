@@ -67,7 +67,10 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  override val deleteRequiresAuthentication: Boolean = false
+  // single spectrum delete is now restricted to an admin or the spectrum owner, so a plain
+  // authenticated non owner must be rejected. The authorization branch of the shared test asserts
+  // exactly that: non admin gets 403 and admin gets 200
+  override val deleteRequiresAuthentication: Boolean = true
 
   "we will be connecting to the REST controller" when {
     RestAssured.baseURI = s"http://localhost:$port/rest"
