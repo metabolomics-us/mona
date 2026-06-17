@@ -55,7 +55,15 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.PUT, "/rest/news/**").hasAuthority("ADMIN")
       .antMatchers(HttpMethod.POST, "/rest/news/**").hasAuthority("ADMIN")
 
-      //deletes need authentication
+      //bulk spectra deletes (by query or by id list) are admin only. The /search rule must come
+      //before the single resource rule below since /rest/spectra/* would otherwise match it
+      .antMatchers(HttpMethod.DELETE, "/rest/spectra/search").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.DELETE, "/rest/spectra").hasAuthority("ADMIN")
+
+      //single spectrum delete is allowed for an admin or the owner (ownership enforced in the controller)
+      .antMatchers(HttpMethod.DELETE, "/rest/spectra/*").authenticated()
+
+      //all other deletes need authentication
       .antMatchers(HttpMethod.DELETE).authenticated()
   }
 

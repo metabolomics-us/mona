@@ -3,7 +3,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TagService} from '../../services/persistence/tag.resource';
 import {faEdit, faMinusSquare, faUser} from '@fortawesome/free-solid-svg-icons';
 import {NGXLogger} from 'ngx-logger';
-import {Subscription} from 'rxjs';
+import {interval, Subscription} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {ToasterService} from 'angular2-toaster';
@@ -24,6 +25,8 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
   currentUser;
   librarySubscription: Subscription;
   deleteSubscription: Subscription;
+  deletionPollSubscription: Subscription;
+  deletionJob: any;
   removeIDs: string;
   constructor(public auth: AuthenticationService, public tagService: TagService,
               public logger: NGXLogger, public spectraQueryBuilderService: SpectraQueryBuilderService,
@@ -37,6 +40,8 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     };
     this.currentUser = {};
     this.deleteSubscription = null;
+    this.deletionPollSubscription = null;
+    this.deletionJob = null;
     this.libraryTags = [];
     this.removeIDs = null;
     this.hidePasswords = true;
@@ -59,6 +64,55 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     if (this.deleteSubscription !== null) {
       this.deleteSubscription.unsubscribe();
     }
+    if (this.deletionPollSubscription !== null) {
+      this.deletionPollSubscription.unsubscribe();
+    }
+  }
+
+  // Polls the deletion job until it reaches a terminal state, updating the progress bar each tick
+  startDeletionPolling(jobId: string) {
+    if (this.deletionPollSubscription !== null) {
+      this.deletionPollSubscription.unsubscribe();
+    }
+
+    this.deletionPollSubscription = interval(2000).pipe(
+      switchMap(() => this.spectrum.deletionStatus(jobId))
+    ).subscribe((job: any) => {
+      this.deletionJob = job;
+
+      if (job.status === 'COMPLETE' || job.status === 'FAILED') {
+        this.deletionPollSubscription.unsubscribe();
+
+        if (job.status === 'COMPLETE') {
+          this.toaster.pop({
+            type: 'success',
+            title: 'Deletion Complete!',
+            body: `Deleted ${job.deleted}${job.skipped > 0 ? ', skipped ' + job.skipped : ''} spectra. The library list refreshes shortly.`
+          });
+          this.refreshTags();
+        } else {
+          this.toaster.pop({
+            type: 'error',
+            title: 'Deletion Failed',
+            body: job.errorMessage || 'See server logs for details.'
+          });
+        }
+      }
+    }, (error) => {
+      this.logger.error('Deletion status poll failed: ' + error);
+    });
+  }
+
+  // Percentage complete (deleted + skipped) of the current deletion job, for the progress bar
+  deletionProgress(): number {
+    if (!this.deletionJob || !this.deletionJob.total) {
+      return 0;
+    }
+    return Math.floor(((this.deletionJob.deleted + this.deletionJob.skipped) / this.deletionJob.total) * 100);
+  }
+
+  isDeletionRunning(): boolean {
+    return this.deletionJob && (this.deletionJob.status === 'SCHEDULED' || this.deletionJob.status === 'RUNNING');
   }
 
   refreshTags() {
@@ -93,12 +147,14 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       this.deleteSubscription = this.spectrum.batchDelete({
         query: this.spectraQueryBuilderService.getFilter()
       }, this.auth.getCurrentUser().accessToken)
-        .subscribe(() => {
+        .subscribe((job: any) => {
+          this.deletionJob = job;
           this.toaster.pop({
             type: 'success',
-            title: 'Deletion Successful!',
-            body: 'Deletion was successful, libraries will persist until they reload overnight. Please wait a few minutes then validate that the libraries were deleted.'
+            title: 'Deletion Started',
+            body: 'The deletion runs in the background and continues even if you leave. Live progress is shown on this page.'
           });
+          this.startDeletionPolling(job.id);
         }, (error) => {
           this.toaster.pop({
             type: 'error',
@@ -113,17 +169,19 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     if (this.auth.isAdmin()) {
       if (this.removeIDs !== null) {
         const parsed = this.removeIDs.replace(/\s+/g, '').split(',');
-        this.spectrum.batchDeleteByIds(parsed, this.auth.getCurrentUser().accessToken).subscribe(() => {
+        this.spectrum.batchDeleteByIds(parsed, this.auth.getCurrentUser().accessToken).subscribe((job: any) => {
+          this.deletionJob = job;
           this.toaster.pop({
             type: 'success',
-            title: 'Deletion Successful!',
-            body: 'Deletion was successful, libraries associated with the deleted spectra will persist until they reload overnight. Please wait a few minutes then validate that the spectra were deleted.'
+            title: 'Deletion Started',
+            body: 'The deletion runs in the background and continues even if you leave. Live progress is shown on this page.'
           });
+          this.startDeletionPolling(job.id);
           this.removeIDs = null;
         }, (error) => {
           this.toaster.pop({
             type: 'error',
-            title: 'There was a problem deleting libraries.',
+            title: 'There was a problem deleting spectra.',
             body: `${error.message}`
           });
           this.removeIDs = null;

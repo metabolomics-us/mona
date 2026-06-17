@@ -2,11 +2,11 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventScheduler}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.Autowired
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SpectrumRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, SpectrumRepository}
 import com.turkraft.springfilter.boot.FilterSpecification
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation.Profile
@@ -14,6 +14,7 @@ import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 
+import javax.persistence.EntityManager
 import java.lang
 import java.util.{Date, List}
 import scala.jdk.CollectionConverters._
@@ -35,6 +36,16 @@ class SpectrumPersistenceService extends LazyLogging {
 
   @Autowired(required = false)
   val eventScheduler: EventScheduler[Spectrum] = null
+
+  @Autowired(required = false)
+  val deletionJobRepository: DeletionJobRepository = null
+
+  @Autowired
+  private val entityManager: EntityManager = null
+
+  // Spectra deleted per batch before the persistence context is cleared. Keeping the context
+  // small is what avoids the O(n^2) dirty checking that throttled the old delete loop
+  val deletionBatchSize = 500
 
   final def fireAddEvent(spectrum: Spectrum): Unit = {
     logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.getId} has been added")
@@ -235,6 +246,88 @@ class SpectrumPersistenceService extends LazyLogging {
   def deleteSpectraByQuery(query: String): Unit = {
     val spec: Specification[Spectrum] = new FilterSpecification[Spectrum](query)
     spectrumResultRepository.findAll(spec).asScala.foreach(delete)
+  }
+
+  /**
+   * deletes every spectrum matching the query in bounded batches, recording progress on the job.
+   * Spectra that fail to delete (e.g. a corrupt row) are skipped and logged rather than aborting
+   * the whole job. Paging always reads page zero of the still matching set, excluding ids that
+   * were skipped, so the set shrinks to empty without re-processing skipped rows
+   *
+   * @param query a RSQL or text query, must be non empty (an empty query would match everything)
+   * @param job   the tracking row whose deleted/skipped counters are updated as work progresses
+   */
+  @CacheEvict(value = Array("spectra"), allEntries = true)
+  def deleteSpectraByQueryTracked(query: String, job: DeletionJob): Unit = {
+    val baseSpec: Specification[Spectrum] = new FilterSpecification[Spectrum](query)
+    val skipped = scala.collection.mutable.Set[String]()
+    var hasMore = true
+
+    while (hasMore) {
+      val spec: Specification[Spectrum] =
+        if (skipped.isEmpty) baseSpec
+        else baseSpec.and((root, _, cb) => cb.not(root.get[String]("id").in(skipped.asJava)))
+
+      val batch = spectrumResultRepository
+        .findAll(spec, PageRequest.of(0, deletionBatchSize, Sort.by("id").descending()))
+        .getContent.asScala
+
+      if (batch.isEmpty) {
+        hasMore = false
+      } else {
+        deleteBatch(batch, job, skipped)
+        saveJobProgress(job)
+      }
+    }
+  }
+
+  /**
+   * deletes the spectra with the given ids in bounded batches, recording progress on the job.
+   * Missing or un-deletable ids are skipped and logged
+   *
+   * @param ids the mona ids to delete
+   * @param job the tracking row whose deleted/skipped counters are updated as work progresses
+   */
+  @CacheEvict(value = Array("spectra"), allEntries = true)
+  def deleteSpectraByIdsTracked(ids: java.util.List[String], job: DeletionJob): Unit = {
+    val skipped = scala.collection.mutable.Set[String]()
+
+    spectrumResultRepository.findAllByIdIn(ids).asScala.grouped(deletionBatchSize).foreach { batch =>
+      deleteBatch(batch, job, skipped)
+      saveJobProgress(job)
+    }
+  }
+
+  /**
+   * deletes a single batch of spectra, one row at a time so a failure on one row is isolated.
+   * The persistence context is cleared after the batch (and after any failure) to keep dirty
+   * checking cheap and to recover from a failed flush
+   */
+  private def deleteBatch(batch: Iterable[Spectrum], job: DeletionJob, skipped: scala.collection.mutable.Set[String]): Unit = {
+    batch.foreach { spectrum =>
+      try {
+        spectrumResultRepository.delete(spectrum)
+        spectrumResultRepository.flush()
+        fireDeleteEvent(spectrum)
+        job.setDeleted(job.getDeleted + 1)
+      } catch {
+        case e: Exception =>
+          logger.error(s"failed to delete spectrum ${spectrum.getId}, skipping: ${e.getMessage}", e)
+          skipped += spectrum.getId
+          job.setSkipped(job.getSkipped + 1)
+          // recover the persistence context from a failed flush so the next row is unaffected
+          entityManager.clear()
+      }
+    }
+
+    entityManager.clear()
+  }
+
+  private def saveJobProgress(job: DeletionJob): Unit = {
+    if (deletionJobRepository != null) {
+      job.setLastUpdated(new Date())
+      deletionJobRepository.save(job)
+    }
   }
 
   /**

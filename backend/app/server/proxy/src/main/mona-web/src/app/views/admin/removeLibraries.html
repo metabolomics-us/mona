@@ -28,6 +28,17 @@
           </div>
         </form>
       </div>
+      <div class="row mt-3" *ngIf="deletionJob">
+        <div class="col">
+          <div class="text-center">
+            <i>Deletion {{deletionJob.status | lowercase}}: {{deletionJob.deleted + deletionJob.skipped | number: '1.0-0'}} / {{deletionJob.total | number: '1.0-0'}} spectra<span *ngIf="deletionJob.skipped > 0"> ({{deletionJob.skipped | number: '1.0-0'}} skipped)</span></i>
+          </div>
+          <ngb-progressbar class="custom-progress" [ngClass]="{active: isDeletionRunning(), 'progress-striped': isDeletionRunning(), 'progress-bar-success': deletionJob.status === 'COMPLETE'}" [type]="deletionJob.status === 'FAILED' ? 'danger' : 'success'" max="100" [value]="deletionProgress()">
+            <span style="color: white; white-space: nowrap; font-style: italic; font-weight: bold;">{{deletionProgress()}}%</span>
+          </ngb-progressbar>
+          <div class="text-center text-danger" *ngIf="deletionJob.status === 'FAILED'">{{deletionJob.errorMessage}}</div>
+        </div>
+      </div>
     </div>
     <div class="col">
       <br/>

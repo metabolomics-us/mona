@@ -98,28 +98,33 @@ export class Spectrum {
 		return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra/associate/allByQuery`, data);
 	}
 
+  // Enqueues a query based deletion job and returns the DeletionJob (202 Accepted) for progress polling
   batchDelete(data: any, token: any): Observable<any> {
     const config = {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + token
       },
-      params: this.cleanParameters(data),
-      responseType: 'text' as 'json'
+      params: this.cleanParameters(data)
     };
     return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/spectra/search`, config);
   }
 
+  // Enqueues an id based deletion job and returns the DeletionJob (202 Accepted) for progress polling
   batchDeleteByIds(data: any, token: any): Observable<any> {
     const config = {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + token
       },
-      body: data,
-      responseType: 'text' as 'json'
+      body: data
     };
     return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/spectra`, config);
+  }
+
+  // Polls the progress of a deletion job by id
+  deletionStatus(jobId: string): Observable<any> {
+    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/delete/status/${jobId}`);
   }
 }
 

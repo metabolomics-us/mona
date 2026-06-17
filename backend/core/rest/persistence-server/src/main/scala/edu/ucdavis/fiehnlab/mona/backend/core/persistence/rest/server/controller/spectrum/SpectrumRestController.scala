@@ -1,19 +1,22 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
 import java.util.concurrent.Future
+import java.util.{Date, UUID}
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, WrappedString}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, SpectrumSubmitter, Submitter}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, Spectrum, SpectrumDeletionRequest, SpectrumSubmitter, Submitter}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, SubmitterRepository}
+import org.springframework.amqp.core.MessageDeliveryMode
+import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.annotation.Profile
 
 import javax.servlet.{ServletRequest, ServletResponse}
@@ -37,6 +40,48 @@ class SpectrumRestController extends LazyLogging {
 
   @Autowired
   val loginService: LoginService = null
+
+  @Autowired
+  val deletionJobRepository: DeletionJobRepository = null
+
+  @Autowired
+  val rabbitTemplate: RabbitTemplate = null
+
+  @Autowired
+  @Qualifier("spectra-deletion-queue")
+  val deletionQueueName: String = null
+
+  /**
+    * resolves the email of the caller from the Authorization header so deletion jobs can record
+    * who triggered them. Returns null when no usable token is present
+    */
+  private def callerEmail(): String = {
+    val header = httpServletRequest.getHeader("Authorization")
+
+    if (header != null && header.split(" ").length > 1) {
+      try {
+        loginService.info(header.split(" ").last).emailAddress
+      } catch {
+        case e: Exception =>
+          logger.debug(s"could not resolve caller email: ${e.getMessage}")
+          null
+      }
+    } else {
+      null
+    }
+  }
+
+  /**
+    * enqueues a deletion job on the durable queue with persistent delivery so it survives a
+    * broker restart, then returns the freshly persisted tracking row
+    */
+  private def enqueueDeletionJob(job: DeletionJob): Unit = {
+    deletionJobRepository.save(job)
+    rabbitTemplate.convertAndSend(deletionQueueName, new SpectrumDeletionRequest(job.getId), (message: org.springframework.amqp.core.Message) => {
+      message.getMessageProperties.setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+      message
+    })
+  }
 
   /**
     * Executes a search against the repository and can cause out of memory errors.  It is recommended to utilize this
@@ -98,21 +143,57 @@ class SpectrumRestController extends LazyLogging {
     }
   }
 
+  /**
+    * enqueues a deletion of the given spectra ids as a tracked background job and returns
+    * immediately with the job (status SCHEDULED). Poll /rest/spectra/delete/status/{id} for progress
+    */
   @RequestMapping(path = Array(""), method = Array(RequestMethod.DELETE))
-  @Async
   @ResponseBody
-  def massDeleteByID(@RequestBody ids: java.util.List[String]): Future[String] = {
-    spectrumPersistenceService.deleteSpectraByIdIn(ids)
-    new AsyncResult[String]("Delete request received.")
+  def massDeleteByID(@RequestBody ids: java.util.List[String]): ResponseEntity[DeletionJob] = {
+    if (ids == null || ids.isEmpty) {
+      logger.warn("refusing id based deletion with an empty id list")
+      new ResponseEntity[DeletionJob](HttpStatus.BAD_REQUEST)
+    } else {
+      val job = new DeletionJob(UUID.randomUUID.toString, null, ids.asScala.mkString(","), callerEmail(), new Date, DeletionJob.STATUS_SCHEDULED, ids.size.toLong)
+      enqueueDeletionJob(job)
+      new ResponseEntity[DeletionJob](job, HttpStatus.ACCEPTED)
+    }
   }
 
+  /**
+    * enqueues a deletion of all spectra matching the query as a tracked background job and returns
+    * immediately with the job (status SCHEDULED). An empty query is rejected so a blank request can
+    * never match (and delete) everything. Poll /rest/spectra/delete/status/{id} for progress
+    */
   @RequestMapping(path = Array("/search"), method = Array(RequestMethod.DELETE))
-  @Async
   @ResponseBody
-  def massDeleteBySearch(@RequestParam(value = "query", required = false) query: WrappedString): Future[String] = {
+  def massDeleteBySearch(@RequestParam(value = "query", required = false) query: WrappedString): ResponseEntity[DeletionJob] = {
     val queryString = if (query != null) query.string else ""
-    spectrumPersistenceService.deleteSpectraByQuery(queryString)
-    new AsyncResult[String]("Delete request received.")
+
+    if (queryString.trim.isEmpty) {
+      logger.warn("refusing query based deletion with an empty query (would match everything)")
+      new ResponseEntity[DeletionJob](HttpStatus.BAD_REQUEST)
+    } else {
+      val total = spectrumPersistenceService.count(queryString)
+      val job = new DeletionJob(UUID.randomUUID.toString, queryString, null, callerEmail(), new Date, DeletionJob.STATUS_SCHEDULED, total)
+      enqueueDeletionJob(job)
+      new ResponseEntity[DeletionJob](job, HttpStatus.ACCEPTED)
+    }
+  }
+
+  /**
+    * returns the current state of a deletion job (status, total, deleted, skipped) for progress polling
+    */
+  @RequestMapping(path = Array("/delete/status/{jobId}"), method = Array(RequestMethod.GET))
+  @ResponseBody
+  def deletionStatus(@PathVariable("jobId") jobId: String): ResponseEntity[DeletionJob] = {
+    val job = deletionJobRepository.findById(jobId).orElse(null)
+
+    if (job == null) {
+      new ResponseEntity[DeletionJob](HttpStatus.NOT_FOUND)
+    } else {
+      new ResponseEntity[DeletionJob](job, HttpStatus.OK)
+    }
   }
 
   /**
@@ -268,14 +349,39 @@ class SpectrumRestController extends LazyLogging {
    * @param id
    * @return
    */
-  @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.DELETE))
   @ResponseBody
-  final def delete(@PathVariable("id") id: String): Unit = {
+  final def delete(@PathVariable("id") id: String): ResponseEntity[String] = {
     doDelete(id)
   }
 
-  def doDelete(id: String): Unit = spectrumPersistenceService.deleteById(id)
+  /**
+    * deletes a single spectrum. Allowed for an admin or the spectrum's owner only. Routes through
+    * the event firing delete so listeners (e.g. webhooks) are notified
+    */
+  def doDelete(id: String): ResponseEntity[String] = {
+    val spectrum: Spectrum = spectrumPersistenceService.findByMonaId(id)
+
+    if (spectrum == null) {
+      new ResponseEntity[String](HttpStatus.NOT_FOUND)
+    } else {
+      val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
+      val loginInfo: LoginInfo = loginService.info(token)
+
+      val isAdmin: Boolean = loginInfo.roles.contains("ADMIN")
+      val isOwner: Boolean = spectrum.getSubmitter != null && spectrum.getSubmitter.getEmailAddress == loginInfo.emailAddress
+
+      if (isAdmin || isOwner) {
+        spectrumPersistenceService.delete(spectrum)
+        // empty body on success so the generic rest client can deserialize the response without
+        // tripping over a non json string. The 200 status communicates the delete succeeded
+        new ResponseEntity[String](HttpStatus.OK)
+      } else {
+        logger.warn(s"user ${loginInfo.emailAddress} attempted to delete spectrum $id they do not own")
+        new ResponseEntity[String](HttpStatus.FORBIDDEN)
+      }
+    }
+  }
 
 
   /**
