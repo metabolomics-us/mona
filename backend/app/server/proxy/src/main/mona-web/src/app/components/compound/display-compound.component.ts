@@ -20,6 +20,7 @@ export class DisplayCompoundComponent implements  OnInit{
     pictureId;
     chemId;
     classifications: Metadata[];
+    classificationUnavailable: boolean;
     showClassyFireInfo;
     metaData: any;
     faCloudDownloadAlt = faCloudDownloadAlt;
@@ -37,6 +38,10 @@ export class DisplayCompoundComponent implements  OnInit{
 
       // Build compound classification tree
       this.classifications = [];
+
+      // Detect the marker added by curation when ClassyFire could not be reached
+      this.classificationUnavailable = this.compound.hasOwnProperty('metaData') && Array.isArray(this.compound.metaData) &&
+        this.compound.metaData.some((x) => x.name === 'ClassyFire Status');
 
       if (this.compound.hasOwnProperty('classification')) {
         // Get high order classifications

@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{HttpStatus, ResponseEntity}
-import org.springframework.web.client.{HttpStatusCodeException, RestOperations}
+import org.springframework.web.client.{HttpStatusCodeException, ResourceAccessException, RestOperations}
 
 import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, Buffer}
@@ -61,8 +61,33 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       spectrum
     } else {
       logger.error(s"${spectrum.getId}: ClassyFire is unreachable!")
+      spectrum.getCompound.asScala.foreach(markClassyfireUnavailable(_, spectrum.getId))
       spectrum
     }
+  }
+
+  /**
+    * Add a transient marker indicating ClassyFire could not be reached so the frontend can show that
+    * classification is pending rather than genuinely empty. The marker is computed metadata, so it is
+    * stripped by RemoveComputedData at the start of the next curation run and re-added only if it fails again
+    *
+    * @param compound
+    * @param id
+    * @return
+    */
+  def markClassyfireUnavailable(compound: Compound, id: String): Compound = {
+    logger.warn(s"$id: Flagging compound classification as pending, ClassyFire was unavailable")
+
+    val alreadyFlagged: Boolean = compound.getMetaData != null &&
+      compound.getMetaData.asScala.exists(_.getName == CommonMetaData.CLASSYFIRE_STATUS)
+
+    if (!alreadyFlagged) {
+      val metaData = new MetaData(null, CommonMetaData.CLASSYFIRE_STATUS, CommonMetaData.CLASSYFIRE_STATUS_UNAVAILABLE, true, "classification", true, null)
+      val existing: Buffer[MetaData] = if (compound.getMetaData != null) compound.getMetaData.asScala else Buffer[MetaData]()
+      compound.setMetaData((existing :+ metaData).asJava)
+    }
+
+    compound
   }
 
   /**
@@ -119,6 +144,9 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         case x: HttpStatusCodeException =>
           logger.warn(s"$id: Received status code ${x.getStatusCode} for ${compound.getInchiKey}")
           scheduleClassification(compound, id)
+        case x: ResourceAccessException =>
+          logger.warn(s"$id: ClassyFire is unavailable, skipping classification: ${x.getMessage}")
+          markClassyfireUnavailable(compound, id)
       }
     }
 
@@ -147,6 +175,9 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         case x: HttpStatusCodeException =>
           logger.warn(s"$id: Received status code ${x.getStatusCode} for ${compound.getInchiKey}")
           scheduleClassification(compound, id)
+        case x: ResourceAccessException =>
+          logger.warn(s"$id: ClassyFire is unavailable, skipping classification: ${x.getMessage}")
+          markClassyfireUnavailable(compound, id)
       }
     }
   }
@@ -264,6 +295,9 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         case x: HttpStatusCodeException =>
           logger.warn(s"$id: Received status code ${x.getStatusCode} for ${compound.getInchiKey}")
           compound
+        case x: ResourceAccessException =>
+          logger.warn(s"$id: ClassyFire is unavailable, unable to schedule classification: ${x.getMessage}")
+          markClassyfireUnavailable(compound, id)
       }
     } else {
       logger.info(s"$id: No structure available to submit to ClassyFire")

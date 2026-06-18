@@ -64,4 +64,9 @@ object CommonMetaData {
   val SPECTRAL_ENTROPY: String = "spectral entropy"
 
   val NORMALIZED_ENTROPY: String = "normalized entropy"
+
+  // Marker added when ClassyFire could not be reached so the frontend can indicate classification is pending
+  val CLASSYFIRE_STATUS: String = "ClassyFire Status"
+
+  val CLASSYFIRE_STATUS_UNAVAILABLE: String = "Unavailable"
 }

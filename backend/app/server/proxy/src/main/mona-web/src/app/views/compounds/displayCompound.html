@@ -62,6 +62,17 @@
         </div>
     </div>
 
+    <div class="row" *ngIf="classifications.length == 0 && classificationUnavailable">
+        <div class="col-md-12">
+            <h4>ClassyFire Compound Classification</h4>
+            <div class="alert alert-warning" role="alert">
+                <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+                Classification is pending. ClassyFire was unavailable during the last curation, so no classes could be retrieved yet.
+                This compound will be classified the next time it is curated while the service is reachable.
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-12">
           <br/><br/>
