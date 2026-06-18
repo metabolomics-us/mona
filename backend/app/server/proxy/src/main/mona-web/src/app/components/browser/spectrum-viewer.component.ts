@@ -74,7 +74,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
           this.currentFeedback = res;
         });
         this.accordionStatus = {
-          isSpectraOpen: false,
+          isSpectraOpen: true,
           isIonTableOpen: false,
           isMetadataOpen: false,
           isSimilarSpectraOpen: false,
