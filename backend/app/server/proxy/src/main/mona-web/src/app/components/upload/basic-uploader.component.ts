@@ -235,27 +235,6 @@ export class BasicUploaderComponent implements OnInit{
 
 
     /**
-     * Convert an array of names to an InChIKey based on the first result
-     * @param names array of compound names
-     * @param callback callback function to get name
-     */
-    namesToInChIKey(names, callback) {
-        if (names.length === 0) {
-            callback(null);
-        } else {
-            this.compoundConversionService.nameToInChIKey(names[0], (molecule) => {
-                if (molecule !== null) {
-                    callback(molecule);
-                } else {
-                    this.namesToInChIKey(names.slice(1), callback);
-                }
-            }, (error) => {
-                this.namesToInChIKey(names.slice(1), callback);
-            });
-        }
-    }
-
-    /**
      * Pull names from CTS given an InChIKey and update the currentSpectrum
      */
     pullNames(inchiKey) {
@@ -303,6 +282,11 @@ export class BasicUploaderComponent implements OnInit{
     }
 
     processInChIKey(inchiKey) {
+        if (inchiKey === null || inchiKey === '') {
+            this.compoundError = 'Please provide an InChIKey, InChI, or SMILES!';
+            this.compoundProcessing = false;
+            return;
+        }
         this.compoundConversionService.getInChIByInChIKey(
             inchiKey,
              (data) => {
@@ -316,7 +300,6 @@ export class BasicUploaderComponent implements OnInit{
                 } else {
                     this.compoundError = 'Unable to process provided InChIKey!';
                 }
-
                 this.compoundProcessing = false;
             }
         );
@@ -362,19 +345,10 @@ export class BasicUploaderComponent implements OnInit{
             this.processInChIKey(this.currentSpectrum.inchiKey);
         }
 
-        // Process names
-        else if (this.currentSpectrum.names.length > 0) {
-            this.namesToInChIKey(this.currentSpectrum.names, (inchiKey) => {
-                this.logger.debug('Name to inchikey response: ' + inchiKey);
-                if (inchiKey !== null) {
-                    this.logger.info('Found InChIKey: ' + inchiKey);
-                    this.currentSpectrum.inchiKey = inchiKey;
-                    this.processInChIKey(inchiKey);
-                } else {
-                    this.compoundError = 'Unable to find a match for provided name!';
-                    this.compoundProcessing = false;
-                }
-            });
+        // A compound name on its own can no longer be resolved to a structure since the CTS name lookup was retired and replaced with CTS-Lite
+        else if (this.currentSpectrum.names.some((name) => name && name.trim() !== '')) {
+            this.compoundError = 'A compound name on its own can no longer be resolved. Please also provide an InChI, InChIKey, SMILES, or MOL/SDF file.';
+            this.compoundProcessing = false;
         }
 
         else {

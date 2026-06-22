@@ -2,12 +2,11 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Impacts, MetaData}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.CTSLiteService
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.{Component, Service}
-import org.springframework.web.client.RestOperations
 
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
@@ -177,13 +176,8 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
 
   // CTS-Lite cannot return a MOL, but it can translate an InChIKey to an InChI or SMILES
   // which we then convert to a structure locally with the CDK
-  val CTS_LITE_URL: String = "https://cts-lite.metabolomics.us/match"
-
-  // Standard InChIKey layout: 14 letters, 10 letters and a final letter, separated by dashes
-  val INCHIKEY_PATTERN: String = "[A-Z]{14}-[A-Z]{10}-[A-Z]"
-
   @Autowired
-  protected val restOperations: RestOperations = null
+  protected val ctsLiteService: CTSLiteService = null
 
   def process(compound: Compound, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
     val inchikey: String =
@@ -192,61 +186,27 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
       else
         compound.getMetaData.asScala.filter(_.getName.toLowerCase == CommonMetaData.INCHI_KEY.toLowerCase).map(_.getValue.toString).headOption.orNull
 
-    // Only call out for a syntactically valid InChIKey. A garbage value can make CTS-Lite hang
-    // while it tries to interpret what kind of identifier it is
-    if (inchikey == null || inchikey.isEmpty) {
-      logger.info(s"$id: No InChIKey found")
-      (null, null)
-    } else if (!inchikey.matches(INCHIKEY_PATTERN)) {
-      logger.info(s"$id: Skipping InChIKey lookup, '$inchikey' is not a valid InChIKey")
-      (null, null)
-    } else {
-      logger.info(s"$id: Resolving structure by InChIKey ($inchikey) via CTS-Lite, invoking url $CTS_LITE_URL")
+    ctsLiteService.matchInChIKey(inchikey, id) match {
+      case Some(structure) =>
+        // Prefer the InChI, falling back to the SMILES, to build the molecule locally
+        val fromInchi: IAtomContainer =
+          if (structure.inchi != null && structure.inchi.nonEmpty) compoundConversion.inchiToMolecule(structure.inchi) else null
 
-      try {
-        val response: ResponseEntity[Array[CTSLiteResult]] =
-          restOperations.postForEntity(CTS_LITE_URL, CTSLiteRequest(inchikey), classOf[Array[CTSLiteResult]])
+        val molecule: IAtomContainer =
+          if (fromInchi != null) fromInchi
+          else if (structure.smiles != null && structure.smiles.nonEmpty) compoundConversion.smilesToMolecule(structure.smiles)
+          else null
 
-        val matched: Option[CTSLiteMatch] = Option(response.getBody)
-          .flatMap(_.headOption)
-          .filter(_.found_match)
-          .flatMap(result => Option(result.matches))
-          .flatMap(_.headOption)
-
-        matched match {
-          case Some(structure) =>
-            // Prefer the InChI, falling back to the SMILES, to build the molecule locally
-            val fromInchi: IAtomContainer =
-              if (structure.inchi != null && structure.inchi.nonEmpty) compoundConversion.inchiToMolecule(structure.inchi) else null
-
-            val molecule: IAtomContainer =
-              if (fromInchi != null) fromInchi
-              else if (structure.smiles != null && structure.smiles.nonEmpty) compoundConversion.smilesToMolecule(structure.smiles)
-              else null
-
-            if (molecule != null) {
-              logger.info(s"$id: Resolved structure from InChIKey lookup")
-              (compoundConversion.generateMolDefinition(molecule), molecule)
-            } else {
-              logger.info(s"$id: InChIKey lookup returned a match but no usable structure")
-              (null, null)
-            }
-
-          case None =>
-            logger.info(s"$id: No InChIKey match found on CTS-Lite for $inchikey")
-            (null, null)
-        }
-      } catch {
-        case e: Throwable =>
-          logger.error(s"$id: Error during InChIKey lookup: ${e.getMessage}")
+        if (molecule != null) {
+          logger.info(s"$id: Resolved structure from InChIKey lookup")
+          (compoundConversion.generateMolDefinition(molecule), molecule)
+        } else {
+          logger.info(s"$id: InChIKey lookup returned a match but no usable structure")
           (null, null)
-      }
+        }
+
+      case None =>
+        (null, null)
     }
   }
 }
-
-case class CTSLiteRequest(queries: String)
-
-case class CTSLiteMatch(inchikey: String, inchi: String, smiles: String)
-
-case class CTSLiteResult(found_match: Boolean, match_level: String, matches: Array[CTSLiteMatch], error_message: String)

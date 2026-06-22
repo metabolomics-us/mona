@@ -14,7 +14,7 @@ export const environment = {
   google_analytics: '',
   loggerLevel: NgxLoggerLevel.DEBUG,
   serverLevel: NgxLoggerLevel.OFF,
-  ctsUrl: 'http://cts.fiehnlab.ucdavis.edu'
+  ctsLiteUrl: 'https://cts-lite.metabolomics.us'
 };
 
 /*

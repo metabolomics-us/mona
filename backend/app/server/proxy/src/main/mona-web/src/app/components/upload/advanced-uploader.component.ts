@@ -9,7 +9,6 @@ import {FilterPipe} from '../../filters/filter.pipe';
 import {ElementRef} from '@angular/core';
 import {Location} from '@angular/common';
 import {UploadLibraryService} from '../../services/upload/upload-library.service';
-import {CtsService} from 'angular-cts-service/dist/cts-lib';
 import {TagService} from '../../services/persistence/tag.resource';
 import {AsyncService} from '../../services/upload/async.service';
 import {NGXLogger} from 'ngx-logger';
@@ -109,7 +108,7 @@ export class AdvancedUploaderComponent implements OnInit{
   };
 
 	constructor( public authenticationService: AuthenticationService,  public location: Location,
-				          public uploadLibraryService: UploadLibraryService,  public ctsService: CtsService,
+				          public uploadLibraryService: UploadLibraryService,
 				          public tagService: TagService,  public asyncService: AsyncService,  public logger: NGXLogger,
 				          public element: ElementRef, public filterPipe: FilterPipe,  public http: HttpClient,
               public router: Router, public modalService: NgbModal, public toaster: ToasterService,
@@ -418,15 +417,6 @@ export class AdvancedUploaderComponent implements OnInit{
               };
             });
 
-            // Get structure from InChIKey if no InChI is provided
-            if (typeof spectrum.inchiKey !== 'undefined' && typeof spectrum.inchi === 'undefined') {
-              this.ctsService.convertInchiKeyToMol(spectrum.inchiKey, (molecule) => {
-                if (molecule !== null) {
-                  spectrum.molFile = molecule;
-                }
-              }, undefined);
-            }
-
             // Remove annotations and origin from metadata
             spectrum.hiddenMetadata = spectrum.meta.filter((metadata) => {
               return metadata.name === 'origin' || (typeof metadata.category !== 'undefined' && metadata.category === 'annotation');
@@ -570,15 +560,6 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
-  // Was not working anymore 8/29/2025
-	// convertMolToInChI() {
-	// 	if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
-	// 	  this.ctsService.convertToInchiKey(this.currentSpectrum.molFile, (result) => {
-	// 			this.currentSpectrum.inchiKey = result.inchikey;
-	// 		}, undefined);
-	// 	}
-	// }
-
   /**
    * Pull names from CTS given an InChIKey and update the currentSpectrum
    */
@@ -676,27 +657,6 @@ export class AdvancedUploaderComponent implements OnInit{
   }
 
   /**
-   * Convert an array of names to an InChIKey based on the first result
-   * @param names array of compound names
-   * @param callback callback function to get name
-   */
-  namesToInChIKey(names, callback) {
-    if (names.length === 0) {
-      callback(null);
-    } else {
-      this.compoundConversionService.nameToInChIKey(names[0], (molecule) => {
-        if (molecule !== null) {
-          callback(molecule);
-        } else {
-          this.namesToInChIKey(names.slice(1), callback);
-        }
-      }, (error) => {
-        this.namesToInChIKey(names.slice(1), callback);
-      });
-    }
-  }
-
-  /**
    * Generate MOL file from available compound information
    */
   retrieveCompoundData() {
@@ -736,19 +696,10 @@ export class AdvancedUploaderComponent implements OnInit{
       this.processInChIKey(this.currentSpectrum.inchiKey);
     }
 
-    // Process names
-    else if (this.currentSpectrum.names.length > 0) {
-      this.namesToInChIKey(this.currentSpectrum.names, (inchiKey) => {
-        this.logger.debug('Name to inchikey response: ' + inchiKey);
-        if (inchiKey !== null) {
-          this.logger.info('Found InChIKey: ' + inchiKey);
-          this.currentSpectrum.inchiKey = inchiKey;
-          this.processInChIKey(inchiKey);
-        } else {
-          this.compoundError = 'Unable to find a match for provided name!';
-          this.compoundProcessing = false;
-        }
-      });
+    // A compound name on its own can no longer be resolved to a structure since the CTS name lookup was retired and converted to CTS-Lite
+    else if (this.currentSpectrum.names.some((name) => name && name.trim() !== '')) {
+      this.compoundError = 'A compound name on its own can no longer be resolved. Please also provide an InChI, InChIKey, SMILES, or MOL/SDF file.';
+      this.compoundProcessing = false;
     }
 
     else {

@@ -3,69 +3,65 @@
  */
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {CtsService} from 'angular-cts-service/dist/cts-lib';
-import {ChemifyService} from 'angular-cts-service/dist/cts-lib';
 import {NGXLogger} from 'ngx-logger';
 import {Injectable} from '@angular/core';
 
 @Injectable()
 export class CompoundConversionService{
     private apiUrl;
-    constructor(public ctsService: CtsService, public chemifyService: ChemifyService,
-                public logger: NGXLogger, public http: HttpClient) {
-      this.apiUrl = environment.ctsUrl;
+    constructor(public logger: NGXLogger, public http: HttpClient) {
+      this.apiUrl = environment.ctsLiteUrl;
     }
 
     /**
-     * Converts the given name to an InChIKey via Chemify
+     * Look up the first CTS-Lite match for an InChIKey. CTS-Lite returns a 200 with found_match false when
+     * the key is unknown, so a miss surfaces through the error callback like any other failure
      */
-    nameToInChIKey(name, callback, errorCallback) {
-      const oldCtsUrl = 'https://oldcts.fiehnlab.ucdavis.edu';
+    private matchInChIKey(inchiKey, callback, errorCallback) {
+      this.http.post(`${this.apiUrl}/match`, {queries: inchiKey}).subscribe(
+        (res: any) => {
+          if (Array.isArray(res) && res.length > 0 && res[0].found_match && res[0].matches && res[0].matches.length > 0) {
+            callback(res[0].matches[0]);
+          } else {
+            errorCallback({status: 200});
+          }
+        },
+        (error) => errorCallback(error)
+      );
+    }
 
-      // Handle empty name provided
-      if (name.trim() === '') {
-        callback('');
-        return;
-      }
-
-      this.http.get(`${oldCtsUrl}/chemify/rest/identify/${name}`)
-        .subscribe(
-          (res: any) => callback(res[0].result),
-          (err) => errorCallback(err)
+    /**
+     * Returns the compound name for a given InChIKey from CTS-Lite
+     */
+    InChIKeyToName(inchiKey, callback, errorCallback) {
+        this.matchInChIKey(
+          inchiKey,
+          (match) => {
+            if (match.compound_name) {
+              callback([match.compound_name]);
+            } else {
+              errorCallback({status: 200});
+            }
+          },
+          errorCallback
         );
     }
 
     /**
-     * Returns high ranking names for given InChIKey from the CTS
-     */
-    InChIKeyToName(inchiKey, callback, errorCallback) {
-        this.http.get(`${this.apiUrl}/rest/convert/InChIKey/Chemical%20Name/${inchiKey}`).subscribe(
-            (res: any) => {
-                if (res.length > 0 && res[0].results.length > 0) {
-                    // callback(res[0].results);
-                    callback(res[0].results.slice(0, 5));
-                } else {
-                    errorCallback({status: 200});
-                }
-            },  (error) => {
-                errorCallback(error);
-            });
-    }
-
-    /**
-     * Look up the InChI for given InChIKey from the CTS
+     * Look up the InChI for given InChIKey from CTS-Lite
      */
     getInChIByInChIKey(inchiKey, callback, errorCallback) {
-        this.http.get(`${this.apiUrl}/rest/convert/InChIKey/InChI%20Code/${inchiKey}`).subscribe(
-            (response: any) => {
-                if (response.length > 0 && response[0].results.length > 0) {
-                    callback(response[0].results);
-                } else {
-                    errorCallback({status: 200});
-                }
-            }, (error) => {
-                errorCallback(error);
-        });
+        this.matchInChIKey(
+          inchiKey,
+          (match) => {
+            if (match.inchi) {
+              callback([match.inchi]);
+            } else {
+              errorCallback({status: 200});
+            }
+          },
+          errorCallback
+        );
     }
 
     /**

@@ -7,8 +7,6 @@
 import {NGXLogger} from 'ngx-logger';
 import {MspParserLibService} from 'angular-msp-parser/dist/msp-parser-lib';
 import {MgfParserLibService} from 'angular-mgf-parser/dist/mgf-parser-lib';
-import {ChemifyService} from 'angular-cts-service/dist/cts-lib';
-import {CtsService} from 'angular-cts-service/dist/cts-lib';
 import {AuthenticationService} from '../authentication.service';
 import {MassbankParserLibService} from 'angular-massbank-parser/dist/massbank-parser-lib';
 import {HttpClient} from '@angular/common/http';
@@ -37,8 +35,6 @@ export class UploadLibraryService{
     constructor(public logger: NGXLogger,
                 public mspParserLibService: MspParserLibService,
                 public mgfParserLibService: MgfParserLibService,
-                public chemifyService: ChemifyService,
-                public ctsService: CtsService,
                 public authenticationService: AuthenticationService,
                 public massbankParserLibService: MassbankParserLibService,
                 public http: HttpClient,
@@ -54,90 +50,21 @@ export class UploadLibraryService{
     }
 
     /**
-     * obtains a promise for us to get to the an inchi key for a spectra object
+     * Resolves a spectrum for upload. CTS-based structure enrichment was removed because curation now
+     * resolves the InChI, MOL, SMILES and name server-side from any provided identifier, so we only need
+     * to confirm the spectrum carries a structure to work from. A compound name on its own cannot be
+     * resolved since the CTS name lookup was retired and replaced with CTS-Lite
      * @param spectra type object
-     * @returns observable to subscribe to
+     * @returns promise that resolves with the spectrum, or rejects when no structure identifier is present
      */
      obtainKey(spectra): Promise<any> {
-        /**
-         * helper function to resolve the correct inchi by name
-         * @param spectra type object
-         */
-        const resolveByName = (spec, resolve, reject) => {
-            if (spec.name) {
-              // TODO: chemifyService is outdated, uses wrong URL (needs oldcts.fiehnlab...),
-              //  uses old nameToInChIKey function here, look at new version
-              //  written in compound-conversion.service.ts (8/28/25)
-                this.chemifyService.nameToInChIKey(spec.name, (key) => {
-                    if (key === null) {
-                        reject('sorry no InChI Key found for ' + spec.name + ', at name to InChI key!');
-                    }
-                    else {
-                        spec.inchiKey = key;
-                        resolve(spec);
-                    }
-                }, undefined);
-            }
-
-            // if we have a bunch of names
-            else if (spec.names && spec.names.length > 0) {
-
-                // TODO: chemifyService is outdated, uses wrong URL (needs oldcts.fiehnlab...),
-                //  uses old nameToInChIKey function here, look at new version
-                //  written in compound-conversion.service.ts (8/28/25)
-                this.chemifyService.nameToInChIKey(spec.names[0], (key) => {
-                    if (key === null) {
-                        reject('sorry no InChI Key found for ' + spec.names[0] + ', at names to InChI key!');
-                    }
-                    else {
-                        spec.inchiKey = key;
-                        resolve(spec);
-                    }
-                }, undefined);
-            }
-
-            // we got nothing so we give up
-            else {
-                reject('sorry, the given object was invalid. We need a name, InChI code, InChI Key, or an array with names for this to work!');
-            }
-        };
-
-        const myPromise = new Promise((resolve, reject) => {
-            if (spectra.inchi) {
-                // no work needed
+        return new Promise((resolve, reject) => {
+            if (spectra.inchi || spectra.inchiKey || spectra.smiles) {
                 resolve(spectra);
-            }
-            // in case we got a smiles
-            else if (spectra.smiles) {
-                this.ctsService.convertSmileToInChICode(spectra.smiles, (data) => {
-                    spectra.inchi = data.inchicode;
-                    spectra.inchiKey = data.inchikey;
-
-                    resolve(spectra);
-                }, undefined);
-            }
-
-            // in case we got an inchi
-            else if (spectra.inchiKey) {
-                this.ctsService.convertInchiKeyToMol(spectra.inchiKey, (molecule) => {
-                    if (molecule === null && spectra.inchi === null) {
-                        resolveByName(spectra, resolve, reject);
-                    }
-                    else {
-                        if (molecule !== null) {
-                            spectra.molFile = molecule;
-                        }
-                        resolve(spectra);
-                    }
-                }, undefined);
-            }
-
-            else {
-                resolveByName(spectra, resolve, reject);
+            } else {
+                reject('sorry, the given object was invalid. We need an InChI code, InChIKey, or SMILES for this to work!');
             }
         });
-
-        return myPromise;
     }
 
     /**
@@ -161,8 +88,8 @@ export class UploadLibraryService{
             else {
                 // get the key
                 this.obtainKey(spectrumObject).then((spectrumWithKey: any) => {
-                    // only if we have an inchi or a molfile we can submit this file
-                    if (spectrumWithKey.inchi !== null || spectrumWithKey.molFile !== null) {
+                    // submit as long as we have a structure identifier, curation resolves the rest server-side
+                    if (spectrumWithKey.inchi || spectrumWithKey.molFile || spectrumWithKey.inchiKey || spectrumWithKey.smiles) {
                         this.submitSpectrum(spectrumWithKey, submitter, saveSpectrumCallback, additionalData).then((submittedSpectra) => {
                             resolve(submittedSpectra);
                         });
@@ -170,7 +97,7 @@ export class UploadLibraryService{
 
                     else {
                         this.logger.error('invalid ' + JSON.stringify(spectrumWithKey));
-                        reject(new Error('dropped object from submission, since it was declared invalid, it had neither an InChI or a Molfile, which means the provide InChI key most likely was not found!'));
+                        reject(new Error('dropped object from submission, since it was declared invalid, it had no InChI, InChIKey, SMILES or MOL file to resolve a structure from!'));
                     }
                 }).catch((error) => {
                     this.logger.warn(error + '\n' + JSON.stringify(spectrumObject));

@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{Workflow, WorkflowBuilder}
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.{CalculateCompoundProperties, ResolveCompoundNames}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.adduct.AdductPrediction
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.ClassyfireProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
@@ -81,7 +81,7 @@ class CurationConfig extends LazyLogging {
     * @return
     */
   @Bean
-  def curationWorkflow(classifierProcessor: ClassyfireProcessor, calculateCompoundProperties: CalculateCompoundProperties): ItemProcessor[Spectrum, Spectrum] = {
+  def curationWorkflow(classifierProcessor: ClassyfireProcessor, calculateCompoundProperties: CalculateCompoundProperties, resolveCompoundNames: ResolveCompoundNames): ItemProcessor[Spectrum, Spectrum] = {
     val flow: Workflow[Spectrum] = WorkflowBuilder
       .create[Spectrum]
       .enableAnnotationLinking(false)
@@ -92,6 +92,7 @@ class CurationConfig extends LazyLogging {
 
           // Compound curation
           calculateCompoundProperties,
+          resolveCompoundNames,
           classifierProcessor,
 
           // Spectrum-level curation

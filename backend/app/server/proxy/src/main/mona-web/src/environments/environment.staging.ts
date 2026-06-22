@@ -8,5 +8,5 @@ export const environment = {
   google_analytics: 'UA-87692241-2',
   loggerLevel: NgxLoggerLevel.INFO,
   serverLevel: NgxLoggerLevel.OFF,
-  ctsUrl: 'http://cts.fiehnlab.ucdavis.edu'
+  ctsLiteUrl: 'https://cts-lite.metabolomics.us'
 };
