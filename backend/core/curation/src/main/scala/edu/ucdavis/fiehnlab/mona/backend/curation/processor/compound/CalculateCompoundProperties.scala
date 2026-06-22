@@ -5,7 +5,6 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Impacts, MetaData, Score, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Tag
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.FetchCTSCompoundData
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.batch.item.ItemProcessor
@@ -17,7 +16,7 @@ import scala.jdk.CollectionConverters._
 /**
   * Created by sajjan on 4/4/16.
   */
-@Step(description = "this step calculates the compound properties using the CDK", previousClass = classOf[FetchCTSCompoundData], workflow = "spectra-curation")
+@Step(description = "this step calculates the compound properties using the CDK", workflow = "spectra-curation")
 class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   @Autowired

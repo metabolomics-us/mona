@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Impacts, MetaDat
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.{HttpStatus, ResponseEntity}
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.{Component, Service}
 import org.springframework.web.client.RestOperations
 
@@ -33,57 +33,36 @@ class CompoundProcessor extends LazyLogging {
 
   def process(compound: Compound, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
 
-    val molProcessorResult =
+    def attempt(processor: AbstractCompoundProcessor): (String, IAtomContainer) =
       try {
-        molProcessor.process(compound, id, impacts)
+        processor.process(compound, id, impacts)
       } catch {
         case e: Exception =>
           e.printStackTrace()
-          null
+          (null, null)
       }
 
-    val inchiProcessorResult =
-      try {
-        inchiProcessor.process(compound, id, impacts)
-      } catch {
-        case e: Exception =>
-          e.printStackTrace()
-          null
-      }
+    def isValid(result: (String, IAtomContainer)): Boolean = result != null && result._1 != null && result._2 != null
 
-    val smilesProcessorResult =
-      try {
-        smilesProcessor.process(compound, id, impacts)
-      } catch {
-        case e: Exception =>
-          e.printStackTrace()
-          null
-      }
+    // Try each structure source in priority order, stopping at the first that yields a molecule.
+    // The InChIKey lookup is an external call, so it only runs as a last resort when no structure
+    // is already present on the record
+    val sources: Seq[(String, AbstractCompoundProcessor)] = Seq(
+      ("Using provided MOL definition", molProcessor),
+      ("Using provided InChI to resolve MOL definition", inchiProcessor),
+      ("Using provided SMILES to resolve MOL definition", smilesProcessor),
+      ("Using provided InChIKey to resolve MOL definition", inchikeyProcessor)
+    )
 
-    val inchikeyProcessorResult =
-      try {
-        inchikeyProcessor.process(compound, id, impacts)
-      } catch {
-        case e: Exception =>
-          e.printStackTrace()
-          null
-      }
-
-    if (molProcessorResult._1 != null && molProcessorResult._2 != null) {
-      logger.info(s"$id: Using provided MOL definition")
-      molProcessorResult
-    } else if (inchiProcessorResult._1 != null && inchiProcessorResult._2 != null) {
-      logger.info(s"$id: Using provided InChI")
-      inchiProcessorResult
-    } else if (smilesProcessorResult._1 != null && smilesProcessorResult._2 != null) {
-      logger.info(s"$id: Using provided SMILES")
-      smilesProcessorResult
-    } else if (inchikeyProcessorResult._1 != null && inchikeyProcessorResult._2 != null) {
-      logger.info(s"$id: Using provided InChIKey")
-      inchikeyProcessorResult
-    } else {
-      logger.warn(s"$id: Unable to generate CDK molecule")
-      (null, null)
+    sources.iterator
+      .map { case (message, processor) => (message, attempt(processor)) }
+      .find { case (_, result) => isValid(result) } match {
+      case Some((message, result)) =>
+        logger.info(s"$id: $message")
+        result
+      case None =>
+        logger.warn(s"$id: Unable to generate CDK molecule")
+        (null, null)
     }
   }
 
@@ -196,7 +175,9 @@ class CompoundSMILESProcessor extends AbstractCompoundProcessor with LazyLogging
 @Component
 class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
 
-  val CTS_URL: String = "http://oldcts.fiehnlab.ucdavis.edu/service/inchikeytomol/"
+  // CTS-Lite cannot return a MOL, but it can translate an InChIKey to an InChI or SMILES
+  // which we then convert to a structure locally with the CDK
+  val CTS_LITE_URL: String = "https://cts-lite.metabolomics.us/match"
 
   @Autowired
   protected val restOperations: RestOperations = null
@@ -210,25 +191,40 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
 
     // Lookup InChIKey
     if (inchikey != null && !inchikey.isEmpty) {
-      logger.info(s"$id: Looking up MOL definition by InChIKey on CTS, invoking url $CTS_URL$inchikey")
+      logger.info(s"$id: Resolving structure by InChIKey on CTS-Lite, invoking url $CTS_LITE_URL")
 
       try {
-        val response: ResponseEntity[CTSInChIKeyLookupResponse] = restOperations.getForEntity(CTS_URL + inchikey, classOf[CTSInChIKeyLookupResponse])
+        val response: ResponseEntity[Array[CTSLiteResult]] =
+          restOperations.postForEntity(CTS_LITE_URL, CTSLiteRequest(inchikey), classOf[Array[CTSLiteResult]])
 
-        if (response.getStatusCode == HttpStatus.OK) {
-          val molDefinition: String = response.getBody.molecule
-          val molecule: IAtomContainer = compoundConversion.parseMolDefinition(molDefinition)
+        val matched: Option[CTSLiteMatch] = Option(response.getBody)
+          .flatMap(_.headOption)
+          .filter(_.found_match)
+          .flatMap(result => Option(result.matches))
+          .flatMap(_.headOption)
 
-          if (molDefinition != null && molDefinition.nonEmpty) {
-            logger.info(s"$id: Request successful, parsing MOL definition")
-            (compoundConversion.generateMolDefinition(molecule), molecule)
-          } else {
-            logger.info(s"$id: InChIKey lookup failed, ${response.getBody.message}")
+        matched match {
+          case Some(structure) =>
+            // Prefer the InChI, falling back to the SMILES, to build the molecule locally
+            val fromInchi: IAtomContainer =
+              if (structure.inchi != null && structure.inchi.nonEmpty) compoundConversion.inchiToMolecule(structure.inchi) else null
+
+            val molecule: IAtomContainer =
+              if (fromInchi != null) fromInchi
+              else if (structure.smiles != null && structure.smiles.nonEmpty) compoundConversion.smilesToMolecule(structure.smiles)
+              else null
+
+            if (molecule != null) {
+              logger.info(s"$id: Resolved structure from InChIKey lookup")
+              (compoundConversion.generateMolDefinition(molecule), molecule)
+            } else {
+              logger.info(s"$id: InChIKey lookup returned a match but no usable structure")
+              (null, null)
+            }
+
+          case None =>
+            logger.info(s"$id: No InChIKey match found on CTS-Lite for $inchikey")
             (null, null)
-          }
-        } else {
-          logger.info(s"$id: InChIKey lookup failed with status code ${response.getStatusCode}")
-          (null, null)
         }
       } catch {
         case e: Throwable =>
@@ -242,4 +238,8 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
   }
 }
 
-case class CTSInChIKeyLookupResponse(molecule: String, message: String)
+case class CTSLiteRequest(queries: String)
+
+case class CTSLiteMatch(inchikey: String, inchi: String, smiles: String)
+
+case class CTSLiteResult(found_match: Boolean, match_level: String, matches: Array[CTSLiteMatch], error_message: String)
