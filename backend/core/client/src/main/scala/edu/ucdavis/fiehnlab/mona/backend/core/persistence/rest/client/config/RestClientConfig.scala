@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service.RestLoginService
+import org.apache.http.client.config.RequestConfig
 import org.apache.http.conn.HttpClientConnectionManager
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
@@ -27,6 +28,16 @@ class RestClientConfig extends LazyLogging {
 
   @Value("${mona.rest.client.connections.route:1}")
   val monaMaxRouteConnections: Int = 0
+
+  // Timeouts so a slow or unresponsive external service can never hang
+  @Value("${mona.rest.client.timeout.connect:10000}")
+  val connectTimeout: Int = 0
+
+  @Value("${mona.rest.client.timeout.socket:30000}")
+  val socketTimeout: Int = 0
+
+  @Value("${mona.rest.client.timeout.connectionRequest:10000}")
+  val connectionRequestTimeout: Int = 0
 
   @Bean(name = Array[String]("monaRestServer"))
   def monaRestServer(@Value("${mona.rest.server.host:localhost}") monaServerHost: String, @Value("${mona.rest.server.port:8080}") monaServerPort: Int): String = {
@@ -52,10 +63,17 @@ class RestClientConfig extends LazyLogging {
   @Bean
   def restOperations(connectionManager: HttpClientConnectionManager): RestOperations = {
 
-    logger.info("creating rest template")
+    logger.info(s"creating rest template with connect=$connectTimeout, socket=$socketTimeout, connectionRequest=$connectionRequestTimeout (ms)")
+
+    val requestConfig: RequestConfig = RequestConfig.custom()
+      .setConnectTimeout(connectTimeout)
+      .setSocketTimeout(socketTimeout)
+      .setConnectionRequestTimeout(connectionRequestTimeout)
+      .build()
 
     val httpClient = HttpClientBuilder.create()
       .setConnectionManager(connectionManager)
+      .setDefaultRequestConfig(requestConfig)
       .build()
 
     val rest: RestTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient))

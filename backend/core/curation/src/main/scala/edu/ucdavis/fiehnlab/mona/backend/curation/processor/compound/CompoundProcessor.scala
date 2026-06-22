@@ -179,6 +179,9 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
   // which we then convert to a structure locally with the CDK
   val CTS_LITE_URL: String = "https://cts-lite.metabolomics.us/match"
 
+  // Standard InChIKey layout: 14 letters, 10 letters and a final letter, separated by dashes
+  val INCHIKEY_PATTERN: String = "[A-Z]{14}-[A-Z]{10}-[A-Z]"
+
   @Autowired
   protected val restOperations: RestOperations = null
 
@@ -189,9 +192,16 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
       else
         compound.getMetaData.asScala.filter(_.getName.toLowerCase == CommonMetaData.INCHI_KEY.toLowerCase).map(_.getValue.toString).headOption.orNull
 
-    // Lookup InChIKey
-    if (inchikey != null && !inchikey.isEmpty) {
-      logger.info(s"$id: Resolving structure by InChIKey on CTS-Lite, invoking url $CTS_LITE_URL")
+    // Only call out for a syntactically valid InChIKey. A garbage value can make CTS-Lite hang
+    // while it tries to interpret what kind of identifier it is
+    if (inchikey == null || inchikey.isEmpty) {
+      logger.info(s"$id: No InChIKey found")
+      (null, null)
+    } else if (!inchikey.matches(INCHIKEY_PATTERN)) {
+      logger.info(s"$id: Skipping InChIKey lookup, '$inchikey' is not a valid InChIKey")
+      (null, null)
+    } else {
+      logger.info(s"$id: Resolving structure by InChIKey ($inchikey) via CTS-Lite, invoking url $CTS_LITE_URL")
 
       try {
         val response: ResponseEntity[Array[CTSLiteResult]] =
@@ -231,9 +241,6 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
           logger.error(s"$id: Error during InChIKey lookup: ${e.getMessage}")
           (null, null)
       }
-    } else {
-      logger.info(s"$id: No InChIKey found")
-      (null, null)
     }
   }
 }
