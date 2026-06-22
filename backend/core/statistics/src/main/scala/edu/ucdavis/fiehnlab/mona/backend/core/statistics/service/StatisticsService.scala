@@ -157,7 +157,7 @@ class StatisticsService extends LazyLogging {
     **/
 
   def updateGlobalStatistics(): String = {
-    globalStatisticsRepository.deleteAll()
+    globalStatisticsRepository.deleteAllInBatch()
     // Spectrum count
     val spectrumCount: Long = spectrumPersistenceService.count()
     val compoundCount: Long = generateCompoundCount()

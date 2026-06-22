@@ -64,7 +64,10 @@ class MetaDataStatisticsService extends LazyLogging{
     */
   @Transactional
   def updateMetaDataStatistics(): String = {
-    statisticsMetaDataRepository.deleteAll()
+    // Bulk delete child value counts first, then parent rows, in single statements
+    // rather than loading every entity into the persistence context to delete it
+    statisticsMetaDataRepository.deleteAllMetaDataValueCountsInBatch()
+    statisticsMetaDataRepository.deleteAllInBatch()
     val metaDataNameMap: Map[String, Map[String, Int]] = Map()
     val metaDataCounterMap: Map[String, Int] = Map()
     var counter = 0

@@ -38,7 +38,7 @@ class TagStatisticsService extends LazyLogging{
    * */
   @Transactional
   def updateTagStatistics(): String = {
-    statisticsTagRepository.deleteAll()
+    statisticsTagRepository.deleteAllInBatch()
 
     val tagsCounter: Map[String, Int] = Map()
     val tagsRuleBase: Map[String, Boolean] = Map()

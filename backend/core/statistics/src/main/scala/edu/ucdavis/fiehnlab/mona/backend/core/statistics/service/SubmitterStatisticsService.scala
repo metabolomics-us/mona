@@ -28,7 +28,7 @@ class SubmitterStatisticsService extends LazyLogging{
 
   @Transactional
   def updateSubmitterStatistics(): String = {
-    statisticsSubmitterRepository.deleteAll()
+    statisticsSubmitterRepository.deleteAllInBatch()
     val submitterObjects: Map[String, SpectrumSubmitterStatistics] = Map()
     val submitterCounter: Map[String, Integer] = Map()
     val submitterScores: Map[String, ListBuffer[Double]] = Map()
