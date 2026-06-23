@@ -17,7 +17,7 @@ import {Component, OnInit} from '@angular/core';
                     <span style="color: white; white-space: nowrap; font-style: italic; font-weight: bold;" [textContent]="spectraUploadProgressString"></span>
                 </ngb-progressbar>
             </p>
-            <div class="text-center" *ngIf="showETA">{{etaString}}<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> </div>
+            <div class="text-center" *ngIf="showETA">{{etaString}} <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> </div>
         </div>
         <div class="text-center text-nowrap" *ngIf="spectraUploadProgress === -1"><i>No Upload Started</i></div>`,
 })
