@@ -58,7 +58,7 @@ There are three scripts in the root of the project to easily start development:
 
 **1. Start all necessary Docker microservices:**
 ```bash
-./start_docker_dev.sh
+./start_docker.sh
 ```
 
 **2. Solve CORS issues between the frontend and microservices:**
