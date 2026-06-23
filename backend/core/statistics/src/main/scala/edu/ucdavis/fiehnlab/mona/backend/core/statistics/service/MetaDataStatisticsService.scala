@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.{Propagation, Transactional}
 
 import javax.persistence.EntityManager
-import scala.collection.mutable.Map
+import scala.collection.mutable.{ListBuffer, Map}
 import scala.jdk.CollectionConverters._
-import scala.jdk.StreamConverters.StreamHasToScala
 
 
 /**
@@ -64,48 +63,33 @@ class MetaDataStatisticsService extends LazyLogging{
     */
   @Transactional
   def updateMetaDataStatistics(): String = {
+    logger.info("Aggregating metadata statistics now...")
     // Bulk delete child value counts first, then parent rows, in single statements
-    // rather than loading every entity into the persistence context to delete it
     statisticsMetaDataRepository.deleteAllMetaDataValueCountsInBatch()
     statisticsMetaDataRepository.deleteAllInBatch()
-    val metaDataNameMap: Map[String, Map[String, Int]] = Map()
+
+    // Aggregate per name/value counts in the database, then group the results by name in memory
+    val metaDataValueMap: Map[String, ListBuffer[MetaDataValueCount]] = Map()
     val metaDataCounterMap: Map[String, Int] = Map()
-    var counter = 0
 
-    metaDataRepository.streamAllBy().toScala(Iterator).foreach { metaData =>
-      if (metaDataNameMap.contains(metaData.getName)) {
-        if (metaDataNameMap(metaData.getName).contains(metaData.getValue)) {
-          metaDataNameMap(metaData.getName)(metaData.getValue) += 1
-          metaDataCounterMap(metaData.getName) += 1
-        } else {
-          metaDataNameMap(metaData.getName)(metaData.getValue) = 1
-          metaDataCounterMap(metaData.getName) += 1
-        }
-      } else {
-        metaDataNameMap(metaData.getName) = Map(metaData.getValue -> 1)
-        metaDataCounterMap(metaData.getName) = 1
-      }
-      counter += 1
-      entityManager.detach(metaData)
-
-      if (counter % 100000 == 0) {
-        logger.info(s"\tCompleted MetaData Object #${counter}")
-      }
+    metaDataRepository.aggregateValueCounts().asScala.foreach { aggregation =>
+      val count = aggregation.getCount.toInt
+      metaDataValueMap.getOrElseUpdate(aggregation.getName, ListBuffer()) += new MetaDataValueCount(aggregation.getValue, count)
+      metaDataCounterMap(aggregation.getName) = metaDataCounterMap.getOrElse(aggregation.getName, 0) + count
     }
 
-    metaDataNameMap.foreach{ case(key, value) =>
-      val metaDataValueList: List[MetaDataValueCount] = value.toList.map{case(value, count) =>
-        new MetaDataValueCount(value, count)
-      }
-      val entry = new StatisticsMetaData(key, metaDataCounterMap(key), metaDataValueList.asJava)
+    metaDataValueMap.foreach { case (name, valueCounts) =>
+      val entry = new StatisticsMetaData(name, metaDataCounterMap(name), valueCounts.toList.asJava)
       statisticsMetaDataRepository.save(entry)
       entityManager.detach(entry)
-
     }
-    metaDataNameMap.clear()
+    val nameCount = metaDataValueMap.size
+    val valuePairCount = metaDataValueMap.valuesIterator.map(_.size).sum
+    metaDataValueMap.clear()
     metaDataCounterMap.clear()
     entityManager.flush()
     entityManager.clear()
+    logger.info(s"Metadata statistics complete: $nameCount names, $valuePairCount value pairs")
     "MetaData Statistics Updated"
   }
 }

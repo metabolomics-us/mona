@@ -56,6 +56,7 @@ class CompoundClassStatisticsService extends LazyLogging{
     */
   @Transactional
   def updateCompoundClassStatistics(): String = {
+    logger.info("Aggregating compound class statistics now...")
     val finalMap: Map[String, Map[String, ArrayBuffer[String]]] = Map()
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
     val compoundClasses: Map[String, String] = Map()
@@ -119,12 +120,14 @@ class CompoundClassStatisticsService extends LazyLogging{
       statisticsCompoundClassesRepository.save(statsCompoundClass)
       entityManager.detach(statsCompoundClass)
     }
+    val classCount = finalMap.size
     finalMap.clear()
     inchiKeys.clearAndShrink()
     compoundClasses.clear()
     compoundClassString.clearAndShrink()
     entityManager.flush()
     entityManager.clear()
+    logger.info(s"Compound class statistics complete: $classCount classes")
     "Compound Class Statistics Completed"
   }
 }
