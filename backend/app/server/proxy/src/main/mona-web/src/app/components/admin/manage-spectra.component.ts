@@ -27,6 +27,8 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
   deleteSubscription: Subscription;
   deletionPollSubscription: Subscription;
   deletionJob: any;
+  // Human readable label for what is being deleted (selected library names), shown alongside progress
+  deletionLabel: string;
   removeIDs: string;
   constructor(public auth: AuthenticationService, public tagService: TagService,
               public logger: NGXLogger, public spectraQueryBuilderService: SpectraQueryBuilderService,
@@ -42,6 +44,7 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     this.deleteSubscription = null;
     this.deletionPollSubscription = null;
     this.deletionJob = null;
+    this.deletionLabel = null;
     this.libraryTags = [];
     this.removeIDs = null;
     this.hidePasswords = true;
@@ -87,7 +90,7 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
           this.toaster.pop({
             type: 'success',
             title: 'Deletion Complete!',
-            body: `Deleted ${job.deleted}${job.skipped > 0 ? ', skipped ' + job.skipped : ''} spectra. The library list refreshes shortly.`
+            body: `Deleted ${job.deleted}${job.skipped > 0 ? ', skipped ' + job.skipped : ''} spectra${this.deletionLabel ? ' from ' + this.deletionLabel : ''}. The library list will refresh shortly.`
           });
           this.refreshTags();
         } else {
@@ -144,6 +147,8 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
         this.spectraQueryBuilderService.addTagToQuery(libraryTags, undefined);
       }
 
+      this.deletionLabel = libraryTags.join(', ');
+
       this.deleteSubscription = this.spectrum.batchDelete({
         query: this.spectraQueryBuilderService.getFilter()
       }, this.auth.getCurrentUser().accessToken)
@@ -169,6 +174,7 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     if (this.auth.isAdmin()) {
       if (this.removeIDs !== null) {
         const parsed = this.removeIDs.replace(/\s+/g, '').split(',');
+        this.deletionLabel = null;
         this.spectrum.batchDeleteByIds(parsed, this.auth.getCurrentUser().accessToken).subscribe((job: any) => {
           this.deletionJob = job;
           this.toaster.pop({
