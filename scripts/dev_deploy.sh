@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# dev-deploy.sh — rebuild and redeploy one or more MoNA services locally
+# Rebuild and redeploy one or more MoNA services locally
 #
 # Usage:
-#   ./dev-deploy.sh <service> [service2 ...]
+#   ./dev_deploy.sh <service> [service2 ...]
 #
 # Services:
 #   persistence     backend/core/rest/persistence-server
@@ -24,9 +24,9 @@
 #   --clean       Run clean before install (forces full recompile)
 #
 # Examples:
-#   ./dev-deploy.sh persistence
-#   ./dev-deploy.sh persistence auth
-#   ./dev-deploy.sh --dry-run persistence auth
+#   ./dev_deploy.sh persistence
+#   ./dev_deploy.sh persistence auth
+#   ./dev_deploy.sh --dry-run persistence auth
 
 set -euo pipefail
 
@@ -44,7 +44,7 @@ BOLD='\033[1m'
 DIM='\033[2m'
 RESET='\033[0m'
 
-REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BACKEND_ROOT="$REPO_ROOT/backend"
 COMPOSE_FILE="$BACKEND_ROOT/docker-compose-dev.yml"
 DOCKER_TAG="dev"

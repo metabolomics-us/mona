@@ -54,7 +54,7 @@ You'll need a `settings.xml` for your Maven User Settings File — this includes
 
 ## Starting Development
 
-There are three scripts in the root of the project to easily start development:
+There are four scripts in the `./scripts/` dir to easily get you started with development:
 
 **1. Start all necessary Docker microservices:**
 ```bash
@@ -69,6 +69,11 @@ There are three scripts in the root of the project to easily start development:
 **3. Start the Angular frontend with live reload at `localhost:9090`:**
 ```bash
 ./start_frontend.sh
+```
+
+**4. Rebuild and redeploy microservices during dev:**
+```bash
+./dev_deploy.sh   # see usage
 ```
 
 ### AWS CloudWatch logging
@@ -123,7 +128,7 @@ MoNA is a microservices application. All services run as Docker containers.
 
 ## Backups
 
-The `generate_backup.sh` script is used to generate backups of the postgres database on Gose. It is run monthly with cron. See the script for more details.
+The `./scripts/generate_backup.sh` script is used to generate backups of the postgres database on Gose. It is run monthly with cron. See the script for more details.
 
 ---
 
@@ -152,7 +157,7 @@ Select the module to build using the folder dropdown in IntelliJ's Maven build w
 | Command | What it does |
 |---|---|
 | `mvn clean install` | Builds a local Docker image tagged `test` (configurable via `<docker.tag>` in root `pom.xml`); also builds with `latest` and version tags |
-| `./deploy_to_docker.sh` | Pushes the production images to ECR |
+| `./push_to_ecr.sh` | Pushes the production images to ECR |
 | `docker push <image_name>:<tag>` | Pushes a single image to ECR |
 
 Ensure you have logged in to the AWS CLI before pushing to ECR.

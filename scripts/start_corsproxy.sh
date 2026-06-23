@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Setup proxy to connect frontend to microservices backend
+# Setup proxy to connect frontend to microservices backend
 echo "============================="
 echo "        STARTING CORS        "
 echo "============================="

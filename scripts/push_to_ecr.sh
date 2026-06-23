@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo "============================="
-echo "      DEPLOYING IMAGES       "
-echo "============================="
+echo "============================"
+echo "       PUSHING IMAGES       "
+echo "============================"
 
 docker push public.ecr.aws/fiehnlab/mona-auth-server:prod
 docker push public.ecr.aws/fiehnlab/mona-bootstrap:prod

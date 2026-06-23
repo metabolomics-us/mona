@@ -15,7 +15,7 @@ nginx_v2/
 pom.xml.bak
 release.txt
 .planning
-dependencies.md
+.dependencies.md
 .project
 .settings/
 .bloop
