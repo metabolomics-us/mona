@@ -47,7 +47,7 @@ export class SpectraUploadProgressComponent implements OnInit{
             this.uploadedSpectraCount = this.uploadLibraryService.uploadedSpectraCount;
 
             this.spectraUploadProgress = (this.completedSpectraCount / this.uploadedSpectraCount) * 100;
-            this.spectraUploadProgressString = this.spectraUploadProgress + '%';
+            this.spectraUploadProgressString = this.spectraUploadProgress.toFixed(1) + '%';
           }
           else if (!isUploading && this.uploadLibraryService.isSTP) {
             this.spectraUploadProgressString = 'Working on next batch of spectra...';
