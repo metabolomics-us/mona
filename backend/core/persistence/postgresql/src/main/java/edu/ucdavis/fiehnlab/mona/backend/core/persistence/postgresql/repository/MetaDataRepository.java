@@ -1,12 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository;
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.MetaData;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.MetaDataNameAggregation;
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.MetaDataValueAggregation;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
 import javax.persistence.QueryHint;
 
 import static org.hibernate.annotations.QueryHints.READ_ONLY;
@@ -29,14 +31,25 @@ public interface MetaDataRepository extends JpaRepository<MetaData, Long> {
     @Query("select m from MetaData m")
     public Stream<MetaData> streamAllBy();
 
-    // Aggregate the row count of every distinct metadata name/value pair in the database
+    // Aggregate the total row count for every distinct metadata name in the database
+    @QueryHints(value = {
+            @QueryHint(name = HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = READ_ONLY, value = "true")
+    })
+    @Query("SELECT new edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.MetaDataNameAggregation(m.name, count(m)) " +
+            "FROM MetaData m GROUP BY m.name")
+    public List<MetaDataNameAggregation> aggregateNameCounts();
+
+    // Aggregate the row count of every distinct value for the given metadata names. Only the
+    // names whose value breakdown the UI actually charts are passed in, avoiding the cost of
+    // materializing every name/value pair in the database
     @QueryHints(value = {
             @QueryHint(name = HINT_CACHEABLE, value = "false"),
             @QueryHint(name = READ_ONLY, value = "true")
     })
     @Query("SELECT new edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.MetaDataValueAggregation(m.name, m.value, count(m)) " +
-            "FROM MetaData m GROUP BY m.name, m.value")
-    public List<MetaDataValueAggregation> aggregateValueCounts();
+            "FROM MetaData m WHERE m.name IN :names GROUP BY m.name, m.value")
+    public List<MetaDataValueAggregation> aggregateValueCountsForNames(@Param("names") List<String> names);
 
     // Count the distinct metadata names directly in the database
     @Query("SELECT count(DISTINCT m.name) FROM MetaData m")

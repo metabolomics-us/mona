@@ -28,6 +28,11 @@ class MetaDataStatisticsService extends LazyLogging{
   @Autowired
   private val entityManager: EntityManager = null
 
+  // Metadata names whose per value breakdown is charted on the database statistics page
+  // (see spectra-database-index.component.ts). Only these names get their values aggregated
+  // and stored, since no other consumer reads the value counts of the remaining names
+  private val valueDetailNames: List[String] = List("ms level", "ionization mode", "precursor type")
+
   /**
     * Get all data in the metadata statistics repository
     *
@@ -69,28 +74,30 @@ class MetaDataStatisticsService extends LazyLogging{
     statisticsMetaDataRepository.deleteAllMetaDataValueCountsInBatch()
     statisticsMetaDataRepository.deleteAllInBatch()
 
-    // Aggregate per name/value counts in the database, then group the results by name in memory
+    // Aggregate the per value breakdown in the database, but only for the charted names, then
+    // group the results by name in memory
     val metaDataValueMap: Map[String, ListBuffer[MetaDataValueCount]] = Map()
-    val metaDataCounterMap: Map[String, Int] = Map()
 
-    metaDataRepository.aggregateValueCounts().asScala.foreach { aggregation =>
-      val count = aggregation.getCount.toInt
-      metaDataValueMap.getOrElseUpdate(aggregation.getName, ListBuffer()) += new MetaDataValueCount(aggregation.getValue, count)
-      metaDataCounterMap(aggregation.getName) = metaDataCounterMap.getOrElse(aggregation.getName, 0) + count
+    metaDataRepository.aggregateValueCountsForNames(valueDetailNames.asJava).asScala.foreach { aggregation =>
+      metaDataValueMap.getOrElseUpdate(aggregation.getName, ListBuffer()) +=
+        new MetaDataValueCount(aggregation.getValue, aggregation.getCount.toInt)
     }
 
-    metaDataValueMap.foreach { case (name, valueCounts) =>
-      val entry = new StatisticsMetaData(name, metaDataCounterMap(name), valueCounts.toList.asJava)
+    // Aggregate the total count for every name in the database and save a parent row per name,
+    // attaching the value breakdown only for the charted names
+    val nameAggregations = metaDataRepository.aggregateNameCounts().asScala
+    nameAggregations.foreach { aggregation =>
+      val valueCounts = metaDataValueMap.getOrElse(aggregation.getName, ListBuffer())
+      val entry = new StatisticsMetaData(aggregation.getName, aggregation.getCount.toInt, valueCounts.toList.asJava)
       statisticsMetaDataRepository.save(entry)
       entityManager.detach(entry)
     }
-    val nameCount = metaDataValueMap.size
+    val nameCount = nameAggregations.size
     val valuePairCount = metaDataValueMap.valuesIterator.map(_.size).sum
     metaDataValueMap.clear()
-    metaDataCounterMap.clear()
     entityManager.flush()
     entityManager.clear()
-    logger.info(f"Metadata statistics complete: $nameCount names, $valuePairCount value pairs in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
+    logger.info(f"Metadata statistics complete: $nameCount names, $valuePairCount value pairs across ${valueDetailNames.size} charted names in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     "MetaData Statistics Updated"
   }
 }
