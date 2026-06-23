@@ -66,7 +66,8 @@ class CompoundClassStatisticsService extends LazyLogging{
     compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
 
       compound.getMetaData.asScala.foreach { metadata =>
-        if (metadata.getName == "InChIKey") {
+        // Skip malformed or partial InChIKeys, which can occur transiently during re-curation
+        if (metadata.getName == "InChIKey" && metadata.getValue != null && metadata.getValue.length >= 14) {
           inchiKeys.append(metadata.getValue.substring(0, 14))
         }
       }
