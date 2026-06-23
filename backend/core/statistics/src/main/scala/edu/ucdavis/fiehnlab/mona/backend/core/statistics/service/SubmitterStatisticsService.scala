@@ -26,6 +26,7 @@ class SubmitterStatisticsService extends LazyLogging{
   @Transactional
   def updateSubmitterStatistics(): String = {
     logger.info("Aggregating submitter statistics now...")
+    val start = System.currentTimeMillis()
     statisticsSubmitterRepository.deleteAllInBatch()
 
     // Aggregate per submitter counts and average scores in the database, grouped by email address
@@ -38,7 +39,7 @@ class SubmitterStatisticsService extends LazyLogging{
     }
     entityManager.flush()
     entityManager.clear()
-    logger.info(s"Submitter statistics complete: ${aggregations.size} submitters")
+    logger.info(f"Submitter statistics complete: ${aggregations.size} submitters in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     "Submitter Statistics Completed"
   }
   /**

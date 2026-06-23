@@ -38,6 +38,7 @@ class TagStatisticsService extends LazyLogging{
   @Transactional
   def updateTagStatistics(): String = {
     logger.info("Aggregating tag statistics now...")
+    val start = System.currentTimeMillis()
     statisticsTagRepository.deleteAllInBatch()
 
     // Aggregate tag counts in the database, excluding library tags with no spectrum or compound
@@ -59,7 +60,7 @@ class TagStatisticsService extends LazyLogging{
     val tagCount = tagsCounter.size
     entityManager.flush()
     entityManager.clear()
-    logger.info(s"Tag statistics complete: $tagCount tags")
+    logger.info(f"Tag statistics complete: $tagCount tags in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     "Tag Statistics Completed"
   }
 

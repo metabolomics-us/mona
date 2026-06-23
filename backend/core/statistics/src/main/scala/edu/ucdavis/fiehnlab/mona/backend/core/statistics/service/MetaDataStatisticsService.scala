@@ -64,6 +64,7 @@ class MetaDataStatisticsService extends LazyLogging{
   @Transactional
   def updateMetaDataStatistics(): String = {
     logger.info("Aggregating metadata statistics now...")
+    val start = System.currentTimeMillis()
     // Bulk delete child value counts first, then parent rows, in single statements
     statisticsMetaDataRepository.deleteAllMetaDataValueCountsInBatch()
     statisticsMetaDataRepository.deleteAllInBatch()
@@ -89,7 +90,7 @@ class MetaDataStatisticsService extends LazyLogging{
     metaDataCounterMap.clear()
     entityManager.flush()
     entityManager.clear()
-    logger.info(s"Metadata statistics complete: $nameCount names, $valuePairCount value pairs")
+    logger.info(f"Metadata statistics complete: $nameCount names, $valuePairCount value pairs in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     "MetaData Statistics Updated"
   }
 }
