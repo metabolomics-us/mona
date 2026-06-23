@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.controller.statistics
 
 import java.util.concurrent.Future
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
@@ -20,7 +21,7 @@ import org.springframework.context.annotation.Profile
 @RestController
 @RequestMapping(Array("/rest"))
 @Profile(Array("mona.persistence"))
-class StatisticsRestController {
+class StatisticsRestController extends LazyLogging {
 
   @Autowired
   val statisticsService: StatisticsService = null
@@ -55,6 +56,20 @@ class StatisticsRestController {
   @RequestMapping(path = Array("/tags/library"), method = Array(RequestMethod.GET))
   @Async
   def listLibraryTags: Future[Iterable[StatisticsTag]] = new AsyncResult[Iterable[StatisticsTag]](tagStatisticsService.getLibraryTagStatistics)
+
+  /**
+    * Recompute the tag statistics from live data and return the refreshed library tags. Lets the
+    * admin library list reflect deletions immediately instead of waiting for the nightly statistics run
+    *
+    * @return
+   * */
+  @RequestMapping(path = Array("/tags/library/refresh"), method = Array(RequestMethod.POST))
+  @ResponseBody
+  def refreshLibraryTags: Iterable[StatisticsTag] = {
+    logger.info("Refreshing libraries now...")
+    tagStatisticsService.updateTagStatistics()
+    tagStatisticsService.getLibraryTagStatistics
+  }
 
   /**
     * Get all metadata statistics

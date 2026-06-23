@@ -24,6 +24,17 @@ export class AdminService {
     return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/statistics/update`, null, config);
   }
 
+  // Recomputes tag statistics from live data and returns the refreshed library tags
+  refreshLibraries(token: any): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    };
+    return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/tags/library/refresh`, null, config);
+  }
+
   refreshSimilarity(token: any): Observable<any> {
     const config = {
       headers: {

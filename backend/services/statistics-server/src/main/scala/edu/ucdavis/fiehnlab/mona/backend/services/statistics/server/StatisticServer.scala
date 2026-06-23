@@ -43,6 +43,7 @@ class StatisticServer extends WebSecurityConfigurerAdapter {
 
       //update statistics need authentication
       .antMatchers(HttpMethod.POST, "/rest/statistics/update").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.POST, "/rest/tags/library/refresh").hasAuthority("ADMIN")
       .antMatchers(HttpMethod.POST, "/rest/spectra/refresh").hasAuthority("ADMIN")
   }
 

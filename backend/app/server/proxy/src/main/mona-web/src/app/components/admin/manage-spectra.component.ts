@@ -118,16 +118,16 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     return this.deletionJob && (this.deletionJob.status === 'SCHEDULED' || this.deletionJob.status === 'RUNNING');
   }
 
+  // Recomputes tag statistics from live data so deleted libraries drop off immediately, then
+  // updates the displayed library list
   refreshTags() {
-    this.tagService.query().subscribe((tags: any) => {
-      if (tags.length > 0) {
-        this.libraryTags = tags.filter((x) => {
-          return x.category === 'library';
-        });
-      }
+    this.adminService.refreshLibraries(this.auth.getCurrentUser().accessToken).subscribe((tags: any) => {
+      this.libraryTags = (tags || []).filter((x) => {
+        return x.category === 'library';
+      });
     },
       (error) => {
-        this.logger.error('Tag pull failed: ' + error);
+        this.logger.error('Library refresh failed: ' + error);
       });
   }
 
