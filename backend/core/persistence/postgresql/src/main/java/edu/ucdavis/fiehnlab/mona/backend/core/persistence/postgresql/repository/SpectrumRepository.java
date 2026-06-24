@@ -21,7 +21,7 @@ import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 @Repository
 @Profile({"mona.persistence"})
-public interface SpectrumRepository extends  JpaRepository<Spectrum, String>, JpaSpecificationExecutor<Spectrum> {
+public interface SpectrumRepository extends  JpaRepository<Spectrum, String>, JpaSpecificationExecutor<Spectrum>, SpectrumRepositoryCustom {
     List<Spectrum> findAllByIdIn(List<String> monaIds);
 
     boolean existsById(String id);

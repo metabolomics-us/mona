@@ -179,6 +179,6 @@ class MSPWriter extends DomainWriter {
     buildSpectraString(spectrum, p)
 
     p.println()
-    p.flush()
+    // Do not flush per record, the underlying export writer is flushed once when it is closed
   }
 }

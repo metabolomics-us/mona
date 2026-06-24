@@ -162,6 +162,18 @@ class SpectrumPersistenceService extends LazyLogging {
   }
 
   /**
+   * Keyset (cursor) page of spectra for exports, ordered by id descending. Returns up to limit
+   * spectra with id less than lastId (pass null for the first page)
+   *
+   * @param query  the filter query, or null/empty for all spectra
+   * @param lastId id of the last spectrum already returned, or null for the first page
+   * @param limit  maximum spectra to return
+   * @return the next keyset page of spectra
+   */
+  def findAllForExport(query: String, lastId: String, limit: Int): List[Spectrum] =
+    spectrumResultRepository.findForExport(query, lastId, limit)
+
+  /**
    * find all data without a query
    *
    * @return

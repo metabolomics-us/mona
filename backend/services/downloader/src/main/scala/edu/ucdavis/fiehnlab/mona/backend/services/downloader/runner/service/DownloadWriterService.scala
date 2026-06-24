@@ -3,12 +3,10 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.service
 import java.lang.Iterable
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
-import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -33,18 +31,41 @@ class DownloadWriterService extends LazyLogging {
     *
     * @param query
     */
-  private def executeQuery(query: String): Iterable[Spectrum] = {
-    new DynamicIterable[Spectrum, String](query, 1000) {
+  // Page size for keyset based export paging
+  private val exportPageSize: Int = 1000
 
-      /**
-        * Loads more data from the server for the given query
-        */
-      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
-        if (query == null || query.isEmpty) {
-          spectrumPersistenceService.findAll(pageable)
+  private def executeQuery(query: String): Iterable[Spectrum] = new Iterable[Spectrum] {
+
+    /**
+      * Walks the id ordering with a cursor (id < lastId) instead of offset paging, so there is no
+      * per-page count query and no growing offset on large exports
+      */
+    override def iterator(): java.util.Iterator[Spectrum] = new java.util.Iterator[Spectrum] {
+      private var buffer: java.util.List[Spectrum] = spectrumPersistenceService.findAllForExport(query, null, exportPageSize)
+      private var index: Int = 0
+      private var lastId: String = if (buffer.isEmpty) null else buffer.get(buffer.size - 1).getId
+
+      override def hasNext: Boolean = {
+        if (index < buffer.size) {
+          true
+        } else if (buffer.size < exportPageSize) {
+          // The last page was partial, so there is nothing left to fetch
+          false
         } else {
-          spectrumPersistenceService.findAll(query, pageable)
+          // Fetch the next keyset page starting after the last id we returned
+          buffer = spectrumPersistenceService.findAllForExport(query, lastId, exportPageSize)
+          index = 0
+          if (!buffer.isEmpty) {
+            lastId = buffer.get(buffer.size - 1).getId
+          }
+          index < buffer.size
         }
+      }
+
+      override def next(): Spectrum = {
+        val spectrum = buffer.get(index)
+        index += 1
+        spectrum
       }
     }
   }
