@@ -43,24 +43,15 @@
     <div class="col">
       <br/>
       <div class="row justify-content-center">
-        <h1 class="h3">Admin Buttons (Force Updates)</h1>
+        <h1 class="h3">Admin Buttons</h1>
       </div>
       <hr/>
-      <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2 accessibility" (click)="updateStatistics()">Update Statistics</button>
-      </div>
-      <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2 accessibility" (click)="refreshSimilarity()">Refresh Similarity Service</button>
-      </div>
-      <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2 accessibility" (click)="updatePredefinedQueries()">Update Predefined Queries</button>
-      </div>
-      <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2 accessibility" (click)="updateStaticQueries()">Update Static Queries</button>
-      </div>
-      <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2 accessibility" (click)="reCurateAllData()">Re-Curate All Data</button>
-      </div>
+      <admin-button label="Update Statistics" info="Updates all statistics including library and spectra counts, statistics page, submitter avg. scores, etc." (action)="updateStatistics()"></admin-button>
+      <admin-button label="Refresh Similarity Service" info="Rebuilds the spectral similarity search index" (action)="refreshSimilarity()"></admin-button>
+      <admin-button label="Update Predefined Queries" info="Regenerates all library exports (JSON, MSP, SDF) on the downloads page" (action)="updatePredefinedQueries()"></admin-button>
+      <admin-button label="Re-Curate All Data" info="Re-curates all spectra (may take a long time)" (action)="reCurateAllData()"></admin-button>
+      <!-- Frontend functionality is broken for 'static queries', removing for less confusion -->
+      <!-- <admin-button label="Update Static Queries" info="Regenerates the all-spectra PNG image and spectrum ID list static files" (action)="updateStaticQueries()"></admin-button> -->
     </div>
   </div>
   <div class="row">
