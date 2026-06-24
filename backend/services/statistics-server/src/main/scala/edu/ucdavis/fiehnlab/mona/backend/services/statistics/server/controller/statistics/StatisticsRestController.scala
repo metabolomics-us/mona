@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.controller.statistics
 
 import java.util.concurrent.Future
-import java.util.concurrent.atomic.AtomicBoolean
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service._
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,9 +42,6 @@ class StatisticsRestController extends LazyLogging {
 
   @Autowired
   val statisticsUpdateRunner: StatisticsUpdateRunner = null
-
-  // Guards against a second update being scheduled while one is still running
-  private val updateInProgress: AtomicBoolean = new AtomicBoolean(false)
 
   /**
     * Get a list of unique tags and their respective counts
@@ -119,14 +115,14 @@ class StatisticsRestController extends LazyLogging {
    * */
   @RequestMapping(path = Array("/statistics/update"), method = Array(RequestMethod.POST))
   def updateStatistics(): ResponseEntity[String] = {
-    // Reject if an update is already running so we never schedule a second concurrent recompute
-    if (!updateInProgress.compareAndSet(false, true)) {
+    // Best-effort conflict response. The authoritative guard lives in StatisticsService.updateStatistics
+    // so it is shared with the nightly cron. A rare race here just no-ops in the service, never doubles work
+    if (statisticsService.isUpdateInProgress) {
       new ResponseEntity[String]("Statistics update already in progress", HttpStatus.CONFLICT)
     } else {
       // Delegated to an @Async runner bean so the request returns immediately
       // The response confirms the update was requested, not that the recompute has finished
-      // The runner clears updateInProgress in a finally block when the recompute completes
-      statisticsUpdateRunner.runUpdate(updateInProgress)
+      statisticsUpdateRunner.runUpdate()
       new ResponseEntity[String]("Statistics update requested", HttpStatus.ACCEPTED)
     }
   }

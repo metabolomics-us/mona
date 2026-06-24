@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.util.Date
+import java.util.concurrent.atomic.AtomicBoolean
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{CompoundRepository, MetaDataRepository, SpectrumRepository, SpectrumSubmitterRepository, StatisticsGlobalRepository, StatisticsTagRepository, TagsRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
@@ -56,6 +57,12 @@ class StatisticsService extends LazyLogging {
 
   @Autowired
   private val entityManager: EntityManager = null
+
+  // Guards against overlapping recomputes whether triggered by the admin button or the nightly cron
+  private val updateInProgress: AtomicBoolean = new AtomicBoolean(false)
+
+  // True while a statistics recompute is running, used by the admin endpoint to report a conflict
+  def isUpdateInProgress: Boolean = updateInProgress.get()
 
 
   def generateCompoundCount(): Long = {
@@ -148,15 +155,25 @@ class StatisticsService extends LazyLogging {
   @Scheduled(cron = "0 0 0 * * *")
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   def updateStatistics(): Unit = {
-    logger.info("Starting statistics update now...")
-    val start = System.currentTimeMillis()
-    metaDataStatisticsService.updateMetaDataStatistics()
-    submitterStatisticsService.updateSubmitterStatistics()
-    compoundClassStatisticsService.updateCompoundClassStatistics()
-    tagStatisticsService.updateTagStatistics()
-    updateGlobalStatistics()
-    entityManager.flush()
-    entityManager.clear()
-    logger.info(f"Statistics Update is Completed in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs!")
+    // Skip if an update is already running so the admin button and the nightly cron never overlap
+    // This is the single shared guard for both trigger paths since both call this method
+    if (!updateInProgress.compareAndSet(false, true)) {
+      logger.info("Statistics update already in progress, skipping this run")
+    } else {
+      try {
+        logger.info("Starting statistics update now...")
+        val start = System.currentTimeMillis()
+        metaDataStatisticsService.updateMetaDataStatistics()
+        submitterStatisticsService.updateSubmitterStatistics()
+        compoundClassStatisticsService.updateCompoundClassStatistics()
+        tagStatisticsService.updateTagStatistics()
+        updateGlobalStatistics()
+        entityManager.flush()
+        entityManager.clear()
+        logger.info(f"Statistics Update is Completed in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs!")
+      } finally {
+        updateInProgress.set(false)
+      }
+    }
   }
 }
