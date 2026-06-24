@@ -45,6 +45,9 @@ class DownloadListenerConfig {
     container.setConnectionFactory(connectionFactory)
     container.setMessageListener(predefinedQueryExportListener)
     container.setQueues(predefinedQueue)
+    // Pull one export at a time so unstarted jobs stay visible as ready messages in the queue
+    // The download scheduler uses that ready count to know a regeneration is still in progress
+    container.setPrefetchCount(1)
     container
   }
 }

@@ -8,7 +8,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.domain.{PredefinedQuery, QueryExport}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.StatisticsTagRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryRepository, QueryExportRepository}
-import org.springframework.amqp.rabbit.core.RabbitTemplate
+import com.rabbitmq.client.Channel
+import org.springframework.amqp.rabbit.core.{ChannelCallback, RabbitTemplate}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -84,9 +85,40 @@ class DownloadSchedulerService extends LazyLogging {
   }
 
   /**
+    * Number of predefined export jobs still waiting in the queue. With prefetch set to 1 on the
+    * downloader, unstarted jobs remain as ready messages, so a non-zero count means a regeneration
+    * is still in progress. Returns 0 if the queue cannot be inspected so we never block legitimately
+    */
+  def pendingPredefinedMessages(): Int = {
+    try {
+      val count: Integer = rabbitTemplate.execute(new ChannelCallback[Integer] {
+        override def doInRabbit(channel: Channel): Integer =
+          channel.queueDeclarePassive(predefinedQueueName).getMessageCount
+      })
+
+      if (count == null) 0 else count.intValue()
+    } catch {
+      case e: Exception =>
+        logger.warn(s"Could not inspect predefined download queue depth: ${e.getMessage}")
+        0
+    }
+  }
+
+  /**
+    * True while a predefined export regeneration is still draining the queue
+    */
+  def isPredefinedExportInProgress: Boolean = pendingPredefinedMessages() > 0
+
+  /**
     * Generates the downloads of all export formats for each predefined query download
     */
   def generatePredefinedExports(): Array[PredefinedQuery] = {
+
+    // Skip if a previous regeneration is still draining the queue, which also guards the cron trigger
+    if (pendingPredefinedMessages() > 0) {
+      logger.info("Predefined export already in progress, skipping regeneration")
+      Array.empty[PredefinedQuery]
+    } else {
 
     // Update the list of pre-generated downloads based on libraries present in the database
     statisticsTagRepository.findAll().asScala
@@ -112,6 +144,7 @@ class DownloadSchedulerService extends LazyLogging {
       rabbitTemplate.convertAndSend(predefinedQueueName, predefinedQuery)
       notifications.sendEvent(Event(Notification(predefinedQuery, getClass.getName)))
       predefinedQuery
+    }
     }
   }
 

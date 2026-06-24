@@ -267,6 +267,14 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
           body: 'Predefined queries are re-generating. Please allow up to an hour for this operation to complete.'
         });
       }, (error) => {
+        if (error.status === 409) {
+          this.toaster.pop({
+            type: 'info',
+            title: 'Update already in progress',
+            body: 'A predefined query regeneration is already running. Please wait for it to finish.'
+          });
+          return;
+        }
         this.toaster.pop({
           type: 'error',
           title: 'There was a problem requesting an update to predefined queries.',
