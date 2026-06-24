@@ -49,7 +49,7 @@
       <admin-button label="Update Statistics" info="Updates all statistics including library and spectra counts, statistics page, submitter avg. scores, etc." (action)="updateStatistics()"></admin-button>
       <admin-button label="Rebuild Similarity Index" info="Rebuilds the spectral similarity search index" (action)="refreshSimilarity()"></admin-button>
       <admin-button label="Regenerate Downloads" info="Regenerates all library exports (JSON, MSP, SDF) on the downloads page" (action)="updatePredefinedQueries()"></admin-button>
-      <admin-button label="Re-Curate All Spectra" info="Re-curates all spectra (may take a long time)" (action)="reCurateAllData()"></admin-button>
+      <admin-button label="Re-Curate All Spectra" info="Re-curates all spectra (can take days on prod)" (action)="reCurateAllData()"></admin-button>
       <!-- Frontend functionality is broken for 'static queries', removing for less confusion -->
       <!-- <admin-button label="Update Static Queries" info="Regenerates the all-spectra PNG image and spectrum ID list static files" (action)="updateStaticQueries()"></admin-button> -->
     </div>
