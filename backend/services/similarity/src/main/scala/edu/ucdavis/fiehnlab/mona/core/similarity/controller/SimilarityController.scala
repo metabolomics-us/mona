@@ -1,12 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.controller
 
-import edu.ucdavis.fiehnlab.mona.core.similarity.service.{ SimilarityPopulationService, SimilaritySearchService}
+import java.util.concurrent.atomic.AtomicBoolean
+
+import edu.ucdavis.fiehnlab.mona.core.similarity.service.{SimilarityPopulationService, SimilarityRefreshRunner, SimilaritySearchService}
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.AlgorithmTypes.AlgorithmType
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.IndexType.IndexType
 import edu.ucdavis.fiehnlab.mona.core.similarity.types._
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.scheduling.annotation.Async
+import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.web.bind.annotation._
 
 import scala.collection.Set
@@ -27,6 +29,12 @@ class SimilarityController {
 
   @Autowired
   val populateService: SimilarityPopulationService = null
+
+  @Autowired
+  val refreshRunner: SimilarityRefreshRunner = null
+
+  // Guards against a second refresh being scheduled while one is still running
+  private val refreshInProgress: AtomicBoolean = new AtomicBoolean(false)
 
 
   /**
@@ -78,10 +86,16 @@ class SimilarityController {
   }
 
   @RequestMapping(path = Array("/refresh"), method = Array(RequestMethod.POST))
-  @Async
-  def refreshIndices: String = {
-    populateService.populateIndices()
-    "Similarity Service Being Refreshed"
+  def refreshIndices: ResponseEntity[String] = {
+    // Reject if a refresh is already running so we never schedule a second concurrent repopulation
+    if (!refreshInProgress.compareAndSet(false, true)) {
+      new ResponseEntity[String]("Similarity refresh already in progress", HttpStatus.CONFLICT)
+    } else {
+      // Delegated to an @Async runner bean so the request returns immediately
+      // The runner clears refreshInProgress in a finally block when the repopulation completes
+      refreshRunner.runRefresh(refreshInProgress)
+      new ResponseEntity[String]("Similarity Service Being Refreshed", HttpStatus.ACCEPTED)
+    }
   }
 
   /**

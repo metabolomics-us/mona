@@ -215,6 +215,14 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
           body: 'Statistics will be recalculated. Please allow up to an hour for this operation to complete.'
         });
       }, (error) => {
+        if (error.status === 409) {
+          this.toaster.pop({
+            type: 'info',
+            title: 'Update already in progress',
+            body: 'A statistics update is already running. Please wait for it to finish.'
+          });
+          return;
+        }
         this.toaster.pop({
           type: 'error',
           title: 'There was a problem requesting statistic update.',
@@ -233,6 +241,14 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
           body: 'Similarity Service is being repopulated. Please allow up to an hour for this operation to complete.'
         });
       }, (error) => {
+        if (error.status === 409) {
+          this.toaster.pop({
+            type: 'info',
+            title: 'Update already in progress',
+            body: 'A similarity refresh is already running. Please wait for it to finish.'
+          });
+          return;
+        }
         this.toaster.pop({
           type: 'error',
           title: 'There was a problem requesting similarity refresh.',
@@ -287,6 +303,14 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
           body: 'All data is being re-curated, this can be a lengthy process and involve a few days depending on size of current database.'
         });
       }, (error) => {
+        if (error.status === 409) {
+          this.toaster.pop({
+            type: 'info',
+            title: 'Update already in progress',
+            body: 'A re-curation is already running. Please wait for it to finish.'
+          });
+          return;
+        }
         this.toaster.pop({
           type: 'error',
           title: 'There was a problem scheduling data for curation.',

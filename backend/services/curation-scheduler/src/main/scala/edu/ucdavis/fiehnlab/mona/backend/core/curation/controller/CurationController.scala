@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation.controller
 
 import java.util.concurrent.Future
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.servlet.http.HttpServletRequest
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurationService
@@ -34,6 +35,9 @@ class CurationController extends LazyLogging {
   @Autowired
   val entityManager: EntityManager = null
 
+  // Guards against a second mass curation being scheduled while one is still scheduling
+  private val curationInProgress: AtomicBoolean = new AtomicBoolean(false)
+
   /**
     * schedules the spectra with the specified id for curation
     *
@@ -64,36 +68,45 @@ class CurationController extends LazyLogging {
   @Async
   def curateByQuery(@RequestParam(required = false, name = "query") query: String): Future[ResponseEntity[CurationJobScheduled]] = {
 
-    val it = new DynamicIterable[Spectrum, String](query, 1000) {
-      /**
-        * Loads more data from the server for the given query
-        */
-      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
-        if (query == null || query.isEmpty) {
-          spectrumPersistenceService.findAll(pageable)
-        } else {
-          spectrumPersistenceService.findAll(query, pageable)
-        }
-      }
-    }.iterator
-
-    var count: Int = 0
-
-    while (it.hasNext) {
-      val spectrum = it.next()
-      curationService.scheduleSpectrum(spectrum)
-      count += 1
-
-      if (count % 10000 == 0) {
-        logger.info(s"Scheduled $count spectra...")
-      }
-      entityManager.detach(spectrum)
+    // Reject if a mass curation is already scheduling so we never schedule the same spectra twice
+    if (!curationInProgress.compareAndSet(false, true)) {
+      return new AsyncResult[ResponseEntity[CurationJobScheduled]](new ResponseEntity(HttpStatus.CONFLICT))
     }
 
-    logger.info(s"Finished scheduling $count spectra")
-    new AsyncResult[ResponseEntity[CurationJobScheduled]](
-      new ResponseEntity[CurationJobScheduled](CurationJobScheduled(count), HttpStatus.OK)
-    )
+    try {
+      val it = new DynamicIterable[Spectrum, String](query, 1000) {
+        /**
+          * Loads more data from the server for the given query
+          */
+        override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
+          if (query == null || query.isEmpty) {
+            spectrumPersistenceService.findAll(pageable)
+          } else {
+            spectrumPersistenceService.findAll(query, pageable)
+          }
+        }
+      }.iterator
+
+      var count: Int = 0
+
+      while (it.hasNext) {
+        val spectrum = it.next()
+        curationService.scheduleSpectrum(spectrum)
+        count += 1
+
+        if (count % 10000 == 0) {
+          logger.info(s"Scheduled $count spectra...")
+        }
+        entityManager.detach(spectrum)
+      }
+
+      logger.info(s"Finished scheduling $count spectra")
+      new AsyncResult[ResponseEntity[CurationJobScheduled]](
+        new ResponseEntity[CurationJobScheduled](CurationJobScheduled(count), HttpStatus.OK)
+      )
+    } finally {
+      curationInProgress.set(false)
+    }
   }
 
   /**
