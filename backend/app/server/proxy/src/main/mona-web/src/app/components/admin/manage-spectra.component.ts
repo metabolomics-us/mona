@@ -125,9 +125,19 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       this.libraryTags = (tags || []).filter((x) => {
         return x.category === 'library';
       });
+      this.toaster.pop({
+        type: 'success',
+        title: 'Libraries Refreshed!',
+        body: 'The library list has been refreshed.'
+      });
     },
       (error) => {
         this.logger.error('Library refresh failed: ' + error);
+        this.toaster.pop({
+          type: 'error',
+          title: 'There was a problem refreshing the libraries.',
+          body: `${error.message}`
+        });
       });
   }
 
