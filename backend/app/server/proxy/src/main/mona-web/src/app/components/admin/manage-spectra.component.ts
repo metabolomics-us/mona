@@ -3,8 +3,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TagService} from '../../services/persistence/tag.resource';
 import {faEdit, faMinusSquare, faUser} from '@fortawesome/free-solid-svg-icons';
 import {NGXLogger} from 'ngx-logger';
-import {interval, Subscription} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
+import {forkJoin, interval, of, Subscription} from 'rxjs';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {ToasterService} from 'angular2-toaster';
@@ -183,27 +183,74 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
   deleteByIds() {
     if (this.auth.isAdmin()) {
       if (this.removeIDs !== null) {
-        const parsed = this.removeIDs.replace(/\s+/g, '').split(',');
-        this.deletionLabel = null;
-        this.spectrum.batchDeleteByIds(parsed, this.auth.getCurrentUser().accessToken).subscribe((job: any) => {
-          this.deletionJob = job;
-          this.toaster.pop({
-            type: 'success',
-            title: 'Deletion Started',
-            body: 'The deletion runs in the background and continues even if you leave. Live progress is shown on this page.'
-          });
-          this.startDeletionPolling(job.id);
-          this.removeIDs = null;
+        const parsed = this.removeIDs.replace(/\s+/g, '').split(',').filter((id) => id.length > 0);
+
+        if (parsed.length === 0) {
+          return;
+        }
+
+        // Verify each id actually exists before enqueuing a deletion job, so deleting a
+        // nonexistent id surfaces a clear message instead of a misleading success 0/n
+        const existenceChecks = parsed.map((id) =>
+          this.spectrum.get(id).pipe(
+            map(() => ({id, exists: true})),
+            catchError(() => of({id, exists: false}))
+          )
+        );
+
+        forkJoin(existenceChecks).subscribe((results: any[]) => {
+          const validIds = results.filter((r) => r.exists).map((r) => r.id);
+          const invalidIds = results.filter((r) => !r.exists).map((r) => r.id);
+
+          if (validIds.length === 0) {
+            this.toaster.pop({
+              type: 'error',
+              title: 'No Matching Spectra',
+              body: `None of the provided IDs exist: ${invalidIds.join(', ')}`
+            });
+            return;
+          }
+
+          if (invalidIds.length > 0) {
+            this.toaster.pop({
+              type: 'warning',
+              title: 'Some IDs Not Found',
+              body: `Skipping ${invalidIds.length} ID(s) that do not exist: ${invalidIds.join(', ')}`
+            });
+          }
+
+          this.submitIdDeletion(validIds);
         }, (error) => {
           this.toaster.pop({
             type: 'error',
-            title: 'There was a problem deleting spectra.',
+            title: 'There was a problem validating spectra IDs.',
             body: `${error.message}`
           });
-          this.removeIDs = null;
         });
       }
     }
+  }
+
+  // Enqueues the actual id based deletion job for the ids that were confirmed to exist
+  submitIdDeletion(ids: string[]) {
+    this.deletionLabel = null;
+    this.spectrum.batchDeleteByIds(ids, this.auth.getCurrentUser().accessToken).subscribe((job: any) => {
+      this.deletionJob = job;
+      this.toaster.pop({
+        type: 'success',
+        title: 'Deletion Started',
+        body: 'The deletion runs in the background and continues even if you leave. Live progress is shown on this page.'
+      });
+      this.startDeletionPolling(job.id);
+      this.removeIDs = null;
+    }, (error) => {
+      this.toaster.pop({
+        type: 'error',
+        title: 'There was a problem deleting spectra.',
+        body: `${error.message}`
+      });
+      this.removeIDs = null;
+    });
   }
 
   updateStatistics() {
