@@ -237,7 +237,7 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       this.adminService.refreshSimilarity(this.auth.getCurrentUser().accessToken).subscribe((res) => {
         this.toaster.pop({
           type: 'success',
-          title: 'Similarity Service Being Updated!',
+          title: 'Similarity Index Rebuild Queued!',
           body: 'Similarity Service is being repopulated. Please allow up to an hour for this operation to complete.'
         });
       }, (error) => {
@@ -263,8 +263,8 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       this.adminService.updatePredefinedDownloads(this.auth.getCurrentUser().accessToken).subscribe(() => {
         this.toaster.pop({
           type: 'success',
-          title: 'Predefined Queries Re-Generating!',
-          body: 'Predefined queries are re-generating. Please allow up to an hour for this operation to complete.'
+          title: 'Re-Generating Downloads!',
+          body: 'Predefined queries are now re-generating. Please allow up to an hour for this operation to complete.'
         });
       }, (error) => {
         if (error.status === 409) {
@@ -307,8 +307,8 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       this.adminService.reCurateAllData(this.auth.getCurrentUser().accessToken).subscribe(() => {
         this.toaster.pop({
           type: 'success',
-          title: 'Curation Scheduling for All Data Successful',
-          body: 'All data is being re-curated, this can be a lengthy process and involve a few days depending on size of current database.'
+          title: 'Curation Scheduling for All Spectra Successful',
+          body: 'All data is being re-curated, this can take up to a few days.'
         });
       }, (error) => {
         if (error.status === 409) {
