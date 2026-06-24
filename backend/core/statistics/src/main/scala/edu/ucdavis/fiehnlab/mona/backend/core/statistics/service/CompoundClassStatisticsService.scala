@@ -58,6 +58,7 @@ class CompoundClassStatisticsService extends LazyLogging{
   def updateCompoundClassStatistics(): String = {
     logger.info("Aggregating compound class statistics now...")
     val start = System.currentTimeMillis()
+    statisticsCompoundClassesRepository.deleteAllInBatch()
     val finalMap: Map[String, Map[String, ArrayBuffer[String]]] = Map()
     val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
     val compoundClasses: Map[String, String] = Map()
