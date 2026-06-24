@@ -211,8 +211,8 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       this.adminService.updateStatistics(this.auth.getCurrentUser().accessToken).subscribe((res) => {
         this.toaster.pop({
           type: 'success',
-          title: 'Statistics Being Updated!',
-          body: 'Statistics are currently being recalculated. Please allow up to an hour for this operation to complete.'
+          title: 'Statistics Update Scheduled!',
+          body: 'Statistics will be recalculated. Please allow up to an hour for this operation to complete.'
         });
       }, (error) => {
         this.toaster.pop({
