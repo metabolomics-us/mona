@@ -4,7 +4,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.{MetaDataValueCo
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.MetaDataStatisticsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
-import org.springframework.scheduling.annotation.{Async, AsyncResult}
+import org.springframework.scheduling.annotation.AsyncResult
 import org.springframework.web.bind.annotation._
 
 import java.util.concurrent.Future
@@ -29,7 +29,6 @@ class MetaDataRestController {
     * @return
     */
   @RequestMapping(path = Array("/names"), method = Array(RequestMethod.GET))
-  @Async
   def listMetaDataName(@RequestParam(value = "search", required = false) partialMetaDataName: String): Future[Array[StatisticsMetaData]] = {
     if (partialMetaDataName == null || partialMetaDataName.isEmpty) {
       new AsyncResult[Array[StatisticsMetaData]](metaDataStatisticsService.getMetaDataNames)
@@ -47,7 +46,6 @@ class MetaDataRestController {
     * @return
     */
   @RequestMapping(path = Array("/values"), method = Array(RequestMethod.GET))
-  @Async
   def listMetaDataValues(@RequestParam(value = "name", required = true) metaDataName: String,
                          @RequestParam(value = "search", required = false) partialMetaDataValue: String): AsyncResult[StatisticsMetaData] = {
 
