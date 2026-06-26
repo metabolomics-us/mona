@@ -75,10 +75,16 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
     if (molecule == null) {
       logger.warn(s"$id: Unable to load provided structure information with CDK")
       impacts.append(new Impacts(-10, "Unable to generate a molecular structure from provided compound data"))
+
+      // Keep the submitted InChI and InChIKey that were promoted into the metadata buffer above
+      // so they survive even when no structure could be generated
+      compound.setMetaData(metaData.asJava)
       compound
     } else if (molDefinition == null) {
       logger.warn(s"$id: No MOL definition found")
       impacts.append(new Impacts(-2, "Unable to read or generate MOL data"))
+
+      compound.setMetaData(metaData.asJava)
       compound
     } else {
       // Read MOL data

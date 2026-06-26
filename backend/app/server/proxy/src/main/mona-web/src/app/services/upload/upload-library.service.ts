@@ -131,7 +131,7 @@ export class UploadLibraryService{
                 if (typeof spectra.inchi !== 'undefined' && spectra.inchi !== null) {
                   s.biologicalCompound.inchi = spectra.inchi;
                 }
-                if (typeof spectra.smiles !== 'undefined' && spectra.smiles !== null) {
+                if (typeof spectra.smiles !== 'undefined' && spectra.smiles !== null && spectra.smiles !== '') {
                   s.biologicalCompound.metaData.push({category: 'none', computed: false, hidden: false,
                     name: 'SMILES', value: spectra.smiles});
                 }
