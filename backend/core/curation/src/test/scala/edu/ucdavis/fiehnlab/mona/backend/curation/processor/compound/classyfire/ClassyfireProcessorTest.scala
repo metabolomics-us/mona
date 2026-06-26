@@ -1,18 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire
 
-import java.io.InputStreamReader
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CompoundTestApplication
-import org.junit.runner.RunWith
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-import org.springframework.test.context.junit4.SpringRunner
 
 import scala.jdk.CollectionConverters._
 
@@ -31,23 +28,51 @@ class ClassyfireProcessorTest extends AnyWordSpec with LazyLogging {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "ClassyfireProcessorTest" should {
-    val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-    val spectrumGiven: Spectrum = exampleRecords.head
 
-    "process" in {
-      assert(classyfireProcessor != null)
+    "recognize a syntactically valid InChIKey" in {
+      assert(classyfireProcessor.isValidInchiKey("RYYVLZVUVIJVGH-UHFFFAOYSA-N"))
+      assert(!classyfireProcessor.isValidInchiKey(null))
+      assert(!classyfireProcessor.isValidInchiKey(""))
+      assert(!classyfireProcessor.isValidInchiKey("   "))
+      assert(!classyfireProcessor.isValidInchiKey("not-an-inchikey"))
+    }
 
-      if (classyfireProcessor.isReachable) {
-        logger.info(s"Test faulty in CI, needs rework")
-//        val output = classyfireProcessor.process(spectrumGiven)
-//
-//        output.getCompound.asScala.foreach { compound =>
-//          assert(compound.getClassification.size() > 0)
-//        }
-      } else {
-        logger.error("ClassyFire is offline - skipping test")
-      }
+    "skip a compound that already has classification data without calling ClassyFire" in {
+      val compound: Compound = new Compound()
+      compound.setMetaData(List[MetaData]().asJava)
+      compound.setClassification(List[MetaData](new MetaData(null, "kingdom", "Organic compounds", false, "classification", true, null)).asJava)
 
+      val result: Compound = classyfireProcessor.classify(compound, "test-id")
+
+      assert(result.getClassification.size() == 1)
+      assert(result.getClassification.asScala.exists(_.getName == "kingdom"))
+    }
+
+    "skip a compound with no valid InChIKey without calling ClassyFire" in {
+      val compound: Compound = new Compound()
+      compound.setMetaData(List[MetaData]().asJava)
+      compound.setClassification(List[MetaData]().asJava)
+      compound.setInchiKey("")
+
+      val result: Compound = classyfireProcessor.classify(compound, "test-id")
+
+      assert(result.getClassification.isEmpty)
+    }
+
+    "report a spectrum as pending when a compound still carries a scheduled query id" in {
+      val pendingCompound: Compound = new Compound()
+      pendingCompound.setClassification(List[MetaData](new MetaData(null, CommonMetaData.CLASSYFIRE_QUERY_ID, "123", true, "none", false, null)).asJava)
+      val pendingSpectrum: Spectrum = new Spectrum()
+      pendingSpectrum.setCompound(List[Compound](pendingCompound).asJava)
+
+      assert(classyfireProcessor.hasPendingClassification(pendingSpectrum))
+
+      val doneCompound: Compound = new Compound()
+      doneCompound.setClassification(List[MetaData](new MetaData(null, "kingdom", "Organic compounds", false, "classification", true, null)).asJava)
+      val doneSpectrum: Spectrum = new Spectrum()
+      doneSpectrum.setCompound(List[Compound](doneCompound).asJava)
+
+      assert(!classyfireProcessor.hasPendingClassification(doneSpectrum))
     }
 
     "flag a compound as pending when ClassyFire is unavailable" in {

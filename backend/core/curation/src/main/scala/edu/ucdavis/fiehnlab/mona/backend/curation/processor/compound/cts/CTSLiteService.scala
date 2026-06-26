@@ -17,7 +17,7 @@ class CTSLiteService extends LazyLogging {
   val CTS_LITE_URL: String = "https://cts-lite.metabolomics.us/match"
 
   // Standard InChIKey layout: 14 letters, 10 letters and a final letter, separated by dashes
-  val INCHIKEY_PATTERN: String = "[A-Z]{14}-[A-Z]{10}-[A-Z]"
+  val INCHIKEY_PATTERN: String = CTSLiteService.INCHIKEY_PATTERN
 
   @Autowired
   protected val restOperations: RestOperations = null
@@ -56,6 +56,11 @@ class CTSLiteService extends LazyLogging {
       }
     }
   }
+}
+
+object CTSLiteService {
+  // Standard InChIKey layout: 14 letters, 10 letters and a final letter, separated by dashes
+  val INCHIKEY_PATTERN: String = "[A-Z]{14}-[A-Z]{10}-[A-Z]"
 }
 
 case class CTSLiteRequest(queries: String)

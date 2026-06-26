@@ -69,4 +69,7 @@ object CommonMetaData {
   val CLASSYFIRE_STATUS: String = "ClassyFire Status"
 
   val CLASSYFIRE_STATUS_UNAVAILABLE: String = "Unavailable"
+
+  // Transient marker holding a scheduled ClassyFire query id while we wait for the async classification to finish
+  val CLASSYFIRE_QUERY_ID: String = "ClassyFire Query ID"
 }

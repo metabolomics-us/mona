@@ -48,6 +48,9 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.POST, "/rest/spectra/**").authenticated()
       .antMatchers(HttpMethod.POST, "/rest/submitters").authenticated()
 
+      //classification cache writes need authentication, the curation runner authenticates with its token
+      .antMatchers(HttpMethod.POST, "/rest/classificationCache/**").authenticated()
+
       //updates needs authentication
       .antMatchers(HttpMethod.PUT, "/rest/spectra/**").authenticated()
       .antMatchers(HttpMethod.PUT, "/rest/submitters").authenticated()
@@ -80,6 +83,7 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.GET, "/rest/spectra/**")
       .antMatchers(HttpMethod.GET, "/rest/news/**")
       .antMatchers(HttpMethod.GET, "/rest/feedback/**")
+      .antMatchers(HttpMethod.GET, "/rest/classificationCache/**")
 
       .antMatchers(HttpMethod.POST, "/rest/feedback")
       .antMatchers(HttpMethod.POST, "/rest/spectra/count")

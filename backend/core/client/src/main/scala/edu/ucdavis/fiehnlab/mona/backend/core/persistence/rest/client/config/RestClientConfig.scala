@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{ClassificationCacheRestClient, MonaSpectrumRestClient}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service.RestLoginService
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.conn.HttpClientConnectionManager
@@ -104,5 +104,10 @@ class RestClientConfig extends LazyLogging {
   @Bean
   def monaSpectrumRestClient: MonaSpectrumRestClient = {
     new MonaSpectrumRestClient
+  }
+
+  @Bean
+  def classificationCacheRestClient: ClassificationCacheRestClient = {
+    new ClassificationCacheRestClient
   }
 }

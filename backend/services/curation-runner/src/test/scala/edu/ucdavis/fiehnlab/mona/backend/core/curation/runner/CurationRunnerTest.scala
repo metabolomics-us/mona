@@ -56,7 +56,7 @@ class CurationRunnerTest extends AnyWordSpec with Eventually with LazyLogging {
   }
 }
 
-class TestCurationListener extends CurationListener(null, null) with LazyLogging {
+class TestCurationListener extends CurationListener(null, null, null, null, null) with LazyLogging {
   var messageCount: Int = 0
 
   override def handleMessage(spectra: Spectrum): Unit = {
