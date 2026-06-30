@@ -118,7 +118,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     * @return
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    logger.info(s"${spectrum.getId}: Retrieving classification data from ClassyFire")
+    logger.info(s"${spectrum.getId}: Processing classification")
 
     val compounds = spectrum.getCompound.asScala.map { compound =>
       if (compound.getClassification == null) {
@@ -205,10 +205,10 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     val alreadyClassified: Boolean = compound.getClassification.asScala.exists(_.getName != CommonMetaData.CLASSYFIRE_QUERY_ID)
     val inchiKey: String = resolveInchiKey(compound)
 
-    logger.info(s"$id: Checking ClassyFire classification for InChIKey ${if (inchiKey == null || inchiKey.trim.isEmpty) "(none)" else inchiKey}")
+    logger.info(s"$id: Handling classification for InChIKey ${if (inchiKey == null || inchiKey.trim.isEmpty) "(none)" else inchiKey}")
 
     if (alreadyClassified) {
-      logger.info(s"$id: Already have ClassyFire data, skipping...")
+      logger.info(s"$id: Already classified, skipping...")
       stat(_.incAlreadyClassified())
       // Seed the skeleton cache from this existing classification (from an earlier run, possibly the old
       // inline runner) so other spectra sharing the skeleton can reuse it without calling ClassyFire
@@ -224,7 +224,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     // Only call ClassyFire when we have a valid InChIKey to look up
     else {
       if (!isValidInchiKey(inchiKey)) {
-        logger.info(s"$id: No valid InChIKey, skipping ClassyFire classification")
+        logger.info(s"$id: No valid InChIKey, skipping classification")
         stat(_.incMissingInchiKey())
         compound
       } else {
@@ -232,7 +232,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
         classificationCacheLookup(block) match {
           case Some(cache) =>
-            logger.info(s"$id: Reusing cached classification for skeleton $block")
+            logger.info(s"$id: Reusing cached classification for InChIKey skeleton $block")
             stat(_.incDbCacheHit())
             applyCachedClassification(compound, cache)
           case None =>
@@ -256,8 +256,9 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       return markClassyfireUnavailable(compound, id)
     }
 
+    val inchikey = resolveInchiKey(compound)
     val url = s"http://classyfire.wishartlab.com/queries/$queryId.json"
-    logger.info(s"$id: Invoking url: $url")
+    logger.info(s"$id: API CALL: Polling ClassyFire query status for ${inchikey}: $url")
 
     try {
       val result: ResponseEntity[QueryResult] = withRateLimit(id, "poll") {
@@ -275,10 +276,10 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
             !isEmptyClassification(resultBody.entities.head)
 
         if (hasUsableClassification) {
-          logger.info(s"$id: ClassyFire query successful, fetching results")
+          logger.info(s"$id: ClassyFire query status is Done, storing results")
           processClassification(compound, id, resultBody.entities.head)
         } else {
-          logger.warn(s"$id: ClassyFire query finished without a usable classification, giving up")
+          logger.warn(s"$id: ClassyFire query finished without a usable classification, storing negative cache")
           stat(_.incFailed())
           // ClassyFire ran the structure through its classifier and came back with nothing usable, the one
           // authoritative negative. Cache it so this skeleton is not re-queried on every recuration
@@ -335,7 +336,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     }
 
     val url = s"http://classyfire.wishartlab.com/entities/$inchiKey.json"
-    logger.info(s"$id: Invoking url: $url")
+    logger.info(s"$id: API CALL: Looking up ClassyFire entity for $inchiKey: $url")
 
     try {
       val result: ResponseEntity[ClassyfireResult] = withRateLimit(id, "entities") {
@@ -460,7 +461,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
     if (structure.nonEmpty) {
       val url = s"http://classyfire.wishartlab.com/queries"
-      logger.info(s"$id: Invoking url: $url")
+      logger.info(s"$id: API CALL: Scheduling ClassyFire query for $structure: $url")
 
       try {
         val result: ResponseEntity[QueryScheduleResult] = withRateLimit(id, "queries") {
