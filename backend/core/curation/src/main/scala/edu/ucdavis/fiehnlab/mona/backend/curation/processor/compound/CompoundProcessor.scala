@@ -85,13 +85,13 @@ class CompoundMOLProcessor extends AbstractCompoundProcessor {
     if (compound.getMolFile != null && !compound.getMolFile.isEmpty) {
       logger.info(s"$id: Parsing MOL definition")
 
-      val molecule: IAtomContainer = compoundConversion.parseMolDefinition(compound.getMolFile)
+      val molecule: IAtomContainer = compoundConversion.parseMolDefinition(compound.getMolFile, id)
 
       if (impacts != null && molecule == null) {
         impacts.append(new Impacts(-1, "MOL data could not be parsed"))
       }
 
-      (compoundConversion.generateMolDefinition(molecule), molecule)
+      (compoundConversion.generateMolDefinition(molecule, id), molecule)
     } else {
       logger.info(s"$id: No MOL definition found")
       (null, null)
@@ -117,11 +117,11 @@ class CompoundInChIProcessor extends AbstractCompoundProcessor {
     if (inchi != null) {
       logger.info(s"$id: Converting InChI to MOL definition...")
 
-      val molecule: IAtomContainer = compoundConversion.inchiToMolecule(inchi)
+      val molecule: IAtomContainer = compoundConversion.inchiToMolecule(inchi, id)
 
       if (molecule != null) {
         logger.info(s"$id: InChI conversion successful")
-        (compoundConversion.generateMolDefinition(molecule), molecule)
+        (compoundConversion.generateMolDefinition(molecule, id), molecule)
       } else {
         logger.warn(s"$id: InChI conversion failed")
 
@@ -149,11 +149,11 @@ class CompoundSMILESProcessor extends AbstractCompoundProcessor with LazyLogging
     if (smiles.isDefined && !smiles.get.getValue.toString.isEmpty) {
       logger.info(s"$id: Converting SMILES to MOL definition")
 
-      val molecule: IAtomContainer = compoundConversion.smilesToMolecule(smiles.get.getValue.toString)
+      val molecule: IAtomContainer = compoundConversion.smilesToMolecule(smiles.get.getValue.toString, id)
 
       if (molecule != null) {
         logger.info(s"$id: Generating MOL definition from molecule")
-        (compoundConversion.generateMolDefinition(molecule), molecule)
+        (compoundConversion.generateMolDefinition(molecule, id), molecule)
       } else {
         logger.info(s"$id: SMILES conversion failed")
 
@@ -190,16 +190,16 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
       case Some(structure) =>
         // Prefer the InChI, falling back to the SMILES, to build the molecule locally
         val fromInchi: IAtomContainer =
-          if (structure.inchi != null && structure.inchi.nonEmpty) compoundConversion.inchiToMolecule(structure.inchi) else null
+          if (structure.inchi != null && structure.inchi.nonEmpty) compoundConversion.inchiToMolecule(structure.inchi, id) else null
 
         val molecule: IAtomContainer =
           if (fromInchi != null) fromInchi
-          else if (structure.smiles != null && structure.smiles.nonEmpty) compoundConversion.smilesToMolecule(structure.smiles)
+          else if (structure.smiles != null && structure.smiles.nonEmpty) compoundConversion.smilesToMolecule(structure.smiles, id)
           else null
 
         if (molecule != null) {
           logger.info(s"$id: Resolved structure from InChIKey lookup")
-          (compoundConversion.generateMolDefinition(molecule), molecule)
+          (compoundConversion.generateMolDefinition(molecule, id), molecule)
         } else {
           logger.info(s"$id: InChIKey lookup returned a match but no usable structure")
           (null, null)

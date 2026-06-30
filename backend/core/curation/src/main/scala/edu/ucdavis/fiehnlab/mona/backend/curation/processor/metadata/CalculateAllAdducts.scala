@@ -24,7 +24,7 @@ class CalculateAllAdducts extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   override def process(spectrum: Spectrum): Spectrum = {
     // Get computed total exact mass from the biological compound if it exists
     if(spectrum.getTags.asScala.exists(x => x.getText == "GC-MS")) {
-      logger.info(s"Process is only for LC-MS spectra")
+      logger.info(s"${spectrum.getId}: GC-MS detected. Adduct calculation process is only for LC-MS spectra, skipping")
       spectrum
     } else {
       val biologicalIndex: Int =

@@ -46,7 +46,7 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
         logger.debug("adding spectra to server")
         monaSpectrumRestClient.add(spectrum)
       } else {
-        logger.debug(s"updating spectra on server ${spectrum.getId}")
+        logger.debug(s"${spectrum.getId}: updating spectra on server")
 
         try {
           val s = monaSpectrumRestClient.get(spectrum.getId)

@@ -17,7 +17,7 @@ class CompoundConversionService {
 
 
   private def generateCompoundSummary(molecule: IAtomContainer): CompoundSummary = {
-    val (inchi, inchiKey): (String, String) = compoundConversion.moleculeToInChIAndInChIKey(molecule)
+    val (inchi, inchiKey): (String, String) = compoundConversion.moleculeToInChIAndInChIKey(molecule, null)
 
     CompoundSummary(
       inchi,
@@ -25,20 +25,20 @@ class CompoundConversionService {
       compoundConversion.moleculeToSMILES(molecule),
       compoundConversion.moleculeToMolecularFormula(molecule),
       compoundConversion.moleculeToTotalExactMass(molecule),
-      compoundConversion.generateMolDefinition(molecule)
+      compoundConversion.generateMolDefinition(molecule, null)
     )
   }
 
 
   def parseSmiles(smiles: String): CompoundSummary =
-    generateCompoundSummary(compoundConversion.smilesToMolecule(smiles))
+    generateCompoundSummary(compoundConversion.smilesToMolecule(smiles, null))
 
 
   def parseInChI(inchi: String): CompoundSummary =
-    generateCompoundSummary(compoundConversion.inchiToMolecule(inchi))
+    generateCompoundSummary(compoundConversion.inchiToMolecule(inchi, null))
 
   def parseMol(mol: String): CompoundSummary =
-    generateCompoundSummary(compoundConversion.parseMolDefinition(mol))
+    generateCompoundSummary(compoundConversion.parseMolDefinition(mol, null))
 }
 
 

@@ -33,7 +33,7 @@ class MassAccuracyValidation extends ItemProcessor[Spectrum, Spectrum] with Lazy
     }
 
     else {
-      logger.info(s"Mass accuracy value is: ${massAccuracyMetaData.head.getValue}")
+      logger.info(s"${spectrum.getId}: Mass accuracy value is: ${massAccuracyMetaData.head.getValue}")
       val massAccuracy: Double = massAccuracyMetaData.head.getValue.toDouble
 
       if (massAccuracy <= HIGH_ACCURACY) {
@@ -48,7 +48,7 @@ class MassAccuracyValidation extends ItemProcessor[Spectrum, Spectrum] with Lazy
         spectrum
 
       } else if (massAccuracy > MINIMUM_ACCURACY) {
-        logger.info(s"S${spectrum.getId}: Has a poor mass accuracy of $massAccuracy, greater than the threshold of $MINIMUM_ACCURACY")
+        logger.info(s"${spectrum.getId}: Has a poor mass accuracy of $massAccuracy, greater than the threshold of $MINIMUM_ACCURACY")
 
         spectrum.setScore(
           CurationUtilities.addImpact(spectrum.getScore, -1, s"Poor mass accuracy of ${"%.3f".format(massAccuracy)} ppm")

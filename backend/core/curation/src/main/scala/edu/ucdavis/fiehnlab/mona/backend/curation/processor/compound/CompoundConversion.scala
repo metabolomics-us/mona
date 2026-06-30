@@ -52,7 +52,7 @@ class CompoundConversion extends LazyLogging {
     * @param smiles
     * @return
     */
-  def smilesToMolecule(smiles: String): IAtomContainer = {
+  def smilesToMolecule(smiles: String, id: String): IAtomContainer = {
     try {
       val smilesParser: SmilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance())
       smilesParser.kekulise(false)
@@ -60,17 +60,17 @@ class CompoundConversion extends LazyLogging {
       AtomContainerManipulator.suppressHydrogens(parsedSmile)
     } catch {
       case e: InvalidSmilesException =>
-        logger.error("Invalid SMILES Code")
+        logger.error(s"$id: Invalid SMILES Code")
         e.printStackTrace()
         null
       case e: Exception =>
-        logger.error("Unknown SMILES Error")
+        logger.error(s"$id: Unknown SMILES Error")
         e.printStackTrace()
         null
     }
   }
 
-  def smilesToMolDefinition(smiles: String): String = generateMolDefinition(smilesToMolecule(smiles))
+  def smilesToMolDefinition(smiles: String, id: String): String = generateMolDefinition(smilesToMolecule(smiles, id), id)
 
 
   /**
@@ -78,7 +78,7 @@ class CompoundConversion extends LazyLogging {
     * @param inchi
     * @return
     */
-  def inchiToMolecule(inchi: String): IAtomContainer = {
+  def inchiToMolecule(inchi: String, id: String): IAtomContainer = {
     val inchiGeneratorFactory: InChIGeneratorFactory = InChIGeneratorFactory.getInstance()
     val inchiToStructure: InChIToStructure = inchiGeneratorFactory.getInChIToStructure(inchi, DefaultChemObjectBuilder.getInstance())
 
@@ -86,18 +86,18 @@ class CompoundConversion extends LazyLogging {
     val returnStatus = inchiToStructure.getReturnStatus
 
     if (returnStatus != INCHI_RET.OKAY && returnStatus != INCHI_RET.WARNING) {
-      logger.error(s"Structure generation failed: ${returnStatus.toString}\n[${inchiToStructure.getMessage}]\n[${inchiToStructure.getWarningFlags}]")
+      logger.error(s"$id: Structure generation failed: ${returnStatus.toString}\n[${inchiToStructure.getMessage}]\n[${inchiToStructure.getWarningFlags}]")
       null
     } else {
       if (returnStatus == INCHI_RET.WARNING) {
-        logger.warn(s"InChI warning: ${inchiToStructure.getMessage}")
+        logger.warn(s"$id: InChI warning: ${inchiToStructure.getMessage}")
       }
 
       AtomContainerManipulator.suppressHydrogens(molecule)
     }
   }
 
-  def inchiToMolDefinition(inchi: String): String = generateMolDefinition(inchiToMolecule(inchi))
+  def inchiToMolDefinition(inchi: String, id: String): String = generateMolDefinition(inchiToMolecule(inchi, id), id)
 
 
   /**
@@ -105,8 +105,8 @@ class CompoundConversion extends LazyLogging {
     * @param molString
     * @return
     */
-  def parseMolDefinition(molString: String): IAtomContainer = {
-    logger.debug(s"Receive MOL data: $molString")
+  def parseMolDefinition(molString: String, id: String): IAtomContainer = {
+    logger.debug(s"$id: Receive MOL data: $molString")
 
     // Read MOL data
     val molecule: IAtomContainer = new MDLV2000Reader(new StringReader(molString)).read(new AtomContainer())
@@ -118,7 +118,7 @@ class CompoundConversion extends LazyLogging {
     * @param molecule
     * @return
     */
-  def generateMolDefinition(molecule: IAtomContainer): String = {
+  def generateMolDefinition(molecule: IAtomContainer, id: String): String = {
     val stringWriter: StringWriter = new StringWriter()
     val mdlWriter: MDLV2000Writer = new MDLV2000Writer(stringWriter)
     mdlWriter.setWriteAromaticBondTypes(true)
@@ -138,7 +138,7 @@ class CompoundConversion extends LazyLogging {
 
     else {
       // TODO Improve handling disconnected structures
-      logger.warn("Generating MOL definition of disconnected molecules")
+      logger.warn(s"$id: Generating MOL definition of disconnected molecules")
 
       val result: IAtomContainer = new AtomContainer
 
@@ -177,32 +177,32 @@ class CompoundConversion extends LazyLogging {
     * @param molecule
     * @return
     */
-  def moleculeToInChI(molecule: IAtomContainer): String = moleculeToInChIAndInChIKey(molecule)._1
+  def moleculeToInChI(molecule: IAtomContainer, id: String): String = moleculeToInChIAndInChIKey(molecule, id)._1
 
   /**
     *
     * @param molecule
     * @return
     */
-  def moleculeToInChIKey(molecule: IAtomContainer): String = moleculeToInChIAndInChIKey(molecule)._2
+  def moleculeToInChIKey(molecule: IAtomContainer, id: String): String = moleculeToInChIAndInChIKey(molecule, id)._2
 
   /**
     *
     * @param molecule
     * @return
     */
-  def moleculeToInChIAndInChIKey(molecule: IAtomContainer): (String, String) = {
+  def moleculeToInChIAndInChIKey(molecule: IAtomContainer, id: String): (String, String) = {
     try {
       val inchiGenerator = InChIGeneratorFactory.getInstance().getInChIGenerator(molecule)
-      logger.info(s"InChI conversion is: ${inchiGenerator.getReturnStatus} - ${inchiGenerator.getMessage}")
+      logger.info(s"$id: InChI conversion is: ${inchiGenerator.getReturnStatus} - ${inchiGenerator.getMessage}")
       (inchiGenerator.getInchi, inchiGenerator.getInchiKey)
     } catch {
       case e: CDKException =>
-        logger.error(s"CDK InChIGenerator failed for molecule: ${e.getMessage}", e)
+        logger.error(s"$id: CDK InChIGenerator failed for molecule: ${e.getMessage}", e)
         (null, null)
 
       case e: Exception =>
-        logger.error(s"Unexpected exception during InChIGenerator execution: ${e.getMessage}", e)
+        logger.error(s"$id: Unexpected exception during InChIGenerator execution: ${e.getMessage}", e)
         (null, null)
     }
   }

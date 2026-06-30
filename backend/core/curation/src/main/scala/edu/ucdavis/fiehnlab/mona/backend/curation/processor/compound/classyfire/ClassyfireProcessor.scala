@@ -230,7 +230,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       } else {
         val block: String = inchiKey.take(14)
 
-        classificationCacheLookup(block) match {
+        classificationCacheLookup(block, id) match {
           case Some(cache) =>
             logger.info(s"$id: Reusing cached classification for InChIKey skeleton $block")
             stat(_.incDbCacheHit())
@@ -508,7 +508,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       val block: String = inchiKey.take(14)
       val existing: Buffer[MetaData] = compound.getClassification.asScala.filterNot(_.getName == CommonMetaData.CLASSYFIRE_QUERY_ID)
 
-      if (existing.nonEmpty && classificationCacheLookup(block).isEmpty) {
+      if (existing.nonEmpty && classificationCacheLookup(block, id).isEmpty) {
         storeClassificationCache(block, existing, id)
       }
     }
@@ -518,14 +518,15 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     * Look up a cached classification by skeleton block, swallowing any cache error
     *
     * @param block
+    * @param id
     * @return
     */
-  def classificationCacheLookup(block: String): Option[ClassificationCache] = {
+  def classificationCacheLookup(block: String, id: String): Option[ClassificationCache] = {
     try {
       classificationCacheRestClient.findByBlock(block).filter(isCacheEntryUsable)
     } catch {
       case e: Throwable =>
-        logger.warn(s"Unable to read classification cache for $block: ${e.getMessage}")
+        logger.warn(s"$id: Unable to read classification cache for $block: ${e.getMessage}")
         None
     }
   }

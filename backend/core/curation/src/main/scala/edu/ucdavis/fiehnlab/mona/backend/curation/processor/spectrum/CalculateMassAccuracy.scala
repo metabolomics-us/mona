@@ -69,7 +69,7 @@ class CalculateMassAccuracy extends ItemProcessor[Spectrum, Spectrum] with LazyL
       }
 
       // Find a matching adduct
-      val (adductMatch, adductMode, adductFunction): (String, String, Double => Double) = AdductBuilder.findAdduct(precursorType)
+      val (adductMatch, adductMode, adductFunction): (String, String, Double => Double) = AdductBuilder.findAdduct(precursorType, spectrum.getId)
 
 
       if (theoreticalMass == null) {

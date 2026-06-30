@@ -100,8 +100,8 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
 
       // Calculate InChI and InChIKey and only add them to the record if they differ from provided values
-      val computedInChI: String = compoundConversion.moleculeToInChI(molecule)
-      val computedInChIKey: String = compoundConversion.moleculeToInChIKey(molecule)
+      val computedInChI: String = compoundConversion.moleculeToInChI(molecule, id)
+      val computedInChIKey: String = compoundConversion.moleculeToInChIKey(molecule, id)
 
       val providedInChI: Option[MetaData] = (compound.getMetaData.asScala ++ metaData)
         .find(x => x.getName.toLowerCase == CommonMetaData.INCHI_CODE.toLowerCase && !x.getComputed)

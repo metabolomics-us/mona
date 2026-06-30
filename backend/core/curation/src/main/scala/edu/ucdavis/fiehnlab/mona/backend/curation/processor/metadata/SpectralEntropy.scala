@@ -23,13 +23,13 @@ class SpectralEntropy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging
     for (x <- clean_a) {
       intensity_a = intensity_a :+ x(1)
     }
-    logger.info(s"Peak number is: ${peak_a}")
+    logger.info(s"${spectrum.getId}: Peak number is: ${peak_a}")
 
     val entropy_a: Double = entropy(intensity_a)
     val normalized_entropy_a: Double = entropy_a/log(peak_a)
 
-    logger.info(s"Calculated Spectral Entropy is: ${entropy_a}")
-    logger.info(s"Calculated Normalized Entropy is: ${normalized_entropy_a}")
+    logger.info(s"${spectrum.getId}: Calculated Spectral Entropy is: ${entropy_a}")
+    logger.info(s"${spectrum.getId}: Calculated Normalized Entropy is: ${normalized_entropy_a}")
 
     val updatedMetaData: Buffer[MetaData] = spectrum.getMetaData.asScala :+
       new MetaData(null, CommonMetaData.SPECTRAL_ENTROPY, entropy_a.toString, false, "computed", true, null) :+

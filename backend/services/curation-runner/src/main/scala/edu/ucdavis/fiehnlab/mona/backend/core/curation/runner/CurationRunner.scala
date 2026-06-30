@@ -156,19 +156,19 @@ class CurationListener(workflow: ItemProcessor[Spectrum, Spectrum],
 
   override def handleMessage(spectrum: Spectrum): Unit = {
     try {
-      logger.info(s"Received spectrum: ${spectrum.getId}")
+      logger.info(s"${spectrum.getId}: Received spectrum")
       val result: Spectrum = workflow.process(spectrum)
-      logger.info(s"Finished curating spectrum: ${spectrum.getId}")
+      logger.info(s"${spectrum.getId}: Finished curating spectrum")
       writer.write(result)
-      logger.info(s"Saved spectrum ${spectrum.getId} to system")
+      logger.info(s"${spectrum.getId}: Saved spectrum to system")
 
       // Hand off to the dedicated classyfire queue, tracking the live queue depth
       rabbitTemplate.convertAndSend(classyfireQueueName, result)
       stats.incQueued()
     } catch {
       case e: Exception =>
-        logger.info(s"Exception occurred during curation of spectrum ${spectrum.getId}, fail silently: ${e.getMessage}")
-        logger.info(ExceptionUtils.getStackTrace(e))
+        logger.info(s"${spectrum.getId}: Exception occurred during curation, fail silently: ${e.getMessage}")
+        logger.info(s"${spectrum.getId}: ${ExceptionUtils.getStackTrace(e)}")
     }
   }
 }
@@ -212,7 +212,7 @@ class ClassyfireListener(classyfireProcessor: ClassyfireProcessor,
       }
     } catch {
       case e: Exception =>
-        logger.warn(s"Classification failed for spectrum ${spectrum.getId}, fail silently: ${e.getMessage}")
+        logger.warn(s"${spectrum.getId}: Classification failed, fail silently: ${e.getMessage}")
         // Treat as terminal so the live queue depth cannot leak
         stats.decQueued()
     }
