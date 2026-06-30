@@ -11,13 +11,16 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.CTSLite
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.http.{HttpStatus, ResponseEntity}
-import org.springframework.web.client.{HttpStatusCodeException, ResourceAccessException, RestOperations}
+import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
+import org.springframework.web.client.{HttpStatusCodeException, ResourceAccessException, RestClientException, RestOperations}
 
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicBoolean
 import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, Buffer}
 import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 /**
   * Connects to the external ClassyFire service and classifies the compounds of a spectrum. This processor no
@@ -53,9 +56,25 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   // Null safe stat update, the stats bean is always present in production but may be absent in unit tests
   private def stat(update: ClassyfireStats => Unit): Unit = if (classyfireStats != null) update(classyfireStats)
 
-  // Minimum spacing between outbound ClassyFire requests
+  // Minimum spacing between outbound ClassyFire requests, the floor the adaptive spacing decays back to
   @Value("${mona.classyfire.request.spacing:2500}")
   val requestSpacingMs: Long = 2500
+
+  // Upper bound the adaptive spacing is allowed to widen to after repeated 429s
+  @Value("${mona.classyfire.request.spacing.max:15000}")
+  val maxSpacingMs: Long = 15000
+
+  // Factor the spacing is multiplied by on each 429, widening it toward ClassyFire's real limit
+  @Value("${mona.classyfire.request.spacing.increase:1.5}")
+  val spacingIncreaseFactor: Double = 1.5
+
+  // Number of consecutive successful requests before the spacing decays one step back toward the floor
+  @Value("${mona.classyfire.request.spacing.recovery:5}")
+  val spacingRecoveryThreshold: Int = 5
+
+  // Milliseconds the spacing is reduced by on each recovery step
+  @Value("${mona.classyfire.request.spacing.decay:250}")
+  val spacingDecayStepMs: Long = 250
 
   // How many times a single request is retried after an HTTP 429 before giving up
   @Value("${mona.classyfire.retry.max:5}")
@@ -75,9 +94,14 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   private val serviceUp: AtomicBoolean = new AtomicBoolean(true)
   @volatile private var downSince: Long = 0
 
-  // Pacing state, guarded so concurrent consumers (if ever configured) still serialize their spacing
+  // Pacing state, guarded so concurrent consumers (if ever configured) still serialize their spacing.
+  // currentSpacingMs adapts between requestSpacingMs (floor) and maxSpacingMs (cap): it widens on a 429 and
+  // decays back toward the floor after a run of successes, so the steady state converges near ClassyFire's
+  // real per IP limit rather than wasting a round trip on a 429 every other request
   private val pacingLock = new Object
   private var lastRequestTime: Long = 0
+  private var currentSpacingMs: Long = requestSpacingMs
+  private var consecutiveSuccesses: Int = 0
 
   /**
     * Classify every compound of the spectrum. Compounds are mutated in place
@@ -228,7 +252,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     logger.info(s"$id: Invoking url: $url")
 
     try {
-      val result: ResponseEntity[QueryResult] = withRateLimit(id) {
+      val result: ResponseEntity[QueryResult] = withRateLimit(id, "poll") {
         restOperations.getForEntity(url, classOf[QueryResult])
       }
       markUp()
@@ -252,14 +276,19 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       }
     } catch {
       case x: HttpStatusCodeException =>
-        logger.warn(s"$id: Received status code ${x.getStatusCode} polling query $queryId, rescheduling")
+        logger.warn(s"$id: poll of query $queryId returned ${x.getStatusCode}, rescheduling")
         // The query expired or is unknown, drop the stale id and reschedule from structure
         dropQueryId(compound)
         scheduleClassification(compound, id)
       case x: ResourceAccessException =>
         markDown()
-        logger.warn(s"$id: ClassyFire is unavailable, will retry: ${x.getMessage}")
+        logger.warn(s"$id: poll ClassyFire unreachable, will retry: ${x.getMessage}")
         markClassyfireUnavailable(compound, id)
+      case x: RestClientException =>
+        // The request succeeded but the body could not be read (e.g. an unexpected content type). Keep the
+        // query id so the listener re-enqueues and polls again rather than silently dropping the spectrum
+        logger.warn(s"$id: poll of query $queryId response could not be read, will poll again: ${x.getMessage}")
+        compound
     }
   }
 
@@ -291,24 +320,29 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     logger.info(s"$id: Invoking url: $url")
 
     try {
-      val result: ResponseEntity[ClassyfireResult] = withRateLimit(id) {
+      val result: ResponseEntity[ClassyfireResult] = withRateLimit(id, "entities") {
         restOperations.getForEntity(url, classOf[ClassyfireResult])
       }
       markUp()
-      logger.info(s"$id: ClassyFire request successful")
+      logger.info(s"$id: entities lookup successful")
       processClassification(compound, id, result.getBody)
     } catch {
       case x: HttpStatusCodeException if x.getStatusCode == HttpStatus.TOO_MANY_REQUESTS =>
-        logger.warn(s"$id: ClassyFire rate limited after retries, leaving classification pending")
+        logger.warn(s"$id: entities lookup rate limited (429) after retries, leaving classification pending")
         stat(_.incRateLimited())
         markClassyfireUnavailable(compound, id)
       case x: HttpStatusCodeException =>
-        logger.warn(s"$id: Received status code ${x.getStatusCode} for $inchiKey, scheduling classification")
+        logger.warn(s"$id: entities lookup returned ${x.getStatusCode} for $inchiKey, scheduling classification")
         scheduleClassification(compound, id)
       case x: ResourceAccessException =>
         markDown()
-        logger.warn(s"$id: ClassyFire is unavailable, will retry: ${x.getMessage}")
+        logger.warn(s"$id: entities ClassyFire unreachable, will retry: ${x.getMessage}")
         markClassyfireUnavailable(compound, id)
+      case x: RestClientException =>
+        // The lookup succeeded but the body could not be read (e.g. an unexpected content type). Treat it like
+        // a miss and schedule a fresh query rather than silently dropping the spectrum
+        logger.warn(s"$id: entities lookup response could not be read for $inchiKey, scheduling classification: ${x.getMessage}")
+        scheduleClassification(compound, id)
     }
   }
 
@@ -402,7 +436,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       logger.info(s"$id: Invoking url: $url")
 
       try {
-        val result: ResponseEntity[QueryScheduleResult] = withRateLimit(id) {
+        val result: ResponseEntity[QueryScheduleResult] = withRateLimit(id, "queries") {
           restOperations.postForEntity(url, QueryScheduleRequest("", structure, "STRUCTURE"), classOf[QueryScheduleResult])
         }
         markUp()
@@ -412,12 +446,18 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         compound
       } catch {
         case x: HttpStatusCodeException =>
-          logger.warn(s"$id: Received status code ${x.getStatusCode} scheduling $structure")
+          logger.warn(s"$id: queries submission returned ${x.getStatusCode} for $structure, marking unavailable")
           stat(_.incFailed())
           markClassyfireUnavailable(compound, id)
         case x: ResourceAccessException =>
           markDown()
-          logger.warn(s"$id: ClassyFire is unavailable, will retry: ${x.getMessage}")
+          logger.warn(s"$id: queries ClassyFire unreachable, will retry: ${x.getMessage}")
+          markClassyfireUnavailable(compound, id)
+        case x: RestClientException =>
+          // The submission succeeded but the body could not be read (e.g. an unexpected content type), so the
+          // query id is unknown. Mark it pending so it is retried rather than silently dropping the spectrum
+          logger.warn(s"$id: queries submission response could not be read for $structure, marking unavailable: ${x.getMessage}")
+          stat(_.incFailed())
           markClassyfireUnavailable(compound, id)
       }
     } else {
@@ -496,20 +536,24 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   }
 
   /**
-    * Run an outbound ClassyFire request, spacing it from the previous one and retrying on HTTP 429 with an
-    * exponential backoff. Any non 429 error is rethrown immediately for the caller to handle
+    * Run an outbound ClassyFire request, spacing it from the previous one and retrying on HTTP 429. The
+    * spacing adapts: a 429 widens it (benefiting every endpoint since the timer is shared) and a run of
+    * successes decays it back toward the floor. On a 429 the server's Retry-After header is honored when
+    * present, otherwise an exponential backoff is used. Any non 429 error is rethrown for the caller to handle
     *
-    * @param id
-    * @param thunk
+    * @param id       the spectrum id, for logging
+    * @param endpoint which ClassyFire endpoint this call targets (entities, queries, poll), for logging
+    * @param thunk    the request to run
     * @tparam T
     * @return
     */
-  def withRateLimit[T](id: String)(thunk: => T): T = {
+  def withRateLimit[T](id: String, endpoint: String)(thunk: => T): T = {
     var attempt: Int = 0
 
     while (true) {
       pacingLock.synchronized {
-        val wait: Long = lastRequestTime + requestSpacingMs - System.currentTimeMillis()
+        val spacing: Long = math.max(requestSpacingMs, currentSpacingMs)
+        val wait: Long = lastRequestTime + spacing - System.currentTimeMillis()
         if (wait > 0) {
           Thread.sleep(wait)
         }
@@ -517,22 +561,77 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       }
 
       try {
-        return thunk
+        val result: T = thunk
+        recordSuccess()
+        return result
       } catch {
         case e: HttpStatusCodeException if e.getStatusCode == HttpStatus.TOO_MANY_REQUESTS =>
+          widenSpacing()
           attempt += 1
           if (attempt > maxRetries) {
-            logger.warn(s"$id: ClassyFire still rate limited after $attempt attempts, giving up")
+            logger.warn(s"$id: $endpoint request still rate limited after $attempt attempts, giving up")
             throw e
           }
-          val backoff: Long = backoffBaseMs * (1L << (attempt - 1))
-          logger.warn(s"$id: ClassyFire rate limited (429), backing off ${backoff}ms and retrying ($attempt/$maxRetries)")
+          val (backoff, source): (Long, String) = parseRetryAfter(e.getResponseHeaders) match {
+            case Some(retryAfter) => (retryAfter, "server Retry-After")
+            case None => (backoffBaseMs * (1L << (attempt - 1)), "computed backoff")
+          }
+          logger.warn(s"$id: $endpoint request rate limited (429), backing off ${backoff}ms ($source) and retrying ($attempt/$maxRetries)")
           Thread.sleep(backoff)
       }
     }
 
     // unreachable, the loop only exits via return or throw
     throw new IllegalStateException("rate limit loop exited unexpectedly")
+  }
+
+  /**
+    * Widen the shared request spacing after a 429, up to the configured cap, and reset the success streak.
+    * Multiplicative increase so the spacing climbs quickly toward ClassyFire's real limit
+    */
+  private[classyfire] def widenSpacing(): Unit = pacingLock.synchronized {
+    val base: Long = math.max(requestSpacingMs, currentSpacingMs)
+    currentSpacingMs = math.min(maxSpacingMs, math.round(base * spacingIncreaseFactor))
+    consecutiveSuccesses = 0
+  }
+
+  /**
+    * Record a successful request and, once enough have succeeded in a row, decay the spacing one step back
+    * toward the floor. Additive decrease so the spacing eases down without oscillating
+    */
+  private[classyfire] def recordSuccess(): Unit = pacingLock.synchronized {
+    consecutiveSuccesses += 1
+    if (consecutiveSuccesses >= spacingRecoveryThreshold) {
+      val base: Long = math.max(requestSpacingMs, currentSpacingMs)
+      currentSpacingMs = math.max(requestSpacingMs, base - spacingDecayStepMs)
+      consecutiveSuccesses = 0
+    }
+  }
+
+  /**
+    * The current effective spacing between requests, never below the configured floor
+    */
+  def currentSpacing: Long = pacingLock.synchronized(math.max(requestSpacingMs, currentSpacingMs))
+
+  /**
+    * Parse a Retry-After header into a millisecond delay. Supports both forms allowed by the spec, a number
+    * of seconds or an HTTP date. Returns None when the header is absent or unparseable so the caller falls
+    * back to its own backoff. A delay in the past is clamped to zero
+    *
+    * @param headers the response headers from the 429, may be null
+    * @return the delay in milliseconds, if a usable Retry-After was present
+    */
+  private[classyfire] def parseRetryAfter(headers: HttpHeaders): Option[Long] = {
+    if (headers == null) {
+      None
+    } else {
+      Option(headers.getFirst(HttpHeaders.RETRY_AFTER)).map(_.trim).filter(_.nonEmpty).flatMap { value =>
+        Try(value.toLong).toOption.map(_ * 1000L).orElse {
+          Try(ZonedDateTime.parse(value, DateTimeFormatter.RFC_1123_DATE_TIME))
+            .toOption.map(_.toInstant.toEpochMilli - System.currentTimeMillis())
+        }
+      }.map(math.max(0L, _))
+    }
   }
 
   /**

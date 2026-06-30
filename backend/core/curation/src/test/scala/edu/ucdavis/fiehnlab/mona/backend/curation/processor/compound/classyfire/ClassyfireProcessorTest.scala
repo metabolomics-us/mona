@@ -9,8 +9,11 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CompoundTes
 import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpHeaders
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
+import java.time.{ZoneOffset, ZonedDateTime}
+import java.time.format.DateTimeFormatter
 import scala.jdk.CollectionConverters._
 
 /**
@@ -97,6 +100,70 @@ class ClassyfireProcessorTest extends AnyWordSpec with LazyLogging {
       classyfireProcessor.markClassyfireUnavailable(compound, "test-id")
 
       assert(compound.getMetaData.asScala.count(_.getName == CommonMetaData.CLASSYFIRE_STATUS) == 1)
+    }
+
+    // Drive the shared adaptive spacing back down to the floor so each pacing test starts from a known state.
+    // recordSuccess decays one step every spacingRecoveryThreshold calls, so a large run clamps it to the floor
+    def resetSpacingToFloor(): Unit = (1 to 400).foreach(_ => classyfireProcessor.recordSuccess())
+
+    "widen the shared request spacing on a 429, capped at the maximum" in {
+      resetSpacingToFloor()
+      assert(classyfireProcessor.currentSpacing == 2500)
+
+      classyfireProcessor.widenSpacing()
+      assert(classyfireProcessor.currentSpacing == 3750) // round(2500 * 1.5)
+
+      classyfireProcessor.widenSpacing()
+      assert(classyfireProcessor.currentSpacing == 5625) // round(3750 * 1.5)
+
+      // repeated 429s never push the spacing past the configured cap
+      (1 to 20).foreach(_ => classyfireProcessor.widenSpacing())
+      assert(classyfireProcessor.currentSpacing == 15000)
+    }
+
+    "decay the spacing after a run of successes, never below the floor" in {
+      resetSpacingToFloor()
+      classyfireProcessor.widenSpacing()
+      classyfireProcessor.widenSpacing()
+      val widened: Long = classyfireProcessor.currentSpacing // 5625, success streak reset to 0
+
+      // fewer than the recovery threshold of successes leaves the spacing unchanged
+      (1 to 4).foreach(_ => classyfireProcessor.recordSuccess())
+      assert(classyfireProcessor.currentSpacing == widened)
+
+      // the threshold success triggers exactly one decay step
+      classyfireProcessor.recordSuccess()
+      assert(classyfireProcessor.currentSpacing == widened - 250)
+
+      // a long run of successes decays back to, but never below, the floor
+      (1 to 1000).foreach(_ => classyfireProcessor.recordSuccess())
+      assert(classyfireProcessor.currentSpacing == 2500)
+    }
+
+    "honor a numeric Retry-After header as seconds" in {
+      val headers: HttpHeaders = new HttpHeaders()
+      headers.set(HttpHeaders.RETRY_AFTER, "2")
+
+      assert(classyfireProcessor.parseRetryAfter(headers).contains(2000L))
+    }
+
+    "honor an HTTP-date Retry-After header" in {
+      val headers: HttpHeaders = new HttpHeaders()
+      val future: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(30)
+      headers.set(HttpHeaders.RETRY_AFTER, future.format(DateTimeFormatter.RFC_1123_DATE_TIME))
+
+      val delay: Option[Long] = classyfireProcessor.parseRetryAfter(headers)
+      assert(delay.isDefined)
+      assert(delay.get > 0 && delay.get <= 30000)
+    }
+
+    "fall back to no Retry-After when the header is absent or unparseable" in {
+      assert(classyfireProcessor.parseRetryAfter(new HttpHeaders()).isEmpty)
+      assert(classyfireProcessor.parseRetryAfter(null).isEmpty)
+
+      val garbage: HttpHeaders = new HttpHeaders()
+      garbage.set(HttpHeaders.RETRY_AFTER, "not-a-delay")
+      assert(classyfireProcessor.parseRetryAfter(garbage).isEmpty)
     }
   }
 }

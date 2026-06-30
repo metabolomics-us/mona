@@ -12,6 +12,7 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation._
+import org.springframework.http.MediaType
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.{RestOperations, RestTemplate}
@@ -98,6 +99,12 @@ class RestClientConfig extends LazyLogging {
   def mappingJacksonHttpMessageConverter: MappingJackson2HttpMessageConverter = {
     val converter: MappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter()
     converter.setObjectMapper(MonaMapper.create)
+    // Some external services (e.g. ClassyFire's queries poll endpoint) return JSON bodies tagged as text/json,
+    // which the default converter does not claim, causing the response to fail extraction. Append it so those
+    // bodies still deserialize, keeping application/json first so request bodies are still written as json
+    val mediaTypes = new java.util.ArrayList[MediaType](converter.getSupportedMediaTypes())
+    mediaTypes.add(new MediaType("text", "json"))
+    converter.setSupportedMediaTypes(mediaTypes)
     converter
   }
 
