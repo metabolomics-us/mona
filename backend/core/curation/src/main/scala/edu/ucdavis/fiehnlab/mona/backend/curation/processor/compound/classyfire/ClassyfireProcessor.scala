@@ -253,6 +253,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     */
   def pollScheduledQuery(compound: Compound, id: String, queryId: String): Compound = {
     if (circuitOpen) {
+      stat(_.incServiceUnavailable())
       return markClassyfireUnavailable(compound, id)
     }
 
@@ -277,7 +278,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
         if (hasUsableClassification) {
           logger.info(s"$id: ClassyFire query status is Done, storing results")
-          processClassification(compound, id, resultBody.entities.head)
+          processClassification(compound, id, resultBody.entities.head, fromEntities = false)
         } else {
           logger.warn(s"$id: ClassyFire query finished without a usable classification, storing negative cache")
           stat(_.incFailed())
@@ -289,6 +290,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       } else {
         // Still in queue or in progress, keep the query id so the listener re-enqueues to poll again
         logger.info(s"$id: ClassyFire query not finished (status = ${resultBody.classification_status}), will poll again")
+        stat(_.incAwaitingPoll())
         compound
       }
     } catch {
@@ -300,11 +302,13 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       case x: ResourceAccessException =>
         markDown()
         logger.warn(s"$id: poll ClassyFire unreachable, will retry: ${x.getMessage}")
+        stat(_.incServiceUnavailable())
         markClassyfireUnavailable(compound, id)
       case x: RestClientException =>
         // The request succeeded but the body could not be read (e.g. an unexpected content type). Keep the
         // query id so the listener re-enqueues and polls again rather than silently dropping the spectrum
         logger.warn(s"$id: poll of query $queryId response could not be read, will poll again: ${x.getMessage}")
+        stat(_.incAwaitingPoll())
         compound
     }
   }
@@ -332,6 +336,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     */
   def lookupEntities(compound: Compound, id: String, inchiKey: String): Compound = {
     if (circuitOpen) {
+      stat(_.incServiceUnavailable())
       return markClassyfireUnavailable(compound, id)
     }
 
@@ -352,7 +357,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         scheduleClassification(compound, id)
       } else {
         logger.info(s"$id: entities lookup successful")
-        processClassification(compound, id, body)
+        processClassification(compound, id, body, fromEntities = true)
       }
     } catch {
       case x: HttpStatusCodeException if x.getStatusCode == HttpStatus.TOO_MANY_REQUESTS =>
@@ -365,6 +370,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       case x: ResourceAccessException =>
         markDown()
         logger.warn(s"$id: entities ClassyFire unreachable, will retry: ${x.getMessage}")
+        stat(_.incServiceUnavailable())
         markClassyfireUnavailable(compound, id)
       case x: RestClientException =>
         // The lookup succeeded but the body could not be read (e.g. an unexpected content type). Treat it like
@@ -383,7 +389,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     * @param classification
     * @return
     */
-  def processClassification(compound: Compound, id: String, classification: ClassyfireResult): Compound = {
+  def processClassification(compound: Compound, id: String, classification: ClassyfireResult, fromEntities: Boolean): Compound = {
     val buffer: ArrayBuffer[MetaData] = ArrayBuffer()
 
     if (classification.kingdom != null) {
@@ -421,7 +427,9 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     }
 
     if (buffer.nonEmpty) {
-      stat(_.incNewlyClassified())
+      // A result fetched from the entities endpoint was already classified on ClassyFire's side, only a result
+      // from a completed query we scheduled is genuinely newly classified
+      if (fromEntities) stat(_.incEntitiesHit()) else stat(_.incNewlyClassified())
 
       // Cache by the classified structure's own skeleton so every spectrum sharing it reuses this result. The
       // ClassyFire response inchikey is prefixed (e.g. "InChIKey=AAAA..."), so strip it before validating and
@@ -446,6 +454,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     */
   def scheduleClassification(compound: Compound, id: String): Compound = {
     if (circuitOpen) {
+      stat(_.incServiceUnavailable())
       return markClassyfireUnavailable(compound, id)
     }
 
@@ -480,6 +489,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         case x: ResourceAccessException =>
           markDown()
           logger.warn(s"$id: queries ClassyFire unreachable, will retry: ${x.getMessage}")
+          stat(_.incServiceUnavailable())
           markClassyfireUnavailable(compound, id)
         case x: RestClientException =>
           // The submission succeeded but the body could not be read (e.g. an unexpected content type), so the
@@ -490,6 +500,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       }
     } else {
       logger.info(s"$id: No structure available to submit to ClassyFire")
+      stat(_.incNoStructure())
       compound
     }
   }

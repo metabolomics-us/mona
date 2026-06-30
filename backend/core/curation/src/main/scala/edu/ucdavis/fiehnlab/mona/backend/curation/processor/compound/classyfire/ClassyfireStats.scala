@@ -22,12 +22,18 @@ class ClassyfireStats {
   val spectraReceived = new AtomicLong(0)     // spectra pulled from the classyfire queue
   val pending = new AtomicLong(0)             // spectra re-enqueued to poll a scheduled query or retry an outage
 
-  // Per compound outcome
-  val newlyClassified = new AtomicLong(0)              // classified by an actual ClassyFire call
+  // Per compound outcome. Every processed compound lands in exactly one of these, so for a single compound
+  // per spectrum dataset their sum reconciles with spectraReceived (a re-enqueued spectrum is received and
+  // counted again, and each such receive also lands in exactly one outcome)
+  val newlyClassified = new AtomicLong(0)              // freshly classified by a scheduled query we submitted
+  val entitiesHits = new AtomicLong(0)                 // classification fetched from ClassyFire's entities endpoint
   val dbCacheHits = new AtomicLong(0)                  // classification reused from the skeleton cache
   val alreadyClassified = new AtomicLong(0)            // skipped, the compound already had classification
   val missingInchiKey = new AtomicLong(0)              // skipped, no valid InChIKey
   val newClassificationsScheduled = new AtomicLong(0)  // novel structures submitted for async classification
+  val awaitingPoll = new AtomicLong(0)                 // scheduled query polled but not finished, re-enqueued
+  val noStructure = new AtomicLong(0)                  // valid InChIKey but no structure to submit, left unclassified
+  val serviceUnavailable = new AtomicLong(0)           // ClassyFire down or unreachable, re-enqueued to retry
   val rateLimited = new AtomicLong(0)                  // abandoned after repeated HTTP 429s
   val failed = new AtomicLong(0)                       // failed (invalid query result or schedule error)
 
@@ -57,10 +63,14 @@ class ClassyfireStats {
   def incSpectraReceived(): Unit = spectraReceived.incrementAndGet()
   def incPending(): Unit = pending.incrementAndGet()
   def incNewlyClassified(): Unit = newlyClassified.incrementAndGet()
+  def incEntitiesHit(): Unit = entitiesHits.incrementAndGet()
   def incDbCacheHit(): Unit = dbCacheHits.incrementAndGet()
   def incAlreadyClassified(): Unit = alreadyClassified.incrementAndGet()
   def incMissingInchiKey(): Unit = missingInchiKey.incrementAndGet()
   def incNewClassificationScheduled(): Unit = newClassificationsScheduled.incrementAndGet()
+  def incAwaitingPoll(): Unit = awaitingPoll.incrementAndGet()
+  def incNoStructure(): Unit = noStructure.incrementAndGet()
+  def incServiceUnavailable(): Unit = serviceUnavailable.incrementAndGet()
   def incRateLimited(): Unit = rateLimited.incrementAndGet()
   def incFailed(): Unit = failed.incrementAndGet()
   def incDbCacheWrite(): Unit = dbCacheWrites.incrementAndGet()
@@ -73,9 +83,11 @@ class ClassyfireStats {
   def summary: String =
     "ClassyFire batch summary:\n" +
       s"  spectra:           spectraReceived=${spectraReceived.get()}, pendingReEnqueued=${pending.get()}\n" +
-      s"  compound outcomes: newlyClassified=${newlyClassified.get()}, dbCacheHits=${dbCacheHits.get()}, " +
-      s"alreadyClassified=${alreadyClassified.get()}, missingInchiKey=${missingInchiKey.get()}, " +
-      s"newClassificationsScheduled=${newClassificationsScheduled.get()}, rateLimited=${rateLimited.get()}, " +
+      s"  compound outcomes: newlyClassified=${newlyClassified.get()}, entitiesHits=${entitiesHits.get()}, " +
+      s"dbCacheHits=${dbCacheHits.get()}, alreadyClassified=${alreadyClassified.get()}, " +
+      s"missingInchiKey=${missingInchiKey.get()}, newClassificationsScheduled=${newClassificationsScheduled.get()}, " +
+      s"awaitingPoll=${awaitingPoll.get()}, noStructure=${noStructure.get()}, " +
+      s"serviceUnavailable=${serviceUnavailable.get()}, rateLimited=${rateLimited.get()}, " +
       s"failed=${failed.get()}\n" +
       s"  cache writes:      dbCacheWrites=${dbCacheWrites.get()}"
 
@@ -83,10 +95,14 @@ class ClassyfireStats {
     spectraReceived.set(0)
     pending.set(0)
     newlyClassified.set(0)
+    entitiesHits.set(0)
     dbCacheHits.set(0)
     alreadyClassified.set(0)
     missingInchiKey.set(0)
     newClassificationsScheduled.set(0)
+    awaitingPoll.set(0)
+    noStructure.set(0)
+    serviceUnavailable.set(0)
     rateLimited.set(0)
     failed.set(0)
     dbCacheWrites.set(0)

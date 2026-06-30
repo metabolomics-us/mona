@@ -213,6 +213,7 @@ class ClassyfireListener(classyfireProcessor: ClassyfireProcessor,
     } catch {
       case e: Exception =>
         logger.warn(s"${spectrum.getId}: Classification failed, fail silently: ${e.getMessage}")
+        stats.incFailed()
         // Treat as terminal so the live queue depth cannot leak
         stats.decQueued()
     }
