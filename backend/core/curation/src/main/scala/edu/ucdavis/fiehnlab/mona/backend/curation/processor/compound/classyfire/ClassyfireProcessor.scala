@@ -33,7 +33,10 @@ import scala.util.Try
   *   - only calls ClassyFire when the compound has a syntactically valid InChIKey
   *   - dedupes by the 14 character InChIKey first block (the connectivity skeleton) via a persistent cache, so
   *     each skeleton is sent to ClassyFire at most once and reused for every spectrum sharing it
-  *   - on a 404 schedules an async query and records its id so the listener re-enqueues the spectrum to poll
+  *   - when the entity lookup yields no classification (a 404, a 500, or the empty 200 ClassyFire sometimes
+  *     returns) schedules an async query and records its id so the listener re-enqueues the spectrum to poll
+  *   - negative caches a skeleton only when a finished query has no usable result, so an unclassifiable
+  *     structure is not re-queried on every recuration, expiring per the negative cache TTL
   *   - paces requests and retries on HTTP 429, and infers reachability from actual responses
   */
 @Step(description = "run's classification rules from the wishart's lab classyfire tool")
@@ -87,6 +90,11 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   // How long to fast fail after ClassyFire was found unreachable before probing it again
   @Value("${mona.classyfire.down.cooldown:60000}")
   val downCooldownMs: Long = 60000
+
+  // How long a negative cache entry is honored before the skeleton is retried. A negative entry records that
+  // ClassyFire ran the structure through its classifier and could not classify it
+  @Value("${mona.classyfire.negative.cache.ttl:7776000000}")
+  val negativeCacheTtlMs: Long = 7776000000L
 
   private val objectMapper: ObjectMapper = MonaMapper.create
 
@@ -261,12 +269,20 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       if (resultBody.classification_status == "Done") {
         // The query has finished, so this is terminal either way: drop the query id and either store the
         // classification or give up. Not doing this would re-poll an invalid query forever
-        if (resultBody.invalid_entities.isEmpty && resultBody.entities.nonEmpty) {
+        val hasUsableClassification: Boolean =
+          resultBody.entities != null && resultBody.entities.nonEmpty &&
+            (resultBody.invalid_entities == null || resultBody.invalid_entities.isEmpty) &&
+            !isEmptyClassification(resultBody.entities.head)
+
+        if (hasUsableClassification) {
           logger.info(s"$id: ClassyFire query successful, fetching results")
           processClassification(compound, id, resultBody.entities.head)
         } else {
           logger.warn(s"$id: ClassyFire query finished without a usable classification, giving up")
           stat(_.incFailed())
+          // ClassyFire ran the structure through its classifier and came back with nothing usable, the one
+          // authoritative negative. Cache it so this skeleton is not re-queried on every recuration
+          negativeCacheSkeleton(compound, id)
           dropQueryId(compound)
         }
       } else {
@@ -304,7 +320,9 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   }
 
   /**
-    * Look up an already classified compound by InChIKey. On a 404 the compound is novel, so schedule a query
+    * Look up an already classified compound by InChIKey. When the entity index has no usable classification for
+    * it, whether a 404 (novel), a 500, or the empty 200 ClassyFire sometimes returns, schedule a query from the
+    * structure instead, since the queries endpoint can classify it even when the entity lookup cannot
     *
     * @param compound
     * @param id
@@ -324,8 +342,17 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         restOperations.getForEntity(url, classOf[ClassyfireResult])
       }
       markUp()
-      logger.info(s"$id: entities lookup successful")
-      processClassification(compound, id, result.getBody)
+      val body: ClassyfireResult = result.getBody
+
+      // Submit the structure to the queries endpoint instead of treating the empty
+      // response as a real (empty) classification, which would cache nothing and re-query on every recuration
+      if (isEmptyClassification(body)) {
+        logger.info(s"$id: entities lookup returned no classification for $inchiKey, scheduling classification")
+        scheduleClassification(compound, id)
+      } else {
+        logger.info(s"$id: entities lookup successful")
+        processClassification(compound, id, body)
+      }
     } catch {
       case x: HttpStatusCodeException if x.getStatusCode == HttpStatus.TOO_MANY_REQUESTS =>
         logger.warn(s"$id: entities lookup rate limited (429) after retries, leaving classification pending")
@@ -494,12 +521,58 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     */
   def classificationCacheLookup(block: String): Option[ClassificationCache] = {
     try {
-      classificationCacheRestClient.findByBlock(block)
+      classificationCacheRestClient.findByBlock(block).filter(isCacheEntryUsable)
     } catch {
       case e: Throwable =>
         logger.warn(s"Unable to read classification cache for $block: ${e.getMessage}")
         None
     }
+  }
+
+  /**
+    * Whether a cached entry should be used. A positive entry (a real classification) never expires. A negative
+    * entry (empty, meaning ClassyFire could not classify the skeleton) is only honored until the negative cache
+    * TTL elapses, so the skeleton is retried later rather than negative cached forever
+    *
+    * @param cache
+    * @return
+    */
+  private[classyfire] def isCacheEntryUsable(cache: ClassificationCache): Boolean = {
+    if (!isNegativeCache(cache)) {
+      true
+    } else {
+      cache.getCreated != null && (System.currentTimeMillis() - cache.getCreated.getTime) < negativeCacheTtlMs
+    }
+  }
+
+  /**
+    * A negative cache entry holds no classification metadata, recording that ClassyFire examined the skeleton
+    * and could not classify it. A blank or unparseable payload is treated as negative so it expires and is
+    * retried rather than served as a (broken) hit forever
+    *
+    * @param cache
+    * @return
+    */
+  private[classyfire] def isNegativeCache(cache: ClassificationCache): Boolean = {
+    val json: String = cache.getClassification
+    json == null || json.trim.isEmpty ||
+      Try(objectMapper.readValue(json, classOf[Array[MetaData]]).isEmpty).getOrElse(true)
+  }
+
+  /**
+    * True when a ClassyFire result carries no classification at all, as deserialized from the empty {} body
+    * ClassyFire returns for a structure it has no entity record for
+    *
+    * @param result
+    * @return
+    */
+  private[classyfire] def isEmptyClassification(result: ClassyfireResult): Boolean = {
+    result == null || (
+      result.kingdom == null && result.superclass == null && result.`class` == null &&
+        result.subclass == null && result.direct_parent == null &&
+        (result.intermediate_nodes == null || result.intermediate_nodes.isEmpty) &&
+        (result.alternative_parents == null || result.alternative_parents.isEmpty)
+    )
   }
 
   /**
@@ -532,6 +605,38 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     } catch {
       case e: Throwable =>
         logger.warn(s"$id: Unable to write classification cache for $block: ${e.getMessage}")
+    }
+  }
+
+  /**
+    * Negative cache the compound's skeleton so it is not re-queried on every recuration. Resolves the skeleton
+    * from the compound's InChIKey and only writes when it is valid
+    *
+    * @param compound
+    * @param id
+    */
+  private def negativeCacheSkeleton(compound: Compound, id: String): Unit = {
+    val inchiKey: String = resolveInchiKey(compound)
+    if (isValidInchiKey(inchiKey)) {
+      storeNegativeCache(inchiKey.take(14), id)
+    }
+  }
+
+  /**
+    * Store an empty classification for a skeleton, recording that ClassyFire could not classify it. Timestamped
+    * so the negative entry expires per the negative cache TTL. Swallows any cache error like the positive write
+    *
+    * @param block
+    * @param id
+    */
+  def storeNegativeCache(block: String, id: String): Unit = {
+    try {
+      classificationCacheRestClient.add(new ClassificationCache(block, "[]", new java.util.Date()))
+      stat(_.incDbCacheWrite())
+      logger.info(s"$id: Negative cached skeleton $block, ClassyFire could not classify it")
+    } catch {
+      case e: Throwable =>
+        logger.warn(s"$id: Unable to write negative classification cache for $block: ${e.getMessage}")
     }
   }
 

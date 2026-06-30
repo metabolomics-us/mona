@@ -1,7 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{ClassificationCache, Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
@@ -60,6 +61,32 @@ class ClassyfireProcessorTest extends AnyWordSpec with LazyLogging {
       val result: Compound = classyfireProcessor.classify(compound, "test-id")
 
       assert(result.getClassification.isEmpty)
+    }
+
+    "treat an empty ClassyFire entities result as no classification" in {
+      // ClassyFire answers a structure it has no entity record for with an empty {} body, deserialized to an
+      // all null result. This must route to the queries endpoint rather than be stored as an empty classification
+      val empty: ClassyfireResult = ClassyfireResult(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+      assert(classyfireProcessor.isEmptyClassification(empty))
+      assert(classyfireProcessor.isEmptyClassification(null))
+
+      val populated: ClassyfireResult = empty.copy(kingdom = Classification("Organic compounds", null, null, null))
+      assert(!classyfireProcessor.isEmptyClassification(populated))
+    }
+
+    "honor a fresh negative cache entry but expire an old one, and never expire a positive entry" in {
+      val mapper = MonaMapper.create
+      val positiveJson: String = mapper.writeValueAsString(Array(new MetaData(null, "kingdom", "Organic compounds", false, "classification", true, null)))
+
+      // a negative entry (empty payload) is usable while fresh
+      assert(classyfireProcessor.isCacheEntryUsable(new ClassificationCache("ABCDEFGHIJKLMN", "[]", new java.util.Date())))
+      // but expires once older than the TTL
+      assert(!classyfireProcessor.isCacheEntryUsable(new ClassificationCache("ABCDEFGHIJKLMN", "[]", new java.util.Date(0))))
+      // a positive entry is always usable, regardless of age
+      assert(classyfireProcessor.isCacheEntryUsable(new ClassificationCache("ABCDEFGHIJKLMN", positiveJson, new java.util.Date(0))))
+
+      assert(classyfireProcessor.isNegativeCache(new ClassificationCache("ABCDEFGHIJKLMN", "[]", new java.util.Date())))
+      assert(!classyfireProcessor.isNegativeCache(new ClassificationCache("ABCDEFGHIJKLMN", positiveJson, new java.util.Date())))
     }
 
     "report a spectrum as pending when a compound still carries a scheduled query id" in {
