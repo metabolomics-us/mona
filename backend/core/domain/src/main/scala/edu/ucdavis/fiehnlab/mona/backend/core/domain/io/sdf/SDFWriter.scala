@@ -164,7 +164,10 @@ class SDFWriter extends DomainWriter{
     buildMetaData(compound.getMetaData.asScala.toArray, "EXACT MASS", "total exact mass", p)
     buildMetaData(compound.getMetaData.asScala.toArray, "MW", "total exact mass", p, x => (x.toDouble + 0.2).toInt.toString)
     printMetaData("ID", spectrum.getId, p)
-    printMetaData("CONTRIBUTOR", s"${spectrum.getSubmitter.getFirstName} ${spectrum.getSubmitter.getLastName}, {${spectrum.getSubmitter.getInstitution}", p)
+    // Submitter can be null when a concurrent curation is in progress, skip it
+    if (spectrum.getSubmitter != null) {
+      printMetaData("CONTRIBUTOR", s"${spectrum.getSubmitter.getFirstName} ${spectrum.getSubmitter.getLastName}, {${spectrum.getSubmitter.getInstitution}", p)
+    }
     buildComments(spectrum, p)
     buildSpectraString(spectrum, p)
     p.println("$$$$")
