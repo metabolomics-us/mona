@@ -146,6 +146,21 @@ class DownloadSchedulerController extends LazyLogging {
   }
 
   /**
+    * Removes predefined library downloads whose library no longer exists. Called by the library
+    * deletion flow so the downloads page stops listing exports for deleted libraries
+    */
+  @RequestMapping(path = Array("/predefined/reconcile"), method = Array(RequestMethod.POST))
+  @ResponseBody
+  def reconcilePredefinedExports(): ResponseEntity[Array[PredefinedQuery]] = {
+    // Reject if a regeneration is still draining the queue, pruning now would be undone by the in-flight listener
+    if (downloadSchedulerService.isPredefinedExportInProgress) {
+      new ResponseEntity(HttpStatus.CONFLICT)
+    } else {
+      new ResponseEntity(downloadSchedulerService.reconcilePredefinedLibraryQueries(), HttpStatus.OK)
+    }
+  }
+
+  /**
     * Schedules the re-generation of static exports
     */
   @RequestMapping(path = Array("/generateStatic"), method = Array(RequestMethod.GET))

@@ -53,6 +53,9 @@ class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
       // must be an admin to create predefined queryes
       .antMatchers(HttpMethod.POST, "/rest/downloads/predefined").hasAuthority("ADMIN")
 
+      // must be an admin to reconcile predefined downloads against deleted libraries
+      .antMatchers(HttpMethod.POST, "/rest/downloads/predefined/reconcile").hasAuthority("ADMIN")
+
       // must be an admin to upload static files
       .antMatchers(HttpMethod.POST, "/rest/downloads/static").hasAuthority("ADMIN")
   }

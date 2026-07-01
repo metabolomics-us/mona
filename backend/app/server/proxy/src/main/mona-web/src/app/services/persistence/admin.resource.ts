@@ -68,6 +68,17 @@ export class AdminService {
     return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/downloads/generatePredefined`, config);
   }
 
+  // Removes predefined library downloads whose library no longer exists
+  reconcilePredefinedDownloads(token: any): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    };
+    return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/downloads/predefined/reconcile`, null, config);
+  }
+
   reCurateAllData(token: any): Observable<any> {
     const config = {
       headers: {

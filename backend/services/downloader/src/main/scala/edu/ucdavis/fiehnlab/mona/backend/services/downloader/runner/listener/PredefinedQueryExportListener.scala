@@ -38,7 +38,7 @@ class PredefinedQueryExportListener extends GenericMessageListener[PredefinedQue
       queryExportRepository.save(result.getSdfExport)
       predefinedQueryRepository.save(result)
 
-      logger.info(s"Finished downloading predefined querry ${result.getLabel}, exported ${result.getJsonExport.getCount} spectra")
+      logger.info(s"Finished downloading predefined query ${result.getLabel}, exported ${result.getJsonExport.getCount} spectra")
     } catch {
       case e: Exception => logger.error(s"Error during download of predefined query ${predefinedQuery.getLabel}, failing silently: ${e.getMessage}", e)
     }

@@ -130,6 +130,8 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
         title: 'Libraries Refreshed!',
         body: 'The library list has been refreshed.'
       });
+      // Statistics now reflect the deletion, so prune predefined downloads for libraries that are gone
+      this.reconcilePredefinedDownloads();
     },
       (error) => {
         this.logger.error('Library refresh failed: ' + error);
@@ -139,6 +141,22 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
           body: `${error.message}`
         });
       });
+  }
+
+  // Drops predefined library downloads whose library was just deleted. Runs after the statistics
+  // refresh so the backend sees the deletion, and stays silent unless something was actually removed
+  reconcilePredefinedDownloads() {
+    this.adminService.reconcilePredefinedDownloads(this.auth.getCurrentUser().accessToken).subscribe((removed: any) => {
+      if (removed && removed.length > 0) {
+        this.toaster.pop({
+          type: 'info',
+          title: 'Download List Updated',
+          body: `Removed ${removed.length} download${removed.length === 1 ? '' : 's'} for deleted libraries.`
+        });
+      }
+    }, (error) => {
+      this.logger.error('Predefined download reconciliation failed: ' + error);
+    });
   }
 
   submitDeletionQuery() {
