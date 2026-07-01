@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.writer
 
 import javax.annotation.PostConstruct
+import java.util.concurrent.atomic.AtomicInteger
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -25,13 +26,7 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
     monaSpectrumRestClient.login(loginToken)
   }
 
-  private var counter: Int = 0
-
-  /**
-    * how many tries are left for the current data set
-    */
-  private var retriesLeft = maxRetries
-
+  private val counter: AtomicInteger = new AtomicInteger(0)
 
   /**
     * attempts to write all these spectra to the repository
@@ -39,7 +34,16 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
     *
     * @param spectrum
     */
-  override def write(spectrum: Spectrum): Unit = {
+  override def write(spectrum: Spectrum): Unit = writeWithRetries(spectrum, maxRetries)
+
+  /**
+    * Persists a single spectrum, retrying on server errors. Retries are carried as a method parameter so the
+    * retry budget is per spectrum, letting multiple consumer threads write concurrently without sharing state
+    *
+    * @param spectrum
+    * @param retriesLeft how many attempts remain for this spectrum
+    */
+  private def writeWithRetries(spectrum: Spectrum, retriesLeft: Int): Unit = {
 
     try {
       if (spectrum.getId == null) {
@@ -62,22 +66,18 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
         }
       }
 
-      counter = counter + 1
+      val written = counter.incrementAndGet()
 
-      if (counter % 1000 == 1) {
-        logger.info(s"written $counter spectra to the repository")
+      if (written % 1000 == 1) {
+        logger.info(s"written $written spectra to the repository")
       }
     } catch {
       case e: HttpServerErrorException =>
         if (retrySilently && retriesLeft > 0) {
-          retriesLeft = retriesLeft - 1
-          logger.warn(s"${e.getMessage} attempting recovery ${maxRetries - retriesLeft} out of $maxRetries")
+          logger.warn(s"${e.getMessage} attempting recovery ${maxRetries - retriesLeft + 1} out of $maxRetries")
 
           Thread.sleep(recoveryPauseInMS)
-          write(spectrum)
-
-          //success time to reset the retires
-          retriesLeft = maxRetries
+          writeWithRetries(spectrum, retriesLeft - 1)
         } else {
           throw e
         }

@@ -60,6 +60,12 @@ class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging {
   @Value("${mona.security.curation.token}")
   val token: String = null
 
+  // Number of concurrent consumers on the main curation queue. Curation is I/O bound, so the useful
+  // ceiling is downstream capacity (persistence-server, Postgres, CTS-Lite) rather than CPU cores.
+  // Tunable per environment via mona-config, applied when the container bean is built
+  @Value("${mona.curation.concurrency:4}")
+  val curationConcurrency: Int = 4
+
   // How long the classyfire queue must be idle before we log a batch summary. Kept well above the pending
   // queue TTL (mona.classyfire.pending.ttl, default 60000) so a pending poll redelivery resets the idle
   // timer first and we never declare a batch done while a scheduled query is still being polled
@@ -88,8 +94,9 @@ class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging {
   }
 
   /**
-    * Consumes the main curation queue. Concurrency is left at the default of one consumer for now,
-    * parallelizing curation (container.setConcurrentConsumers) is a planned follow-up
+    * Consumes the main curation queue with a fixed pool of curationConcurrency consumer threads, so spectra
+    * are curated in parallel within this single instance. Prefetch is a small buffer so each consumer stays
+    * fed between messages
     *
     * @param connectionFactory
     * @param listener
@@ -101,6 +108,9 @@ class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging {
     container.setConnectionFactory(connectionFactory)
     container.setMessageListener(listener)
     container.setQueueNames(queueName)
+    container.setConcurrentConsumers(curationConcurrency)
+    container.setMaxConcurrentConsumers(curationConcurrency)
+    container.setPrefetchCount(25)
     container
   }
 
