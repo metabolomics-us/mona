@@ -60,12 +60,10 @@ class CompoundConversion extends LazyLogging {
       AtomContainerManipulator.suppressHydrogens(parsedSmile)
     } catch {
       case e: InvalidSmilesException =>
-        logger.error(s"$id: Invalid SMILES Code")
-        e.printStackTrace()
+        logger.warn(s"$id: Invalid SMILES code '$smiles': ${e.getMessage}")
         null
       case e: Exception =>
-        logger.error(s"$id: Unknown SMILES Error")
-        e.printStackTrace()
+        logger.warn(s"$id: Unknown SMILES error for '$smiles': ${e.getMessage}")
         null
     }
   }
