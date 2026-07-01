@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import com.typesafe.scalalogging.Logger
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
@@ -21,13 +20,13 @@ class CurationRunner {
   @Autowired
   val curationService: CurationService = null
 
-  // Number of spectra loaded and scheduled per transaction while walking the table
+  // Number of spectra loaded and scheduled per keyset page while walking the table
   private val PageSize: Int = 1000
 
   /**
-    * Pages through every spectrum matching the given query and schedules each for curation
-    * Delegates one page at a time to CurationService.scheduleSpectraPage so each page runs in its
-    * own read-only transaction (needed for lazy serialization) rather than one transaction per run
+    * Walks every spectrum matching the given query with a keyset cursor and schedules each for curation
+    * Delegates one page at a time to CurationService.scheduleSpectraKeysetPage so each page runs in its
+    * own read-only transaction (needed for lazy serialization) and the cursor avoids a growing offset
     * Clears the in-progress flag once every spectrum has been queued so the next request can be accepted
     *
     * @param query
@@ -36,19 +35,27 @@ class CurationRunner {
   @Async
   def scheduleAllForCuration(query: String, inProgress: AtomicBoolean): Unit = {
     try {
-      var pageNumber: Int = 0
+      var lastId: String = null
       var count: Int = 0
+      var pageIndex: Int = 0
       var hasNext: Boolean = true
 
       while (hasNext) {
-        val page: Page[Spectrum] = curationService.scheduleSpectraPage(query, PageRequest.of(pageNumber, PageSize))
-        count += page.getNumberOfElements
-        hasNext = page.hasNext
-        pageNumber += 1
+        val page: java.util.List[Spectrum] = curationService.scheduleSpectraKeysetPage(query, lastId, PageSize)
+        val pageSize: Int = page.size
 
-        if (pageNumber % 10 == 0) {
-          logger.info(s"Scheduled $count spectra...")
+        if (pageSize > 0) {
+          count += pageSize
+          lastId = page.get(pageSize - 1).getId
+          pageIndex += 1
+
+          if (pageIndex % 10 == 0) {
+            logger.info(s"Scheduled $count spectra...")
+          }
         }
+
+        // A short (or empty) page means the cursor reached the end of the table
+        hasNext = pageSize == PageSize
       }
 
       logger.info(s"Finished scheduling $count spectra")
