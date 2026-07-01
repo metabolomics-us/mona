@@ -40,6 +40,7 @@ export class AdvancedUploaderComponent implements OnInit{
   spectraIndex;
   loadedSpectra;
   totalSpectra;
+  filesParsed;
   spectrum;
   tags;
   showIonTable;
@@ -119,6 +120,9 @@ export class AdvancedUploaderComponent implements OnInit{
 		this.spectra = [];
 		this.spectrumErrors = {};
 		this.spectraIndex = 0;
+		this.loadedSpectra = 0;
+		this.totalSpectra = 0;
+		this.filesParsed = false;
 		this.fileUpload = null;
 		this.files = null;
 		this.convMolUpload = null;
@@ -390,6 +394,9 @@ export class AdvancedUploaderComponent implements OnInit{
               spectrum.submitter = this.library.submitter;
             }
           }
+          // Count every spectrum queued for processing so allSpectraLoaded can
+          // compare it against loadedSpectra once file parsing has finished
+          this.totalSpectra++;
           this.asyncService.addToPool(async () => {
             // Create list of ions
             spectrum.basePeak = 0;
@@ -505,8 +512,12 @@ export class AdvancedUploaderComponent implements OnInit{
         return;
       } else {
         this.uploadLibraryService.isSTP = false;
+        this.filesParsed = false;
+        this.loadedSpectra = 0;
+        this.totalSpectra = 0;
+        const fileReads = [];
         for (let i = 0; i < this.files.length; i++) {
-          this.uploadLibraryService.loadSpectraFile(this.files[i],
+          fileReads.push(this.uploadLibraryService.loadSpectraFile(this.files[i],
             async (data, origin) => {
               for (const item of data) {
                 promiseBuffer.push(this.batchProcess(item, origin));
@@ -523,8 +534,13 @@ export class AdvancedUploaderComponent implements OnInit{
                 body: reason
               });
             }, 500);
-          });
+          }));
         }
+        // Once every file has been fully read, totalSpectra is final and
+        // allSpectraLoaded can become true as soon as the pool catches up
+        Promise.all(fileReads).then(() => {
+          this.filesParsed = true;
+        });
       }
     }
 	}
@@ -794,7 +810,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	waitForLogin() {
 		this.authenticationService.isAuthenticated.subscribe((authenticate) => {
 			if (authenticate) {
-				if (this.spectraLoaded === 2) {
+				if (this.spectraLoaded === 2 && this.allSpectraLoaded) {
 					this.uploadFile();
 				}
 			}
@@ -933,6 +949,9 @@ export class AdvancedUploaderComponent implements OnInit{
 		this.spectraLoaded = 0;
 		this.spectraIndex = 0;
 		this.spectra = [];
+		this.loadedSpectra = 0;
+		this.totalSpectra = 0;
+		this.filesParsed = false;
 
 		this.filenames = null;
 		this.fileUpload = null;
@@ -946,6 +965,15 @@ export class AdvancedUploaderComponent implements OnInit{
 
 	goToDocumentation() {
 	  this.router.navigate(['/documentation/uploadLibrary']).then();
+  }
+
+  /**
+   * True once every spectrum streamed from the selected files has landed in
+   * the spectra array. The async pool alone is not a reliable signal since it
+   * can drain between streamed batches while the file is still being read
+   */
+  get allSpectraLoaded(): boolean {
+    return this.filesParsed && this.loadedSpectra >= this.totalSpectra;
   }
 
   get compoundInfoProvided(): boolean {
