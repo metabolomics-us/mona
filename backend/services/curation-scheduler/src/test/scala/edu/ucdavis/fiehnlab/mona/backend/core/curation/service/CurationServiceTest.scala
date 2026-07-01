@@ -116,30 +116,19 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually w
       (1 to 10).foreach { i =>
         logger.info(s"Test $i/10")
 
-        val count = transactionTemplate.execute{ x =>
-          val z = notificationCounter.getEventCount
-          Hibernate.initialize(z)
-          z
-        }
+        val count = notificationCounter.getEventCount
         testCurationRunner.resetMessageStatus()
 
-        transactionTemplate.execute{ x =>
-          curationController.curateByQuery("")
-          Hibernate.initialize()
-          x
+        // Scheduling now runs asynchronously and returns 202; retry while a prior run's guard clears
+        eventually(timeout(80 seconds)) {
+          assert(curationController.curateByQuery("").getStatusCodeValue == 202)
         }
 
-
-        transactionTemplate.execute{ x =>
-          eventually(timeout(80 seconds)) {
-            assert(testCurationRunner.messageReceived)
-            assert(testCurationRunner.messageCount == 59)
-            assert(notificationCounter.getEventCount - count == 59)
-          }
-          Hibernate.initialize()
-          x
+        eventually(timeout(80 seconds)) {
+          assert(testCurationRunner.messageReceived)
+          assert(testCurationRunner.messageCount == 59)
+          assert(notificationCounter.getEventCount - count == 59)
         }
-
       }
     }
 
@@ -147,30 +136,19 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually w
       (1 to 10).foreach { i =>
         logger.info(s"Test $i/10")
 
-        val count = transactionTemplate.execute { x =>
-          val z = notificationCounter.getEventCount
-          Hibernate.initialize(z)
-          z
-        }
+        val count = notificationCounter.getEventCount
         testCurationRunner.resetMessageStatus()
 
-        transactionTemplate.execute{ x =>
-          curationController.curateByQuery("metaData.name:'ion mode' and metaData.value:'negative'")
-          Hibernate.initialize()
-          x
+        // Scheduling now runs asynchronously and returns 202; retry while a prior run's guard clears
+        eventually(timeout(80 seconds)) {
+          assert(curationController.curateByQuery("metaData.name:'ion mode' and metaData.value:'negative'").getStatusCodeValue == 202)
         }
 
-
-        transactionTemplate.execute{ x =>
-          eventually(timeout(80 seconds)) {
-            assert(testCurationRunner.messageReceived)
-            assert(testCurationRunner.messageCount == 25)
-            assert(notificationCounter.getEventCount - count == 25)
-          }
-          Hibernate.initialize()
-          x
+        eventually(timeout(80 seconds)) {
+          assert(testCurationRunner.messageReceived)
+          assert(testCurationRunner.messageCount == 25)
+          assert(notificationCounter.getEventCount - count == 25)
         }
-
       }
     }
   }

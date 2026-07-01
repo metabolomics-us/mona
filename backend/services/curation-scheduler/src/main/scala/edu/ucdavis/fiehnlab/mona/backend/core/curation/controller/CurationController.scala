@@ -1,21 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation.controller
 
-import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.servlet.http.HttpServletRequest
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurationService
+import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.{CurationRunner, CurationService}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import io.swagger.v3.oas.annotations.media.Schema
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.{Page, Pageable}
+import org.springframework.amqp.rabbit.core.RabbitAdmin
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.http.{HttpStatus, ResponseEntity}
-import org.springframework.scheduling.annotation.{Async, AsyncResult}
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation._
-import javax.persistence.EntityManager
 
 
 /**
@@ -33,10 +28,21 @@ class CurationController extends LazyLogging {
   val curationService: CurationService = null
 
   @Autowired
-  val entityManager: EntityManager = null
+  val curationRunner: CurationRunner = null
 
-  // Guards against a second mass curation being scheduled while one is still scheduling
-  private val curationInProgress: AtomicBoolean = new AtomicBoolean(false)
+  @Autowired
+  val rabbitAdmin: RabbitAdmin = null
+
+  @Autowired
+  @Qualifier("spectra-curation-queue")
+  val queueName: String = null
+
+  // Only tracks the enqueue phase, not the curation itself
+  private val schedulingInProgress: AtomicBoolean = new AtomicBoolean(false)
+
+  // Reject a fresh mass curation while this many spectra are still queued from a previous run
+  @Value("${mona.curation.mass-backlog-threshold:1000}")
+  val massCurationBacklogThreshold: Int = 1000
 
   /**
     * schedules the spectra with the specified id for curation
@@ -45,17 +51,14 @@ class CurationController extends LazyLogging {
     * @return
     */
   @RequestMapping(path = Array("/{id}"))
-  @Async
-  def curateById(@PathVariable("id") id: String, request: HttpServletRequest): Future[ResponseEntity[CurationJobScheduled]] = {
+  def curateById(@PathVariable("id") id: String, request: HttpServletRequest): ResponseEntity[CurationJobScheduled] = {
     val spectrum = spectrumPersistenceService.findByMonaId(id)
 
     if (spectrum == null) {
-      new AsyncResult[ResponseEntity[CurationJobScheduled]](new ResponseEntity(HttpStatus.NOT_FOUND))
+      new ResponseEntity(HttpStatus.NOT_FOUND)
     } else {
       curationService.scheduleSpectrum(spectrum)
-      new AsyncResult[ResponseEntity[CurationJobScheduled]](
-        new ResponseEntity[CurationJobScheduled](CurationJobScheduled(1), HttpStatus.OK)
-      )
+      new ResponseEntity[CurationJobScheduled](CurationJobScheduled(1), HttpStatus.OK)
     }
   }
 
@@ -65,58 +68,33 @@ class CurationController extends LazyLogging {
     * @param query
     */
   @RequestMapping(path = Array(""))
-  @Async
-  def curateByQuery(@RequestParam(required = false, name = "query") query: String): Future[ResponseEntity[CurationJobScheduled]] = {
+  def curateByQuery(@RequestParam(required = false, name = "query") query: String): ResponseEntity[String] = {
 
-    // Reject if a mass curation is already scheduling so we never schedule the same spectra twice
-    if (!curationInProgress.compareAndSet(false, true)) {
-      return new AsyncResult[ResponseEntity[CurationJobScheduled]](new ResponseEntity(HttpStatus.CONFLICT))
+    // Reject if a mass curation is already scheduling
+    if (!schedulingInProgress.compareAndSet(false, true)) {
+      return new ResponseEntity[String]("Re-curation scheduling already in progress", HttpStatus.CONFLICT)
     }
 
-    try {
-      val it = new DynamicIterable[Spectrum, String](query, 1000) {
-        /**
-          * Loads more data from the server for the given query
-          */
-        override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
-          if (query == null || query.isEmpty) {
-            spectrumPersistenceService.findAll(pageable)
-          } else {
-            spectrumPersistenceService.findAll(query, pageable)
-          }
-        }
-      }.iterator
+    // Reject if a previous batch is still draining through the queue so we don't pile on a second batch
+    val backlog: Int = Option(rabbitAdmin.getQueueInfo(queueName)).map(_.getMessageCount).getOrElse(0)
 
-      var count: Int = 0
-
-      while (it.hasNext) {
-        val spectrum = it.next()
-        curationService.scheduleSpectrum(spectrum)
-        count += 1
-
-        if (count % 10000 == 0) {
-          logger.info(s"Scheduled $count spectra...")
-        }
-        entityManager.detach(spectrum)
-      }
-
-      logger.info(s"Finished scheduling $count spectra")
-      new AsyncResult[ResponseEntity[CurationJobScheduled]](
-        new ResponseEntity[CurationJobScheduled](CurationJobScheduled(count), HttpStatus.OK)
-      )
-    } finally {
-      curationInProgress.set(false)
+    if (backlog > massCurationBacklogThreshold) {
+      schedulingInProgress.set(false)
+      return new ResponseEntity[String](s"Re-curation already in progress, $backlog spectra still queued", HttpStatus.CONFLICT)
     }
+
+    // Delegated to an @Async runner bean so the request returns immediately
+    // The runner clears schedulingInProgress in a finally block when scheduling completes
+    curationRunner.scheduleAllForCuration(query, schedulingInProgress)
+    new ResponseEntity[String]("Re-curation scheduled for all spectra", HttpStatus.ACCEPTED)
   }
 
   /**
     * Curate a single spectrum on demand
     */
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
-  def curateSpectrum(@RequestBody spectrum: Spectrum): Future[ResponseEntity[Spectrum]] = {
-    new AsyncResult[ResponseEntity[Spectrum]](
-      new ResponseEntity(curationService.curateSpectrum(spectrum), HttpStatus.OK)
-    )
+  def curateSpectrum(@RequestBody spectrum: Spectrum): ResponseEntity[Spectrum] = {
+    new ResponseEntity(curationService.curateSpectrum(spectrum), HttpStatus.OK)
   }
 }
 

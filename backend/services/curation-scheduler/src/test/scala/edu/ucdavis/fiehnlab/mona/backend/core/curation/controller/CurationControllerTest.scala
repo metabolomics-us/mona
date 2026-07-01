@@ -87,12 +87,12 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
     "these must all pass, since we are logged in " must {
       "curateByQuery" in {
         val count: Long = notificationCounter.getEventCount
-        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData.name:'ion mode' and metaData.value:'negative'").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
 
-        assert(result.count == 25)
+        // Scheduling now happens asynchronously, so the endpoint returns 202 immediately
+        authenticate().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData.name:'ion mode' and metaData.value:'negative'").`then`().statusCode(202)
 
         eventually(timeout(80 seconds)) {
-          assert(notificationCounter.getEventCount - count == result.count)
+          assert(notificationCounter.getEventCount - count == 25)
         }
       }
 
@@ -114,12 +114,14 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
 
       "curateAll" in {
         val count: Long = notificationCounter.getEventCount
-        val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
 
-        assert(result.count == exampleRecords.length)
+        // Scheduling now happens asynchronously, so the endpoint returns 202 immediately
+        eventually(timeout(80 seconds)) {
+          authenticate().contentType("application/json; charset=UTF-8").when().get("/curation").`then`().statusCode(202)
+        }
 
         eventually(timeout(80 seconds)) {
-          assert(notificationCounter.getEventCount - count == result.count)
+          assert(notificationCounter.getEventCount - count == exampleRecords.length)
         }
       }
 
