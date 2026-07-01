@@ -21,7 +21,15 @@ if [ "$STOP" == true ]; then
     echo "============================"
     echo "  STOPPING DOCKER SERVICES   "
     echo "============================"
-    echo -e "Environment arg passed: $ENV\n"
+    # Detect which environment is currently running
+    RUNNING_FILE=$(docker compose ls --format json | grep -o "$(pwd)/backend/docker-compose-[a-z]*\.yml" | head -n 1)
+    if [ -z "$RUNNING_FILE" ]; then
+        echo "No running compose environment found, nothing to stop"
+        exit 0
+    fi
+    ENV=$(basename "$RUNNING_FILE" .yml)
+    ENV=${ENV#docker-compose-}
+    echo -e "Detected running environment: $ENV\n"
     docker-compose -f backend/docker-compose-"$ENV".yml down
     exit 0
 fi
