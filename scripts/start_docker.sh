@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Usage: start_docker.sh [stop] || [dev|test|local]
+#   - stop: stop all running docker services
+#   - dev|test|local: start the corresponding docker-compose environment
+
 # cd into repo root
 cd "$(dirname "$0")/.." || exit 1
 
