@@ -124,9 +124,7 @@
               "src/main/mona-web/src/favicon.ico",
               "src/main/mona-web/src/assets"
             ],
-            "styles": [
-              "src/main/mona-web/src/styles.scss"
-            ],
+            "styles": [],
             "scripts": []
           }
         },
