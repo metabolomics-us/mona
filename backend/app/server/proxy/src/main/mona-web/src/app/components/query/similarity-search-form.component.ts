@@ -74,15 +74,29 @@ export class SimilaritySearchFormComponent implements OnInit{
         this.spectrum = null;
         this.uploadError = null;
 
-        this.uploadLibraryService.loadSpectraFile(event.target.files[0],
+        return this.uploadLibraryService.loadSpectraFile(event.target.files[0],
             (data, origin) => {
                 this.uploadLibraryService.processData(data, (spectrum) => {
+                    if (spectrum === null || typeof spectrum === 'undefined') {
+                        // Invalid block, the zero spectra check below reports it
+                        return;
+                    }
                     // Create list of ions
                     this.spectrum = spectrum.spectrum;
                     this.page = 2;
                 }, origin);
             }
-        );
+        ).then(() => {
+            // The file was read but no valid spectrum was produced, return to the
+            // form with an error instead of hanging on the loading page
+            if (!this.spectrum) {
+                this.uploadError = 'No valid mass spectra found in the uploaded file!';
+                this.page = 0;
+            }
+        }).catch((reason) => {
+            this.uploadError = reason instanceof Error ? reason.message : String(reason);
+            this.page = 0;
+        });
     }
 
     /**

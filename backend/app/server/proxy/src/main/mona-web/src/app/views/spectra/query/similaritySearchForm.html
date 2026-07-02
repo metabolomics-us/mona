@@ -15,7 +15,7 @@
                 <br />
 
                 <label><strong>Upload a File:</strong></label>
-                <p class="help-block" *ngIf="uploadError"><strong>{{uploadError}}</strong></p>
+                <p class="help-block text-danger" *ngIf="uploadError"><strong>ERROR: {{uploadError}}</strong></p>
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
                     <span class="input-group-btn">
                         <button class="btn btn-primary btn-file accessibility"
@@ -33,7 +33,7 @@
                 <div class="input-group" [ngClass]="{'has-error': pasteError}">
                   <div class="input-group">
                     <label><strong>Paste a Mass Spectrum:</strong></label>
-                    <p class="help-block" [hidden]="pasteError"><strong>{{pasteError}}</strong></p>
+                    <p class="help-block text-danger" *ngIf="pasteError"><strong>&ensp;{{pasteError}}</strong></p>
                   </div>
                     <textarea placeholder="Supports single-line and multi-line spectra formats:
 
