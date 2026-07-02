@@ -144,6 +144,12 @@ The `./scripts/generate_backup.sh` script is used to generate backups of the pos
 2. Using the built-in Maven tab in IntelliJ (right-hand side by default), run `mvn clean install` on the `backend` folder.
 - Or run `mvn clean test` from the terminal inside the `backend/` folder.
 
+**Frontend tests:**
+
+1. cd into `./backend/app/server/proxy/src/main`
+2. nvm use 14.16.1
+3. ng test --watch=false --browsers=ChromeHeadless
+
 ---
 
 ## Building Docker Images
