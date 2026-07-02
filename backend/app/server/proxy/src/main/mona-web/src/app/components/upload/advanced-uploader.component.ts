@@ -261,7 +261,10 @@ export class AdvancedUploaderComponent implements OnInit{
 	 */
 	addMetadataField() {
 		this.currentSpectrum.meta.push({name: '', value: ''});
-		this.element.nativeElement.getElementById('metadata_editor').scrollTop = 0;
+		const editor = document.getElementById('metadata_editor');
+		if (editor) {
+			editor.scrollTop = 0;
+		}
 	}
 
 	removeMetadataField(index) {
@@ -805,7 +808,7 @@ export class AdvancedUploaderComponent implements OnInit{
 			}
 
 			ions.sort((a, b) => {
-				return a[0] - b[0];
+				return a.ion - b.ion;
 			});
 
 			msp += 'Num Peaks: ' + ions.length + '\n';
@@ -816,15 +819,14 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 
 		// Export file
-		// http://stackoverflow.com/a/18197341/406772
-		const pom = this.element.nativeElement.createElement('a');
+		const pom = document.createElement('a');
 		pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(msp));
 		pom.setAttribute('download', 'export.msp');
 		pom.style.display = 'none';
 
-		this.element.nativeElement.body.appendChild(pom);
+		document.body.appendChild(pom);
 		pom.click();
-		this.element.nativeElement.body.removeChild(pom);
+		document.body.removeChild(pom);
 	}
 
 
