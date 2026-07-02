@@ -495,6 +495,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	  this.uploadLibraryService.completedSpectraCount = 0;
 	  this.uploadLibraryService.failedSpectraCount = 0;
 	  this.uploadLibraryService.uploadedSpectraCount = 0;
+	  this.uploadLibraryService.totalSpectraCount = 0;
 	  this.libraryIDNum = 1;
 	  let promiseBuffer = [];
 	  let totalSize = 0;
@@ -894,6 +895,7 @@ export class AdvancedUploaderComponent implements OnInit{
 				this.uploadLibraryService.completedSpectraCount = 0;
 				this.uploadLibraryService.failedSpectraCount = 0;
 				this.uploadLibraryService.uploadedSpectraCount = 0;
+				this.uploadLibraryService.totalSpectraCount = 0;
 				this.uploadLibraryService.uploadStartTime = new Date().getTime();
 			}
 

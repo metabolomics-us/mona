@@ -612,6 +612,7 @@ export class BasicUploaderComponent implements OnInit{
                 this.uploadLibraryService.completedSpectraCount = 0;
                 this.uploadLibraryService.failedSpectraCount = 0;
                 this.uploadLibraryService.uploadedSpectraCount = 0;
+                this.uploadLibraryService.totalSpectraCount = 0;
                 this.uploadLibraryService.uploadStartTime = new Date().getTime();
             }
 

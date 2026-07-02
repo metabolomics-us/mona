@@ -26,6 +26,7 @@ export class UploadLibraryService{
     completedSpectraCount;
     failedSpectraCount;
     uploadedSpectraCount;
+    totalSpectraCount;
     uploadedSpectra;
 
     uploadStartTime;
@@ -43,6 +44,7 @@ export class UploadLibraryService{
         this.completedSpectraCount = 0;
         this.failedSpectraCount = 0;
         this.uploadedSpectraCount = 0;
+        this.totalSpectraCount = 0;
         this.uploadStartTime = -1;
         this.uploadProcess.next(true);
         this.isSTP = false;
@@ -288,6 +290,38 @@ export class UploadLibraryService{
     }
 
     /**
+     * Counts spectra in a file buffer by tallying format markers chunk by chunk,
+     * so the progress bar knows the true total before every batch has parsed
+     * @param arrayBuffer full file contents
+     * @param extension one of msp, mgf or txt
+     */
+    countSpectraInBuffer(arrayBuffer, extension: string): number {
+      const chunkSize = 3 * 1024 * 1024;
+      const decoder = new TextDecoder();
+      const marker = extension === 'mgf' ? /BEGIN IONS/g
+        : extension === 'txt' ? /PK\$NUM_PEAK/g
+        : /num\s?peaks\s*:/gi;
+      let total = 0;
+      let tail = '';
+
+      for (let offset = 0; offset < arrayBuffer.byteLength; offset += chunkSize) {
+        const text = tail + decoder.decode(arrayBuffer.slice(offset, offset + chunkSize), {stream: true});
+        let lastEnd = 0;
+        let match;
+        marker.lastIndex = 0;
+        while ((match = marker.exec(text)) !== null) {
+          total++;
+          lastEnd = marker.lastIndex;
+        }
+        // Carry a short tail into the next chunk so a marker split across the
+        // boundary is still found, starting after the last counted match so
+        // nothing is counted twice
+        tail = text.slice(Math.max(text.length - 31, lastEnd));
+      }
+      return total;
+    }
+
+    /**
      * Loads spectra file and returns the data to a callback function
      * @param file filename
      * @param callback helper callback
@@ -431,6 +465,9 @@ export class UploadLibraryService{
           return Promise.reject(reason);
         });
         checkFormatMismatch(arrayBuff);
+        // Record the full spectra count up front so the progress bar shows the
+        // real total instead of only the batches queued so far
+        this.totalSpectraCount += this.countSpectraInBuffer(arrayBuff, extension);
         if (extension === 'txt') {
           await arrayBufferToStringTxtFile(arrayBuff);
         } else {

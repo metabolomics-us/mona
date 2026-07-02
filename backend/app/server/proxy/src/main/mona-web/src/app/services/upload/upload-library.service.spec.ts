@@ -169,6 +169,47 @@ describe('UploadLibraryService', () => {
     });
   });
 
+  describe('total spectra pre-count for the progress bar', () => {
+    it('records the full msp spectra count when the file is read', async () => {
+      const multiMsp = MSP_CONTENT + '\n' + MSP_CONTENT + '\n' + MSP_CONTENT;
+
+      await loadAndParse(new File([multiMsp], 'multi.msp'));
+
+      expect(service.totalSpectraCount).toBe(3);
+    });
+
+    it('records the full mgf spectra count when the file is read', async () => {
+      const multiMgf = MGF_CONTENT + '\n' + MGF_CONTENT;
+
+      await loadAndParse(new File([multiMgf], 'multi.mgf'));
+
+      expect(service.totalSpectraCount).toBe(2);
+    });
+
+    it('records the massbank record count when the file is read', async () => {
+      await loadAndParse(new File([MASSBANK_CONTENT], 'test.txt'));
+
+      expect(service.totalSpectraCount).toBe(1);
+    });
+
+    it('accumulates the total across multiple files', async () => {
+      await loadAndParse(new File([MSP_CONTENT], 'one.msp'));
+      await loadAndParse(new File([MSP_CONTENT], 'two.msp'));
+
+      expect(service.totalSpectraCount).toBe(2);
+    });
+
+    it('counts a marker even when it is split across chunk boundaries', () => {
+      const marker = 'Num Peaks: 3\n';
+      const chunkSize = 3 * 1024 * 1024;
+      // Position one marker so it straddles the first chunk boundary
+      const content = 'x'.repeat(chunkSize - 5) + marker + 'y'.repeat(100);
+      const buffer = new TextEncoder().encode(content).buffer;
+
+      expect(service.countSpectraInBuffer(buffer, 'msp')).toBe(1);
+    });
+  });
+
   describe('processData null spectrum guard', () => {
     it('forwards null to the callback without throwing when the parser yields null', () => {
       spyOn(service.mspParserLibService, 'convertFromData').and.callFake((data, cb: any) => cb(null));
