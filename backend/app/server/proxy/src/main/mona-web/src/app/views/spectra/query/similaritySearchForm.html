@@ -18,7 +18,7 @@
                 <p class="help-block text-danger" *ngIf="uploadError"><strong>ERROR: {{uploadError}}</strong></p>
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
                     <span class="input-group-btn">
-                        <button class="btn btn-primary btn-file accessibility"
+                        <button type="button" class="btn btn-primary btn-file accessibility"
                             (keydown.enter)="fileUpload.click(); $event.preventDefault()"
                             (keydown.space)="fileUpload.click(); $event.preventDefault()">
                             Browse&hellip;
@@ -47,7 +47,7 @@ OR
                     class="form-control" [rows]="9" name="pastedSpectrum" [(ngModel)]="pastedSpectrum"></textarea>
                 </div>
                 <br />
-                <button class="btn btn-primary accessibility" (click)="parsePastedSpectrum(pastedSpectrum)">Search</button>
+                <button type="button" class="btn btn-primary accessibility" (click)="parsePastedSpectrum(pastedSpectrum)">Search</button>
             </div>
 
             <!-- Loading page -->
@@ -97,8 +97,8 @@ OR
                                     {{precursorToleranceUnit}} <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu pull-right" ngbDropdownMenu>
-                                    <li><button ngbDropdownItem (click)="precursorToleranceUnit = 'PPM'">PPM</button></li>
-                                    <li><button ngbDropdownItem (click)="precursorToleranceUnit = 'Da'">Da</button></li>
+                                    <li><button type="button" ngbDropdownItem (click)="precursorToleranceUnit = 'PPM'">PPM</button></li>
+                                    <li><button type="button" ngbDropdownItem (click)="precursorToleranceUnit = 'Da'">Da</button></li>
                                 </ul>
                             </div>
                         </div>
@@ -109,7 +109,7 @@ OR
                 <button class="btn btn-primary mr-2" type="submit">
                     Search for Similar Spectra
                 </button>
-                <button class="btn btn-danger ml-2" (click)="fileUpload = null; filenames = null; page = 0">Reset</button>
+                <button type="button" class="btn btn-danger ml-2" (click)="fileUpload = null; filenames = null; page = 0">Reset</button>
             </div>
         </div>
     </div>

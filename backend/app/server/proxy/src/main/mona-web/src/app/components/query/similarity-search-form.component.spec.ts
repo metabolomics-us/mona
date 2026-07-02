@@ -4,6 +4,8 @@ describe('SimilaritySearchFormComponent', () => {
   let component: SimilaritySearchFormComponent;
   let uploadLibraryService: any;
   let logger: any;
+  let spectraQueryBuilderService: any;
+  let router: any;
 
   const validSpectrum = () => ({names: [''], meta: [], spectrum: '10:100 20:999'});
 
@@ -16,12 +18,16 @@ describe('SimilaritySearchFormComponent', () => {
       processData: jasmine.createSpy('processData')
     };
 
+    spectraQueryBuilderService = jasmine.createSpyObj('SpectraQueryBuilderService', ['setSimilarityQuery']);
+    router = jasmine.createSpyObj('Router', ['navigate']);
+    router.navigate.and.returnValue(Promise.resolve(true));
+
     component = new SimilaritySearchFormComponent(
       logger,
       uploadLibraryService,
+      spectraQueryBuilderService,
       {} as any,
-      {} as any,
-      {} as any
+      router
     );
     component.ngOnInit();
   });
@@ -63,6 +69,24 @@ describe('SimilaritySearchFormComponent', () => {
 
     expect(component.page).toBe(0);
     expect(component.uploadError).toMatch(/no valid mass spectra/i);
+  });
+
+  it('does not execute a search when no spectrum has been provided', () => {
+    component.search(null, null, null, 'PPM');
+
+    expect(spectraQueryBuilderService.setSimilarityQuery).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
+    expect(component.page).toBe(0);
+    expect(component.pasteError).toMatch(/provide a mass spectrum/i);
+  });
+
+  it('executes the search when a spectrum is set', () => {
+    component.spectrum = '10:100 20:999';
+
+    component.search(null, null, null, 'PPM');
+
+    expect(spectraQueryBuilderService.setSimilarityQuery).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalled();
   });
 
   it('shows the spectrum viewer when parsing succeeds', async () => {

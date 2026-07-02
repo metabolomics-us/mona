@@ -107,6 +107,14 @@ export class SimilaritySearchFormComponent implements OnInit{
      * @param precursorToleranceUnit integer
      */
     search(minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit) {
+        // A stray form submit (e.g. Enter in a text field) must never launch
+        // a search without a spectrum
+        if (this.spectrum == null || this.spectrum === '') {
+            this.pasteError = 'Please provide a mass spectrum before searching!';
+            this.page = 0;
+            return;
+        }
+
         const request = {
             spectrum: this.spectrum,
             minSimilarity: 500,
