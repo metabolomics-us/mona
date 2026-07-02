@@ -242,6 +242,52 @@ export class UploadLibraryService{
 
 
     /**
+     * Returns the supported format for a filename based on its trailing extension,
+     * or null when the extension is not a supported spectra format
+     * @param filename name of the uploaded file
+     */
+    getSupportedExtension(filename: string): string {
+      const parts = filename.toLowerCase().split('.');
+      if (parts.length < 2) {
+        return null;
+      }
+      const extension = parts.pop();
+      return ['msp', 'mgf', 'txt'].indexOf(extension) > -1 ? extension : null;
+    }
+
+    /**
+     * Checks the content for the distinctive marker of a supported format,
+     * mirroring what each parser's countSpectra keys on
+     * @param content decoded file content
+     * @param format one of msp, mgf or txt
+     */
+    hasFormatMarker(content: string, format: string): boolean {
+      if (format === 'mgf') {
+        return content.indexOf('BEGIN IONS') > -1;
+      } else if (format === 'txt') {
+        return content.indexOf('PK$NUM_PEAK') > -1;
+      } else if (format === 'msp') {
+        return /num\s?peaks\s*:/i.test(content);
+      }
+      return false;
+    }
+
+    /**
+     * Detects the actual format of the content regardless of the file extension,
+     * or null when no supported format marker is found
+     * @param content decoded file content
+     */
+    detectFormat(content: string): string {
+      const formats = ['mgf', 'txt', 'msp'];
+      for (const format of formats) {
+        if (this.hasFormatMarker(content, format)) {
+          return format;
+        }
+      }
+      return null;
+    }
+
+    /**
      * Loads spectra file and returns the data to a callback function
      * @param file filename
      * @param callback helper callback
@@ -249,17 +295,38 @@ export class UploadLibraryService{
      */
     async loadSpectraFile(file, callback): Promise<any> {
       let count = 0;
+
+      // Fail fast on unsupported extensions before any file reading happens
+      const extension = this.getSupportedExtension(file.name);
+      if (extension === null) {
+        const nameParts = file.name.split('.');
+        const shownExtension = nameParts.length > 1 ? ` .${nameParts.pop().toLowerCase()}` : '';
+        throw new Error(`Unsupported file type${shownExtension}. Supported file types: .msp, .mgf, .txt`);
+      }
+
       // In order to process data efficiently and in a smaller footprint, the file needs to be sliced into smaller batches
       // that are individually matched by regex pattern.
       const getFileExtension = () => {
-        if (file.name.toLowerCase().indexOf('.msp') > 0) {
+        if (extension === 'msp') {
           return new RegExp(/((?:.*:\s*[^\n]*\n?)+)\n((?:\s*[0-9]*\.?[0-9]+\s+[0-9]*\.?[0-9]+[;\n]?.*\n?)*)/g);
         }
-        else if (file.name.toLowerCase().indexOf('.mgf') > 0) {
+        else if (extension === 'mgf') {
           return new RegExp(/BEGIN IONS([\s\S]*?)END IONS/g);
         }
-        else if (file.name.toLowerCase().indexOf('.txt') > 0) {
+        else {
           return new RegExp(/.*/g);
+        }
+      };
+
+      // Rejects mislabeled files by comparing the extension against the format
+      // detected from the content, so a wrong parser is never silently applied
+      const checkFormatMismatch = (arrayBuffer) => {
+        const preview = new TextDecoder().decode(arrayBuffer.slice(0, 1024 * 1024));
+        if (!this.hasFormatMarker(preview, extension)) {
+          const detected = this.detectFormat(preview);
+          if (detected !== null) {
+            throw new Error(`File uploaded was .${extension}, but detected as .${detected}`);
+          }
         }
       };
 
@@ -310,6 +377,8 @@ export class UploadLibraryService{
           slice = arrayBuffer.slice(offset, offset + chunkSize);
           // Decoder will translate array buffer to readable string value
           decodedText = decoder.decode(slice);
+          // Track matches per chunk so an unmatched chunk cannot loop forever
+          let matchesInChunk = 0;
           // Every loop we match the next regex value in the slice to grab a spectrum
           // With the /g tag on the regex it will match the entire slice, so everytime
           // we execute .exec() it will return a matched block until blocks is null
@@ -322,6 +391,7 @@ export class UploadLibraryService{
             // Push full match stored in blocks[0] and file name into our promise buffer
             promiseBuffer.push([blocks[0]]);
             count++;
+            matchesInChunk++;
             // regex.lastIndex doesn't seem reliable outside the loop so after every iteration save
             // the regex.lastIndex into lastIndex until we break out.
             lastIndex = regex.lastIndex;
@@ -338,9 +408,10 @@ export class UploadLibraryService{
           // call the .size() function to get an appropriate size of our smaller slice.
           foundSize = new Blob([decodedText.substring(0, lastIndex)]).size;
           offset += foundSize;
-          // When our offset is the size of the array buffer, then we reached EOF so send
-          // the last promiseBuffer and break out.
-          if (offset > arrayBuffer.byteLength - 1) {
+          // When our offset is the size of the array buffer we reached EOF. An unmatched
+          // chunk also ends the read since the offset can no longer advance, which
+          // previously caused an infinite loop on content the regex never matched
+          if (matchesInChunk === 0 || offset > arrayBuffer.byteLength - 1) {
             await callback(promiseBuffer, file.name);
             break;
           } else{
@@ -359,7 +430,8 @@ export class UploadLibraryService{
         }).catch((reason) => {
           return Promise.reject(reason);
         });
-        if (file.name.toLowerCase().indexOf('.txt') > 0) {
+        checkFormatMismatch(arrayBuff);
+        if (extension === 'txt') {
           await arrayBufferToStringTxtFile(arrayBuff);
         } else {
           await arrayBufferToString(arrayBuff);
@@ -385,13 +457,14 @@ export class UploadLibraryService{
      */
     countData(data, origin) {
         if (typeof origin !== 'undefined') {
-            if (origin.toLowerCase().indexOf('.msp') > 0) {
+            const extension = this.getSupportedExtension(origin);
+            if (extension === 'msp') {
                 return this.mspParserLibService.countSpectra(data);
             }
-            else if (origin.toLowerCase().indexOf('.mgf') > 0) {
+            else if (extension === 'mgf') {
                 return this.mgfParserLibService.countSpectra(data);
             }
-            else if (origin.toLowerCase().indexOf('.txt') > 0) {
+            else if (extension === 'txt') {
                 return this.massbankParserLibService.countSpectra(data);
             }
             else {
@@ -411,26 +484,29 @@ export class UploadLibraryService{
     processData(data, callback, origin) {
         // Add origin to spectrum metadata before callback
         const addOriginMetadata = (spectrum) => {
-            if (typeof origin !== 'undefined') {
+            // Null spectra must be forwarded as-is so callers can count parse failures
+            // without crashing on the metadata push
+            if (typeof spectrum === 'undefined' || spectrum === null) {
+              callback(null);
+            } else if (typeof origin !== 'undefined') {
               spectrum.meta.push({name: 'origin', value: origin});
               callback(spectrum);
-            } else if (typeof spectrum === 'undefined' || spectrum === null) {
-              callback(null);
+            } else {
+              callback(spectrum);
             }
-
-
         };
         // Parse data
         if (typeof origin !== 'undefined') {
-            if (origin.toLowerCase().indexOf('.msp') > 0) {
+            const extension = this.getSupportedExtension(origin);
+            if (extension === 'msp') {
                 this.logger.debug('uploading msp file...');
                 this.mspParserLibService.convertFromData(data, addOriginMetadata);
             }
-            else if (origin.toLowerCase().indexOf('.mgf') > 0) {
+            else if (extension === 'mgf') {
                 this.logger.debug('uploading mgf file...');
                 this.mgfParserLibService.convertFromData(data, addOriginMetadata);
             }
-            else if (origin.toLowerCase().indexOf('.txt') > 0) {
+            else if (extension === 'txt') {
                 this.logger.debug('uploading massbank file...');
                 this.massbankParserLibService.convertFromData(data, addOriginMetadata);
             }

@@ -425,11 +425,16 @@ export class BasicUploaderComponent implements OnInit{
         this.page = 1;
         this.uploadError = null;
         this.uploadLibraryService.isSTP = false;
-        this.uploadLibraryService.loadSpectraFile(event.target.files[0],
+        return this.uploadLibraryService.loadSpectraFile(event.target.files[0],
              (data, origin) => {
                 this.logger.info('Loading file ' + event.target.files[0].name + '...');
 
                 this.uploadLibraryService.processData(data, (spectrum) => {
+                    if (spectrum === null || typeof spectrum === 'undefined') {
+                        // Parser could not build a valid spectrum from this block, the
+                        // zero spectra check after the file read reports it to the user
+                        return;
+                    }
                     if (!this.currentSpectrum) {
                         // Create list of ions
                         this.logger.info('Parsing ions...');
@@ -496,7 +501,16 @@ export class BasicUploaderComponent implements OnInit{
                     }
                 }, origin);
             }
-        );
+        ).then(() => {
+            // The file was read but no valid spectrum was produced, advance to the
+            // no valid mass spectra card instead of hanging on the loading page
+            if (!this.currentSpectrum) {
+                this.page = 2;
+            }
+        }).catch((reason) => {
+            this.uploadError = reason instanceof Error ? reason.message : String(reason);
+            this.page = 0;
+        });
     }
 
 

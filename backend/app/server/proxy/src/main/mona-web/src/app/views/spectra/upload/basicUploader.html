@@ -23,7 +23,7 @@
                 <br />
 
               <label><strong>Upload a File:</strong></label>
-                <p class="help-block" *ngIf="uploadError" [ngClass]="{'has-error': uploadError}"><strong>{{uploadError}}</strong></p>
+                <p class="help-block text-danger" *ngIf="uploadError"><strong>ERROR: {{uploadError}}</strong></p>
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
                         <button class="btn btn-primary accessibility btn-file"
                             (keydown.enter)="fileUpload.click()"
@@ -76,8 +76,12 @@ OR
 
         <!-- Error message if no spectra are found -->
         <div *ngIf="page === 2 && currentSpectrum === null" class="card">
-            <div class="card-header"><strong style="font-size: 1.2em;">Loading...</strong></div>
-            <div class="card-body text-center"><strong>No valid mass spectra found in the uploaded file(s)!</strong></div>
+            <div class="card-header"><strong style="font-size: 1.2em;">No Spectra Found</strong></div>
+            <div class="card-body text-center">
+                <strong>No valid mass spectra found in the uploaded file!</strong>
+                <br /><br />
+                <button class="btn btn-primary accessibility" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Try Again</button>
+            </div>
         </div>
 
 

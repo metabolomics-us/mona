@@ -474,8 +474,8 @@ export class AdvancedUploaderComponent implements OnInit{
            setTimeout(() => {
              this.toaster.pop({
                type: 'error',
-               title: 'Error Occurred While Parsing File',
-               body: reason
+               title: `Error parsing file: '${file.name}'`,
+               body: this.parseErrorMessage(reason)
              });
            }, 500);
          });
@@ -515,6 +515,7 @@ export class AdvancedUploaderComponent implements OnInit{
         this.filesParsed = false;
         this.loadedSpectra = 0;
         this.totalSpectra = 0;
+        let failedFiles = 0;
         const fileReads = [];
         for (let i = 0; i < this.files.length; i++) {
           fileReads.push(this.uploadLibraryService.loadSpectraFile(this.files[i],
@@ -527,23 +528,46 @@ export class AdvancedUploaderComponent implements OnInit{
               })));
               promiseBuffer = [];
             }).catch((reason) => {
-            setTimeout(() => {
-              this.toaster.pop({
-                type: 'error',
-                title: 'Error Occurred While Parsing File',
-                body: reason
-              });
-            }, 500);
+            failedFiles++;
+            this.toaster.pop({
+              type: 'error',
+              title: `Error parsing file: '${this.files[i].name}'`,
+              body: this.parseErrorMessage(reason)
+            });
           }));
         }
         // Once every file has been fully read, totalSpectra is final and
         // allSpectraLoaded can become true as soon as the pool catches up
-        Promise.all(fileReads).then(() => {
+        return Promise.all(fileReads).then(() => {
           this.filesParsed = true;
+          if (this.totalSpectra === 0) {
+            if (failedFiles === this.files.length) {
+              // Every file failed to parse, return to the upload form so the
+              // user can retry after reading the error toasters
+              this.resetFile();
+            } else {
+              // Files were read but produced nothing, show the no spectra card
+              this.spectraLoaded = 2;
+            }
+          }
         });
       }
     }
 	}
+
+  /**
+   * Turns a parse rejection into a user readable message instead of a raw exception
+   * @param reason rejection reason from loadSpectraFile or batchProcess
+   */
+  parseErrorMessage(reason): string {
+    if (reason instanceof Error) {
+      return reason.message;
+    }
+    if (typeof reason === 'string' && reason !== '') {
+      return reason;
+    }
+    return 'The file could not be parsed';
+  }
 
 
 	/**

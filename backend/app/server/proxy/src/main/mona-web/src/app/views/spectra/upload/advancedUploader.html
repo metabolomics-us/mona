@@ -164,8 +164,11 @@
 
         <!-- Error message if no spectra are found -->
         <div *ngIf="spectraLoaded === 2 && spectra.length === 0" class="card">
-            <div class="card-header"><strong>Loading and parsing data</strong></div>
-            <div class="card-body text-center"><p class="lead">No valid mass spectra found in the uploaded file(s)!</p></div>
+            <div class="card-header"><strong>No Spectra Found</strong></div>
+            <div class="card-body text-center">
+                <p class="lead">No valid mass spectra found in the uploaded file(s)!</p>
+                <button class="btn btn-primary accessibility" (click)="resetFile()"><fa-icon [icon]="faArrowLeft"></fa-icon> Try Again</button>
+            </div>
         </div>
 
 
