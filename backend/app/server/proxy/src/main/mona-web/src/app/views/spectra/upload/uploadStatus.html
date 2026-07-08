@@ -12,7 +12,7 @@
                  in the table below once the batch finishes -->
             <div *ngIf="uploadLibraryService.uploadedSpectraCount > 0 && uploadLibraryService.isUploading()" class="mb-4">
                 <h2 class="h4">Thank you for your submission!</h2>
-                <p>Please <b>do not close or refresh this window</b> until this interactive upload finishes,
+                <p>Please <b>do not close or refresh this window</b> until this upload finishes,
                     otherwise the remaining spectra will not be sent to the server.</p>
                 <spectra-upload-progress-bar></spectra-upload-progress-bar>
 
