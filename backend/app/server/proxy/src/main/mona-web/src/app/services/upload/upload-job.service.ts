@@ -38,12 +38,4 @@ export class UploadJobService {
     }
     return Math.floor((((job.parsed || 0) + (job.failed || 0)) / job.total) * 100);
   }
-
-  isJobRunning(job: UploadJobModel): boolean {
-    return job && (job.status === 'SCHEDULED' || job.status === 'RUNNING');
-  }
-
-  isJobUploading(job: UploadJobModel): boolean {
-    return job && job.status === 'UPLOADING';
-  }
 }
