@@ -411,7 +411,7 @@ export class UploadLibraryService{
       };
 
       const arrayBufferToString = async (arrayBuffer) => {
-        // Start with 2.5MB by default
+        // Start with 3MB by default
         const chunkSize = 3 * 1024 * 1024;
         // Buffer only 150 spectrum at a time
         const bufferSize = 200;
