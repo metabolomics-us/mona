@@ -7,7 +7,7 @@
   </div>
   <div class="modal-body">
     <div class="modal-content" *ngIf="!authenticationService.isLoggedIn()" class="alert alert-primary">
-      <h2 class="h4"> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to spectra</h2>
+      <h2 class="h4"> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h2>
     </div>
     <strong><p>
       Spectra can still be uploaded as-is, but the file(s) is too large to utilize the interactive advanced uploader.
