@@ -20,7 +20,7 @@ import scala.jdk.CollectionConverters._
 @Service
 class UploadStorageService extends LazyLogging {
 
-  @Value("${mona.uploads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_uploads")
+  @Value("${mona.uploads:#{systemProperties['java.io.tmpdir']}#{systemProperties['file.separator']}mona_uploads}")
   val uploadDir: String = null
 
   def baseDir: Path = Paths.get(uploadDir)
