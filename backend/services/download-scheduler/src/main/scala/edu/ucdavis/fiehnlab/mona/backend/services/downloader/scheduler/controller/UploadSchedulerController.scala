@@ -1,0 +1,314 @@
+package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.controller
+
+import java.util.{Date, UUID}
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{UploadJob, UploadJobRequest}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.UploadJobRepository
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.UploadStorageService
+import org.springframework.amqp.core.{Message, MessageDeliveryMode}
+import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
+import org.springframework.http.{HttpStatus, ResponseEntity}
+import org.springframework.web.bind.annotation._
+import org.springframework.web.multipart.MultipartFile
+
+import javax.servlet.http.HttpServletRequest
+import scala.jdk.CollectionConverters._
+
+/**
+  * Accepts spectra file uploads, stores them on disk in resumable chunks, and tracks each upload
+  * as an UploadJob so progress and history survive a closed tab or a service restart. Once a file
+  * is fully assembled it is enqueued on the durable upload queue for background parsing
+  *
+  * Uploads are tied to the caller resolved from the bearer token. A user sees and deletes only
+  * their own jobs unless they are an admin, mirroring the ownership checks on spectrum delete
+  */
+@RestController
+@RequestMapping(value = Array("/rest/uploads"))
+class UploadSchedulerController extends LazyLogging {
+
+  @Autowired
+  val uploadJobRepository: UploadJobRepository = null
+
+  @Autowired
+  val uploadStorageService: UploadStorageService = null
+
+  @Autowired
+  val loginService: LoginService = null
+
+  @Autowired
+  val httpServletRequest: HttpServletRequest = null
+
+  @Autowired
+  val rabbitTemplate: RabbitTemplate = null
+
+  @Autowired
+  @Qualifier("spectra-upload-queue")
+  val uploadQueueName: String = null
+
+  @Autowired
+  val objectMapper: ObjectMapper = null
+
+  // Defense in depth against a single uploaded file larger than 10gb
+  @Value("${mona.uploads.max-file-size-bytes:10737418240}")
+  val maxFileSizeBytes: Long = 10737418240L
+
+  /* 30gb max storage size for the docker container's volume (mona_uploads), prevent gose from filling
+   * A request that would exceed this limit returns 507 INSUFFICIENT_STORAGE
+   * This should never actually happen since the volume is cleaned automatically 
+   */
+  @Value("${mona.uploads.max-total-size-bytes:32212254720}")
+  val maxTotalSizeBytes: Long = 32212254720L
+
+  // Resolves the caller's login info from the Authorization header, or null when no usable token is present
+  private def callerInfo(): LoginInfo = {
+    val header = httpServletRequest.getHeader("Authorization")
+
+    if (header != null && header.split(" ").length > 1) {
+      try {
+        loginService.info(header.split(" ").last)
+      } catch {
+        case e: Exception =>
+          logger.debug(s"could not resolve caller: ${e.getMessage}")
+          null
+      }
+    } else {
+      null
+    }
+  }
+
+  private def canAccess(job: UploadJob, info: LoginInfo): Boolean = {
+    info != null && (info.roles.contains("ADMIN") || job.getEmailAddress == info.emailAddress)
+  }
+
+  /**
+    * Initializes an upload: records the file metadata, creates the on disk job directory, and
+    * returns the new UploadJob (status UPLOADING) whose id the client uses for the chunk uploads
+    */
+  @RequestMapping(method = Array(RequestMethod.POST))
+  def initUpload(@RequestBody payload: java.util.Map[String, Object]): ResponseEntity[UploadJob] = {
+    val info: LoginInfo = callerInfo()
+
+    if (info == null) {
+      new ResponseEntity[UploadJob](HttpStatus.UNAUTHORIZED)
+    } else {
+      val fileName: String = Option(payload.get("fileName")).map(_.toString).orNull
+      val format: String = Option(payload.get("format")).map(_.toString).orNull
+      val libraryName: String = Option(payload.get("libraryName")).map(_.toString).orNull
+      val libraryDescription: String = Option(payload.get("libraryDescription")).map(_.toString).orNull
+      val libraryLink: String = Option(payload.get("libraryLink")).map(_.toString).orNull
+      val libraryPrefix: String = Option(payload.get("libraryPrefix")).map(_.toString).orNull
+      val librarySubmitterEmail: String = Option(payload.get("librarySubmitterEmail")).map(_.toString).orNull
+      val librarySubmitterFirstName: String = Option(payload.get("librarySubmitterFirstName")).map(_.toString).orNull
+      val librarySubmitterLastName: String = Option(payload.get("librarySubmitterLastName")).map(_.toString).orNull
+      val librarySubmitterInstitution: String = Option(payload.get("librarySubmitterInstitution")).map(_.toString).orNull
+      // Spring already deserialized the JSON body's "additionalTags" array into a java.util.List;
+      // re-serialize it to a single JSON string since UploadJob has no collection valued columns
+      val additionalTags: String = Option(payload.get("additionalTags")).map(objectMapper.writeValueAsString).orNull
+      val fileSize: java.lang.Long =
+        Option(payload.get("fileSize")).map(v => java.lang.Long.valueOf(v.toString.toLong)).orNull
+
+      // Measured once here rather than per chunk so the volume walk stays off the hot upload path
+      val currentTotal: Long = uploadStorageService.totalSize()
+
+      if (fileName == null || fileName.trim.isEmpty) {
+        new ResponseEntity[UploadJob](HttpStatus.BAD_REQUEST)
+      } else if (fileSize != null && fileSize > maxFileSizeBytes) {
+        logger.warn(s"rejected upload init for ${info.emailAddress}: $fileName ($fileSize bytes) exceeds the $maxFileSizeBytes byte cap")
+        new ResponseEntity[UploadJob](HttpStatus.PAYLOAD_TOO_LARGE)
+      } else if (fileSize != null && currentTotal + fileSize > maxTotalSizeBytes) {
+        logger.warn(s"rejected upload init for ${info.emailAddress}: $fileName ($fileSize bytes) would push the uploads volume past its $maxTotalSizeBytes byte cap (currently $currentTotal bytes used)")
+        new ResponseEntity[UploadJob](HttpStatus.INSUFFICIENT_STORAGE)
+      } else {
+        val jobId: String = UUID.randomUUID.toString
+        uploadStorageService.initJob(jobId)
+        val storedPath: String = uploadStorageService.storedFile(jobId, fileName).toString
+
+        val job: UploadJob = new UploadJob(jobId, info.emailAddress, fileName, storedPath, format, fileSize, libraryName, new Date, UploadJob.STATUS_UPLOADING)
+        job.setLibraryDescription(libraryDescription)
+        job.setLibraryLink(libraryLink)
+        job.setLibraryPrefix(libraryPrefix)
+        job.setLibrarySubmitterEmail(librarySubmitterEmail)
+        job.setLibrarySubmitterFirstName(librarySubmitterFirstName)
+        job.setLibrarySubmitterLastName(librarySubmitterLastName)
+        job.setLibrarySubmitterInstitution(librarySubmitterInstitution)
+        job.setAdditionalTags(additionalTags)
+        uploadJobRepository.save(job)
+
+        logger.info(s"initialized upload job $jobId for ${info.emailAddress}: $fileName ($fileSize bytes)")
+        new ResponseEntity[UploadJob](job, HttpStatus.CREATED)
+      }
+    }
+  }
+
+  /**
+    * Records a client side interactive upload (the small file editor path that parses and posts
+    * spectra directly) as a history entry. There is no stored file to parse, this only gives
+    * those uploads a row in the user's upload history alongside server side uploads. Normally
+    * recorded as COMPLETE when the batch finishes, or as FAILED with an error message when the
+    * client detects that a page refresh or close interrupted the batch
+    */
+  @RequestMapping(path = Array("/record"), method = Array(RequestMethod.POST))
+  def recordInteractive(@RequestBody payload: java.util.Map[String, Object]): ResponseEntity[UploadJob] = {
+    val info: LoginInfo = callerInfo()
+
+    if (info == null) {
+      new ResponseEntity[UploadJob](HttpStatus.UNAUTHORIZED)
+    } else {
+      def longOf(key: String): Long = Option(payload.get(key)).map(_.toString.toLong).getOrElse(0L)
+
+      val fileName: String = Option(payload.get("fileName")).map(_.toString).getOrElse("Interactive upload")
+      val libraryName: String = Option(payload.get("libraryName")).map(_.toString).orNull
+
+      // Only the two terminal states may be recorded, anything else is coerced to COMPLETE
+      val status: String = Option(payload.get("status")).map(_.toString) match {
+        case Some(UploadJob.STATUS_FAILED) => UploadJob.STATUS_FAILED
+        case _ => UploadJob.STATUS_COMPLETE
+      }
+
+      val job: UploadJob = new UploadJob(UUID.randomUUID.toString, info.emailAddress, fileName, null, null, null, libraryName, new Date, status)
+      job.setTotal(longOf("total"))
+      // An interrupted upload only got through part of the batch, so parsed reflects what was
+      // attempted rather than the full total
+      job.setParsed(if (status == UploadJob.STATUS_FAILED) longOf("persisted") else longOf("total"))
+      job.setPersisted(longOf("persisted"))
+      job.setFailed(longOf("failed"))
+      job.setErrorMessage(Option(payload.get("errorMessage")).map(_.toString).orNull)
+      uploadJobRepository.save(job)
+
+      logger.info(s"recorded interactive upload for ${info.emailAddress}: $fileName (${job.getPersisted}/${job.getTotal}, $status)")
+      new ResponseEntity[UploadJob](job, HttpStatus.CREATED)
+    }
+  }
+
+  /**
+    * Appends a chunk at the given byte offset. Re-sending the same offset overwrites, so a dropped
+    * connection is recovered simply by resending. Returns the updated job so the client sees the
+    * committed byte count
+    */
+  @RequestMapping(path = Array("/{jobId}/chunk"), method = Array(RequestMethod.PUT))
+  def uploadChunk(@PathVariable("jobId") jobId: String,
+                  @RequestParam("offset") offset: Long,
+                  @RequestParam("chunk") chunk: MultipartFile): ResponseEntity[UploadJob] = {
+    val info: LoginInfo = callerInfo()
+    val job: UploadJob = uploadJobRepository.findById(jobId).orElse(null)
+
+    if (job == null) {
+      new ResponseEntity[UploadJob](HttpStatus.NOT_FOUND)
+    } else if (!canAccess(job, info)) {
+      new ResponseEntity[UploadJob](HttpStatus.FORBIDDEN)
+    } else {
+      val newEnd: Long = uploadStorageService.writeChunk(jobId, job.getFileName, offset, chunk)
+      // Track the furthest committed byte so an out of order or resent chunk never shrinks progress
+      if (job.getUploadedBytes == null || newEnd > job.getUploadedBytes) {
+        job.setUploadedBytes(newEnd)
+      }
+      // A chunk landing on a job the sweep flagged as stale is itself the resume signal
+      if (job.getStatus == UploadJob.STATUS_INTERRUPTED) {
+        job.setStatus(UploadJob.STATUS_UPLOADING)
+        logger.info(s"upload job $jobId resumed after being interrupted")
+      }
+      job.setLastUpdated(new Date())
+      uploadJobRepository.save(job)
+
+      new ResponseEntity[UploadJob](job, HttpStatus.OK)
+    }
+  }
+
+  /**
+    * Marks the upload complete once the whole file has arrived: verifies the assembled size, flips
+    * the job to SCHEDULED, and enqueues it for background parsing with persistent delivery so it
+    * survives a broker restart
+    */
+  @RequestMapping(path = Array("/{jobId}/complete"), method = Array(RequestMethod.POST))
+  def completeUpload(@PathVariable("jobId") jobId: String): ResponseEntity[UploadJob] = {
+    val info: LoginInfo = callerInfo()
+    val job: UploadJob = uploadJobRepository.findById(jobId).orElse(null)
+
+    if (job == null) {
+      new ResponseEntity[UploadJob](HttpStatus.NOT_FOUND)
+    } else if (!canAccess(job, info)) {
+      new ResponseEntity[UploadJob](HttpStatus.FORBIDDEN)
+    } else {
+      val assembled: Long = uploadStorageService.assembledSize(jobId, job.getFileName)
+
+      if (job.getFileSize != null && assembled != job.getFileSize) {
+        logger.warn(s"upload job $jobId incomplete: assembled $assembled of ${job.getFileSize} bytes")
+        new ResponseEntity[UploadJob](job, HttpStatus.BAD_REQUEST)
+      } else {
+        job.setUploadedBytes(assembled)
+        job.setStatus(UploadJob.STATUS_SCHEDULED)
+        job.setLastUpdated(new Date())
+        uploadJobRepository.save(job)
+
+        rabbitTemplate.convertAndSend(uploadQueueName, new UploadJobRequest(job.getId), (message: Message) => {
+          message.getMessageProperties.setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+          message
+        })
+
+        logger.info(s"upload job $jobId scheduled for parsing")
+        new ResponseEntity[UploadJob](job, HttpStatus.ACCEPTED)
+      }
+    }
+  }
+
+  /**
+    * Returns the current job, used both to poll parsing progress and to read back the committed
+    * byte offset when resuming an interrupted transfer
+    */
+  @RequestMapping(path = Array("/{jobId}"), method = Array(RequestMethod.GET))
+  def getJob(@PathVariable("jobId") jobId: String): ResponseEntity[UploadJob] = {
+    val info: LoginInfo = callerInfo()
+    val job: UploadJob = uploadJobRepository.findById(jobId).orElse(null)
+
+    if (job == null) {
+      new ResponseEntity[UploadJob](HttpStatus.NOT_FOUND)
+    } else if (!canAccess(job, info)) {
+      new ResponseEntity[UploadJob](HttpStatus.FORBIDDEN)
+    } else {
+      new ResponseEntity[UploadJob](job, HttpStatus.OK)
+    }
+  }
+
+  /**
+    * Upload history for the caller, newest first
+    */
+  @RequestMapping(method = Array(RequestMethod.GET))
+  def listMyJobs(): ResponseEntity[java.util.List[UploadJob]] = {
+    val info: LoginInfo = callerInfo()
+
+    if (info == null) {
+      new ResponseEntity[java.util.List[UploadJob]](HttpStatus.UNAUTHORIZED)
+    } else {
+      val jobs: java.util.List[UploadJob] = uploadJobRepository.findByEmailAddressOrderByDateDesc(info.emailAddress)
+      new ResponseEntity[java.util.List[UploadJob]](jobs, HttpStatus.OK)
+    }
+  }
+
+  /**
+    * Deletes an upload job and its stored file. TODO: The deleteSpectra flag additionally drops the
+    * job's library and persisted spectra 
+    * NOTE: careful of libraries that span multiple files and even uploads (different prefix same library name)
+    */
+  @RequestMapping(path = Array("/{jobId}"), method = Array(RequestMethod.DELETE))
+  def deleteJob(@PathVariable("jobId") jobId: String,
+                @RequestParam(value = "deleteSpectra", required = false, defaultValue = "false") deleteSpectra: Boolean): ResponseEntity[String] = {
+    val info: LoginInfo = callerInfo()
+    val job: UploadJob = uploadJobRepository.findById(jobId).orElse(null)
+
+    if (job == null) {
+      new ResponseEntity[String](HttpStatus.NOT_FOUND)
+    } else if (!canAccess(job, info)) {
+      new ResponseEntity[String](HttpStatus.FORBIDDEN)
+    } else {
+      uploadStorageService.deleteJob(jobId)
+      uploadJobRepository.delete(job)
+      logger.info(s"deleted upload job $jobId (deleteSpectra=$deleteSpectra)")
+      new ResponseEntity[String](HttpStatus.OK)
+    }
+  }
+}

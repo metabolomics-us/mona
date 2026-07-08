@@ -1,48 +1,139 @@
 <div class="row">
     <div class="col-md-12">
     <br>
-    <h1 class="h2"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload Status</h1>
+    <h1 class="h2"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> My Uploads</h1>
     <br>
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h2 class="h4"><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h2>
+            <h2 class="h4"><fa-icon [icon]="faUser"></fa-icon> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload and manage spectra</h2>
         </div>
 
-        <div *ngIf="uploadLibraryService.uploadedSpectraCount > 0">
-            <h2 class="h4">Thank you for your submission!</h2>
+        <div *ngIf="authenticationService.isLoggedIn()">
+            <!-- Live progress for a small interactive upload still in flight. Its history row appears
+                 in the table below once the batch finishes -->
+            <div *ngIf="uploadLibraryService.uploadedSpectraCount > 0 && uploadLibraryService.isUploading()" class="mb-4">
+                <h2 class="h4">Thank you for your submission!</h2>
+                <p>Please <b>do not close or refresh this window</b> until this interactive upload finishes,
+                    otherwise the remaining spectra will not be sent to the server.</p>
+                <spectra-upload-progress-bar></spectra-upload-progress-bar>
 
-            <p>Please <b>do not close or refresh this window</b> while your upload is
-                being processed, otherwise your submission will not be sent to the server.</p>
-            <br/><br/>
-
-            <spectra-upload-progress-bar></spectra-upload-progress-bar>
-            <hr/>
-            <a class="btn btn-primary btn-lg" [routerLink]="['/upload']"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload More Mass Spectra</a>
-
-            <br /><br />
-            <hr/>
-            <div>
-                <h2 class="h4">Your uploaded spectra will appear below after they are processed:</h2>
-
-                <div *ngIf="uploadLibraryService.uploadedSpectraCount == 0">
-                    <h3 class="h4">Loading... <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> </h3>
-                </div>
-
-                <div *ngIf="uploadLibraryService.uploadedSpectra && !uploadLibraryService.isSTP" class="overflow-auto" style="max-height: 405px">
+                <div *ngIf="uploadLibraryService.uploadedSpectra && !uploadLibraryService.isSTP" class="overflow-auto mt-2" style="max-height: 200px">
                     <ul>
                         <li *ngFor="let spectrum of uploadLibraryService.uploadedSpectra">
                             Spectrum <a class="davis-blue text-decoration-none font-weight-bold" [routerLink]="['/spectra/display/'+spectrum]">{{spectrum}}</a> was successfully uploaded!
                         </li>
                     </ul>
                 </div>
+                <hr/>
             </div>
-        </div>
 
-        <div *ngIf="uploadLibraryService.uploadedSpectraCount === 0">
-            <h2 class="h5" *ngIf="!uploadLibraryService.isSTP">You have no uploads in progress</h2>
-            <h2 class="h5" *ngIf="uploadLibraryService.isSTP">Straight Through Processing Is Enabled, Please Wait For Batch Load... <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></h2>
-            <br/>
+            <div class="mb-3">
+                <button class="btn btn-primary accessibility" [routerLink]="['/upload']"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload Spectra</button>
+                <button class="btn btn-secondary ml-3 accessibility" (click)="manageMySpectra()"><fa-icon [icon]="faUser"></fa-icon> Browse My Spectra</button>
+            </div>
 
-            <a class="btn btn-primary btn-lg" [routerLink]="['/upload']"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload Spectra</a>
+            <br><br>
+            <h2 class="h4">Upload History</h2>
+
+            <div *ngIf="jobs.length === 0" class="text-muted">
+                You have no uploads yet
+            </div>
+
+            <br>
+            <div *ngIf="jobs.length > 0" class="table-responsive">
+                <table class="table table-sm table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>File(s) / Spectrum ID</th>
+                            <th>Library</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th style="min-width: 160px">Progress</th>
+                            <th>Spectra</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let job of jobs">
+                            <td class="align-middle">
+                                <button class="fakeRef davis-blue accessibility" (click)="queryJob(job)" placement="top"
+                                        aria-label="Search associated spectra" title="Search">
+                                    <fa-icon [icon]="faSearch"></fa-icon>
+                                </button>
+                            </td>
+                            <td class="text-break align-middle" style="max-width: 280px">
+                                <ng-container *ngIf="spectrumId(job) as id; else rawFileName">
+                                    <span class="text-muted">ID:</span> {{id}}
+                                </ng-container>
+                                <ng-template #rawFileName>{{job.fileName}}</ng-template>
+                            </td>
+                            <td class="align-middle">{{job.libraryName || '-'}}</td>
+                            <td class="align-middle" style="min-width: 150px">{{job.date | date:'short'}}</td>
+                            <td class="align-middle">
+                                <span class="badge"
+                                      [ngClass]="{'badge-success': job.status === 'COMPLETE', 'badge-danger': job.status === 'FAILED', 'badge-warning': job.status === 'INTERRUPTED', 'badge-info': isRunning(job)}">
+                                    {{job.status}}
+                                </span>
+                                <div *ngIf="job.status === 'FAILED' && job.errorMessage" class="small text-danger" [title]="job.errorMessage">
+                                    <fa-icon [icon]="faExclamationTriangle"></fa-icon> {{job.errorMessage}}
+                                </div>
+                            </td>
+                            <td class="align-middle">
+                                <div class="position-relative">
+                                    <ngb-progressbar max="100" [value]="jobProgress(job)"
+                                                     [ngClass]="{'custom-progress': job.status !== 'FAILED', 'progress-striped': isRunning(job), active: isRunning(job)}"
+                                                     [type]="job.status === 'FAILED' ? 'danger' : (job.status === 'INTERRUPTED' ? 'warning' : '')">
+                                    </ngb-progressbar>
+                                    <ng-container *ngIf="jobProgress(job) as progress">
+                                        <span class="progress-label-text text-white"
+                                              [style.clip-path]="'inset(0 calc(100% - ' + progress + '%) 0 0)'">{{progress}}&thinsp;%</span>
+                                        <span class="progress-label-text text-dark"
+                                              [style.clip-path]="'inset(0 0 0 ' + progress + '%)'">{{progress}}&thinsp;%</span>
+                                    </ng-container>
+                                </div>
+                            </td>
+                            <td class="text-nowrap align-middle">
+                                <span *ngIf="job.status === 'UPLOADING'">uploading</span>
+                                <span *ngIf="job.status === 'INTERRUPTED'">interrupted</span>
+                                <span *ngIf="job.status !== 'UPLOADING' && job.status !== 'INTERRUPTED'">
+                                    {{job.persisted}}<span *ngIf="job.failed > 0" class="text-danger"> / {{job.failed}} failed</span>
+                                    <span *ngIf="job.total"> of {{job.total}}</span>
+                                </span>
+                            </td>
+                            <td class="text-right align-middle" style="min-width: 90px">
+                                <button *ngIf="job.status === 'INTERRUPTED'" class="btn btn-sm btn-outline-primary btn-file mr-1"
+                                        aria-label="Resume this upload"
+                                        (keydown.enter)="resumeInput.click(); $event.preventDefault()"
+                                        (keydown.space)="resumeInput.click(); $event.preventDefault()">
+                                    <fa-icon [icon]="faPlay"></fa-icon>
+                                    <input type="file" accept=".msp,.mgf,.txt" title="Resume this upload, select the same file" #resumeInput (change)="onResumeFileSelected($event, job)" tabindex="-1"/>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" [disabled]="isRunning(job)"
+                                        title="Remove this upload" (click)="confirmDelete(job, deleteConfirmModal)">
+                                    <fa-icon [icon]="faTrash"></fa-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+<ng-template #deleteConfirmModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Remove upload</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>Remove the upload of <b>{{pendingDelete?.fileName}}</b>?</p>
+        <p class="mb-0">This removes the history entry and any file stored on the server.</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary accessibility" (click)="modal.dismiss()">Cancel</button>
+        <button type="button" class="btn btn-danger accessibility" (click)="modal.close()"><fa-icon [icon]="faTrash"></fa-icon> Delete</button>
+    </div>
+</ng-template>

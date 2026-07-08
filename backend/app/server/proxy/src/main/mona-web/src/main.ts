@@ -38,6 +38,9 @@ import {QueryCacheService} from './app/services/cache/query-cache.service';
 import {CookieMain} from './app/services/cookie/cookie-main.service';
 import {AsyncService} from './app/services/upload/async.service';
 import {UploadLibraryService} from './app/services/upload/upload-library.service';
+import {UploadJobResource} from './app/services/upload/upload-job.resource';
+import {UploadJobService} from './app/services/upload/upload-job.service';
+import {ChunkedUploadService} from './app/services/upload/chunked-upload.service';
 import {AuthenticationService} from './app/services/authentication.service';
 import {CompoundConversionService} from './app/services/compound-conversion.service';
 import {RegistrationService} from './app/services/registration.service';
@@ -176,6 +179,9 @@ const cookieConfig: NgcCookieConsentConfig = {
         QueryCacheService,
         AsyncService,
         UploadLibraryService,
+        UploadJobResource,
+        UploadJobService,
+        ChunkedUploadService,
         AuthenticationService,
         RegistrationService,
         CompoundConversionService,

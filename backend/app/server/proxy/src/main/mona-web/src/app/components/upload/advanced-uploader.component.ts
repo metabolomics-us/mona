@@ -25,6 +25,7 @@ import {
 import {first} from 'rxjs/operators';
 import {ToasterService} from 'angular2-toaster';
 import {CompoundConversionService} from '../../services/compound-conversion.service';
+import {ChunkedUploadService} from '../../services/upload/chunked-upload.service';
 
 @Component({
   selector: 'advanced-uploader',
@@ -75,6 +76,16 @@ export class AdvancedUploaderComponent implements OnInit{
   };
   libraryPrefix;
   libraryIDNum;
+
+  /**
+   * The submitter fields are optional, but if any one of them is filled out
+   * the rest become required
+   */
+  isSubmitterFieldRequired(): boolean {
+    const s = this.library.submitter;
+    return !!(s.emailAddress || s.firstName || s.lastName || s.institution);
+  }
+
   /**
    * * Sort order for the ion table - default m/z ascending
    */
@@ -113,7 +124,8 @@ export class AdvancedUploaderComponent implements OnInit{
 				          public tagService: TagService,  public asyncService: AsyncService,  public logger: NGXLogger,
 				          public element: ElementRef, public filterPipe: FilterPipe,  public http: HttpClient,
               public router: Router, public modalService: NgbModal, public toaster: ToasterService,
-              public compoundConversionService: CompoundConversionService){}
+              public compoundConversionService: CompoundConversionService,
+              public chunkedUploadService: ChunkedUploadService){}
 
 	ngOnInit() {
 		this.spectraLoaded = 0;
@@ -452,6 +464,43 @@ export class AdvancedUploaderComponent implements OnInit{
     });
   }
 
+	/**
+	 * Server side upload for large files. Streams each raw file to the server in chunks and lets the
+	 * server parse and persist it in the background
+	 */
+	serverSideUpload() {
+	  const token = this.authenticationService.getCurrentUser().accessToken;
+	  const files = this.files;
+
+	  const meta: any = {};
+	  if (this.showLibraryForm) {
+	    if (this.library.link === null) {
+	      this.library.link = 'http://massbank.us';
+	    }
+	    meta.libraryName = this.library.library;
+	    meta.libraryDescription = this.library.description;
+	    meta.libraryLink = this.library.link;
+	    meta.libraryPrefix = this.libraryPrefix;
+	    if (this.library.submitter.emailAddress !== null) {
+	      meta.librarySubmitterEmail = this.library.submitter.emailAddress;
+	      meta.librarySubmitterFirstName = this.library.submitter.firstName;
+	      meta.librarySubmitterLastName = this.library.submitter.lastName;
+	      meta.librarySubmitterInstitution = this.library.submitter.institution;
+	    }
+	    if (this.batchTagList.length > 0) {
+	      meta.additionalTags = this.batchTagList.map((tag) => tag.text);
+	    }
+	  }
+
+	  // Wait until every job row exists on the server before navigating, so the status page's
+	  // fetch on load already sees the new uploads
+	  const created = [];
+	  for (const file of files) {
+	    created.push(this.chunkedUploadService.startUpload(file, meta, token));
+	  }
+	  Promise.all(created).then(() => this.router.navigate(['/upload/status']));
+	}
+
 	straightThroughProcessing() {
 	  let promiseBuffer = [];
 	  // Move to the upload status page then execute the upload process
@@ -504,13 +553,24 @@ export class AdvancedUploaderComponent implements OnInit{
       for (let y = 0; y < this.files.length; y++) {
         totalSize += this.files[y].size;
       }
-      // If the file is larger than 10MB then use straight through processing
-      if (totalSize > 10 * 1024 * 1024) {
+
+      // Do not allow uploads over 10GB
+      const maxTotalUploadSize = 10 * 1024 * 1024 * 1024;
+      if (totalSize > maxTotalUploadSize) {
+        this.toaster.pop({
+          type: 'error',
+          title: 'Upload too large',
+          body: `The selected files total more than 10GB. Please upload fewer or smaller files at a time.`
+        });
+        return;
+      }
+
+      // Large files are parsed and persisted server side
+      if (totalSize > 3 * 1024 * 1024) {
         const modalRef = this.modalService.open(AdvancedUploadModalComponent);
         modalRef.result.then((res) => {
           if (res) {
-            this.uploadLibraryService.isSTP = true;
-            this.straightThroughProcessing();
+            this.serverSideUpload();
           }
         });
         return;
@@ -903,6 +963,17 @@ export class AdvancedUploaderComponent implements OnInit{
 			for (let i = 0; i < this.spectra.length; i++) {
 				 this.spectra[i].meta.push.apply(this.spectra[i].meta, this.spectra[i].hiddenMetadata);
 			}
+			// Record this interactive upload as an UploadJob so it shows in the My Uploads history
+			const fileNames = this.files && this.files.length
+				? Array.from(this.files).map((f: any) => f.name).join(', ')
+				: 'Interactive upload';
+			const libraryName = this.showLibraryForm ? this.library.library : null;
+			const token = this.authenticationService.getCurrentUser().accessToken;
+			// A single spectrum upload is labeled with its server assigned spectrum id instead of the filename
+			const singleSpectrum = this.spectra.length === 1;
+			if (!singleSpectrum) {
+				this.uploadLibraryService.trackInteractiveUpload(fileNames, libraryName, this.spectra.length, token);
+			}
 			this.uploadLibraryService.uploadSpectra(this.spectra,  (spectrum) => {
 				this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, spectrum,
 					{headers: {
@@ -915,9 +986,15 @@ export class AdvancedUploaderComponent implements OnInit{
 					  if (!this.uploadLibraryService.isSTP) {
               this.uploadLibraryService.uploadedSpectra.push(data.id);
             }
+					  if (singleSpectrum) {
+						this.uploadLibraryService.trackInteractiveUpload(`Spectrum ${data.id}`, libraryName, 1, token);
+					  }
 					},
 					 (err) => {
 						this.logger.info(err);
+						if (singleSpectrum) {
+						  this.uploadLibraryService.trackInteractiveUpload(fileNames, libraryName, 1, token);
+						}
 					});
 			});
 			this.router.navigate(['/upload/status']).then();

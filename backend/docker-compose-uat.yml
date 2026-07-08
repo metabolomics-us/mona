@@ -239,6 +239,8 @@ services:
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx10g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - downloader-data:/data
+    environment:
+      MONA_UPLOADS: /data/mona_uploads
     logging:
       driver: awslogs
       options:

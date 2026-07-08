@@ -218,6 +218,8 @@ export class BasicUploaderComponent implements OnInit{
             this.page = 2;
 
             this.currentSpectrum = {names: [''], meta: [{}], ions, spectrum: spectrumString};
+            // A pasted spectrum has no source file to fall back on in the history
+            this.filenames = null;
             this.showIonTable = this.currentSpectrum.ions.length < 500;
         }
     }
@@ -424,6 +426,9 @@ export class BasicUploaderComponent implements OnInit{
     parseFiles(event) {
         this.page = 1;
         this.uploadError = null;
+        // Remember the source file so a failed upload can still be labeled with it in the
+        // history, a successful one is labeled with its spectrum id instead
+        this.filenames = event.target.files && event.target.files.length ? event.target.files[0].name : null;
         this.uploadLibraryService.isSTP = false;
         return this.uploadLibraryService.loadSpectraFile(event.target.files[0],
              (data, origin) => {
@@ -616,6 +621,10 @@ export class BasicUploaderComponent implements OnInit{
                 this.uploadLibraryService.uploadStartTime = new Date().getTime();
             }
 
+            // Record this upload in the My Uploads history. A basic upload is always a single
+            // spectrum, so the entry is labeled with the server assigned spectrum id
+            const token = this.authenticationService.getCurrentUser().accessToken;
+
             this.uploadLibraryService.uploadSpectra([this.currentSpectrum],  (spectrum) => {
                 this.logger.info('submitting spectrum');
                 this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, spectrum,
@@ -625,8 +634,10 @@ export class BasicUploaderComponent implements OnInit{
                     this.logger.info('Spectra successfully Upload!');
                     this.logger.info('Reference ID: ' + data.id);
                     this.uploadLibraryService.uploadedSpectra.push(data.id);
+                    this.uploadLibraryService.trackInteractiveUpload(`Spectrum ${data.id}`, null, 1, token);
                 }, (err) => {
                         this.logger.info('ERROR', err);
+                        this.uploadLibraryService.trackInteractiveUpload(this.filenames || 'Pasted spectrum', null, 1, token);
                 });
             });
 

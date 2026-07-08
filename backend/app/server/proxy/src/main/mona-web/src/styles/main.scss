@@ -335,6 +335,22 @@ div.chart {
   display: block;
 }
 
+/* Progress bar percentage label: two identical copies centered across the full bar width,
+   each clip-path'd to only its half so the text color flips crisply at the fill boundary
+   instead of scrolling with the fill */
+.progress-label-text {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
 input[readonly] {
   background-color: white !important;
   cursor: text !important;

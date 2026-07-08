@@ -3,10 +3,13 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.config.DownloadConfig
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.config.DownloadListenerConfig
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.upload.UploadQueueConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -27,11 +30,18 @@ import org.springframework.security.config.annotation.web.builders.{WebSecurity}
 @EnableScheduling
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration],
-  classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig], classOf[DownloadConfig], classOf[DownloadListenerConfig]))
+  classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig], classOf[DownloadConfig], classOf[DownloadListenerConfig],
+  classOf[UploadQueueConfig]))
 class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Autowired
   val restSecurityService: RestSecurityService = null
+
+  // PostgresLoginService is not annotated for component scanning, every service that resolves
+  // callers from tokens defines this bean itself (same as RestPersistenceServer). The upload
+  // controller needs it
+  @Bean
+  def loginService: LoginService = new PostgresLoginService
 
   /**
    * only authenticated users can schedule downloads from the system
@@ -58,6 +68,12 @@ class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
 
       // must be an admin to upload static files
       .antMatchers(HttpMethod.POST, "/rest/downloads/static").hasAuthority("ADMIN")
+
+      // uploads are tied to a user, so every upload operation needs a valid token. Per job
+      // ownership (a user may only see or delete their own jobs unless admin) is enforced in
+      // UploadSchedulerController
+      .antMatchers("/rest/uploads/**").authenticated()
+      .antMatchers("/rest/uploads").authenticated()
   }
 
   override def configure(web: WebSecurity): Unit = {

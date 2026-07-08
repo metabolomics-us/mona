@@ -40,6 +40,7 @@ describe('AdvancedUploaderComponent', () => {
       {} as any,
       {} as any,
       toaster,
+      {} as any,
       {} as any
     );
     component.ngOnInit();

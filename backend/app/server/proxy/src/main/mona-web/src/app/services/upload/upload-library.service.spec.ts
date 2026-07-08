@@ -2,6 +2,7 @@ import {UploadLibraryService} from './upload-library.service';
 import {MspParserLibService} from 'angular-msp-parser/dist/msp-parser-lib';
 import {MgfParserLibService} from 'angular-mgf-parser/dist/mgf-parser-lib';
 import {MassbankParserLibService} from 'angular-massbank-parser/dist/massbank-parser-lib';
+import {of} from 'rxjs';
 
 describe('UploadLibraryService', () => {
   let service: UploadLibraryService;
@@ -62,9 +63,11 @@ describe('UploadLibraryService', () => {
       logger,
       new MspParserLibService(null as any, logger),
       new MgfParserLibService(logger),
-      {} as any,
+      {isAuthenticated: of(false)} as any,
       new MassbankParserLibService(logger),
       null as any,
+      {} as any,
+      {} as any,
       {} as any,
       {} as any
     );

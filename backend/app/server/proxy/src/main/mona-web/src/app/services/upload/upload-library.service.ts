@@ -15,6 +15,8 @@ import {MetadataOptimization} from '../optimization/metadata-optimization.servic
 import { Subject } from 'rxjs';
 import {Injectable} from '@angular/core';
 import {first} from 'rxjs/operators';
+import {UploadJobResource} from './upload-job.resource';
+import {UploadJobService} from './upload-job.service';
 
 @Injectable()
 export class UploadLibraryService{
@@ -33,6 +35,16 @@ export class UploadLibraryService{
     isSTP;
     uploadComplete;
 
+    // Context for recording an interactive (small file) upload as an UploadJob for history. Set
+    // when a batch starts, cleared once the record is written so each batch is recorded exactly once
+    private interactiveRecord: {fileName: string, libraryName: string, expectedTotal: number, token: string} = null;
+
+    // A refresh or close kills an interactive batch along with this in memory state.
+    // On the next visit a snapshot that is no longer being updated is recorded as an interrupted upload in the history
+    private readonly INTERACTIVE_SNAPSHOT_KEY = 'mona.upload.interactive';
+    private readonly SNAPSHOT_STALE_AFTER = 15000;
+    private recoveryTimer = null;
+
     constructor(public logger: NGXLogger,
                 public mspParserLibService: MspParserLibService,
                 public mgfParserLibService: MgfParserLibService,
@@ -40,7 +52,9 @@ export class UploadLibraryService{
                 public massbankParserLibService: MassbankParserLibService,
                 public http: HttpClient,
                 public asyncService: AsyncService,
-                public metadataOptimization: MetadataOptimization){
+                public metadataOptimization: MetadataOptimization,
+                public uploadJobResource: UploadJobResource,
+                public uploadJobService: UploadJobService){
         this.completedSpectraCount = 0;
         this.failedSpectraCount = 0;
         this.uploadedSpectraCount = 0;
@@ -49,6 +63,14 @@ export class UploadLibraryService{
         this.uploadProcess.next(true);
         this.isSTP = false;
         this.uploadedSpectra = [];
+
+        // Once the login state is available, check whether a previous visit left an interrupted
+        // interactive upload behind and record it in the history
+        this.authenticationService.isAuthenticated.subscribe((isAuthenticated: boolean) => {
+            if (isAuthenticated) {
+                this.recoverInterruptedUpload();
+            }
+        });
     }
 
     /**
@@ -617,6 +639,74 @@ export class UploadLibraryService{
 
 
     /**
+     * Marks the start of an interactive upload so it can be recorded as an UploadJob for history
+     * once every spectrum in the batch has been attempted
+     * @param fileName the source filenames shown in history
+     * @param libraryName the library this upload builds, or null
+     * @param expectedTotal number of spectra in the batch, used to detect completion reliably
+     * @param token bearer token of the submitter
+     */
+    trackInteractiveUpload(fileName, libraryName, expectedTotal, token) {
+        this.interactiveRecord = {fileName, libraryName, expectedTotal, token};
+        this.saveInteractiveSnapshot();
+        // Tracking may be registered after the batch already finished, which the basic uploader
+        // does for pasted spectra because the label needs the id from the upload response. In
+        // that case no further progress tick will run, so check for completion right away
+        this.recordInteractiveUploadIfComplete();
+    }
+
+    // Persists the batch's identity and progress so an upload killed by a refresh or close can
+    // still be recorded as interrupted on the next visit
+    private saveInteractiveSnapshot() {
+        localStorage.setItem(this.INTERACTIVE_SNAPSHOT_KEY, JSON.stringify({
+            fileName: this.interactiveRecord.fileName,
+            libraryName: this.interactiveRecord.libraryName,
+            expectedTotal: this.interactiveRecord.expectedTotal,
+            persisted: this.completedSpectraCount,
+            failed: this.failedSpectraCount,
+            updatedAt: new Date().getTime()
+        }));
+    }
+
+    /**
+     * Records an interactive upload that died with its page (refresh or close) as a FAILED history
+     * entry with the counts it reached. A snapshot is only claimed once it has stopped updating,
+     * so a batch still running in another tab is left alone and rechecked later
+     */
+    private recoverInterruptedUpload() {
+        const raw = localStorage.getItem(this.INTERACTIVE_SNAPSHOT_KEY);
+        if (raw === null || this.interactiveRecord !== null) {
+            return;
+        }
+
+        const snapshot = JSON.parse(raw);
+
+        if (new Date().getTime() - snapshot.updatedAt < this.SNAPSHOT_STALE_AFTER) {
+            clearTimeout(this.recoveryTimer);
+            this.recoveryTimer = setTimeout(() => this.recoverInterruptedUpload(), this.SNAPSHOT_STALE_AFTER);
+            return;
+        }
+
+        localStorage.removeItem(this.INTERACTIVE_SNAPSHOT_KEY);
+
+        this.uploadJobResource.recordInteractive({
+            fileName: snapshot.fileName,
+            libraryName: snapshot.libraryName,
+            total: snapshot.expectedTotal,
+            persisted: snapshot.persisted,
+            failed: snapshot.failed,
+            status: 'FAILED',
+            errorMessage: 'Upload was interrupted, delete and retry'
+        }, this.authenticationService.getCurrentUser().accessToken).subscribe(
+            () => {
+                this.logger.info('recorded an interrupted interactive upload in history');
+                this.uploadJobService.notifyJobsChanged();
+            },
+            (error) => this.logger.error('failed to record interrupted upload: ' + error)
+        );
+    }
+
+    /**
      * Updates and broadcasts the upload progress
      */
     updateUploadProgress(success) {
@@ -633,5 +723,47 @@ export class UploadLibraryService{
         this.completedSpectraCountSub.next(this.completedSpectraCount);
         this.failedSpectraCountSub.next(this.failedSpectraCount);
         this.uploadProcess.next(this.completedSpectraCount + this.failedSpectraCount < this.uploadedSpectraCount);
+
+        if (this.interactiveRecord !== null) {
+            this.saveInteractiveSnapshot();
+        }
+        this.recordInteractiveUploadIfComplete();
+    }
+
+    /**
+     * Once every spectrum in a tracked interactive batch has been attempted, records the upload as
+     * a COMPLETE UploadJob so it appears in the My Uploads history next to server side uploads.
+     * Runs in this singleton service so it survives the uploader component navigating away
+     */
+    private recordInteractiveUploadIfComplete() {
+        if (this.interactiveRecord === null) {
+            return;
+        }
+
+        const attempted = this.completedSpectraCount + this.failedSpectraCount;
+        if (attempted < this.interactiveRecord.expectedTotal) {
+            return;
+        }
+
+        const record = this.interactiveRecord;
+        // Clear first so a late progress tick cannot record the same batch twice. The snapshot
+        // goes with it, this batch finished so there is nothing to recover
+        this.interactiveRecord = null;
+        localStorage.removeItem(this.INTERACTIVE_SNAPSHOT_KEY);
+
+        this.uploadJobResource.recordInteractive({
+            fileName: record.fileName,
+            libraryName: record.libraryName,
+            total: record.expectedTotal,
+            persisted: this.completedSpectraCount,
+            failed: this.failedSpectraCount
+        }, record.token).subscribe(
+            () => {
+                this.logger.debug('recorded interactive upload in history');
+                // The My Uploads page may already be loaded and idle by now, tell it to refetch
+                this.uploadJobService.notifyJobsChanged();
+            },
+            (error) => this.logger.error('failed to record interactive upload: ' + error)
+        );
     }
 }
