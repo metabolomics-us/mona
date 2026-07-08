@@ -12,7 +12,6 @@ describe('BasicUploaderComponent', () => {
   beforeEach(() => {
     logger = jasmine.createSpyObj('NGXLogger', ['trace', 'debug', 'info', 'log', 'warn', 'error']);
     uploadLibraryService = {
-      isSTP: false,
       loadSpectraFile: jasmine.createSpy('loadSpectraFile'),
       processData: jasmine.createSpy('processData'),
       isUploading: jasmine.createSpy('isUploading').and.returnValue(false),

@@ -48,8 +48,7 @@ class UploadJobListener extends GenericMessageListener[UploadJobRequest] with La
   @Autowired
   val libraryPrefixCounterService: LibraryPrefixCounterService = null
 
-  // Flushed to the DB every N spectra rather than on every one, mirroring the client's own STP
-  // buffer size (upload-library.service.ts's bufferSize)
+  // Flushed to the DB every N spectra rather than on every one
   private val ProgressFlushBatchSize = 200
 
   override def handleMessage(request: UploadJobRequest): Unit = {

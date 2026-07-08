@@ -44,20 +44,12 @@ export class SpectraUploadProgressComponent implements OnInit{
             this.updateProgress();
             this.spectraUploadProgressString = this.spectraUploadProgress.toFixed(1) + '%';
           }
-          else if (!isUploading && this.uploadLibraryService.isSTP) {
-            this.updateProgress();
-            this.spectraUploadProgressString = 'Working on next batch of spectra...';
-          }
-          else if (!isUploading && !this.uploadLibraryService.isSTP) {
+          else {
             this.completedSpectraCount = this.uploadLibraryService.completedSpectraCount + this.uploadLibraryService.failedSpectraCount;
             this.uploadedSpectraCount = this.uploadLibraryService.uploadedSpectraCount;
             this.showETA = false;
             this.spectraUploadProgress = 100;
             this.spectraUploadProgressString = 'Upload Completed!';
-          }
-          else {
-            this.spectraUploadProgress = -1;
-            this.spectraUploadProgressString = 'Still Processing...';
           }
           this.buildEtaString();
         });
@@ -77,10 +69,7 @@ export class SpectraUploadProgressComponent implements OnInit{
     }
 
     buildEtaString() {
-        if (this.uploadLibraryService.isSTP) {
-          this.etaString = 'Uploading in batches...';
-        }
-        else if (this.uploadLibraryService.uploadStartTime === -1) {
+        if (this.uploadLibraryService.uploadStartTime === -1) {
             this.etaString = '';
         } else if (this.completedSpectraCount === 0) {
             this.etaString = 'Loading spectra for processing...';

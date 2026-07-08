@@ -429,7 +429,6 @@ export class BasicUploaderComponent implements OnInit{
         // Remember the source file so a failed upload can still be labeled with it in the
         // history, a successful one is labeled with its spectrum id instead
         this.filenames = event.target.files && event.target.files.length ? event.target.files[0].name : null;
-        this.uploadLibraryService.isSTP = false;
         return this.uploadLibraryService.loadSpectraFile(event.target.files[0],
              (data, origin) => {
                 this.logger.info('Loading file ' + event.target.files[0].name + '...');

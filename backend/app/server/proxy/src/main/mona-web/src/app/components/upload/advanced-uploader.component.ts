@@ -333,59 +333,6 @@ export class AdvancedUploaderComponent implements OnInit{
 	  return s.hiddenMetadata.find((e) => e.name === 'origin').value;
   }
 
-	batchProcessSTP(data, origin): Promise<any> {
-	  return new Promise((resolve, reject) => {
-      this.uploadLibraryService.processData(data, (spectrum) => {
-        if (spectrum === null) {
-          reject(true);
-        } else {
-          if (this.showLibraryForm) {
-            spectrum.id = `${this.libraryPrefix}${String(this.libraryIDNum).padStart(6, '0')}`;
-            this.libraryIDNum += 1;
-            if (this.library.link === null) {
-              this.library.link = 'http://massbank.us';
-            }
-            spectrum.library = this.library;
-            spectrum.tags = [];
-            if (this.batchTagList.length > 0) {
-              for (const tag of this.batchTagList) {
-                spectrum.tags.push({ruleBased: false, text: tag.text});
-              }
-            }
-            spectrum.tags.push(this.library.tag);
-            if (this.library.submitter.emailAddress !== null) {
-              this.library.submitter.id = this.library.submitter.emailAddress;
-              spectrum.submitter = this.library.submitter;
-            }
-          }
-          this.uploadLibraryService.uploadSpectra([spectrum],   (res) => {
-            try {
-              this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, res,
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${this.authenticationService.getCurrentUser().accessToken}`
-                  }
-                })
-                .pipe(first())
-                .subscribe((r: any) => {
-                  // If no errors, just resolve the promise and return true
-                  resolve(true);
-                },
-                (err) => {
-                  this.logger.info('ERROR');
-                  this.logger.info(err);
-                  reject(err);
-                });
-            } catch (error) {
-              reject(error);
-            }
-          });
-        }
-      }, origin);
-    });
-  }
-
   batchProcess(data, origin): Promise<any> {
     return new Promise((resolve, reject) => {
       this.uploadLibraryService.processData(data, (spectrum) => {
@@ -501,41 +448,6 @@ export class AdvancedUploaderComponent implements OnInit{
 	  Promise.all(created).then(() => this.router.navigate(['/upload/status']));
 	}
 
-	straightThroughProcessing() {
-	  let promiseBuffer = [];
-	  // Move to the upload status page then execute the upload process
-   this.router.navigate(['/upload/status']).then(() => {
-     // set timeout for 1 second, so we can navigate to upload status page first
-     setTimeout( () => {
-       for (const file of this.files) {
-         this.uploadLibraryService.loadSpectraFile(file, async (data, origin) => {
-           // Receive async batch from loadSpectraFile
-           for (const item of data) {
-             // Create an array of promises that will process the files and then upload to server
-             promiseBuffer.push(this.batchProcessSTP(item, origin));
-           }
-           // Execute batch of promises at once but await so that the batch finishes first before moving to new batch
-           // otherwise we may overload the browser and crash it. May experiment with this.
-           await Promise.all(promiseBuffer.map(p => p.catch((reason) => {
-             return Promise.reject(reason);
-           })));
-           // Reset our array so we can go again.
-           promiseBuffer = [];
-         }).then().catch((reason) => {
-           this.router.navigate(['/upload/advanced']).then();
-           setTimeout(() => {
-             this.toaster.pop({
-               type: 'error',
-               title: `Error parsing file: '${file.name}'`,
-               body: this.parseErrorMessage(reason)
-             });
-           }, 500);
-         });
-         }
-       }, 1000);
-   });
-  }
-
 	/**
 	 * Parse spectra
 	 * @param event Contains an event which serves the files
@@ -575,7 +487,6 @@ export class AdvancedUploaderComponent implements OnInit{
         });
         return;
       } else {
-        this.uploadLibraryService.isSTP = false;
         this.filesParsed = false;
         this.loadedSpectra = 0;
         this.totalSpectra = 0;
@@ -983,9 +894,7 @@ export class AdvancedUploaderComponent implements OnInit{
             first()
         ).subscribe((data: any) => {
 					  this.logger.debug('Spectra was uploaded');
-					  if (!this.uploadLibraryService.isSTP) {
-              this.uploadLibraryService.uploadedSpectra.push(data.id);
-            }
+					  this.uploadLibraryService.uploadedSpectra.push(data.id);
 					  if (singleSpectrum) {
 						this.uploadLibraryService.trackInteractiveUpload(`Spectrum ${data.id}`, libraryName, 1, token);
 					  }

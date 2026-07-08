@@ -32,7 +32,6 @@ export class UploadLibraryService{
     uploadedSpectra;
 
     uploadStartTime;
-    isSTP;
     uploadComplete;
 
     // Context for recording an interactive (small file) upload as an UploadJob for history. Set
@@ -61,7 +60,6 @@ export class UploadLibraryService{
         this.totalSpectraCount = 0;
         this.uploadStartTime = -1;
         this.uploadProcess.next(true);
-        this.isSTP = false;
         this.uploadedSpectra = [];
 
         // Once the login state is available, check whether a previous visit left an interrupted
@@ -499,8 +497,6 @@ export class UploadLibraryService{
       };
 
       await processFiles().then(() => {
-        // Once we finished our read, set isSTP to false so the spectra upload progress bar shows completed.
-        this.isSTP = false;
         this.uploadProcess.next(false);
       }).catch((reason) => {
         return Promise.reject(reason);

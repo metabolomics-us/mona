@@ -18,7 +18,6 @@ describe('AdvancedUploaderComponent', () => {
     asyncService = jasmine.createSpyObj('AsyncService', ['addToPool', 'resetPool', 'hasPooledTasks']);
     asyncService.addToPool.and.callFake((fn) => fn());
     uploadLibraryService = {
-      isSTP: false,
       completedSpectraCount: 0,
       failedSpectraCount: 0,
       uploadedSpectraCount: 0,

@@ -16,7 +16,7 @@
                     otherwise the remaining spectra will not be sent to the server.</p>
                 <spectra-upload-progress-bar></spectra-upload-progress-bar>
 
-                <div *ngIf="uploadLibraryService.uploadedSpectra && !uploadLibraryService.isSTP" class="overflow-auto mt-2" style="max-height: 200px">
+                <div *ngIf="uploadLibraryService.uploadedSpectra" class="overflow-auto mt-2" style="max-height: 200px">
                     <ul>
                         <li *ngFor="let spectrum of uploadLibraryService.uploadedSpectra">
                             Spectrum <a class="davis-blue text-decoration-none font-weight-bold" [routerLink]="['/spectra/display/'+spectrum]">{{spectrum}}</a> was successfully uploaded!
