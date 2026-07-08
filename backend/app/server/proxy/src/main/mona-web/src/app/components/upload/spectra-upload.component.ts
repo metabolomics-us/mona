@@ -10,7 +10,7 @@ import {UploadJobService} from '../../services/upload/upload-job.service';
 import {UploadJobModel} from '../../mocks/upload-job.model';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {ChunkedUploadService} from '../../services/upload/chunked-upload.service';
-import {faSpinner, faUser, faCloudUploadAlt, faTrash, faExclamationTriangle, faSearch, faPlay} from '@fortawesome/free-solid-svg-icons';
+import {faUser, faCloudUploadAlt, faTrash, faExclamationTriangle, faSearch, faPlay} from '@fortawesome/free-solid-svg-icons';
 import {NGXLogger} from 'ngx-logger';
 import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {Router} from '@angular/router';
@@ -23,7 +23,6 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
     templateUrl: '../../views/spectra/upload/uploadStatus.html'
 })
 export class SpectraUploadComponent implements OnInit, OnDestroy {
-  faSpinner = faSpinner;
   faUser = faUser;
   faCloudUploadAlt = faCloudUploadAlt;
   faTrash = faTrash;
