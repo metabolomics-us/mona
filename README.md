@@ -34,7 +34,6 @@ It is highly recommended to use Linux for development (preferably Ubuntu LTS 18.
 | NPM | — | Node Package Manager |
 | Docker & Docker Compose | — | — |
 | AWS CLI | — | Required for ECR image push/pull |
-| corsproxy | — | `npm install -g corsproxy` (npm v8) |
 
 ### Access Requirements
 
@@ -61,17 +60,12 @@ There are four scripts in the `./scripts/` dir to easily get you started with de
 ./start_docker.sh
 ```
 
-**2. Solve CORS issues between the frontend and microservices:**
-```bash
-./start_corsproxy.sh
-```
-
-**3. Start the Angular frontend with live reload at `localhost:9090`:**
+**2. Start the Angular frontend with live reload at `localhost:9090`:**
 ```bash
 ./start_frontend.sh
 ```
 
-**4. Rebuild and redeploy microservices during dev:**
+**3. Rebuild and redeploy microservices during dev:**
 ```bash
 ./dev_deploy.sh   # see usage
 ```

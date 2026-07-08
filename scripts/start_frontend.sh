@@ -8,6 +8,5 @@ echo "      STARTING FRONTEND      "
 echo "============================="
 # Start Frontend Dev
 cd "$(dirname "$0")/../backend/app/server/proxy" || exit 1
-ng serve
-
+ng serve --proxy-config proxy.conf.json
 
