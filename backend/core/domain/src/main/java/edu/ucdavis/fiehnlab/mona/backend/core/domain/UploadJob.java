@@ -63,10 +63,9 @@ public class UploadJob implements Serializable {
     // Spectra that could not be parsed or saved and were skipped and logged
     private Long failed;
 
-    // Intentionally never populated: a Library is @OneToOne cascade=ALL/orphanRemoval on Spectrum,
-    // so sharing one row across a job's spectra would let deleting any single spectrum cascade
-    // delete the library out from under the rest. Each spectrum gets its own fresh Library instead
-    private Long libraryId;
+    // A Library is @OneToOne cascade=ALL/orphanRemoval on Spectrum, so each spectrum in a job gets
+    // its own fresh Library row rather than sharing one. There is therefore no single library id to
+    // record on the job, only the user supplied name below
 
     // User supplied name for the library this upload creates
     private String libraryName;
@@ -214,14 +213,6 @@ public class UploadJob implements Serializable {
         this.failed = failed;
     }
 
-    public Long getLibraryId() {
-        return libraryId;
-    }
-
-    public void setLibraryId(Long libraryId) {
-        this.libraryId = libraryId;
-    }
-
     public String getLibraryName() {
         return libraryName;
     }
@@ -331,11 +322,11 @@ public class UploadJob implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UploadJob that = (UploadJob) o;
-        return Objects.equals(id, that.id) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(fileName, that.fileName) && Objects.equals(storedPath, that.storedPath) && Objects.equals(format, that.format) && Objects.equals(fileSize, that.fileSize) && Objects.equals(uploadedBytes, that.uploadedBytes) && Objects.equals(total, that.total) && Objects.equals(parsed, that.parsed) && Objects.equals(persisted, that.persisted) && Objects.equals(failed, that.failed) && Objects.equals(libraryId, that.libraryId) && Objects.equals(libraryName, that.libraryName) && Objects.equals(libraryDescription, that.libraryDescription) && Objects.equals(libraryLink, that.libraryLink) && Objects.equals(libraryPrefix, that.libraryPrefix) && Objects.equals(librarySubmitterEmail, that.librarySubmitterEmail) && Objects.equals(librarySubmitterFirstName, that.librarySubmitterFirstName) && Objects.equals(librarySubmitterLastName, that.librarySubmitterLastName) && Objects.equals(librarySubmitterInstitution, that.librarySubmitterInstitution) && Objects.equals(additionalTags, that.additionalTags) && Objects.equals(date, that.date) && Objects.equals(lastUpdated, that.lastUpdated) && Objects.equals(status, that.status) && Objects.equals(errorMessage, that.errorMessage);
+        return Objects.equals(id, that.id) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(fileName, that.fileName) && Objects.equals(storedPath, that.storedPath) && Objects.equals(format, that.format) && Objects.equals(fileSize, that.fileSize) && Objects.equals(uploadedBytes, that.uploadedBytes) && Objects.equals(total, that.total) && Objects.equals(parsed, that.parsed) && Objects.equals(persisted, that.persisted) && Objects.equals(failed, that.failed) && Objects.equals(libraryName, that.libraryName) && Objects.equals(libraryDescription, that.libraryDescription) && Objects.equals(libraryLink, that.libraryLink) && Objects.equals(libraryPrefix, that.libraryPrefix) && Objects.equals(librarySubmitterEmail, that.librarySubmitterEmail) && Objects.equals(librarySubmitterFirstName, that.librarySubmitterFirstName) && Objects.equals(librarySubmitterLastName, that.librarySubmitterLastName) && Objects.equals(librarySubmitterInstitution, that.librarySubmitterInstitution) && Objects.equals(additionalTags, that.additionalTags) && Objects.equals(date, that.date) && Objects.equals(lastUpdated, that.lastUpdated) && Objects.equals(status, that.status) && Objects.equals(errorMessage, that.errorMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, emailAddress, fileName, storedPath, format, fileSize, uploadedBytes, total, parsed, persisted, failed, libraryId, libraryName, libraryDescription, libraryLink, libraryPrefix, librarySubmitterEmail, librarySubmitterFirstName, librarySubmitterLastName, librarySubmitterInstitution, additionalTags, date, lastUpdated, status, errorMessage);
+        return Objects.hash(id, emailAddress, fileName, storedPath, format, fileSize, uploadedBytes, total, parsed, persisted, failed, libraryName, libraryDescription, libraryLink, libraryPrefix, librarySubmitterEmail, librarySubmitterFirstName, librarySubmitterLastName, librarySubmitterInstitution, additionalTags, date, lastUpdated, status, errorMessage);
     }
 }
