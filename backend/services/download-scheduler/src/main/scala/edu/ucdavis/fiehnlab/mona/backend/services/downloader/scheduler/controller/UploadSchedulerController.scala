@@ -6,8 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{UploadJob, UploadJobRequest}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.UploadJobRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, SpectrumDeletionRequest, UploadJob, UploadJobRequest}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, UploadJobRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.UploadStorageService
 import org.springframework.amqp.core.{Message, MessageDeliveryMode}
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -33,6 +34,16 @@ class UploadSchedulerController extends LazyLogging {
 
   @Autowired
   val uploadJobRepository: UploadJobRepository = null
+
+  @Autowired
+  val deletionJobRepository: DeletionJobRepository = null
+
+  @Autowired
+  val spectrumPersistenceService: SpectrumPersistenceService = null
+
+  @Autowired
+  @Qualifier("spectra-deletion-queue")
+  val deletionQueueName: String = null
 
   @Autowired
   val uploadStorageService: UploadStorageService = null
@@ -83,6 +94,65 @@ class UploadSchedulerController extends LazyLogging {
 
   private def canAccess(job: UploadJob, info: LoginInfo): Boolean = {
     info != null && (info.roles.contains("ADMIN") || job.getEmailAddress == info.emailAddress)
+  }
+
+  // A single spectrum interactive upload's history row is labeled with its server assigned spectrum
+  // id instead of a filename (see spectra-upload.component.ts's matching SPECTRUM_FILENAME_PATTERN)
+  private val SpectrumFileNamePattern = """^Spectrum (\S+)$""".r
+
+  // What deleting this job's spectra actually targets: either one known spectrum id, or an RSQL
+  // query. Neither field set means there is nothing to delete
+  private case class SpectraDeletionTarget(query: Option[String], ids: List[String]) {
+    def isEmpty: Boolean = query.isEmpty && ids.isEmpty
+  }
+
+  /**
+    * Resolves job.fileName into what should be deleted.
+    * An OR across origin file names alone could also match a different
+    * user's identically named upload, so the query additionally ANDs on this job's submitter.
+    * That submitter is job.getLibrarySubmitterEmail if the library form's override was used, else job.getEmailAddress
+    */
+  private def resolveDeletionTarget(job: UploadJob): SpectraDeletionTarget = {
+    Option(job.getFileName).map(_.trim).filter(_.nonEmpty) match {
+      case None => SpectraDeletionTarget(None, Nil)
+      case Some(SpectrumFileNamePattern(spectrumId)) => SpectraDeletionTarget(None, List(spectrumId))
+      case Some(fileName) =>
+        val originNames = fileName.split(",").map(_.trim).filter(_.nonEmpty)
+
+        if (originNames.isEmpty) {
+          SpectraDeletionTarget(None, Nil)
+        } else {
+          val submitterEmail = Option(job.getLibrarySubmitterEmail).filter(_.nonEmpty).getOrElse(job.getEmailAddress)
+          val originClauses = originNames.map(name => s"exists(metaData.name:'origin' and metaData.value:'$name')").mkString(" or ")
+          SpectraDeletionTarget(Some(s"($originClauses) and submitter.emailAddress:'$submitterEmail'"), Nil)
+        }
+    }
+  }
+
+  private def countDeletionTarget(target: SpectraDeletionTarget): Long = target match {
+    case SpectraDeletionTarget(Some(query), _) => spectrumPersistenceService.count(query)
+    case SpectraDeletionTarget(None, ids) => ids.size.toLong
+  }
+
+  /**
+    * Enqueues a tracked deletion job for the given target, linked back to this upload job so
+    * SpectrumDeletionListener can flip it to DELETED once the deletion completes
+    */
+  private def enqueueSpectraDeletion(job: UploadJob, target: SpectraDeletionTarget, triggeredBy: String): Unit = {
+    val total = countDeletionTarget(target)
+    val deletionJob = target match {
+      case SpectraDeletionTarget(Some(query), _) =>
+        new DeletionJob(UUID.randomUUID.toString, query, null, triggeredBy, new Date, DeletionJob.STATUS_SCHEDULED, total)
+      case SpectraDeletionTarget(None, ids) =>
+        new DeletionJob(UUID.randomUUID.toString, null, ids.mkString(","), triggeredBy, new Date, DeletionJob.STATUS_SCHEDULED, total)
+    }
+    deletionJob.setUploadJobId(job.getId)
+    deletionJobRepository.save(deletionJob)
+
+    rabbitTemplate.convertAndSend(deletionQueueName, new SpectrumDeletionRequest(deletionJob.getId), (message: Message) => {
+      message.getMessageProperties.setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+      message
+    })
   }
 
   /**
@@ -290,25 +360,64 @@ class UploadSchedulerController extends LazyLogging {
   }
 
   /**
-    * Deletes an upload job and its stored file. TODO: The deleteSpectra flag additionally drops the
-    * job's library and persisted spectra 
-    * NOTE: careful of libraries that span multiple files and even uploads (different prefix same library name)
+    * Returns the count of spectra that deleteJob's deleteSpectra=true would delete for this job,
+    * so the delete confirmation can show an accurate number without actually deleting anything
     */
-  @RequestMapping(path = Array("/{jobId}"), method = Array(RequestMethod.DELETE))
-  def deleteJob(@PathVariable("jobId") jobId: String,
-                @RequestParam(value = "deleteSpectra", required = false, defaultValue = "false") deleteSpectra: Boolean): ResponseEntity[String] = {
+  @RequestMapping(path = Array("/{jobId}/spectraCount"), method = Array(RequestMethod.GET))
+  def spectraCount(@PathVariable("jobId") jobId: String): ResponseEntity[java.lang.Long] = {
     val info: LoginInfo = callerInfo()
     val job: UploadJob = uploadJobRepository.findById(jobId).orElse(null)
 
     if (job == null) {
-      new ResponseEntity[String](HttpStatus.NOT_FOUND)
+      new ResponseEntity[java.lang.Long](HttpStatus.NOT_FOUND)
     } else if (!canAccess(job, info)) {
-      new ResponseEntity[String](HttpStatus.FORBIDDEN)
+      new ResponseEntity[java.lang.Long](HttpStatus.FORBIDDEN)
+    } else {
+      new ResponseEntity[java.lang.Long](countDeletionTarget(resolveDeletionTarget(job)), HttpStatus.OK)
+    }
+  }
+
+  /**
+    * Deletes an upload's stored file immediately. When deleteSpectra is true, the job's spectra
+    * (see resolveDeletionTarget) are also removed via the same tracked async deletion pipeline as
+    * the admin mass delete endpoints. Since deletion is async, the job row is not removed: it flips
+    * to DELETING now and to DELETED (with deletedDate set) once SpectrumDeletionListener finishes,
+    * so the upload history table keeps a permanent record of the deletion
+    */
+  @RequestMapping(path = Array("/{jobId}"), method = Array(RequestMethod.DELETE))
+  def deleteJob(@PathVariable("jobId") jobId: String,
+                @RequestParam(value = "deleteSpectra", required = false, defaultValue = "false") deleteSpectra: Boolean): ResponseEntity[UploadJob] = {
+    val info: LoginInfo = callerInfo()
+    val job: UploadJob = uploadJobRepository.findById(jobId).orElse(null)
+
+    if (job == null) {
+      new ResponseEntity[UploadJob](HttpStatus.NOT_FOUND)
+    } else if (!canAccess(job, info)) {
+      new ResponseEntity[UploadJob](HttpStatus.FORBIDDEN)
     } else {
       uploadStorageService.deleteJob(jobId)
-      uploadJobRepository.delete(job)
-      logger.info(s"deleted upload job $jobId (deleteSpectra=$deleteSpectra)")
-      new ResponseEntity[String](HttpStatus.OK)
+
+      if (!deleteSpectra) {
+        uploadJobRepository.delete(job)
+        logger.info(s"deleted upload job $jobId (deleteSpectra=false)")
+        new ResponseEntity[UploadJob](HttpStatus.OK)
+      } else {
+        val target = resolveDeletionTarget(job)
+
+        if (target.isEmpty) {
+          job.setStatus(UploadJob.STATUS_DELETED)
+          job.setDeletedDate(new Date())
+        } else {
+          job.setStatus(UploadJob.STATUS_DELETING)
+          enqueueSpectraDeletion(job, target, info.emailAddress)
+        }
+
+        job.setLastUpdated(new Date())
+        uploadJobRepository.save(job)
+
+        logger.info(s"deleted upload job $jobId file, spectra deletion status=${job.getStatus}")
+        new ResponseEntity[UploadJob](job, HttpStatus.OK)
+      }
     }
   }
 }

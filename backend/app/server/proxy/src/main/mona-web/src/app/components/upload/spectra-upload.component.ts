@@ -35,6 +35,7 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
   jobsChangedSubscription: Subscription;
   refreshSubscription: Subscription;
   pendingDelete: UploadJobModel = null;
+  pendingDeleteSpectraCount: number = null;
   // Whether the previous poll tick saw an upload in progress, used for one trailing fetch
   private wasActive = false;
 
@@ -97,7 +98,7 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
   }
 
   hasActiveJobs(): boolean {
-    return this.jobs.some((job) => job.status === 'UPLOADING' || job.status === 'SCHEDULED' || job.status === 'RUNNING');
+    return this.jobs.some((job) => job.status === 'UPLOADING' || job.status === 'SCHEDULED' || job.status === 'RUNNING' || job.status === 'DELETING');
   }
 
   // Percentage for the row's progress bar: bytes transferred while uploading, spectra parsed while running
@@ -115,20 +116,42 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
     return job.status === 'UPLOADING' || job.status === 'SCHEDULED' || job.status === 'RUNNING';
   }
 
+  // Fetches an up to date spectra count before showing the confirmation, so the warning always
+  // reflects exactly what deleteJob is about to delete
   confirmDelete(job: UploadJobModel, modalTemplate: TemplateRef<any>) {
+    const token = this.authenticationService.getCurrentUser().accessToken;
+    this.uploadJobResource.spectraCount(job.id, token).subscribe(
+      (count) => this.openDeleteConfirm(job, count, modalTemplate),
+      (error) => {
+        this.logger.error('failed to fetch spectra count: ' + error);
+        this.openDeleteConfirm(job, null, modalTemplate);
+      }
+    );
+  }
+
+  private openDeleteConfirm(job: UploadJobModel, spectraCount: number, modalTemplate: TemplateRef<any>) {
     this.pendingDelete = job;
+    this.pendingDeleteSpectraCount = spectraCount;
     this.modalService.open(modalTemplate).result.then(
       () => this.deleteJob(job),
       () => {}
     );
   }
 
+  // Deletes the upload's spectra. Deletion is async (see UploadSchedulerController), so
+  // the job row is kept and updated in place (status DELETING, then DELETED)
   deleteJob(job: UploadJobModel) {
     const token = this.authenticationService.getCurrentUser().accessToken;
-    this.uploadJobResource.deleteJob(job.id, token, false).subscribe(
-      () => {
-        this.jobs = this.jobs.filter((j) => j.id !== job.id);
-        this.toaster.pop({type: 'success', title: 'Upload removed', body: `Removed upload of ${job.fileName}`});
+    this.uploadJobResource.deleteJob(job.id, token, true).subscribe(
+      (updated: UploadJobModel) => {
+        const index = this.jobs.findIndex((j) => j.id === job.id);
+        if (index !== -1) {
+          this.jobs[index] = updated;
+        }
+        const body = updated.status === 'DELETING'
+          ? `Removed upload of ${job.fileName}. Deleting its spectra now.`
+          : `Removed upload of ${job.fileName}.`;
+        this.toaster.pop({type: 'success', title: 'Upload removed', body});
       },
       (error) => {
         this.logger.error('failed to delete upload job: ' + error);

@@ -2,8 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.deletion
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessageListener
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, SpectrumDeletionRequest}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.DeletionJobRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, SpectrumDeletionRequest, UploadJob}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, UploadJobRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -26,6 +26,23 @@ class SpectrumDeletionListener extends GenericMessageListener[SpectrumDeletionRe
 
   @Autowired
   val deletionJobRepository: DeletionJobRepository = null
+
+  @Autowired
+  val uploadJobRepository: UploadJobRepository = null
+
+  // Tells the uploadJob row to transition to DELETED once the deletionJob is complete
+  // Edge case: if the deletionJob is FAILED, the uploadJob stays in the DELETING state
+  private def closeUploadJobLoop(job: DeletionJob): Unit = {
+    if (job.getUploadJobId != null && job.getStatus == DeletionJob.STATUS_COMPLETE) {
+      val uploadJob: UploadJob = uploadJobRepository.findById(job.getUploadJobId).orElse(null)
+
+      if (uploadJob != null) {
+        uploadJob.setStatus(UploadJob.STATUS_DELETED)
+        uploadJob.setDeletedDate(new Date())
+        uploadJobRepository.save(uploadJob)
+      }
+    }
+  }
 
   override def handleMessage(request: SpectrumDeletionRequest): Unit = {
     val jobId: String = request.getJobId
@@ -64,6 +81,8 @@ class SpectrumDeletionListener extends GenericMessageListener[SpectrumDeletionRe
           job.setLastUpdated(new Date())
           deletionJobRepository.save(job)
       }
+
+      closeUploadJobLoop(job)
     }
   }
 }

@@ -54,6 +54,10 @@ public class DeletionJob implements Serializable {
     @Type(type = "org.hibernate.type.TextType")
     private String errorMessage;
 
+    // Set when this deletion was enqueued from an upload's delete button, so the listener can flip
+    // that UploadJob to DELETED once this job completes. Null for a standalone/admin mass delete
+    private String uploadJobId;
+
     public DeletionJob() {
         this.deleted = 0L;
         this.skipped = 0L;
@@ -160,16 +164,24 @@ public class DeletionJob implements Serializable {
         this.errorMessage = errorMessage;
     }
 
+    public String getUploadJobId() {
+        return uploadJobId;
+    }
+
+    public void setUploadJobId(String uploadJobId) {
+        this.uploadJobId = uploadJobId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeletionJob that = (DeletionJob) o;
-        return Objects.equals(id, that.id) && Objects.equals(query, that.query) && Objects.equals(spectrumIds, that.spectrumIds) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(date, that.date) && Objects.equals(lastUpdated, that.lastUpdated) && Objects.equals(status, that.status) && Objects.equals(total, that.total) && Objects.equals(deleted, that.deleted) && Objects.equals(skipped, that.skipped) && Objects.equals(errorMessage, that.errorMessage);
+        return Objects.equals(id, that.id) && Objects.equals(query, that.query) && Objects.equals(spectrumIds, that.spectrumIds) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(date, that.date) && Objects.equals(lastUpdated, that.lastUpdated) && Objects.equals(status, that.status) && Objects.equals(total, that.total) && Objects.equals(deleted, that.deleted) && Objects.equals(skipped, that.skipped) && Objects.equals(errorMessage, that.errorMessage) && Objects.equals(uploadJobId, that.uploadJobId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, query, spectrumIds, emailAddress, date, lastUpdated, status, total, deleted, skipped, errorMessage);
+        return Objects.hash(id, query, spectrumIds, emailAddress, date, lastUpdated, status, total, deleted, skipped, errorMessage, uploadJobId);
     }
 }

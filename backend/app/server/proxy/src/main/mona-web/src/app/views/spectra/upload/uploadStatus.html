@@ -54,24 +54,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let job of jobs">
+                        <tr *ngFor="let job of jobs" [ngClass]="{'text-muted': job.status === 'DELETED'}">
                             <td class="align-middle">
-                                <button class="fakeRef davis-blue accessibility" (click)="queryJob(job)" placement="top"
+                                <button class="fakeRef davis-blue accessibility" [disabled]="job.status === 'DELETED'" (click)="queryJob(job)" placement="top"
                                         aria-label="Search associated spectra" title="Search">
                                     <fa-icon [icon]="faSearch"></fa-icon>
                                 </button>
                             </td>
-                            <td class="text-break align-middle" style="max-width: 280px">
+                            <td class="text-break align-middle" [ngClass]="{'text-decoration-line-through': job.status === 'DELETED'}" style="max-width: 280px">
                                 <ng-container *ngIf="spectrumId(job) as id; else rawFileName">
                                     <span class="text-muted">ID:</span> {{id}}
                                 </ng-container>
                                 <ng-template #rawFileName>{{job.fileName}}</ng-template>
                             </td>
                             <td class="align-middle">{{job.libraryName || '-'}}</td>
-                            <td class="align-middle" style="min-width: 150px">{{job.date | date:'short'}}</td>
+                            <td class="align-middle" style="min-width: 150px">
+                                {{job.date | date:'short'}}
+                                <div *ngIf="job.deletedDate" class="small text-muted">
+                                    <fa-icon [icon]="faTrash" size="xs"></fa-icon> {{job.deletedDate | date:'short'}}
+                                </div>
+                            </td>
                             <td class="align-middle">
                                 <span class="badge"
-                                      [ngClass]="{'badge-success': job.status === 'COMPLETE', 'badge-danger': job.status === 'FAILED', 'badge-warning': job.status === 'INTERRUPTED', 'badge-info': isRunning(job)}">
+                                      [ngClass]="{'badge-success': job.status === 'COMPLETE', 'badge-danger': job.status === 'FAILED', 'badge-warning': job.status === 'INTERRUPTED', 'badge-info': isRunning(job), 'badge-secondary': job.status === 'DELETING', 'badge-dark': job.status === 'DELETED'}">
                                     {{job.status}}
                                 </span>
                                 <div *ngIf="job.status === 'FAILED' && job.errorMessage" class="small text-danger" [title]="job.errorMessage">
@@ -79,7 +84,7 @@
                                 </div>
                             </td>
                             <td class="align-middle">
-                                <div class="position-relative">
+                                <div *ngIf="job.status !== 'DELETED'" class="position-relative">
                                     <ngb-progressbar max="100" [value]="jobProgress(job)"
                                                      [ngClass]="{'custom-progress': job.status !== 'FAILED', 'progress-striped': isRunning(job), active: isRunning(job)}"
                                                      [type]="job.status === 'FAILED' ? 'danger' : (job.status === 'INTERRUPTED' ? 'warning' : '')">
@@ -108,7 +113,7 @@
                                     <fa-icon [icon]="faPlay"></fa-icon>
                                     <input type="file" accept=".msp,.mgf,.txt" title="Resume this upload, select the same file" #resumeInput (change)="onResumeFileSelected($event, job)" tabindex="-1"/>
                                 </button>
-                                <button class="btn btn-sm btn-outline-danger" [disabled]="isRunning(job)"
+                                <button *ngIf="job.status !== 'DELETED'" class="btn btn-sm btn-outline-danger" [disabled]="isRunning(job) || job.status === 'DELETING'"
                                         title="Remove this upload" (click)="confirmDelete(job, deleteConfirmModal)">
                                     <fa-icon [icon]="faTrash"></fa-icon>
                                 </button>
@@ -130,7 +135,13 @@
     </div>
     <div class="modal-body">
         <p>Remove the upload of <b>{{pendingDelete?.fileName}}</b>?</p>
-        <p class="mb-0">This removes the history entry and any file stored on the server.</p>
+        <p class="mb-0">
+            <span *ngIf="pendingDeleteSpectraCount !== null; else unknownCount">
+                This will permanently delete <b>{{pendingDeleteSpectraCount}}</b> spectra created by this upload.
+            </span>
+            <ng-template #unknownCount>This will permanently delete the spectra created by this upload.</ng-template>
+        </p>
+        <p>This also removes the associated files stored on the server (if any).</p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary accessibility" (click)="modal.dismiss()">Cancel</button>

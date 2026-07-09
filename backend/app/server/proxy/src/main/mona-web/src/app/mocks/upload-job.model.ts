@@ -18,5 +18,6 @@ export interface UploadJobModel {
   libraryName: string;
   date: string;
   lastUpdated: string;
+  deletedDate: string;
   errorMessage: string;
 }

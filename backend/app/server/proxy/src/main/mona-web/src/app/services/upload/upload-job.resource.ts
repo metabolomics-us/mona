@@ -62,9 +62,18 @@ export class UploadJobResource {
     });
   }
 
-  // Deletes the job and its stored file (if it exists), as well as TODO: the spectra of the job
-  deleteJob(jobId: string, token: string, deleteSpectra: boolean = false): Observable<any> {
-    return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/uploads/${jobId}?deleteSpectra=${deleteSpectra}`, {
+  // Deletes the job's stored file (if it exists). When deleteSpectra is true, the job's
+  // spectra are also deleted asynchronously; the returned job reflects that (status DELETING or
+  // DELETED) rather than the job being deleted itself
+  deleteJob(jobId: string, token: string, deleteSpectra: boolean = false): Observable<UploadJobModel> {
+    return this.http.delete<UploadJobModel>(`${environment.REST_BACKEND_SERVER}/rest/uploads/${jobId}?deleteSpectra=${deleteSpectra}`, {
+      headers: this.authHeaders(token)
+    });
+  }
+
+  // Count of spectra that deleteJob(jobId, token, true) would delete, for the delete confirmation
+  spectraCount(jobId: string, token: string): Observable<number> {
+    return this.http.get<number>(`${environment.REST_BACKEND_SERVER}/rest/uploads/${jobId}/spectraCount`, {
       headers: this.authHeaders(token)
     });
   }
