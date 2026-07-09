@@ -879,11 +879,12 @@ export class AdvancedUploaderComponent implements OnInit{
 				? Array.from(this.files).map((f: any) => f.name).join(', ')
 				: 'Interactive upload';
 			const libraryName = this.showLibraryForm ? this.library.library : null;
+			const submitterOverride = this.showLibraryForm && this.library.submitter.emailAddress !== null ? this.library.submitter : null;
 			const token = this.authenticationService.getCurrentUser().accessToken;
 			// A single spectrum upload is labeled with its server assigned spectrum id instead of the filename
 			const singleSpectrum = this.spectra.length === 1;
 			if (!singleSpectrum) {
-				this.uploadLibraryService.trackInteractiveUpload(fileNames, libraryName, this.spectra.length, token);
+				this.uploadLibraryService.trackInteractiveUpload(fileNames, libraryName, this.spectra.length, token, submitterOverride);
 			}
 			this.uploadLibraryService.uploadSpectra(this.spectra,  (spectrum) => {
 				this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, spectrum,
@@ -896,13 +897,13 @@ export class AdvancedUploaderComponent implements OnInit{
 					  this.logger.debug('Spectra was uploaded');
 					  this.uploadLibraryService.uploadedSpectra.push(data.id);
 					  if (singleSpectrum) {
-						this.uploadLibraryService.trackInteractiveUpload(`Spectrum ${data.id}`, libraryName, 1, token);
+						this.uploadLibraryService.trackInteractiveUpload(`Spectrum ${data.id}`, libraryName, 1, token, submitterOverride);
 					  }
 					},
 					 (err) => {
 						this.logger.info(err);
 						if (singleSpectrum) {
-						  this.uploadLibraryService.trackInteractiveUpload(fileNames, libraryName, 1, token);
+						  this.uploadLibraryService.trackInteractiveUpload(fileNames, libraryName, 1, token, submitterOverride);
 						}
 					});
 			});

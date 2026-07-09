@@ -233,6 +233,10 @@ class UploadSchedulerController extends LazyLogging {
 
       val fileName: String = Option(payload.get("fileName")).map(_.toString).getOrElse("Interactive upload")
       val libraryName: String = Option(payload.get("libraryName")).map(_.toString).orNull
+      val librarySubmitterEmail: String = Option(payload.get("librarySubmitterEmail")).map(_.toString).orNull
+      val librarySubmitterFirstName: String = Option(payload.get("librarySubmitterFirstName")).map(_.toString).orNull
+      val librarySubmitterLastName: String = Option(payload.get("librarySubmitterLastName")).map(_.toString).orNull
+      val librarySubmitterInstitution: String = Option(payload.get("librarySubmitterInstitution")).map(_.toString).orNull
 
       // Only the two terminal states may be recorded, anything else is coerced to COMPLETE
       val status: String = Option(payload.get("status")).map(_.toString) match {
@@ -248,6 +252,11 @@ class UploadSchedulerController extends LazyLogging {
       job.setPersisted(longOf("persisted"))
       job.setFailed(longOf("failed"))
       job.setErrorMessage(Option(payload.get("errorMessage")).map(_.toString).orNull)
+      // Carry optional submitter if there was one
+      job.setLibrarySubmitterEmail(librarySubmitterEmail)
+      job.setLibrarySubmitterFirstName(librarySubmitterFirstName)
+      job.setLibrarySubmitterLastName(librarySubmitterLastName)
+      job.setLibrarySubmitterInstitution(librarySubmitterInstitution)
       uploadJobRepository.save(job)
 
       logger.info(s"recorded interactive upload for ${info.emailAddress}: $fileName (${job.getPersisted}/${job.getTotal}, $status)")

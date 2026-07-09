@@ -36,7 +36,9 @@ export class UploadLibraryService{
 
     // Context for recording an interactive (small file) upload as an UploadJob for history. Set
     // when a batch starts, cleared once the record is written so each batch is recorded exactly once
-    private interactiveRecord: {fileName: string, libraryName: string, expectedTotal: number, token: string} = null;
+    private interactiveRecord: {fileName: string, libraryName: string, expectedTotal: number, token: string,
+        librarySubmitterEmail?: string, librarySubmitterFirstName?: string, librarySubmitterLastName?: string,
+        librarySubmitterInstitution?: string} = null;
 
     // A refresh or close kills an interactive batch along with this in memory state.
     // On the next visit a snapshot that is no longer being updated is recorded as an interrupted upload in the history
@@ -641,9 +643,16 @@ export class UploadLibraryService{
      * @param libraryName the library this upload builds, or null
      * @param expectedTotal number of spectra in the batch, used to detect completion reliably
      * @param token bearer token of the submitter
+     * @param submitterOverride the library form's optional Submitter override, or null
      */
-    trackInteractiveUpload(fileName, libraryName, expectedTotal, token) {
-        this.interactiveRecord = {fileName, libraryName, expectedTotal, token};
+    trackInteractiveUpload(fileName, libraryName, expectedTotal, token, submitterOverride: any = null) {
+        this.interactiveRecord = {
+            fileName, libraryName, expectedTotal, token,
+            librarySubmitterEmail: submitterOverride ? submitterOverride.emailAddress : null,
+            librarySubmitterFirstName: submitterOverride ? submitterOverride.firstName : null,
+            librarySubmitterLastName: submitterOverride ? submitterOverride.lastName : null,
+            librarySubmitterInstitution: submitterOverride ? submitterOverride.institution : null
+        };
         this.saveInteractiveSnapshot();
         // Tracking may be registered after the batch already finished, which the basic uploader
         // does for pasted spectra because the label needs the id from the upload response. In
@@ -660,6 +669,10 @@ export class UploadLibraryService{
             expectedTotal: this.interactiveRecord.expectedTotal,
             persisted: this.completedSpectraCount,
             failed: this.failedSpectraCount,
+            librarySubmitterEmail: this.interactiveRecord.librarySubmitterEmail,
+            librarySubmitterFirstName: this.interactiveRecord.librarySubmitterFirstName,
+            librarySubmitterLastName: this.interactiveRecord.librarySubmitterLastName,
+            librarySubmitterInstitution: this.interactiveRecord.librarySubmitterInstitution,
             updatedAt: new Date().getTime()
         }));
     }
@@ -691,6 +704,10 @@ export class UploadLibraryService{
             total: snapshot.expectedTotal,
             persisted: snapshot.persisted,
             failed: snapshot.failed,
+            librarySubmitterEmail: snapshot.librarySubmitterEmail,
+            librarySubmitterFirstName: snapshot.librarySubmitterFirstName,
+            librarySubmitterLastName: snapshot.librarySubmitterLastName,
+            librarySubmitterInstitution: snapshot.librarySubmitterInstitution,
             status: 'FAILED',
             errorMessage: 'Upload was interrupted, delete and retry'
         }, this.authenticationService.getCurrentUser().accessToken).subscribe(
@@ -752,7 +769,11 @@ export class UploadLibraryService{
             libraryName: record.libraryName,
             total: record.expectedTotal,
             persisted: this.completedSpectraCount,
-            failed: this.failedSpectraCount
+            failed: this.failedSpectraCount,
+            librarySubmitterEmail: record.librarySubmitterEmail,
+            librarySubmitterFirstName: record.librarySubmitterFirstName,
+            librarySubmitterLastName: record.librarySubmitterLastName,
+            librarySubmitterInstitution: record.librarySubmitterInstitution
         }, record.token).subscribe(
             () => {
                 this.logger.debug('recorded interactive upload in history');
