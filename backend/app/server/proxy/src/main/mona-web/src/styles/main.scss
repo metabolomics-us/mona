@@ -66,6 +66,13 @@ button.fakeRef{
   border: none;
   color: #0d6efd;
 }
+
+button.fakeRef:disabled{
+  background: none;
+  border: none;
+  color: #aba9a9 !important;
+}
+
 // Custom page footer
 .footer {
   padding-top: 19px;
