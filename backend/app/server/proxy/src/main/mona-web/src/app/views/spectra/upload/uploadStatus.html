@@ -135,11 +135,17 @@
     </div>
     <div class="modal-body">
         <p>Remove the upload of <b>{{pendingDelete?.fileName}}</b>?</p>
-        <p class="mb-0">
+        <p>
             <span *ngIf="pendingDeleteSpectraCount !== null; else unknownCount">
-                This will permanently delete <b>{{pendingDeleteSpectraCount}}</b> spectra created by this upload.
+                This will permanently delete <b>{{pendingDeleteSpectraCount}} spectra</b>.
             </span>
             <ng-template #unknownCount>This will permanently delete the spectra created by this upload.</ng-template>
+        </p>
+        <p class="text-danger" *ngIf="pendingDeleteSpectraCount !== null && pendingDelete && pendingDeleteSpectraCount > pendingDelete.persisted">
+            <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+            This will delete <b>{{pendingDeleteSpectraCount}}</b> spectra,
+            more than the <b>{{pendingDelete.persisted}}</b> recorded for this upload. This can happen if you uploaded the same file name more than once.
+            If that is not the case, please report this issue to the <a href="https://github.com/metabolomics-us/mona/issues" target="_blank">issue tracker</a>.
         </p>
         <p>This also removes the associated files stored on the server (if any).</p>
     </div>
