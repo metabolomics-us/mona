@@ -28,6 +28,11 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate5</artifactId>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>

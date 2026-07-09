@@ -56,6 +56,14 @@
                 <version>${jackson.version}</version>
             </dependency>
 
+            <!-- Serializes uninitialized Hibernate lazy proxies/collections as null/empty instead of
+                 throwing LazyInitializationException, wherever they appear in the object graph -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-hibernate5</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.jayway.restassured</groupId>
                 <artifactId>rest-assured</artifactId>
