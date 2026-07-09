@@ -9,5 +9,17 @@
 
         <li *ngIf="isAdmin()" class="divider"></li>
         <li *ngIf="isAdmin()"><button class="query-btn" ngbDropdownItem (click)="curateSpectra()">Re-Curate All Spectra by Submitter</button></li>
+        <li *ngIf="isAdmin()"><button class="query-btn text-danger" ngbDropdownItem (click)="askToDeleteSpectra()">Delete All Spectra by Submitter</button></li>
     </ul>
 </span>
+
+<!-- Confirmation for deleting all of a submitter's spectra -->
+<ngb-toast *ngIf="showSpectraDeletionConfirmation" header="Delete User's Spectra" (hidden)="cancelDeleteSpectra()"
+           [autohide]="false" class="toast-centered bg-light" style="max-width: 24rem; white-space: normal;">
+  <span *ngIf="pendingSpectraCount === null">Counting spectra submitted by <b style="white-space: nowrap;">{{submitter?.emailAddress}}</b>...</span>
+  <span *ngIf="pendingSpectraCount !== null">Permanently delete all <b>{{pendingSpectraCount | number: '1.0-0'}}</b> spectra submitted by <b style="white-space: nowrap;">{{submitter?.emailAddress}}</b>?</span>
+  <div class="mt-2">
+    <button class="btn btn-primary btn-sm" (click)="cancelDeleteSpectra()">Cancel</button>
+    <button class="btn btn-danger btn-sm ml-3" [disabled]="!pendingSpectraCount" (click)="confirmDeleteSpectra()">Delete</button>
+  </div>
+</ngb-toast>

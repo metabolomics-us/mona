@@ -764,6 +764,14 @@ input[type="checkbox"] {
   color: white !important;
 }
 
+/* Danger colored dropdown items stay red at rest but turn white when highlighted, matching the other items */
+.query-btn.text-danger:hover,
+.query-btn.text-danger:focus,
+.query-btn.text-danger:active,
+.query-btn.text-danger.active {
+  color: white !important;
+}
+
 .page-link {
   color: #0b3f6c !important;
   min-width: 46px;
