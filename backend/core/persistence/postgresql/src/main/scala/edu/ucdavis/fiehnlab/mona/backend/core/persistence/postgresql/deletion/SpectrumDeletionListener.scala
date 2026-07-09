@@ -34,12 +34,20 @@ class SpectrumDeletionListener extends GenericMessageListener[SpectrumDeletionRe
   // Edge case: if the deletionJob is FAILED, the uploadJob stays in the DELETING state
   private def closeUploadJobLoop(job: DeletionJob): Unit = {
     if (job.getUploadJobId != null && job.getStatus == DeletionJob.STATUS_COMPLETE) {
-      val uploadJob: UploadJob = uploadJobRepository.findById(job.getUploadJobId).orElse(null)
+      try {
+        val uploadJob: UploadJob = uploadJobRepository.findById(job.getUploadJobId).orElse(null)
 
-      if (uploadJob != null) {
-        uploadJob.setStatus(UploadJob.STATUS_DELETED)
-        uploadJob.setDeletedDate(new Date())
-        uploadJobRepository.save(uploadJob)
+        if (uploadJob != null) {
+          uploadJob.setStatus(UploadJob.STATUS_DELETED)
+          uploadJob.setDeletedDate(new Date())
+          uploadJobRepository.save(uploadJob)
+        } else {
+          logger.warn(s"deletion job ${job.getId} references upload job ${job.getUploadJobId}, which no longer exists")
+        }
+      } catch {
+        // Never let a failure here escape handleMessage: the deletion itself already succeeded
+        case e: Exception =>
+          logger.error(s"failed to close the loop on upload job ${job.getUploadJobId} for deletion job ${job.getId}: ${e.getMessage}", e)
       }
     }
   }

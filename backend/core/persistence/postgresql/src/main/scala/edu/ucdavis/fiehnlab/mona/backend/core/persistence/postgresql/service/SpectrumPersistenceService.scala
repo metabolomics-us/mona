@@ -336,6 +336,7 @@ class SpectrumPersistenceService extends LazyLogging {
       try {
         spectrumResultRepository.delete(spectrum)
         spectrumResultRepository.flush()
+        clearUnloadedLazyFields(spectrum)
         fireDeleteEvent(spectrum)
         job.setDeleted(job.getDeleted + 1)
       } catch {

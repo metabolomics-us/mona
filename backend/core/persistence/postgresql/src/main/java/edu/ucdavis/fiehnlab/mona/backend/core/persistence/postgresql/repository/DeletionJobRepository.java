@@ -8,4 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Profile({"mona.persistence"})
 public interface DeletionJobRepository extends JpaRepository<DeletionJob, String> {
+
+    // Used by the weekly upload sweep to reconcile an UploadJob stuck in DELETING
+    DeletionJob findByUploadJobId(String uploadJobId);
 }

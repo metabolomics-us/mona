@@ -4,8 +4,8 @@ import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.UploadJob
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.UploadJobRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, UploadJob}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, UploadJobRepository}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -24,6 +24,9 @@ class UploadJobSweepService extends LazyLogging {
 
   @Autowired
   val uploadJobRepository: UploadJobRepository = null
+
+  @Autowired
+  val deletionJobRepository: DeletionJobRepository = null
 
   @Autowired
   val uploadStorageService: UploadStorageService = null
@@ -59,7 +62,9 @@ class UploadJobSweepService extends LazyLogging {
     * it's treated as permanently abandoned: its orphaned file is removed and the job is converted
     * to FAILED with a message telling the user it can no longer be resumed or revived, only
     * deleted and retried. The DB row is kept (only the file is removed) so it still shows in the
-    * user's upload history
+    * user's upload history. The same pass also reconciles any job still sitting at DELETING, a
+    * backstop for SpectrumDeletionListener.closeUploadJobLoop missing its one shot at closing the
+    * loop (e.g. an exception there, or the message getting lost)
     */
   @Scheduled(cron = "0 0 0 ? * SAT")
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -79,9 +84,43 @@ class UploadJobSweepService extends LazyLogging {
           logger.info(s"finalized abandoned upload job ${job.getId} as FAILED")
         }
         logger.info(s"abandoned upload finalization complete: $count job(s) finalized")
+
+        reconcileStuckDeletions()
       } finally {
         finalizeInProgress.set(false)
       }
+    }
+  }
+
+  /**
+    * A job still sitting at DELETING by the time this weekly pass runs missed having its loop
+    * closed. Its linked DeletionJob is the source of truth: if that actually reached COMPLETE, the
+    * spectra are gone, so this closes the loop retroactively (DELETED + deletedDate) exactly as
+    * SpectrumDeletionListener would have. Otherwise (the DeletionJob is FAILED, missing, or never
+    * got past SCHEDULED/RUNNING in a whole week) something never finished, so the job is marked
+    * FAILED rather than left showing DELETING forever
+    */
+  private def reconcileStuckDeletions(): Unit = {
+    var count = 0
+    uploadJobRepository.findByStatus(UploadJob.STATUS_DELETING).asScala.foreach { job =>
+      val deletionJob: DeletionJob = deletionJobRepository.findByUploadJobId(job.getId)
+
+      if (deletionJob != null && deletionJob.getStatus == DeletionJob.STATUS_COMPLETE) {
+        job.setStatus(UploadJob.STATUS_DELETED)
+        job.setDeletedDate(new Date())
+        uploadJobRepository.save(job)
+        logger.info(s"reconciled upload job ${job.getId} as DELETED (deletion job ${deletionJob.getId} was already complete)")
+      } else {
+        job.setStatus(UploadJob.STATUS_FAILED)
+        job.setErrorMessage("Deletion of upload failed")
+        job.setLastUpdated(new Date())
+        uploadJobRepository.save(job)
+        logger.warn(s"marked upload job ${job.getId} FAILED, stuck in DELETING with deletion job status ${Option(deletionJob).map(_.getStatus).getOrElse("missing")}")
+      }
+      count += 1
+    }
+    if (count > 0) {
+      logger.info(s"stuck deletion reconciliation complete: $count job(s) reconciled")
     }
   }
 }
