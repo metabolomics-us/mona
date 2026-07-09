@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.Autowired
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, SpectrumRepository}
 import com.turkraft.springfilter.boot.FilterSpecification
+import org.hibernate.Hibernate
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
@@ -132,7 +133,22 @@ class SpectrumPersistenceService extends LazyLogging {
   final def delete(spectrum: Spectrum): Unit = {
     spectrumResultRepository.delete(spectrum)
     spectrumResultRepository.flush()
+    clearUnloadedLazyFields(spectrum)
     fireDeleteEvent(spectrum)
+  }
+
+  /**
+   * fireDeleteEvent hands this spectrum to an async Akka actor .
+   * Any not-yet-loaded lazy field would throw LazyInitializationException ("no Session") there.
+   * None of the delete event's actual consumers read compound/metaData/annotations/tags/library,
+   * so rather than pay for a real fetch, clear whichever fields aren't already loaded
+   */
+  private def clearUnloadedLazyFields(spectrum: Spectrum): Unit = {
+    if (!Hibernate.isInitialized(spectrum.getCompound)) spectrum.setCompound(new java.util.ArrayList())
+    if (!Hibernate.isInitialized(spectrum.getMetaData)) spectrum.setMetaData(new java.util.ArrayList())
+    if (!Hibernate.isInitialized(spectrum.getAnnotations)) spectrum.setAnnotations(new java.util.ArrayList())
+    if (!Hibernate.isInitialized(spectrum.getTags)) spectrum.setTags(new java.util.ArrayList())
+    if (!Hibernate.isInitialized(spectrum.getLibrary)) spectrum.setLibrary(null)
   }
 
   /**
