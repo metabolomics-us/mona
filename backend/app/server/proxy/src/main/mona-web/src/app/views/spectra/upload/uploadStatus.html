@@ -90,9 +90,9 @@
                                                      [type]="job.status === 'FAILED' ? 'danger' : (job.status === 'INTERRUPTED' ? 'warning' : '')">
                                     </ngb-progressbar>
                                     <ng-container *ngIf="jobProgress(job) as progress">
-                                        <span class="progress-label-text text-white"
+                                        <span class="progress-label-text text-white" style="font-size: .9rem"
                                               [style.clip-path]="'inset(0 calc(100% - ' + progress + '%) 0 0)'">{{progress}}&thinsp;%</span>
-                                        <span class="progress-label-text text-dark"
+                                        <span class="progress-label-text text-dark" style="font-size: .9rem"
                                               [style.clip-path]="'inset(0 0 0 ' + progress + '%)'">{{progress}}&thinsp;%</span>
                                     </ng-container>
                                 </div>
