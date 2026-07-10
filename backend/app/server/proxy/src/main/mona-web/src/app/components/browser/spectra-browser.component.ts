@@ -402,19 +402,23 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     }
 
     /**
-     * returns the display url for the spectrum for the given index
+     * navigates to the spectrum viewer in the same tab, used for compact view
      * @param id takes spectrum id
-     * @param index not needed
      */
-    // Open spectrum viewer in new tab, used for compact view
     viewSpectrum(id) {
+      this.router.navigate(['/spectra/display', id]);
+    }
+
+    // Middle-click on the spectrum ID opens in a new tab
+    viewSpectrumMiddleClick(event: MouseEvent, id) {
+      if (event.button !== 1) {
+        return;
+      }
       const url = this.router.serializeUrl(
         this.router.createUrlTree(['/spectra/display', id])
       );
       window.open(url, '_blank');
     }
-
-
 
     /**
      * Execute query

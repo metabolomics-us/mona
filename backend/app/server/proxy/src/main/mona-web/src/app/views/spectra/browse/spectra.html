@@ -174,7 +174,7 @@
             <tbody>
             <tr *ngIf="spectra.length === 0"></tr>
 
-            <tr *ngFor="let spectrum of spectra" class="clickable" (click)="viewSpectrum(spectrum.id)">
+            <tr *ngFor="let spectrum of spectra" class="clickable" (click)="viewSpectrum(spectrum.id)" (auxclick)="viewSpectrumMiddleClick($event, spectrum.id)">
                 <td>
                     <div>
                         <div><a class="davis-blue text-decoration-none clickable" tabindex=0
