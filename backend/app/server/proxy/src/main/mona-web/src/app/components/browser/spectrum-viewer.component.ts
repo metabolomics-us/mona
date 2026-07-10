@@ -12,7 +12,7 @@ import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {NGXLogger} from 'ngx-logger';
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {OrderbyPipe} from '../../filters/orderby.pipe';
@@ -32,7 +32,7 @@ import {ToasterService} from 'angular2-toaster';
     selector: 'spectrum-viewer',
     templateUrl: '../../views/spectra/display/viewSpectrum.html'
 })
-export class SpectrumViewerComponent implements OnInit, AfterViewInit{
+export class SpectrumViewerComponent implements OnInit{
     delayedspectrum: SpectrumModel;
     spectrum: SpectrumModel;
     score;
@@ -49,6 +49,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     intensity;
     showScore;
     id;
+    showSpectrumChart = false;
     faAngleRight = faAngleRight;
     faAngleDown = faAngleDown;
     faQuestionCircle = faQuestionCircle;
@@ -116,18 +117,15 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
           return this.truncateDecimal(mass, 4);
         };
         this.setSpectrum();
+
+        this.showSpectrumChart = false;
+        setTimeout(() => {
+          this.showSpectrumChart = true;
+        });
       });
     }
 
-    ngAfterViewInit() {
-      // Have to use timeout timer since canvas won't draw fast enough on first load for masspecPanel
-      // Commented out so that it does not automatically open by itself 9/3/25
-      // setTimeout(() => {
-      //   this.setAccordionStatus();
-      // }, 100);
-    }
-
-  setAccordionStatus() {
+    setAccordionStatus() {
       this.accordionStatus.isSpectraOpen = true;
     }
 

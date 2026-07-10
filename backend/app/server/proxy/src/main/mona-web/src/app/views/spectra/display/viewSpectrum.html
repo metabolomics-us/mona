@@ -117,7 +117,7 @@
                                     <div [ngbCollapse]="!accordionStatus.isSpectraOpen">
                                       <div class="card-body">
                                         <div class="masspec-modal">
-                                          <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.id"
+                                          <lib-ng-mass-spec-plotter *ngIf="showSpectrumChart" [id]="'massSpec_'+spectrum.id"
                                                                     [spectrum]="spectrum.spectrum" [truncate]="true"></lib-ng-mass-spec-plotter>
                                         </div>
                                       </div>
