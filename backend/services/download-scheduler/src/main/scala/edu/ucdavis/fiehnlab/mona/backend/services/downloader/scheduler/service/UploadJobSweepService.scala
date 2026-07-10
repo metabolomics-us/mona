@@ -85,10 +85,32 @@ class UploadJobSweepService extends LazyLogging {
         }
         logger.info(s"abandoned upload finalization complete: $count job(s) finalized")
 
+        reconcileStuckCancellations()
         reconcileStuckDeletions()
       } finally {
         finalizeInProgress.set(false)
       }
+    }
+  }
+
+  /**
+    * A job still sitting at CANCELLING by the time this weekly pass runs was never finalized by
+    * UploadJobListener, either because the service died before honoring the request or because
+    * the cancel raced the listener's own terminal save. The requested outcome already happened
+    * (nothing is parsing anymore), so this just closes the loop: CANCELLED, file removed
+    */
+  private def reconcileStuckCancellations(): Unit = {
+    var count = 0
+    uploadJobRepository.findByStatus(UploadJob.STATUS_CANCELLING).asScala.foreach { job =>
+      uploadStorageService.deleteJob(job.getId)
+      job.setStatus(UploadJob.STATUS_CANCELLED)
+      job.setLastUpdated(new Date())
+      uploadJobRepository.save(job)
+      count += 1
+      logger.info(s"reconciled upload job ${job.getId} as CANCELLED (cancel request was never finalized)")
+    }
+    if (count > 0) {
+      logger.info(s"stuck cancellation reconciliation complete: $count job(s) reconciled")
     }
   }
 

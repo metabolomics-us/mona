@@ -32,7 +32,17 @@ export class ChunkedUploadService {
   // server job's uploadedBytes, so a refresh still shows the in flight upload
   private active = new Set<Subscription>();
 
+  // Job ids whose transfer should stop. Checked between chunks by runUpload, so a cancel from the
+  // status page stops a loop this browser is driving. Cancels for jobs driven elsewhere are a
+  // no-op here; the server rejects their further chunks with 409 instead
+  private cancelledJobs = new Set<string>();
+
   constructor(public uploadJob: UploadJobResource, public logger: NGXLogger, public toaster: ToasterService) {}
+
+  // Flags a job so its chunk loop stops at the next iteration without calling completeUpload
+  cancelUpload(jobId: string): void {
+    this.cancelledJobs.add(jobId);
+  }
 
   // Starts an upload from the singleton service so the transfer outlives the component. The
   // returned promise resolves as soon as the job row exists on the server (or creation failed),
@@ -110,6 +120,13 @@ export class ChunkedUploadService {
       let offset = startOffset;
 
       while (offset < file.size) {
+        if (this.cancelledJobs.has(jobId)) {
+          this.cancelledJobs.delete(jobId);
+          this.logger.debug('chunked upload cancelled for job ' + jobId);
+          subscriber.complete();
+          return;
+        }
+
         const end = Math.min(offset + this.CHUNK_SIZE, file.size);
         const blob = file.slice(offset, end);
         const committedBase = offset;

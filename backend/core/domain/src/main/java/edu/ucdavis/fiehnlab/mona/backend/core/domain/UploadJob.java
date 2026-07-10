@@ -15,8 +15,8 @@ import java.util.Objects;
  * while the raw file streams to disk in chunks, flipped to INTERRUPTED if a sweep finds no chunk
  * activity for too long, back to UPLOADING if the client resumes, then SCHEDULED once the whole
  * file has arrived and is enqueued, then RUNNING while the worker parses and persists, and
- * finally COMPLETE or FAILED. The row is the source of truth for progress polling and upload
- * history, so a closed tab or a service restart never loses an in flight upload
+ * finally COMPLETE or FAILED. A cancel request flips an in flight job to CANCELLING, which the
+ * worker honors at its next checkpoint by finalizing to CANCELLED.
  */
 @Entity
 @Table(name = "upload_job")
@@ -30,6 +30,8 @@ public class UploadJob implements Serializable {
     public static final String STATUS_FAILED = "FAILED";
     public static final String STATUS_DELETING = "DELETING";
     public static final String STATUS_DELETED = "DELETED";
+    public static final String STATUS_CANCELLING = "CANCELLING";
+    public static final String STATUS_CANCELLED = "CANCELLED";
 
     @Id
     private String id;

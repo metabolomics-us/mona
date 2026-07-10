@@ -28,7 +28,10 @@ import java.util.Date
   * spectrum has been attempted. A bad individual spectrum is skipped and counted in job.failed
   * rather than failing the whole job; only a whole-file failure (unreadable file, unknown format,
   * no submitter account) flips the job to FAILED, deleting the raw file too since a terminal
-  * failure can never be resumed. Registered as a bean by UploadQueueConfig (not a scanned
+  * failure can never be resumed. A cancel request (status CANCELLING, set by the controller) is
+  * honored at message receipt or at the next progress checkpoint: the job finalizes to CANCELLED
+  * with the counts reached so far, keeping every spectrum already persisted and deleting the raw
+  * file. Registered as a bean by UploadQueueConfig (not a scanned
   * component) so importing that one config wires both the listener and its queue container
   */
 class UploadJobListener extends GenericMessageListener[UploadJobRequest] with LazyLogging {
@@ -51,6 +54,10 @@ class UploadJobListener extends GenericMessageListener[UploadJobRequest] with La
   // Flushed to the DB every N spectra rather than on every one
   private val ProgressFlushBatchSize = 200
 
+  // Control flow only: thrown out of the read callback when a cancel request is seen at a
+  // progress checkpoint, so the parse loop unwinds without being treated as a job failure
+  private class UploadCancelledException extends Exception
+
   override def handleMessage(request: UploadJobRequest): Unit = {
     val jobId: String = request.getJobId
     logger.info(s"received upload request for job $jobId")
@@ -59,7 +66,18 @@ class UploadJobListener extends GenericMessageListener[UploadJobRequest] with La
 
     if (job == null) {
       logger.error(s"no upload job found for id $jobId, ignoring request")
+    } else if (job.getStatus == UploadJob.STATUS_CANCELLING) {
+      // Cancelled while still sitting in the queue, nothing was parsed yet
+      job.setStatus(UploadJob.STATUS_CANCELLED)
+      job.setLastUpdated(new Date())
+      uploadJobRepository.save(job)
+      uploadStorageService.deleteJob(jobId)
+      logger.info(s"upload job $jobId cancelled before parsing started")
     } else {
+      var parsed = 0L
+      var persisted = 0L
+      var failed = 0L
+
       try {
         job.setStatus(UploadJob.STATUS_RUNNING)
         job.setLastUpdated(new Date())
@@ -105,10 +123,6 @@ class UploadJobListener extends GenericMessageListener[UploadJobRequest] with La
         job.setTotal(countTotal(job.getStoredPath, job.getFormat))
         uploadJobRepository.save(job)
 
-        var parsed = 0L
-        var persisted = 0L
-        var failed = 0L
-
         val fileReader = Files.newBufferedReader(Paths.get(job.getStoredPath), StandardCharsets.UTF_8)
         try {
           reader.read(fileReader, new DomainReadEventHandler[RawParsedSpectrum] {
@@ -137,11 +151,15 @@ class UploadJobListener extends GenericMessageListener[UploadJobRequest] with La
               }
 
               if (parsed % ProgressFlushBatchSize == 0) {
-                job.setParsed(parsed)
-                job.setPersisted(persisted)
-                job.setFailed(failed)
-                job.setLastUpdated(new Date())
-                uploadJobRepository.save(job)
+                val fresh: UploadJob = uploadJobRepository.findById(jobId).orElse(job)
+                if (fresh.getStatus == UploadJob.STATUS_CANCELLING) {
+                  throw new UploadCancelledException
+                }
+                fresh.setParsed(parsed)
+                fresh.setPersisted(persisted)
+                fresh.setFailed(failed)
+                fresh.setLastUpdated(new Date())
+                uploadJobRepository.save(fresh)
               }
             }
           })
@@ -159,6 +177,17 @@ class UploadJobListener extends GenericMessageListener[UploadJobRequest] with La
         uploadStorageService.deleteJob(jobId)
         logger.info(s"upload job $jobId complete: $persisted persisted, $failed failed out of $parsed parsed")
       } catch {
+        case _: UploadCancelledException =>
+          // Spectra persisted so far are kept, only the remainder of the file is abandoned
+          job.setParsed(parsed)
+          job.setPersisted(persisted)
+          job.setFailed(failed)
+          job.setStatus(UploadJob.STATUS_CANCELLED)
+          job.setLastUpdated(new Date())
+          uploadJobRepository.save(job)
+          uploadStorageService.deleteJob(jobId)
+          logger.info(s"upload job $jobId cancelled: $persisted persisted out of $parsed parsed before cancel")
+
         case e: Exception =>
           logger.error(s"upload job $jobId failed: ${e.getMessage}", e)
           job.setStatus(UploadJob.STATUS_FAILED)

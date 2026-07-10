@@ -96,6 +96,10 @@ class UploadSchedulerController extends LazyLogging {
     info != null && (info.roles.contains("ADMIN") || job.getEmailAddress == info.emailAddress)
   }
 
+  private def isCancelled(job: UploadJob): Boolean = {
+    job.getStatus == UploadJob.STATUS_CANCELLING || job.getStatus == UploadJob.STATUS_CANCELLED
+  }
+
   // A single spectrum interactive upload's history row is labeled with its server assigned spectrum
   // id instead of a filename (see spectra-upload.component.ts's matching SPECTRUM_FILENAME_PATTERN)
   private val SpectrumFileNamePattern = """^Spectrum (\S+)$""".r
@@ -280,6 +284,9 @@ class UploadSchedulerController extends LazyLogging {
       new ResponseEntity[UploadJob](HttpStatus.NOT_FOUND)
     } else if (!canAccess(job, info)) {
       new ResponseEntity[UploadJob](HttpStatus.FORBIDDEN)
+    } else if (isCancelled(job)) {
+      // A browser still streaming chunks after a cancel (e.g. from another tab) must not revive the job
+      new ResponseEntity[UploadJob](job, HttpStatus.CONFLICT)
     } else {
       val newEnd: Long = uploadStorageService.writeChunk(jobId, job.getFileName, offset, chunk)
       // Track the furthest committed byte so an out of order or resent chunk never shrinks progress
@@ -312,6 +319,9 @@ class UploadSchedulerController extends LazyLogging {
       new ResponseEntity[UploadJob](HttpStatus.NOT_FOUND)
     } else if (!canAccess(job, info)) {
       new ResponseEntity[UploadJob](HttpStatus.FORBIDDEN)
+    } else if (isCancelled(job)) {
+      // A cancelled upload must never be scheduled for parsing
+      new ResponseEntity[UploadJob](job, HttpStatus.CONFLICT)
     } else {
       val assembled: Long = uploadStorageService.assembledSize(jobId, job.getFileName)
 
@@ -331,6 +341,48 @@ class UploadSchedulerController extends LazyLogging {
 
         logger.info(s"upload job $jobId scheduled for parsing")
         new ResponseEntity[UploadJob](job, HttpStatus.ACCEPTED)
+      }
+    }
+  }
+
+  /**
+    * Cancels an in flight upload while keeping the spectra persisted so far. A job that was never
+    * enqueued (UPLOADING or INTERRUPTED) is finalized here directly.
+    * A SCHEDULED or RUNNING job is only flipped to CANCELLING; UploadJobListener owns the
+    * transition to CANCELLED, honoring the request at message receipt or at its next progress
+    * checkpoint, so the final spectra counts come from the worker. Terminal statuses return 409
+    */
+  @RequestMapping(path = Array("/{jobId}/cancel"), method = Array(RequestMethod.POST))
+  def cancelJob(@PathVariable("jobId") jobId: String): ResponseEntity[UploadJob] = {
+    val info: LoginInfo = callerInfo()
+    val job: UploadJob = uploadJobRepository.findById(jobId).orElse(null)
+
+    if (job == null) {
+      new ResponseEntity[UploadJob](HttpStatus.NOT_FOUND)
+    } else if (!canAccess(job, info)) {
+      new ResponseEntity[UploadJob](HttpStatus.FORBIDDEN)
+    } else {
+      job.getStatus match {
+        case UploadJob.STATUS_UPLOADING | UploadJob.STATUS_INTERRUPTED =>
+          uploadStorageService.deleteJob(jobId)
+          job.setStatus(UploadJob.STATUS_CANCELLED)
+          job.setLastUpdated(new Date())
+          uploadJobRepository.save(job)
+
+          logger.info(s"upload job $jobId cancelled before scheduling, stored file removed")
+          new ResponseEntity[UploadJob](job, HttpStatus.OK)
+
+        case UploadJob.STATUS_SCHEDULED | UploadJob.STATUS_RUNNING =>
+          job.setStatus(UploadJob.STATUS_CANCELLING)
+          job.setLastUpdated(new Date())
+          uploadJobRepository.save(job)
+
+          logger.info(s"upload job $jobId cancel requested")
+          new ResponseEntity[UploadJob](job, HttpStatus.OK)
+
+        case other =>
+          logger.info(s"upload job $jobId cannot be cancelled from status $other")
+          new ResponseEntity[UploadJob](job, HttpStatus.CONFLICT)
       }
     }
   }

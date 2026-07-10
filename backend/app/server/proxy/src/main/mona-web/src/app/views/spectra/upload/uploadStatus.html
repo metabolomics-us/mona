@@ -41,16 +41,16 @@
             <br>
             <div *ngIf="jobs.length > 0" class="table-responsive">
                 <table class="table table-sm table-striped align-middle">
-                    <thead>
+                    <thead style="word-break: normal">
                         <tr>
                             <th></th>
-                            <th style="word-break: normal">File(s) / Spectrum ID</th>
-                            <th class="text-nowrap">Library</th>
+                            <th>File(s) / Spectrum</th>
+                            <th>Library</th>
                             <th>Date</th>
                             <th>Status</th>
-                            <th style="min-width: 160px">Progress</th>
+                            <th style="min-width: 120px">Progress</th>
                             <th>Spectra</th>
-                            <th></th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,15 +68,17 @@
                                 <ng-template #rawFileName>{{job.fileName}}</ng-template>
                             </td>
                             <td class="align-middle">{{job.libraryName || '-'}}</td>
-                            <td class="align-middle" style="min-width: 150px">
-                                {{job.date | date:'short'}}
+                            <td class="text-nowrap align-middle">
+                                {{job.date | date:'shortDate'}}<br/>
+                                {{job.date | date:'shortTime'}}
                                 <div *ngIf="job.deletedDate" class="small text-muted">
-                                    <fa-icon [icon]="faTrash" size="xs"></fa-icon> {{job.deletedDate | date:'short'}}
+                                    <fa-icon [icon]="faTrash" size="xs"></fa-icon> {{job.deletedDate | date:'shortDate'}}<br/>
+                                    {{job.deletedDate | date:'shortTime'}}
                                 </div>
                             </td>
                             <td class="align-middle">
                                 <span class="badge"
-                                      [ngClass]="{'badge-success': job.status === 'COMPLETE', 'badge-danger': job.status === 'FAILED', 'badge-warning': job.status === 'INTERRUPTED', 'badge-info': isRunning(job), 'badge-secondary': job.status === 'DELETING', 'badge-dark': job.status === 'DELETED'}">
+                                      [ngClass]="{'badge-success': job.status === 'COMPLETE', 'badge-danger': job.status === 'FAILED', 'badge-warning': job.status === 'INTERRUPTED', 'badge-info': isRunning(job) && job.status !== 'CANCELLING', 'badge-secondary': job.status === 'DELETING' || job.status === 'CANCELLING' || job.status === 'CANCELLED', 'badge-dark': job.status === 'DELETED'}">
                                     {{job.status}}
                                 </span>
                                 <div *ngIf="job.status === 'FAILED' && job.errorMessage" class="small text-danger" [title]="job.errorMessage">
@@ -89,11 +91,12 @@
                                                      [ngClass]="{'custom-progress': job.status !== 'FAILED', 'progress-striped': isRunning(job), active: isRunning(job)}"
                                                      [type]="job.status === 'FAILED' ? 'danger' : (job.status === 'INTERRUPTED' ? 'warning' : '')">
                                     </ngb-progressbar>
-                                    <ng-container *ngIf="jobProgress(job) as progress">
+                                    <!-- object wrapper so the label still renders at 0, a bare 0 is falsy in ngIf -->
+                                    <ng-container *ngIf="{pct: jobProgress(job)} as progress">
                                         <span class="progress-label-text text-white" style="font-size: .9rem"
-                                              [style.clip-path]="'inset(0 calc(100% - ' + progress + '%) 0 0)'">{{progress}}&thinsp;%</span>
+                                              [style.clip-path]="'inset(0 calc(100% - ' + progress.pct + '%) 0 0)'">{{progress.pct}}&thinsp;%</span>
                                         <span class="progress-label-text text-dark" style="font-size: .9rem"
-                                              [style.clip-path]="'inset(0 0 0 ' + progress + '%)'">{{progress}}&thinsp;%</span>
+                                              [style.clip-path]="'inset(0 0 0 ' + progress.pct + '%)'">{{progress.pct}}&thinsp;%</span>
                                     </ng-container>
                                 </div>
                             </td>
@@ -105,7 +108,7 @@
                                     <span *ngIf="job.total"> of {{job.total}}</span>
                                 </span>
                             </td>
-                            <td class="text-right align-middle" style="min-width: 90px">
+                            <td class="text-nowrap text-right align-middle">
                                 <button *ngIf="job.status === 'INTERRUPTED'" class="btn btn-sm btn-outline-primary btn-file mr-1"
                                         aria-label="Resume this upload"
                                         (keydown.enter)="resumeInput.click(); $event.preventDefault()"
@@ -113,8 +116,14 @@
                                     <fa-icon [icon]="faPlay"></fa-icon>
                                     <input type="file" accept=".msp,.mgf,.txt" title="Resume this upload, select the same file" #resumeInput (change)="onResumeFileSelected($event, job)" tabindex="-1"/>
                                 </button>
+                                <button *ngIf="canCancel(job) || job.status === 'CANCELLING'" class="btn btn-sm btn-outline-secondary mr-1"
+                                        [disabled]="job.status === 'CANCELLING'"
+                                        [title]="job.status === 'CANCELLING' ? 'Cancelling' : 'Cancel this upload, spectra imported so far are kept'"
+                                        (click)="confirmCancel(job, cancelConfirmModal)">
+                                    <fa-icon [icon]="faBan"></fa-icon>
+                                </button>
                                 <button *ngIf="job.status !== 'DELETED'" class="btn btn-sm btn-outline-danger" [disabled]="isRunning(job) || job.status === 'DELETING'"
-                                        title="Remove this upload" (click)="confirmDelete(job, deleteConfirmModal)">
+                                        title="Remove this upload, delete associated spectra" (click)="confirmDelete(job, deleteConfirmModal)">
                                     <fa-icon [icon]="faTrash"></fa-icon>
                                 </button>
                             </td>
@@ -152,5 +161,23 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary accessibility" (click)="modal.dismiss()">Cancel</button>
         <button type="button" class="btn btn-danger accessibility" (click)="modal.close()"><fa-icon [icon]="faTrash"></fa-icon> Delete</button>
+    </div>
+</ng-template>
+
+<ng-template #cancelConfirmModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Cancel upload</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>Cancel the upload of <b>{{pendingCancel?.fileName}}</b>?</p>
+        <p>No further spectra will be imported. Spectra already imported by this upload are kept
+            and can be removed later with the delete button.</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary accessibility" (click)="modal.dismiss()">Keep uploading</button>
+        <button type="button" class="btn btn-warning accessibility" (click)="modal.close()"><fa-icon [icon]="faBan"></fa-icon> Cancel upload</button>
     </div>
 </ng-template>

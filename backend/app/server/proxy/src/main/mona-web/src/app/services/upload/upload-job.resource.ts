@@ -41,6 +41,14 @@ export class UploadJobResource {
     });
   }
 
+  // Requests cancellation of an in flight upload, keeping the spectra persisted so far. Returns
+  // the job with status CANCELLED (never enqueued) or CANCELLING (the worker finalizes it)
+  cancelJob(jobId: string, token: string): Observable<UploadJobModel> {
+    return this.http.post<UploadJobModel>(`${environment.REST_BACKEND_SERVER}/rest/uploads/${jobId}/cancel`, {}, {
+      headers: this.authHeaders(token)
+    });
+  }
+
   // Current job, used both to poll parsing progress and to read the committed offset when resuming
   getJobStatus(jobId: string, token: string): Observable<UploadJobModel> {
     return this.http.get<UploadJobModel>(`${environment.REST_BACKEND_SERVER}/rest/uploads/${jobId}`, {

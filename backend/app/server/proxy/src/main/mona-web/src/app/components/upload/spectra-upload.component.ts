@@ -10,7 +10,7 @@ import {UploadJobService} from '../../services/upload/upload-job.service';
 import {UploadJobModel} from '../../mocks/upload-job.model';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {ChunkedUploadService} from '../../services/upload/chunked-upload.service';
-import {faUser, faCloudUploadAlt, faTrash, faExclamationTriangle, faSearch, faPlay} from '@fortawesome/free-solid-svg-icons';
+import {faUser, faCloudUploadAlt, faTrash, faExclamationTriangle, faSearch, faPlay, faBan} from '@fortawesome/free-solid-svg-icons';
 import {NGXLogger} from 'ngx-logger';
 import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {Router} from '@angular/router';
@@ -29,6 +29,7 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
   faExclamationTriangle = faExclamationTriangle;
   faSearch = faSearch;
   faPlay = faPlay;
+  faBan = faBan;
 
   jobs: UploadJobModel[] = [];
   authSubscription: Subscription;
@@ -36,6 +37,7 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
   refreshSubscription: Subscription;
   pendingDelete: UploadJobModel = null;
   pendingDeleteSpectraCount: number = null;
+  pendingCancel: UploadJobModel = null;
   // Whether the previous poll tick saw an upload in progress, used for one trailing fetch
   private wasActive = false;
 
@@ -98,7 +100,8 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
   }
 
   hasActiveJobs(): boolean {
-    return this.jobs.some((job) => job.status === 'UPLOADING' || job.status === 'SCHEDULED' || job.status === 'RUNNING' || job.status === 'DELETING');
+    return this.jobs.some((job) => job.status === 'UPLOADING' || job.status === 'SCHEDULED' || job.status === 'RUNNING'
+      || job.status === 'DELETING' || job.status === 'CANCELLING');
   }
 
   // Percentage for the row's progress bar: bytes transferred while uploading, spectra parsed while running
@@ -107,13 +110,48 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
       return 100;
     }
     if (job.status === 'UPLOADING' || job.status === 'INTERRUPTED') {
-      return job.fileSize ? Math.floor((job.uploadedBytes / job.fileSize) * 100) : 0;
+      return job.fileSize ? Math.floor(((job.uploadedBytes || 0) / job.fileSize) * 100) : 0;
     }
     return this.uploadJobService.jobProgress(job);
   }
 
   isRunning(job: UploadJobModel): boolean {
-    return job.status === 'UPLOADING' || job.status === 'SCHEDULED' || job.status === 'RUNNING';
+    return job.status === 'UPLOADING' || job.status === 'SCHEDULED' || job.status === 'RUNNING' || job.status === 'CANCELLING';
+  }
+
+  // Whether the row can still be cancelled. CANCELLING rows show the button disabled instead
+  canCancel(job: UploadJobModel): boolean {
+    return job.status === 'UPLOADING' || job.status === 'INTERRUPTED' || job.status === 'SCHEDULED' || job.status === 'RUNNING';
+  }
+
+  confirmCancel(job: UploadJobModel, modalTemplate: TemplateRef<any>) {
+    this.pendingCancel = job;
+    this.modalService.open(modalTemplate).result.then(
+      () => this.cancelJob(job),
+      () => {}
+    );
+  }
+
+  // Cancels the rest of an upload while keeping the spectra persisted so far
+  cancelJob(job: UploadJobModel) {
+    this.chunkedUploadService.cancelUpload(job.id);
+    const token = this.authenticationService.getCurrentUser().accessToken;
+    this.uploadJobResource.cancelJob(job.id, token).subscribe(
+      (updated: UploadJobModel) => {
+        const index = this.jobs.findIndex((j) => j.id === job.id);
+        if (index !== -1) {
+          this.jobs[index] = updated;
+        }
+        const body = updated.status === 'CANCELLING'
+          ? `Cancelling upload of ${job.fileName}. Spectra imported so far are kept.`
+          : `Cancelled upload of ${job.fileName}.`;
+        this.toaster.pop({type: 'success', title: 'Upload cancelled', body});
+      },
+      (error) => {
+        this.logger.error('failed to cancel upload job: ' + error);
+        this.toaster.pop({type: 'error', title: 'Cancel failed', body: 'Could not cancel the upload, the upload likely already completed'});
+      }
+    );
   }
 
   // Fetches an up to date spectra count before showing the confirmation, so the warning always
