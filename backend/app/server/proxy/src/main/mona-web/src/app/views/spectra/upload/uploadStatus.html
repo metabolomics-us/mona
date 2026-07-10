@@ -71,18 +71,23 @@
                             <td class="text-nowrap align-middle">
                                 {{job.date | date:'shortDate'}}<br/>
                                 {{job.date | date:'shortTime'}}
-                                <div *ngIf="job.deletedDate" class="small text-muted">
-                                    <fa-icon [icon]="faTrash" size="xs"></fa-icon> {{job.deletedDate | date:'shortDate'}}<br/>
-                                    {{job.deletedDate | date:'shortTime'}}
-                                </div>
                             </td>
-                            <td class="align-middle">
+                            <td class="align-middle" style="max-width: 320px">
                                 <span class="badge"
                                       [ngClass]="{'badge-success': job.status === 'COMPLETE', 'badge-danger': job.status === 'FAILED', 'badge-warning': job.status === 'INTERRUPTED', 'badge-info': isRunning(job) && job.status !== 'CANCELLING', 'badge-secondary': job.status === 'DELETING' || job.status === 'CANCELLING' || job.status === 'CANCELLED', 'badge-dark': job.status === 'DELETED'}">
                                     {{job.status}}
                                 </span>
                                 <div *ngIf="job.status === 'FAILED' && job.errorMessage" class="small text-danger" [title]="job.errorMessage">
                                     <fa-icon [icon]="faExclamationTriangle"></fa-icon> {{job.errorMessage}}
+                                </div>
+                                <div *ngIf="job.status === 'INTERRUPTED'" class="small text-muted" style="word-break: normal">
+                                    <fa-icon [icon]="faPlay" size="xs" style="color: #007bff"></fa-icon> Resumable with the same file
+                                </div>
+                                <div *ngIf="job.status === 'CANCELLED' || job.status === 'CANCELLING'" class="small text-muted" style="word-break: normal">
+                                    Upload cancelled before completion
+                                </div>
+                                <div *ngIf="job.status === 'DELETED' && job.deletedDate" class="small text-muted">
+                                    <fa-icon [icon]="faTrash" size="xs"></fa-icon> {{job.deletedDate | date:'shortDate'}} {{job.deletedDate | date:'shortTime'}}
                                 </div>
                             </td>
                             <td class="align-middle">
