@@ -4,18 +4,19 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.builder.MultiPartSpecBuilder
 import com.jayway.restassured.specification.MultiPartSpecification
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.UploadJob
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{UploadJob, UploadJobRequest}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.UploadJobRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.UploadStorageService
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
-import java.util.Date
+import java.util.{Date, UUID}
 import scala.jdk.CollectionConverters._
 
 @SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.DEFINED_PORT)
@@ -30,6 +31,13 @@ class UploadSchedulerControllerTest extends AbstractSpringControllerTest {
 
   @Autowired
   val uploadStorageService: UploadStorageService = null
+
+  @Autowired
+  val rabbitTemplate: RabbitTemplate = null
+
+  @Autowired
+  @Qualifier("spectra-upload-queue")
+  val uploadQueueName: String = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -237,6 +245,98 @@ class UploadSchedulerControllerTest extends AbstractSpringControllerTest {
 
       authenticate().when().get(s"/$jobId").`then`().statusCode(404)
       assert(!uploadStorageService.fileExists(jobId, "test.mgf"))
+    }
+
+    var cancelJobId: String = null
+
+    "initialize a job to exercise cancellation" in {
+      val job: UploadJob = authenticate().contentType("application/json; charset=UTF-8")
+        .body(Map("fileName" -> "cancel.mgf", "fileSize" -> totalSize, "format" -> "mgf"))
+        .when().post("").`then`().statusCode(201).extract().body().as(classOf[UploadJob])
+      cancelJobId = job.getId
+
+      authenticate().contentType("multipart/form-data")
+        .multiPart(chunkPart(chunkOne)).queryParam("offset", 0)
+        .when().put(s"/$cancelJobId/chunk").`then`().statusCode(200)
+    }
+
+    "refuse to cancel without authentication" in {
+      given().when().post(s"/$cancelJobId/cancel").`then`().statusCode(401)
+    }
+
+    "refuse to cancel another user's job" in {
+      authenticate("test", "test-secret").when().post(s"/$cancelJobId/cancel").`then`().statusCode(403)
+    }
+
+    "return not found when cancelling an unknown job" in {
+      authenticate().when().post("/no-such-job/cancel").`then`().statusCode(404)
+    }
+
+    "cancel an UPLOADING job directly and remove its stored file" in {
+      val job: UploadJob = authenticate()
+        .when().post(s"/$cancelJobId/cancel").`then`().statusCode(200).extract().body().as(classOf[UploadJob])
+
+      assert(job.getStatus == UploadJob.STATUS_CANCELLED)
+      assert(!uploadStorageService.fileExists(cancelJobId, "cancel.mgf"))
+    }
+
+    "refuse further chunks for a cancelled job" in {
+      authenticate().contentType("multipart/form-data")
+        .multiPart(chunkPart(chunkTwo)).queryParam("offset", chunkOne.length)
+        .when().put(s"/$cancelJobId/chunk").`then`().statusCode(409)
+    }
+
+    "refuse to schedule a cancelled job" in {
+      authenticate().when().post(s"/$cancelJobId/complete").`then`().statusCode(409)
+    }
+
+    "refuse to cancel an already cancelled job" in {
+      authenticate().when().post(s"/$cancelJobId/cancel").`then`().statusCode(409)
+    }
+
+    "refuse to cancel a completed job" in {
+      val job = new UploadJob(UUID.randomUUID.toString, "admin", "done.mgf", null, "mgf", totalSize, null, new Date, UploadJob.STATUS_COMPLETE)
+      uploadJobRepository.save(job)
+
+      authenticate().when().post(s"/${job.getId}/cancel").`then`().statusCode(409)
+    }
+
+    "cancel an INTERRUPTED job directly" in {
+      val job = new UploadJob(UUID.randomUUID.toString, "admin", "stale.mgf", null, "mgf", totalSize, null, new Date, UploadJob.STATUS_INTERRUPTED)
+      uploadJobRepository.save(job)
+
+      val cancelled: UploadJob = authenticate()
+        .when().post(s"/${job.getId}/cancel").`then`().statusCode(200).extract().body().as(classOf[UploadJob])
+
+      assert(cancelled.getStatus == UploadJob.STATUS_CANCELLED)
+    }
+
+    "flip a RUNNING job to CANCELLING for the worker to finalize" in {
+      // Created directly at RUNNING with no queue message behind it, so the status assertion
+      // cannot race the real listener wired into this test context
+      val job = new UploadJob(UUID.randomUUID.toString, "admin", "running.mgf", null, "mgf", totalSize, null, new Date, UploadJob.STATUS_RUNNING)
+      uploadJobRepository.save(job)
+
+      val cancelling: UploadJob = authenticate()
+        .when().post(s"/${job.getId}/cancel").`then`().statusCode(200).extract().body().as(classOf[UploadJob])
+
+      assert(cancelling.getStatus == UploadJob.STATUS_CANCELLING)
+    }
+
+    "finalize a CANCELLING job at message receipt without parsing" in {
+      val job = new UploadJob(UUID.randomUUID.toString, "admin", "queued.mgf", null, "mgf", totalSize, null, new Date, UploadJob.STATUS_CANCELLING)
+      uploadJobRepository.save(job)
+
+      rabbitTemplate.convertAndSend(uploadQueueName, new UploadJobRequest(job.getId))
+
+      val deadline = System.currentTimeMillis() + 15000
+      var status = job.getStatus
+      while (status != UploadJob.STATUS_CANCELLED && System.currentTimeMillis() < deadline) {
+        Thread.sleep(500)
+        status = uploadJobRepository.findById(job.getId).get().getStatus
+      }
+      assert(status == UploadJob.STATUS_CANCELLED)
+      assert(uploadJobRepository.findById(job.getId).get().getParsed == 0L)
     }
   }
 }
