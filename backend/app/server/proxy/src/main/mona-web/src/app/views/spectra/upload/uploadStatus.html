@@ -56,8 +56,8 @@
                     <tbody>
                         <tr *ngFor="let job of jobs" [ngClass]="{'text-muted': job.status === 'DELETED'}">
                             <td class="align-middle">
-                                <button class="fakeRef davis-blue accessibility" [disabled]="job.status === 'DELETED'" (click)="queryJob(job)" placement="top"
-                                        aria-label="Search associated spectra" title="Search">
+                                <button class="fakeRef davis-blue accessibility" [disabled]="job.status === 'DELETED' || job.fileName === 'Legacy upload'" (click)="queryJob(job)" placement="top"
+                                        aria-label="Search associated spectra" [title]="job.fileName === 'Legacy upload' ? 'Legacy upload, no file associated, cannot search (spectra still exist)' : 'Search'">
                                     <fa-icon [icon]="faSearch"></fa-icon>
                                 </button>
                             </td>
@@ -127,8 +127,8 @@
                                         (click)="confirmCancel(job, cancelConfirmModal)">
                                     <fa-icon [icon]="faBan"></fa-icon>
                                 </button>
-                                <button *ngIf="job.status !== 'DELETED'" class="btn btn-sm btn-outline-danger" [disabled]="isRunning(job) || job.status === 'DELETING'"
-                                        title="Remove this upload, delete associated spectra" (click)="confirmDelete(job, deleteConfirmModal)">
+                                <button *ngIf="job.status !== 'DELETED'" class="btn btn-sm btn-outline-danger" [disabled]="isRunning(job) || job.status === 'DELETING' || job.fileName === 'Legacy upload'"
+                                        [title]="job.fileName === 'Legacy upload' ? 'Legacy upload, cannot reliably delete spectra' : 'Remove this upload, delete associated spectra'" (click)="confirmDelete(job, deleteConfirmModal)">
                                     <fa-icon [icon]="faTrash"></fa-icon>
                                 </button>
                             </td>
