@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationC
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.deletion.DeletionQueueConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.deletion.DeletionQueueDeclarationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.config.DownloadConfig
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.config.DownloadListenerConfig
@@ -32,7 +32,7 @@ import org.springframework.security.config.annotation.web.builders.{WebSecurity}
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration],
   classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig], classOf[DownloadConfig], classOf[DownloadListenerConfig],
-  classOf[UploadQueueConfig], classOf[DeletionQueueConfig]))
+  classOf[UploadQueueConfig], classOf[DeletionQueueDeclarationConfig]))
 class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Autowired
