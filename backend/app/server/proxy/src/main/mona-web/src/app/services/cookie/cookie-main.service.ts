@@ -32,7 +32,7 @@ export class CookieMain{
      * @param value string
      */
     update(name, value) {
-        this.cookie.set(name, value);
+        this.cookie.set(name, value, undefined, '/');
     }
 
     /**
@@ -48,7 +48,21 @@ export class CookieMain{
      * @param cookieName string
      */
     remove(cookieName) {
-        return this.cookie.delete(cookieName);
+        // Delete at root path (for properly-set cookies with path='/')
+        this.cookie.delete(cookieName, '/');
+
+        // Also delete at all parent path segments of the current URL.
+        // Cookies set before the path fix were stored at the page's URL path
+        // (e.g. /spectra/ or /documentation/) rather than '/'.  Those legacy
+        // cookies shadow the root-path cookie on matching routes and survive
+        // a root-only delete, causing re-authentication on refresh.
+        const segments = window.location.pathname.split('/').filter(s => s.length > 0);
+        let path = '';
+        for (const segment of segments) {
+            path += '/' + segment;
+            this.cookie.delete(cookieName, path);
+            this.cookie.delete(cookieName, path + '/');
+        }
     }
 
     /**

@@ -11,7 +11,7 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {User} from '../mocks/user.model';
 import {distinctUntilChanged, first, map} from 'rxjs/operators';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {ToasterService} from 'angular2-toaster';
 
@@ -27,6 +27,7 @@ export class AuthenticationService{
     modalRequest = this.modalRequestSubject.asObservable();
 
     private readonly ADMIN_ROLE_NAME;
+    private submitterDataSubscription: Subscription | null = null;
     constructor(public submitter: Submitter, public cookie: CookieMain,
                 public logger: NGXLogger, public modalService: NgbModal,
                 public http: HttpClient, public toaster: ToasterService) {
@@ -34,6 +35,10 @@ export class AuthenticationService{
     }
 
     pullSubmitterData(credentials: any) {
+        if (this.submitterDataSubscription) {
+          this.submitterDataSubscription.unsubscribe();
+          this.submitterDataSubscription = null;
+        }
         if (credentials.emailAddress === 'admin') {
           this.currentUserSubject.next({emailAddress: credentials.emailAddress, accessToken: credentials.accessToken,
             firstName: credentials.emailAddress, lastName: '', institution: '', roles: [{authority: 'ADMIN'}]});
@@ -45,13 +50,15 @@ export class AuthenticationService{
               Authorization: 'Bearer ' + credentials.accessToken
             }
           };
-          this.http.get(`${environment.REST_BACKEND_SERVER}/rest/submitters/${credentials.emailAddress}`, config).subscribe((res: User) => {
+          this.submitterDataSubscription = this.http.get(`${environment.REST_BACKEND_SERVER}/rest/submitters/${credentials.emailAddress}`, config).subscribe((res: User) => {
+            this.submitterDataSubscription = null;
             this.currentUserSubject.next({
               emailAddress: res.emailAddress, accessToken: credentials.accessToken,
               firstName: res.firstName, lastName: res.lastName, institution: res.institution, roles: res.roles || []
             });
             this.isAuthenticatedSubject.next(true);
           }, error => {
+            this.submitterDataSubscription = null;
             this.logger.debug(error);
           });
         }
@@ -68,15 +75,13 @@ export class AuthenticationService{
     }
 
     validate() {
-      let accessToken;
-
+      // If already authenticated in memory, no need to re-validate
       if (this.isLoggedIn()) {
-        accessToken = this.getCurrentUser().accessToken;
-        this.logger.debug('Validation: logged in with token: ' + accessToken);
-      } else {
-        accessToken = this.cookie.get('AuthorizationToken');
-        this.logger.debug('Validation: getting token from cookie: ' + accessToken);
+        return;
       }
+
+      const accessToken = this.cookie.get('AuthorizationToken');
+      this.logger.debug('Validation: getting token from cookie: ' + accessToken);
 
       // Only try validating if we found a stored token
       if (typeof accessToken !== 'undefined' && accessToken !== null && accessToken !== '') {
@@ -106,6 +111,10 @@ export class AuthenticationService{
      * log us out
      */
     logout() {
+        if (this.submitterDataSubscription) {
+          this.submitterDataSubscription.unsubscribe();
+          this.submitterDataSubscription = null;
+        }
         this.currentUserSubject.next(null);
         this.isAuthenticatedSubject.next(false);
         this.cookie.remove('AuthorizationToken');
