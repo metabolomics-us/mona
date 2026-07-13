@@ -230,7 +230,19 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
     // Poll a previously scheduled async query
     else if (classyfireQueryId.nonEmpty) {
-      pollScheduledQuery(compound, id, classyfireQueryId.head.getValue.toString)
+      val block: Option[String] = if (isValidInchiKey(inchiKey)) Some(inchiKey.take(14)) else None
+
+      // A sibling spectrum sharing this skeleton may have completed the same query and populated the cache
+      // while this one waited in the pending queue. Prefer the cache so we skip a redundant, rate limited poll
+      block.flatMap(classificationCacheLookup(_, id)) match {
+        case Some(cache) =>
+          logger.info(s"$id: Scheduled query already resolved in cache for skeleton ${block.get}, skipping poll")
+          stat(_.incDbCacheHit())
+          clearInFlightQuery(compound)
+          applyCachedClassification(compound, cache)
+        case None =>
+          pollScheduledQuery(compound, id, classyfireQueryId.head.getValue.toString)
+      }
     }
 
     // Only call ClassyFire when we have a valid InChIKey to look up
