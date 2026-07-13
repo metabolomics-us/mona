@@ -15,7 +15,7 @@ describe('SpectraUploadComponent', () => {
   const makeJob = (status: string): any => ({id: 'job-1', fileName: 'test.msp', status});
 
   beforeEach(() => {
-    uploadJobResource = jasmine.createSpyObj('UploadJobResource', ['cancelJob', 'listMyJobs']);
+    uploadJobResource = jasmine.createSpyObj('UploadJobResource', ['cancelJob', 'listMyJobs', 'deletionStatus']);
     chunkedUploadService = jasmine.createSpyObj('ChunkedUploadService', ['cancelUpload']);
     toaster = jasmine.createSpyObj('ToasterService', ['pop']);
     logger = jasmine.createSpyObj('NGXLogger', ['debug', 'info', 'error']);
@@ -64,6 +64,61 @@ describe('SpectraUploadComponent', () => {
 
     component.jobs = [makeJob('CANCELLED')];
     expect(component.hasActiveJobs()).toBe(false);
+  });
+
+  describe('deletion progress', () => {
+    it('drives the DELETING bar from the deletion job behind it', () => {
+      const job = makeJob('DELETING');
+      uploadJobResource.listMyJobs.and.returnValue(of([job]));
+      uploadJobResource.deletionStatus.and.returnValue(of({status: 'RUNNING', total: 10, deleted: 4, skipped: 1}));
+
+      component.loadJobs();
+
+      expect(uploadJobResource.deletionStatus).toHaveBeenCalledWith('job-1', 'token');
+      expect(component.jobProgress(job)).toBe(50);
+    });
+
+    it('shows zero progress until the deletion status arrives', () => {
+      expect(component.jobProgress(makeJob('DELETING'))).toBe(0);
+    });
+
+    it('shows zero progress for a deletion job with no total', () => {
+      const job = makeJob('DELETING');
+      uploadJobResource.listMyJobs.and.returnValue(of([job]));
+      uploadJobResource.deletionStatus.and.returnValue(of({status: 'RUNNING', total: 0, deleted: 0, skipped: 0}));
+
+      component.loadJobs();
+
+      expect(component.jobProgress(job)).toBe(0);
+    });
+
+    it('does not fetch deletion status for rows that are not DELETING', () => {
+      uploadJobResource.listMyJobs.and.returnValue(of([makeJob('COMPLETE'), makeJob('DELETED')]));
+
+      component.loadJobs();
+
+      expect(uploadJobResource.deletionStatus).not.toHaveBeenCalled();
+    });
+
+    it('keeps polling while a job is DELETING', () => {
+      component.jobs = [makeJob('DELETING')];
+      expect(component.hasActiveJobs()).toBe(true);
+
+      component.jobs = [makeJob('DELETED')];
+      expect(component.hasActiveJobs()).toBe(false);
+    });
+
+    it('logs and keeps the last known progress when the deletion status fetch fails', () => {
+      const job = makeJob('DELETING');
+      component.deletionProgress['job-1'] = 30;
+      uploadJobResource.listMyJobs.and.returnValue(of([job]));
+      uploadJobResource.deletionStatus.and.returnValue(throwError({status: 404}));
+
+      component.loadJobs();
+
+      expect(component.jobProgress(job)).toBe(30);
+      expect(logger.error).toHaveBeenCalled();
+    });
   });
 
   describe('cancelJob', () => {

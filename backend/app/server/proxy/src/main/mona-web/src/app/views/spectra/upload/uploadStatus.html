@@ -93,7 +93,7 @@
                             <td class="align-middle">
                                 <div *ngIf="job.status !== 'DELETED'" class="position-relative">
                                     <ngb-progressbar max="100" [value]="jobProgress(job)"
-                                                     [ngClass]="{'custom-progress': job.status !== 'FAILED', 'progress-striped': isRunning(job), active: isRunning(job)}"
+                                                     [ngClass]="{'custom-progress': job.status !== 'FAILED', 'progress-striped': isRunning(job) || job.status === 'DELETING', active: isRunning(job) || job.status === 'DELETING'}"
                                                      [type]="job.status === 'FAILED' ? 'danger' : (job.status === 'INTERRUPTED' ? 'warning' : '')">
                                     </ngb-progressbar>
                                     <!-- object wrapper so the label still renders at 0, a bare 0 is falsy in ngIf -->

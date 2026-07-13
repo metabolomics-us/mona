@@ -38,6 +38,7 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
   pendingDelete: UploadJobModel = null;
   pendingDeleteSpectraCount: number = null;
   pendingCancel: UploadJobModel = null;
+  deletionProgress: {[jobId: string]: number} = {};
   // Whether the previous poll tick saw an upload in progress, used for one trailing fetch
   private wasActive = false;
 
@@ -94,9 +95,26 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
   loadJobs() {
     const token = this.authenticationService.getCurrentUser().accessToken;
     this.uploadJobResource.listMyJobs(token).subscribe(
-      (jobs: UploadJobModel[]) => this.jobs = jobs,
+      (jobs: UploadJobModel[]) => {
+        this.jobs = jobs;
+        this.refreshDeletionProgress(token);
+      },
       (error) => this.logger.error('failed to load upload jobs: ' + error)
     );
+  }
+
+  // Fetches the DeletionJob behind each DELETING row so its progress bar advances
+  private refreshDeletionProgress(token: string) {
+    this.jobs.filter((job) => job.status === 'DELETING').forEach((job) => {
+      this.uploadJobResource.deletionStatus(job.id, token).subscribe(
+        (deletion) => {
+          this.deletionProgress[job.id] = deletion && deletion.total
+            ? Math.floor((((deletion.deleted || 0) + (deletion.skipped || 0)) / deletion.total) * 100)
+            : 0;
+        },
+        (error) => this.logger.error('failed to load deletion status: ' + error)
+      );
+    });
   }
 
   hasActiveJobs(): boolean {
@@ -104,13 +122,17 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
       || job.status === 'DELETING' || job.status === 'CANCELLING');
   }
 
-  // Percentage for the row's progress bar: bytes transferred while uploading, spectra parsed while running
+  // Percentage for the row's progress bar: bytes transferred while uploading, spectra parsed
+  // while running, spectra deleted while deleting
   jobProgress(job: UploadJobModel): number {
     if (job.status === 'COMPLETE') {
       return 100;
     }
     if (job.status === 'UPLOADING' || job.status === 'INTERRUPTED') {
       return job.fileSize ? Math.floor(((job.uploadedBytes || 0) / job.fileSize) * 100) : 0;
+    }
+    if (job.status === 'DELETING') {
+      return this.deletionProgress[job.id] || 0;
     }
     return this.uploadJobService.jobProgress(job);
   }

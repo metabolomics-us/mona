@@ -4,8 +4,8 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.builder.MultiPartSpecBuilder
 import com.jayway.restassured.specification.MultiPartSpecification
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{UploadJob, UploadJobRequest}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.UploadJobRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, UploadJob, UploadJobRequest}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, UploadJobRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.UploadStorageService
@@ -28,6 +28,9 @@ class UploadSchedulerControllerTest extends AbstractSpringControllerTest {
 
   @Autowired
   val uploadJobRepository: UploadJobRepository = null
+
+  @Autowired
+  val deletionJobRepository: DeletionJobRepository = null
 
   @Autowired
   val uploadStorageService: UploadStorageService = null
@@ -245,6 +248,52 @@ class UploadSchedulerControllerTest extends AbstractSpringControllerTest {
 
       authenticate().when().get(s"/$jobId").`then`().statusCode(404)
       assert(!uploadStorageService.fileExists(jobId, "test.mgf"))
+    }
+
+    var deletingJobId: String = null
+
+    "return not found for deletion status of an unknown upload" in {
+      authenticate().when().get("/no-such-job/deletion").`then`().statusCode(404)
+    }
+
+    "return not found for an upload with no spectra deletion behind it" in {
+      val job = new UploadJob(UUID.randomUUID.toString, "admin", "kept.mgf", null, "mgf", totalSize, null, new Date, UploadJob.STATUS_COMPLETE)
+      uploadJobRepository.save(job)
+
+      authenticate().when().get(s"/${job.getId}/deletion").`then`().statusCode(404)
+    }
+
+    "return the deletion job tracking an upload's spectra deletion" in {
+      // Rows created directly with no queue message behind them, so the deletion listener wired
+      // into this test context cannot race the progress assertions
+      val job = new UploadJob(UUID.randomUUID.toString, "admin", "deleting.mgf", null, "mgf", totalSize, null, new Date, UploadJob.STATUS_DELETING)
+      uploadJobRepository.save(job)
+      deletingJobId = job.getId
+
+      val deletionJob = new DeletionJob(UUID.randomUUID.toString,
+        "exists(metaData.name:'origin' and metaData.value:'deleting.mgf') and submitter.emailAddress:'admin'",
+        null, "admin", new Date, DeletionJob.STATUS_RUNNING, 10L)
+      deletionJob.setDeleted(4L)
+      deletionJob.setSkipped(1L)
+      deletionJob.setUploadJobId(job.getId)
+      deletionJobRepository.save(deletionJob)
+
+      val fetched: DeletionJob = authenticate()
+        .when().get(s"/$deletingJobId/deletion").`then`().statusCode(200).extract().body().as(classOf[DeletionJob])
+
+      assert(fetched.getId == deletionJob.getId)
+      assert(fetched.getStatus == DeletionJob.STATUS_RUNNING)
+      assert(fetched.getTotal == 10L)
+      assert(fetched.getDeleted == 4L)
+      assert(fetched.getSkipped == 1L)
+    }
+
+    "refuse deletion status without authentication" in {
+      given().when().get(s"/$deletingJobId/deletion").`then`().statusCode(401)
+    }
+
+    "refuse deletion status for another user's upload" in {
+      authenticate("test", "test-secret").when().get(s"/$deletingJobId/deletion").`then`().statusCode(403)
     }
 
     var cancelJobId: String = null

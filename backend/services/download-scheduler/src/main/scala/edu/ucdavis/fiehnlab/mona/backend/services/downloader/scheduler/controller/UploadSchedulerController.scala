@@ -439,6 +439,31 @@ class UploadSchedulerController extends LazyLogging {
   }
 
   /**
+    * Returns the DeletionJob tracking this upload's async spectra deletion, so the My Uploads page
+    * can drive a real progress bar (deleted + skipped over total) while the upload row is DELETING.
+    * 404 when the upload was never deleted or was deleted without a spectra deletion behind it
+    */
+  @RequestMapping(path = Array("/{jobId}/deletion"), method = Array(RequestMethod.GET))
+  def deletionStatus(@PathVariable("jobId") jobId: String): ResponseEntity[DeletionJob] = {
+    val info: LoginInfo = callerInfo()
+    val job: UploadJob = uploadJobRepository.findById(jobId).orElse(null)
+
+    if (job == null) {
+      new ResponseEntity[DeletionJob](HttpStatus.NOT_FOUND)
+    } else if (!canAccess(job, info)) {
+      new ResponseEntity[DeletionJob](HttpStatus.FORBIDDEN)
+    } else {
+      val deletionJob: DeletionJob = deletionJobRepository.findByUploadJobId(jobId)
+
+      if (deletionJob == null) {
+        new ResponseEntity[DeletionJob](HttpStatus.NOT_FOUND)
+      } else {
+        new ResponseEntity[DeletionJob](deletionJob, HttpStatus.OK)
+      }
+    }
+  }
+
+  /**
     * Deletes an upload's stored file immediately. When deleteSpectra is true, the job's spectra
     * (see resolveDeletionTarget) are also removed via the same tracked async deletion pipeline as
     * the admin mass delete endpoints. Since deletion is async, the job row is not removed: it flips

@@ -79,6 +79,14 @@ export class UploadJobResource {
     });
   }
 
+  // Progress of the async spectra deletion behind a DELETING job (status, total, deleted, skipped),
+  // 404 until a spectra deletion has been enqueued for the job
+  deletionStatus(jobId: string, token: string): Observable<any> {
+    return this.http.get<any>(`${environment.REST_BACKEND_SERVER}/rest/uploads/${jobId}/deletion`, {
+      headers: this.authHeaders(token)
+    });
+  }
+
   // Count of spectra that deleteJob(jobId, token, true) would delete, for the delete confirmation
   spectraCount(jobId: string, token: string): Observable<number> {
     return this.http.get<number>(`${environment.REST_BACKEND_SERVER}/rest/uploads/${jobId}/spectraCount`, {
