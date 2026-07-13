@@ -197,18 +197,6 @@ body {
     background: transparent;
 }
 
-@media (min-width: 992px) {
-    .col-md-4 {
-        font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
-    }
-}
-
-@media (min-width: 992px) {
-    .col-md-8 {
-        font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
-    }
-}
-
 /* Navigation */
 /* ------------------------------- */
 
@@ -285,7 +273,6 @@ body {
 
 .dropdown-menu > li > a,
 .dropdown-menu > li > button {
-    font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
     color: black;
 }
 
