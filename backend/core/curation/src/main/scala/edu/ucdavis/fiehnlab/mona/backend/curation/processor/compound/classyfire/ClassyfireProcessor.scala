@@ -96,6 +96,10 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   @Value("${mona.classyfire.negative.cache.ttl:7776000000}")
   val negativeCacheTtlMs: Long = 7776000000L
 
+  // Hard cap on the in flight skeleton to classyfire query-id map
+  @Value("${mona.classyfire.pending.cache.max:50000}")
+  val pendingQueryCacheMax: Int = 50000
+
   private val objectMapper: ObjectMapper = MonaMapper.create
 
   // Reachability is inferred from real responses rather than an ICMP probe
@@ -110,6 +114,14 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   private var lastRequestTime: Long = 0
   private var currentSpacingMs: Long = requestSpacingMs
   private var consecutiveSuccesses: Int = 0
+
+  // In flight ClassyFire queries keyed by the 14 character InChIKey skeleton, so a compound whose skeleton
+  // already has a scheduled query reuses that id instead of POSTing a duplicate
+  private val pendingQueryLock = new Object
+  private val pendingQueries: java.util.LinkedHashMap[String, String] =
+    new java.util.LinkedHashMap[String, String](16, 0.75f, true) {
+      override def removeEldestEntry(eldest: java.util.Map.Entry[String, String]): Boolean = size() > pendingQueryCacheMax
+    }
 
   /**
     * Classify every compound of the spectrum. Compounds are mutated in place
@@ -270,7 +282,10 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
       if (resultBody.classification_status == "Done") {
         // The query has finished, so this is terminal either way: drop the query id and either store the
-        // classification or give up. Not doing this would re-poll an invalid query forever
+        // classification or give up. Not doing this would re-poll an invalid query forever. Also drop the in
+        // flight dedup entry so later compounds fall through to the now populated db classification cache
+        clearInFlightQuery(compound)
+
         val hasUsableClassification: Boolean =
           resultBody.entities != null && resultBody.entities.nonEmpty &&
             (resultBody.invalid_entities == null || resultBody.invalid_entities.isEmpty) &&
@@ -296,7 +311,9 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     } catch {
       case x: HttpStatusCodeException =>
         logger.warn(s"$id: poll of query $queryId returned ${x.getStatusCode}, rescheduling")
-        // The query expired or is unknown, drop the stale id and reschedule from structure
+        // The query expired or is unknown, drop the stale id and reschedule from structure. Clear the in flight
+        // dedup entry first so the reschedule submits a fresh query instead of reusing the same expired id
+        clearInFlightQuery(compound)
         dropQueryId(compound)
         scheduleClassification(compound, id)
       case x: ResourceAccessException =>
@@ -323,6 +340,57 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     compound.setClassification(compound.getClassification.asScala.filterNot(_.getName == CommonMetaData.CLASSYFIRE_QUERY_ID).asJava)
     compound
   }
+
+  /**
+    * Set the transient scheduled query id marker on the compound, replacing any existing classification. Shared
+    * by a freshly scheduled query and one reused from another compound with the same skeleton
+    *
+    * @param compound
+    * @param queryId
+    * @return
+    */
+  private def setQueryId(compound: Compound, queryId: String): Compound = {
+    compound.setClassification(ArrayBuffer[MetaData](new MetaData(null, CommonMetaData.CLASSYFIRE_QUERY_ID, queryId, true, "none", false, null)).asJava)
+    compound
+  }
+
+  /**
+    * The 14 character InChIKey skeleton to key the in flight query map by, if the compound has a valid InChIKey
+    *
+    * @param compound
+    * @return
+    */
+  private def pendingQueryBlock(compound: Compound): Option[String] = {
+    val inchiKey: String = resolveInchiKey(compound)
+    if (isValidInchiKey(inchiKey)) Some(inchiKey.take(14)) else None
+  }
+
+  /**
+    * The in flight query id already scheduled for this skeleton, if any
+    *
+    * @param block
+    * @return
+    */
+  private def inFlightQuery(block: String): Option[String] =
+    pendingQueryLock.synchronized(Option(pendingQueries.get(block)))
+
+  /**
+    * Record a freshly scheduled query id for its skeleton so later compounds sharing it reuse it
+    *
+    * @param block
+    * @param queryId
+    */
+  private def recordInFlightQuery(block: String, queryId: String): Unit =
+    pendingQueryLock.synchronized(pendingQueries.put(block, queryId))
+
+  /**
+    * Drop the in flight query entry for the compound's skeleton, once the query has reached a terminal state so
+    * later compounds fall through to the persistent cache rather than reusing a finished or expired query id
+    *
+    * @param compound
+    */
+  private def clearInFlightQuery(compound: Compound): Unit =
+    pendingQueryBlock(compound).foreach(block => pendingQueryLock.synchronized(pendingQueries.remove(block)))
 
   /**
     * Look up an already classified compound by InChIKey. When the entity index has no usable classification for
@@ -460,48 +528,60 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
     logger.info(s"$id: Scheduling compound classification from structure")
 
-    val inchi: Buffer[MetaData] = compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.INCHI_CODE && x.getComputed)
-    val smiles: mutable.Buffer[MetaData] = compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.SMILES && x.getComputed)
+    val block: Option[String] = pendingQueryBlock(compound)
 
-    val structure: String =
-      if (inchi.nonEmpty) inchi.head.getValue.toString
-      else if (smiles.nonEmpty) smiles.head.getValue.toString
-      else ""
+    // Reuse an in flight query for this skeleton rather than submitting a duplicate query
+    val reused: Option[Compound] = block.flatMap(inFlightQuery).map { queryId =>
+      logger.info(s"$id: Reusing in flight ClassyFire query $queryId for InChIKey skeleton ${block.get}")
+      stat(_.incPendingQueryReused())
+      setQueryId(compound, queryId)
+    }
 
-    if (structure.nonEmpty) {
-      val url = s"http://classyfire.wishartlab.com/queries"
-      logger.info(s"$id: API CALL: Scheduling ClassyFire query for $structure: $url")
+    reused.getOrElse {
+      val inchi: Buffer[MetaData] = compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.INCHI_CODE && x.getComputed)
+      val smiles: mutable.Buffer[MetaData] = compound.getMetaData.asScala.filter(x => x.getName == CommonMetaData.SMILES && x.getComputed)
 
-      try {
-        val result: ResponseEntity[QueryScheduleResult] = withRateLimit(id, "queries") {
-          restOperations.postForEntity(url, QueryScheduleRequest("", structure, "STRUCTURE"), classOf[QueryScheduleResult])
+      val structure: String =
+        if (inchi.nonEmpty) inchi.head.getValue.toString
+        else if (smiles.nonEmpty) smiles.head.getValue.toString
+        else ""
+
+      if (structure.nonEmpty) {
+        val url = s"http://classyfire.wishartlab.com/queries"
+        logger.info(s"$id: API CALL: Scheduling ClassyFire query for $structure: $url")
+
+        try {
+          val result: ResponseEntity[QueryScheduleResult] = withRateLimit(id, "queries") {
+            restOperations.postForEntity(url, QueryScheduleRequest("", structure, "STRUCTURE"), classOf[QueryScheduleResult])
+          }
+          markUp()
+          val queryId: String = result.getBody.id.toString
+          logger.info(s"$id: Scheduled with query id $queryId")
+          stat(_.incNewClassificationScheduled())
+          block.foreach(recordInFlightQuery(_, queryId))
+          setQueryId(compound, queryId)
+        } catch {
+          case x: HttpStatusCodeException =>
+            logger.warn(s"$id: queries submission returned ${x.getStatusCode} for $structure, marking unavailable")
+            stat(_.incFailed())
+            markClassyfireUnavailable(compound, id)
+          case x: ResourceAccessException =>
+            markDown()
+            logger.warn(s"$id: queries ClassyFire unreachable, will retry: ${x.getMessage}")
+            stat(_.incServiceUnavailable())
+            markClassyfireUnavailable(compound, id)
+          case x: RestClientException =>
+            // The submission succeeded but the body could not be read (e.g. an unexpected content type), so the
+            // query id is unknown. Mark it pending so it is retried rather than silently dropping the spectrum
+            logger.warn(s"$id: queries submission response could not be read for $structure, marking unavailable: ${x.getMessage}")
+            stat(_.incFailed())
+            markClassyfireUnavailable(compound, id)
         }
-        markUp()
-        logger.info(s"$id: Scheduled with query id ${result.getBody.id}")
-        stat(_.incNewClassificationScheduled())
-        compound.setClassification(ArrayBuffer[MetaData](new MetaData(null, CommonMetaData.CLASSYFIRE_QUERY_ID, result.getBody.id.toString, true, "none", false, null)).asJava)
+      } else {
+        logger.info(s"$id: No structure available to submit to ClassyFire")
+        stat(_.incNoStructure())
         compound
-      } catch {
-        case x: HttpStatusCodeException =>
-          logger.warn(s"$id: queries submission returned ${x.getStatusCode} for $structure, marking unavailable")
-          stat(_.incFailed())
-          markClassyfireUnavailable(compound, id)
-        case x: ResourceAccessException =>
-          markDown()
-          logger.warn(s"$id: queries ClassyFire unreachable, will retry: ${x.getMessage}")
-          stat(_.incServiceUnavailable())
-          markClassyfireUnavailable(compound, id)
-        case x: RestClientException =>
-          // The submission succeeded but the body could not be read (e.g. an unexpected content type), so the
-          // query id is unknown. Mark it pending so it is retried rather than silently dropping the spectrum
-          logger.warn(s"$id: queries submission response could not be read for $structure, marking unavailable: ${x.getMessage}")
-          stat(_.incFailed())
-          markClassyfireUnavailable(compound, id)
       }
-    } else {
-      logger.info(s"$id: No structure available to submit to ClassyFire")
-      stat(_.incNoStructure())
-      compound
     }
   }
 

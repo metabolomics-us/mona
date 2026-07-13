@@ -31,6 +31,7 @@ class ClassyfireStats {
   val alreadyClassified = new AtomicLong(0)            // skipped, the compound already had classification
   val missingInchiKey = new AtomicLong(0)              // skipped, no valid InChIKey
   val newClassificationsScheduled = new AtomicLong(0)  // novel structures submitted for async classification
+  val pendingQueriesReused = new AtomicLong(0)         // skeleton already had an in flight query, its id reused
   val awaitingPoll = new AtomicLong(0)                 // scheduled query polled but not finished, re-enqueued
   val noStructure = new AtomicLong(0)                  // valid InChIKey but no structure to submit, left unclassified
   val serviceUnavailable = new AtomicLong(0)           // ClassyFire down or unreachable, re-enqueued to retry
@@ -68,6 +69,7 @@ class ClassyfireStats {
   def incAlreadyClassified(): Unit = alreadyClassified.incrementAndGet()
   def incMissingInchiKey(): Unit = missingInchiKey.incrementAndGet()
   def incNewClassificationScheduled(): Unit = newClassificationsScheduled.incrementAndGet()
+  def incPendingQueryReused(): Unit = pendingQueriesReused.incrementAndGet()
   def incAwaitingPoll(): Unit = awaitingPoll.incrementAndGet()
   def incNoStructure(): Unit = noStructure.incrementAndGet()
   def incServiceUnavailable(): Unit = serviceUnavailable.incrementAndGet()
@@ -86,6 +88,7 @@ class ClassyfireStats {
       s"  compound outcomes: newlyClassified=${newlyClassified.get()}, entitiesHits=${entitiesHits.get()}, " +
       s"dbCacheHits=${dbCacheHits.get()}, alreadyClassified=${alreadyClassified.get()}, " +
       s"missingInchiKey=${missingInchiKey.get()}, newClassificationsScheduled=${newClassificationsScheduled.get()}, " +
+      s"pendingQueriesReused=${pendingQueriesReused.get()}, " +
       s"awaitingPoll=${awaitingPoll.get()}, noStructure=${noStructure.get()}, " +
       s"serviceUnavailable=${serviceUnavailable.get()}, rateLimited=${rateLimited.get()}, " +
       s"failed=${failed.get()}\n" +
@@ -100,6 +103,7 @@ class ClassyfireStats {
     alreadyClassified.set(0)
     missingInchiKey.set(0)
     newClassificationsScheduled.set(0)
+    pendingQueriesReused.set(0)
     awaitingPoll.set(0)
     noStructure.set(0)
     serviceUnavailable.set(0)
