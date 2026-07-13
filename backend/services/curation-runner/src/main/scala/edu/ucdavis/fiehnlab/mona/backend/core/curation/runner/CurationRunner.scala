@@ -26,6 +26,7 @@ import org.springframework.security.config.annotation.web.configuration.{EnableW
 import org.springframework.web.bind.annotation.{GetMapping, RequestMapping, RestController}
 import org.springframework.web.client.HttpClientErrorException
 
+import java.util.Date
 import javax.annotation.PostConstruct
 import scala.collection.mutable.Buffer
 import scala.jdk.CollectionConverters._
@@ -246,12 +247,10 @@ class ClassyfireListener(classyfireProcessor: ClassyfireProcessor,
         // a pointless update and, importantly, avoids re-emitting a spectrum event that would re-trigger curation
         logger.info(s"${classified.getId}: classification unchanged, nothing to persist")
       } else {
-        // Carry over the curation timestamp from the just curated spectrum. Without this the persisted update
-        // would keep the stale stored lastCurated, and the curation event bus listener would treat it as due
-        // for curation again, re-curating this spectrum in an endless loop
-        if (classified.getLastCurated != null) {
-          fresh.setLastCurated(classified.getLastCurated)
-        }
+        // Classification is the tail of the curation pipeline, stamp lastCurated fresh before persisting
+        // so the resulting update event fails the curation event bus listener's freshness check and 
+        // does not re-trigger curation
+        fresh.setLastCurated(new Date())
         spectrumClient.updateAsync(fresh, fresh.getId)
         logger.info(s"${classified.getId}: classification persisted")
       }
