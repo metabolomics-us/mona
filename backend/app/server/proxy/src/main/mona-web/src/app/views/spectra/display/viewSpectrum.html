@@ -28,6 +28,12 @@
                             </span>
                           </label>
                         </div>
+                        <div class="col-md-12" *ngIf="!spectrum.lastCurated">
+                          <div class="alert alert-warning" role="alert">
+                            <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+                            This spectrum has yet to be curated. If it was uploaded in the last 3 days, it is likely still in the curation queue. Otherwise, please report this to the <a href="https://github.com/metabolomics-us/mona/issues" target="_blank">issue tracker</a>.
+                          </div>
+                        </div>
                     </div>
 
                     <div class="row" *ngIf="showScore && spectrum.score">
@@ -54,7 +60,6 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="card top17" *ngIf="!spectrum.score">This spectrum has not yet been curated.</div>
                         </div>
                     </div>
 

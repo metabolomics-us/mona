@@ -18,7 +18,7 @@ import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service'
 import {OrderbyPipe} from '../../filters/orderby.pipe';
 import {ActivatedRoute, Router} from '@angular/router';
 import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
-import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
+import {faQuestionCircle, faFlask, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
@@ -54,6 +54,7 @@ export class SpectrumViewerComponent implements OnInit{
     faAngleDown = faAngleDown;
     faQuestionCircle = faQuestionCircle;
     faFlask = faFlask;
+    faExclamationTriangle = faExclamationTriangle;
     faSpinner = faSpinner;
     faStar = faStar;
     faStarEmpty = faStarEmpty;
