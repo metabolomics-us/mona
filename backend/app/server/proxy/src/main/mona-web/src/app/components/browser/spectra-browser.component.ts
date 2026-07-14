@@ -588,7 +588,7 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     deleteSpectrum(id: string, event: Event) {
       event.stopPropagation();
       const modalRef = this.modalService.open(DeleteConfirmModalComponent);
-      modalRef.componentInstance.message = 'Are you sure you want to delete spectrum ' + id + '?';
+      modalRef.componentInstance.message = 'Are you sure you want to delete spectrum <strong>' + id + '</strong>?';
       modalRef.result.then(() => this.performDelete(id), () => {});
     }
 

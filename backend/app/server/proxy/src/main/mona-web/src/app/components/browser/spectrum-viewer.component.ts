@@ -298,7 +298,7 @@ export class SpectrumViewerComponent implements OnInit{
 
     deleteSpectrum() {
       const modalRef = this.modalService.open(DeleteConfirmModalComponent);
-      modalRef.componentInstance.message = 'Are you sure you want to delete spectrum ' + this.spectrum.id + '?';
+      modalRef.componentInstance.message = 'Are you sure you want to delete spectrum <strong>' + this.spectrum.id + '</strong>?';
       modalRef.result.then(() => this.performDelete(), () => {});
     }
 

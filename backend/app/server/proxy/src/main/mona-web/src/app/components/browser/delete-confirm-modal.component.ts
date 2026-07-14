@@ -17,7 +17,7 @@ import {faTrash} from '@fortawesome/free-solid-svg-icons';
         </button>
     </div>
     <div class="modal-body">
-        <p style="white-space: normal;">{{message}}</p>
+        <p style="white-space: normal;" [innerHTML]="message"></p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary accessibility" (click)="modal.dismiss()">Cancel</button>
