@@ -19,14 +19,18 @@
 #   curation-scheduler backend/services/curation-scheduler
 #
 # Options:
-#   --dry-run     Print what would be built and redeployed without running anything
-#   --also-make   Rebuild upstream dependencies (slower, needed on cold .m2 cache)
-#   --clean       Run clean before install (forces full recompile)
+#   --dry-run, -d     Print what would be built and redeployed without running anything
+#   --also-make, -am  Rebuild upstream dependencies (slower, needed on cold .m2 cache)
+#   --clean, -c       Run clean before install (forces full recompile)
+#   --tag, -t LIST    Comma-separated list of additional tags to apply to each built image
+#   --no-deploy, -nd  Build (and tag) images but skip redeploying containers
 #
 # Examples:
 #   ./dev_deploy.sh persistence
 #   ./dev_deploy.sh persistence auth
 #   ./dev_deploy.sh --dry-run persistence auth
+#   ./dev_deploy.sh --tag prod,local persistence
+#   ./dev_deploy.sh --no-deploy persistence
 
 set -euo pipefail
 
@@ -132,27 +136,67 @@ print_step() {
 DRY_RUN=false
 ALSO_MAKE=false
 CLEAN=false
+NO_DEPLOY=false
 SERVICES=()
+EXTRA_TAGS=()
 
-for arg in "$@"; do
-  if [[ "$arg" == "--dry-run" ]]; then
-    DRY_RUN=true
-  elif [[ "$arg" == "--also-make" || "$arg" == "-am" ]]; then
-    ALSO_MAKE=true
-  elif [[ "$arg" == "--clean" ]]; then
-    CLEAN=true
-  elif [[ "$arg" == "all" ]]; then
-    SERVICES=("${!MODULE_PATHS[@]}")
-  else
-    SERVICES+=("$arg")
-  fi
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --dry-run|-d)
+      DRY_RUN=true
+      shift
+      ;;
+    --also-make|-am)
+      ALSO_MAKE=true
+      shift
+      ;;
+    --clean|-c)
+      CLEAN=true
+      shift
+      ;;
+    --no-deploy|-nd)
+      NO_DEPLOY=true
+      shift
+      ;;
+    --tag|-t)
+      if [[ $# -lt 2 ]]; then
+        echo "ERROR: $1 requires a comma-separated list of tags"
+        exit 1
+      fi
+      IFS=',' read -ra new_tags <<< "$2"
+      for t in "${new_tags[@]}"; do
+        t="${t// /}"
+        [[ -n "$t" ]] && EXTRA_TAGS+=("$t")
+      done
+      shift 2
+      ;;
+    --tag=*|-t=*)
+      IFS=',' read -ra new_tags <<< "${1#*=}"
+      for t in "${new_tags[@]}"; do
+        t="${t// /}"
+        [[ -n "$t" ]] && EXTRA_TAGS+=("$t")
+      done
+      shift
+      ;;
+    all)
+      SERVICES=("${!MODULE_PATHS[@]}")
+      shift
+      ;;
+    *)
+      SERVICES+=("$1")
+      shift
+      ;;
+  esac
 done
 
 if [[ ${#SERVICES[@]} -eq 0 ]]; then
-  echo "Usage: $0 [--dry-run] [--also-make] [--clean] <service> [service2 ...]"
+  echo "Usage: $0 [--dry-run|-d] [--also-make|-am] [--clean|-c] [--tag|-t LIST] [--no-deploy|-nd] <service> [service2 ...]"
   echo ""
-  echo "  --also-make   Rebuild upstream dependencies (slower, needed on cold .m2 cache)"
-  echo "  --clean       Run clean before install (forces full recompile)"
+  echo "  --dry-run, -d    Print what would be built and redeployed without running anything"
+  echo "  --also-make, -am Rebuild upstream dependencies (slower, needed on cold .m2 cache)"
+  echo "  --clean, -c      Run clean before install (forces full recompile)"
+  echo "  --tag, -t        Comma-separated list of additional tags to apply to built images"
+  echo "  --no-deploy, -nd Build (and tag) images but skip redeploying containers"
   echo ""
   echo "Available services:"
   for key in "${!MODULE_PATHS[@]}"; do
@@ -175,9 +219,13 @@ done
 if [[ "$DRY_RUN" == true ]]; then
   print_banner "$CYAN" "DRY RUN — MoNA Dev Deploy" "No commands will be executed"
   echo ""
-  printf "  ${DIM}flags: %s%s${RESET}\n" \
+  printf "  ${DIM}flags: %s%s%s${RESET}\n" \
     "$([[ "$ALSO_MAKE" == true ]] && echo '--also-make ' || echo '')" \
-    "$([[ "$CLEAN" == true ]] && echo '--clean' || echo 'incremental (no --clean)')"
+    "$([[ "$CLEAN" == true ]] && echo '--clean' || echo 'incremental (no --clean)')" \
+    "$([[ "$NO_DEPLOY" == true ]] && echo ' --no-deploy' || echo '')"
+  if [[ ${#EXTRA_TAGS[@]} -gt 0 ]]; then
+    printf "  ${DIM}extra tags: %s${RESET}\n" "$(IFS=,; echo "${EXTRA_TAGS[*]}")"
+  fi
   echo ""
   local_idx=0
   total=${#SERVICES[@]}
@@ -186,6 +234,9 @@ if [[ "$DRY_RUN" == true ]]; then
     printf "  ${BOLD}[%d/%d]${RESET} ${CYAN}%s${RESET}\n" "$local_idx" "$total" "$svc"
     printf "        module:  %s\n" "${MODULE_PATHS[$svc]}"
     printf "        image:   %s:%s\n" "${IMAGE_NAMES[$svc]}" "$DOCKER_TAG"
+    for extra_tag in "${EXTRA_TAGS[@]}"; do
+      printf "        also as: %s:%s\n" "${IMAGE_NAMES[$svc]}" "$extra_tag"
+    done
     printf "        compose: %s\n" "${COMPOSE_NAMES[$svc]}"
     echo ""
   done
@@ -214,6 +265,7 @@ declare -a BUILT=()
 declare -a DEPLOYED=()
 declare -a FAILED=()
 declare -a SKIPPED=()
+declare -a TAGGED=()
 declare -A BUILD_DURATIONS=()
 
 format_duration() {
@@ -272,6 +324,24 @@ for svc in "${SERVICES[@]}"; do
     continue
   fi
 
+  if [[ ${#EXTRA_TAGS[@]} -gt 0 ]]; then
+    printf "\n  ${DIM}Applying additional tags:${RESET}\n"
+    for extra_tag in "${EXTRA_TAGS[@]}"; do
+      extra_image="${IMAGE_NAMES[$svc]}:$extra_tag"
+      if docker tag "$image" "$extra_image"; then
+        printf "  ${GREEN}✓${RESET}  %s\n" "$extra_image"
+        TAGGED+=("$svc -> $extra_tag")
+      else
+        printf "  ${RED}✗  Failed to tag %s${RESET}\n" "$extra_image"
+      fi
+    done
+  fi
+
+  if [[ "$NO_DEPLOY" == true ]]; then
+    printf "\n  ${DIM}Skipping redeploy of %s (--no-deploy)${RESET}\n" "$svc"
+    continue
+  fi
+
   if [[ "$before" == "$after" ]]; then
     printf "\n  ${YELLOW}WARNING: Image timestamp unchanged — build may not have produced a new image${RESET}\n"
     printf "  ${DIM}before: %s${RESET}\n" "$before"
@@ -311,6 +381,12 @@ if [[ ${#BUILT[@]} -gt 0 ]]; then
   for s in "${BUILT[@]}"; do
     printf "    ${GREEN}✓${RESET}  %-24s ${DIM}%s${RESET}\n" "$s" "$(format_duration "${BUILD_DURATIONS[$s]}")"
   done
+  echo ""
+fi
+
+if [[ ${#TAGGED[@]} -gt 0 ]]; then
+  printf "  ${CYAN}${BOLD}Tagged           (${#TAGGED[@]})${RESET}\n"
+  for s in "${TAGGED[@]}"; do printf "    ${CYAN}+${RESET}  %s\n" "$s"; done
   echo ""
 fi
 
