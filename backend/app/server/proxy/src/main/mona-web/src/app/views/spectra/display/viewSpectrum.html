@@ -4,10 +4,15 @@
         <br>
             <div class="card">
                 <div class="card-header">
-                  <div class="card-title" style="padding-top: 8px">
-                    <h1 class="h4 float-left" *ngIf="spectrum.compound[0].names.length > 0">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h1>
-                    <h1 class="h4 float-left" *ngIf="spectrum.compound[0].names.length === 0">Spectrum {{spectrum.id}}</h1>
-                    <h2 class="h5 float-right" style="padding-top: 4px"><spectrum-feedback-results-curation [spectrum]="spectrum"></spectrum-feedback-results-curation></h2>
+                  <div class="card-title d-flex justify-content-between align-items-center" style="padding-top: 8px">
+                    <div style="min-width: 0;">
+                      <div class="text-muted" style="letter-spacing: 0.5px;">
+                        Spectrum ID <span class="badge badge-secondary" style="font-family: monospace; font-size: 85%;">{{spectrum.id}}</span>
+                      </div>
+                      <h1 class="h4 mb-0" *ngIf="spectrum.compound[0].names.length > 0">{{spectrum.compound[0].names[0].name}}</h1>
+                      <h1 class="h4 mb-0 text-muted" *ngIf="spectrum.compound[0].names.length === 0">Unnamed Compound</h1>
+                    </div>
+                    <h2 class="h5 mb-0 flex-shrink-0" style="padding-left: 1rem;"><spectrum-feedback-results-curation [spectrum]="spectrum" [stacked]="true"></spectrum-feedback-results-curation></h2>
                   </div>
                 </div>
 

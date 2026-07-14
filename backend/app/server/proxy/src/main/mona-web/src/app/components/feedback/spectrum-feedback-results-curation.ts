@@ -13,6 +13,7 @@ import {SpectrumModel} from '../../mocks/spectrum.model';
 
 export class SpectrumFeedbackResultsCurationComponent implements OnInit, OnChanges {
   @Input() spectrum: SpectrumModel;
+  @Input() stacked = false;
   currentFeedback;
   curatedFeedback;
   communityFeedback;
