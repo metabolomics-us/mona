@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Sequence.SpectrumSequenceIdGenerator;
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.validators.NullOrNotBlank;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
@@ -25,6 +26,7 @@ public class Spectrum implements Serializable {
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_id")
+    @BatchSize(size = 50)
     private List<Compound> compound;
 
     @Column(name = "id")
@@ -46,11 +48,13 @@ public class Spectrum implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_metadata_id")
     @Column(name = "metaData")
+    @BatchSize(size = 50)
     private List<MetaData> metaData;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_annotation_id")
     @Column(name = "annotations")
+    @BatchSize(size = 50)
     private List<MetaData> annotations = new ArrayList<>();
 
     // Tolerate a missing satellite row left by an interrupted upload (resolves to null
@@ -89,6 +93,7 @@ public class Spectrum implements Serializable {
     @Column(name = "tags")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_id")
+    @BatchSize(size = 50)
     private List<Tag> tags;
 
     // Tolerate a missing library row. A dangling library_id (e.g. left by an interrupted upload)

@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
@@ -31,6 +32,7 @@ public class Compound implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "compound_id")
     @Column(name = "tags")
+    @BatchSize(size = 50)
     private List<Tag> tags;
 
     @Column(name = "inchi")
@@ -40,6 +42,7 @@ public class Compound implements Serializable {
     @Column(name = "names")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "compound_id")
+    @BatchSize(size = 50)
     private List<Names> names;
 
     @Column(name = "molFile")
@@ -56,11 +59,13 @@ public class Compound implements Serializable {
     @Column(name = "metaData")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "compound_metadata_id")
+    @BatchSize(size = 50)
     private List<MetaData> metaData;
 
     @Column(name = "classification")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "compound_classification_id")
+    @BatchSize(size = 50)
     private List<MetaData> classification = new ArrayList<>();
 
     public Compound() {
