@@ -73,6 +73,7 @@ export class SimilaritySearchFormComponent implements OnInit{
         this.page = 1;
         this.spectrum = null;
         this.uploadError = null;
+        this.filenames = event.target.files[0].name;
 
         return this.uploadLibraryService.loadSpectraFile(event.target.files[0],
             (data, origin) => {
@@ -117,6 +118,7 @@ export class SimilaritySearchFormComponent implements OnInit{
 
         const request = {
             spectrum: this.spectrum,
+            filename: this.filenames || null,
             minSimilarity: 500,
             precursorMZ: null,
             precursorTolerancePPM: null,

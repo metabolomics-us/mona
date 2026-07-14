@@ -375,6 +375,10 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
       this.pagination.loading = true;
       this.spectra = [];
 
+      const similarityQuery = this.spectraQueryBuilderService.getSimilarityQuery();
+      this.query = similarityQuery && similarityQuery.filename ?
+        'Similarity search: ' + similarityQuery.filename : 'Similarity search: pasted spectrum';
+
       if (this.initial && !this.sizeParam) {
         this.hideSplash();
         this.pagination.loading = false;

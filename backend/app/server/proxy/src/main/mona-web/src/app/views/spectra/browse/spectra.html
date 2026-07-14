@@ -65,7 +65,8 @@
                   <div>
                     <br/>
                     Current Query (as cURL command)
-                    <pre class="input-group-text" id="curlCommand"><code>
+                    <pre *ngIf="isSimilaritySearch()" class="input-group-text"><code>cURL request not available for similarity searches</code></pre>
+                    <pre *ngIf="!isSimilaritySearch()" class="input-group-text" id="curlCommand"><code>
                       <button class="btn btn-link btn-sm" style="color: slategray; margin-left: -10px" (click)="copyCurlCommand()" aria-label="Copy query"><fa-icon [icon]="faCopy"></fa-icon></button>
                       {{{query: query} | curlPipe}}
                     </code></pre>
