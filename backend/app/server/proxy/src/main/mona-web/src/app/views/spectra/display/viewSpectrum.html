@@ -89,6 +89,7 @@
                         </div>
 
                         <div class="col-md-3 d-flex flex-column gap-2">
+                            <button *ngIf="canDelete()" class="btn btn-danger w-100 mb-1 accessibility" (click)="deleteSpectrum()" ngbTooltip="Delete this spectrum" placement="left"><fa-icon [icon]="faTrash"></fa-icon> Delete Spectrum</button>
                             <button *ngIf="isAdmin()" class="btn btn-primary w-100 mb-1 accessibility" (click)="reCurateSpectrum(this.spectrum.id).subscribe()"><fa-icon [icon]="faFlask"></fa-icon> Re-Curate Spectrum</button>
                             <spectra-download [spectrum]="spectrum"></spectra-download>
                             <spectrum-review [spectrum]="spectrum" *ngIf="authenticationService.isLoggedIn()"></spectrum-review>

@@ -118,12 +118,6 @@
         </div>
 
         <div class="float-right">
-            <span *ngIf="authenticationService.isLoggedIn() && !pagination.table"
-                  [ngbTooltip]="massDeletion.showCurrentSelected().length ? 'Delete selected spectra' : 'No spectra selected for deletion'">
-              <button class="btn btn-danger mr-1 accessibility" type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
-                <fa-icon [icon]="faTrash"></fa-icon> Batch Delete
-              </button>
-            </span>
             <button class="btn btn-primary accessibility" placement="right" ngbTooltip="Number of spectra results from this query"
             (click)="queryInfoCollapsed = !queryInfoCollapsed">
               <fa-icon [icon]="faBookmark"></fa-icon>
@@ -155,7 +149,7 @@
     <!-- display spectra as list -->
     <div class="col-md-12" *ngIf="pagination.table !== true">
         <div *ngFor="let spectrum of spectra" class="m-md-3">
-            <display-spectra-panel [spectrum]="spectrum"></display-spectra-panel>
+            <display-spectra-panel [spectrum]="spectrum" (deleted)="onSpectrumDeleted($event)"></display-spectra-panel>
         </div>
     </div>
 
@@ -163,11 +157,13 @@
     <!-- we have to use hidden tag here bug there is a rendering bug problem with
       the masspec plotter when its first loaded -->
     <div class="col-md-12" *ngIf="pagination.table === true">
-        <table class="table table-hover table-striped" style="table-layout: fixed;">
+        <table class="table table-hover table-striped" style="table-layout: auto;">
             <thead>
             <tr>
                 <th *ngFor="let column of pagination.tableColumnSelected"
-                    [ngClass]="{'text-center': column != 'ID' && column != 'Name'}">{{column}}</th>
+                    [ngClass]="{'text-center': column != 'ID' && column != 'Name'}"
+                    [ngStyle]="{'white-space': 'nowrap', 'max-width': column === 'Name' ? '350px' : null}">{{column}}</th>
+                <th *ngIf="authenticationService.isLoggedIn()" style="width: 1%; white-space: nowrap;"></th>
             </tr>
             </thead>
 
@@ -182,6 +178,7 @@
                         (keydown.space)="$event.preventDefault(); $event.target.click()"
                         ><b>{{spectrum.id}}</b></a></div>
                         <div *ngIf="spectrum.score">
+                        <fa-icon *ngIf="sameSubmitter(spectrum)" size="xs" [icon]="faUser" class="mr-1" ngbTooltip="My Spectrum" placement="bottom"></fa-icon>
                         <label ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom">
                           <span *ngFor="let star of stars(spectrum)" >
                             <fa-icon size="xs" *ngIf="star === 1" [icon]="faStar"></fa-icon>
@@ -199,7 +196,7 @@
                         </div>
                     </div>
                 </td>
-                <td>
+                <td style="max-width: 350px; overflow-wrap: break-word;">
                     <div>
                       <br/>
                         <ul *ngIf="spectrum.compound[0].names.length > 1" class="list-styled" style="margin-left:0 !important; padding-left: 10px !important;">
@@ -234,6 +231,11 @@
                     <div>
                         <p class="text-center">{{spectrum.metaDataMap['total exact mass']}}</p>
                     </div>
+                </td>
+                <td *ngIf="authenticationService.isLoggedIn()" class="text-center align-middle px-3" style="width: 1%; white-space: nowrap;" (click)="$event.stopPropagation()">
+                    <button *ngIf="canDelete(spectrum)" class="btn btn-danger btn-sm" (click)="deleteSpectrum(spectrum.id, $event)" ngbTooltip="Delete this spectrum" placement="left">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
                 </td>
             </tr>
             </tbody>

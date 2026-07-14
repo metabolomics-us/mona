@@ -18,7 +18,7 @@ import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service'
 import {OrderbyPipe} from '../../filters/orderby.pipe';
 import {ActivatedRoute, Router} from '@angular/router';
 import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
-import {faQuestionCircle, faFlask, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
+import {faQuestionCircle, faFlask, faExclamationTriangle, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
@@ -27,6 +27,8 @@ import {Observable, throwError} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {ToasterService} from 'angular2-toaster';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {DeleteConfirmModalComponent} from './delete-confirm-modal.component';
 
 @Component({
     selector: 'spectrum-viewer',
@@ -54,6 +56,7 @@ export class SpectrumViewerComponent implements OnInit{
     faAngleDown = faAngleDown;
     faQuestionCircle = faQuestionCircle;
     faFlask = faFlask;
+    faTrash = faTrash;
     faExclamationTriangle = faExclamationTriangle;
     faSpinner = faSpinner;
     faStar = faStar;
@@ -65,7 +68,8 @@ export class SpectrumViewerComponent implements OnInit{
                  public spectrumService: Spectrum,  public authenticationService: AuthenticationService,
                  public location: Location,  public spectrumCache: SpectrumCacheService,
                  public route: ActivatedRoute,  public router: Router, public orderbyPipe: OrderbyPipe,
-                 public feedbackCache: FeedbackCacheService, public http: HttpClient, public toaster: ToasterService){
+                 public feedbackCache: FeedbackCacheService, public http: HttpClient, public toaster: ToasterService,
+                 public modalService: NgbModal){
       this.currentFeedback = [];
     }
 
@@ -279,6 +283,41 @@ export class SpectrumViewerComponent implements OnInit{
 
     isAdmin() {
       return this.authenticationService.isAdmin();
+    }
+
+    sameSubmitter(): boolean {
+      if (this.authenticationService.isLoggedIn() && this.spectrum && this.spectrum.submitter) {
+        return this.authenticationService.getCurrentUser().emailAddress === this.spectrum.submitter.emailAddress;
+      }
+      return false;
+    }
+
+    canDelete(): boolean {
+      return this.sameSubmitter() || this.isAdmin();
+    }
+
+    deleteSpectrum() {
+      const modalRef = this.modalService.open(DeleteConfirmModalComponent);
+      modalRef.componentInstance.message = 'Are you sure you want to delete spectrum ' + this.spectrum.id + '?';
+      modalRef.result.then(() => this.performDelete(), () => {});
+    }
+
+    performDelete() {
+      const token = this.authenticationService.getCurrentUser().accessToken;
+      this.spectrumService.delete(this.spectrum.id, token).subscribe(() => {
+        this.toaster.pop({
+          type: 'success',
+          title: 'Spectrum Deleted',
+          body: `Spectrum ${this.spectrum.id} was successfully deleted.`
+        });
+        this.router.navigate(['/spectra/browse']);
+      }, (error) => {
+        this.toaster.pop({
+          type: 'error',
+          title: 'Delete Failed',
+          body: error.message || 'An error occurred while deleting the spectrum.'
+        });
+      });
     }
 
     reCurateSpectrum(id: string) {

@@ -98,6 +98,17 @@ export class Spectrum {
 		return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra/associate/allByQuery`, data);
 	}
 
+  // Deletes a single spectrum by id. Allowed for the owning submitter or an admin. Returns an empty 200 body
+  delete(id: string, token: string): Observable<any> {
+    const config = {
+      headers: {
+        Authorization: 'Bearer ' + token
+      },
+      responseType: 'text' as 'json'
+    };
+    return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/spectra/${id}`, config);
+  }
+
   // Enqueues a query based deletion job and returns the DeletionJob (202 Accepted) for progress polling
   batchDelete(data: any, token: any): Observable<any> {
     const config = {

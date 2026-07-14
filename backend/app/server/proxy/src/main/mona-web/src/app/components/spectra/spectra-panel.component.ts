@@ -2,15 +2,18 @@
  * Created by wohlgemuth on 10/16/14.
  * Updated by nolanguzman on 10/31/2021
  */
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
-import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
+import {faExternalLinkAlt, faTrash, faUser} from '@fortawesome/free-solid-svg-icons';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
-import {MassDeletionService} from '../../services/persistence/mass-deletion.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {SpectrumModel} from '../../mocks/spectrum.model';
+import {Spectrum} from '../../services/persistence/spectrum.resource';
+import {ToasterService} from 'angular2-toaster';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {DeleteConfirmModalComponent} from '../browser/delete-confirm-modal.component';
 
 @Component({
     selector: 'display-spectra-panel',
@@ -19,18 +22,21 @@ import {SpectrumModel} from '../../mocks/spectrum.model';
 
 export class SpectraPanelComponent implements OnInit{
     @Input() spectrum: SpectrumModel;
+    @Output() deleted = new EventEmitter<string>();
     currentFeedback;
     IMPORTANT_METADATA;
     importantMetadata;
     secondaryMetadata;
     faExternalLinkAlt = faExternalLinkAlt;
+    faTrash = faTrash;
+    faUser = faUser;
     faStar = faStar;
     faStarEmpty = faStarEmpty;
     faStarHalf = faStarHalfAlt;
-    deletionMark;
 
     constructor( public spectrumCache: SpectrumCacheService, public feedbackCache: FeedbackCacheService,
-                 public massDelete: MassDeletionService, public auth: AuthenticationService) {
+                 public auth: AuthenticationService, public spectrumResource: Spectrum,
+                 public toaster: ToasterService, public modalService: NgbModal) {
       this.currentFeedback = [];
     }
 
@@ -44,15 +50,6 @@ export class SpectraPanelComponent implements OnInit{
 
         this.importantMetadata = [];
         this.secondaryMetadata = [];
-
-        this.deletionMark = this.massDelete.getObject(this.spectrum.id);
-        if (typeof this.deletionMark === 'undefined') {
-          this.deletionMark = {
-            id: this.spectrum.id,
-            selected: false
-          };
-          this.massDelete.addForDeletion(this.deletionMark);
-        }
 
         if (typeof this.spectrum.score === 'undefined') {
           this.spectrum.score = {score: 0, relativeScore: 0, scaledScore: 0, impacts: []};
@@ -99,9 +96,28 @@ export class SpectraPanelComponent implements OnInit{
         return '/spectra/display/' + this.spectrum.id;
     }
 
-    massDeleteToggle(e: any) {
-      this.massDelete.toggleCheckbox(this.spectrum.id);
-      this.deletionMark.selected = !this.deletionMark.selected;
+    deleteSpectrum() {
+      const modalRef = this.modalService.open(DeleteConfirmModalComponent);
+      modalRef.componentInstance.message = 'Are you sure you want to delete spectrum ' + this.spectrum.id + '?';
+      modalRef.result.then(() => this.performDelete(), () => {});
+    }
+
+    performDelete() {
+      const token = this.auth.getCurrentUser().accessToken;
+      this.spectrumResource.delete(this.spectrum.id, token).subscribe(() => {
+        this.toaster.pop({
+          type: 'success',
+          title: 'Spectrum Deleted',
+          body: `Spectrum ${this.spectrum.id} was successfully deleted.`
+        });
+        this.deleted.emit(this.spectrum.id);
+      }, (error) => {
+        this.toaster.pop({
+          type: 'error',
+          title: 'Delete Failed',
+          body: error.message || 'An error occurred while deleting the spectrum.'
+        });
+      });
     }
 
     sameSubmitter(): boolean {
@@ -111,6 +127,10 @@ export class SpectraPanelComponent implements OnInit{
         }
       }
       return false;
+    }
+
+    canDelete(): boolean {
+      return this.sameSubmitter() || this.auth.isAdmin();
     }
 
   get stars() {

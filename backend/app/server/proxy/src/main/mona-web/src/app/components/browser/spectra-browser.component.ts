@@ -19,13 +19,14 @@ import {MassDeletionService} from '../../services/persistence/mass-deletion.serv
 import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {first} from 'rxjs/operators';
-import {faExclamationTriangle, faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faChartBar, faCopy} from '@fortawesome/free-solid-svg-icons';
+import {faExclamationTriangle, faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faChartBar, faCopy, faUser} from '@fortawesome/free-solid-svg-icons';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import {faBookmark} from '@fortawesome/free-regular-svg-icons';
 import {BehaviorSubject} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MassDeleteModalComponent} from './mass-delete-modal.component';
+import {DeleteConfirmModalComponent} from './delete-confirm-modal.component';
 
 @Component({
     selector: 'spectra-browser',
@@ -66,6 +67,7 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     faStarEmpty = faStarEmpty;
     faStarHalf = faStarHalfAlt;
     faCopy = faCopy;
+    faUser = faUser;
     faExclamationTriangle = faExclamationTriangle;
 
     constructor(public spectrum: Spectrum, public spectraQueryBuilderService: SpectraQueryBuilderService,  public location: Location,
@@ -528,6 +530,46 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
             });
           });
         }
+      });
+    }
+
+    sameSubmitter(spectrum: SpectrumModel): boolean {
+      if (this.authenticationService.isLoggedIn()) {
+        return this.authenticationService.getCurrentUser().emailAddress === spectrum.submitter.emailAddress;
+      }
+      return false;
+    }
+
+    canDelete(spectrum: SpectrumModel): boolean {
+      return this.sameSubmitter(spectrum) || this.authenticationService.isAdmin();
+    }
+
+    onSpectrumDeleted(id: string) {
+      this.spectra = this.spectra.filter(s => s.id !== id);
+    }
+
+    deleteSpectrum(id: string, event: Event) {
+      event.stopPropagation();
+      const modalRef = this.modalService.open(DeleteConfirmModalComponent);
+      modalRef.componentInstance.message = 'Are you sure you want to delete spectrum ' + id + '?';
+      modalRef.result.then(() => this.performDelete(id), () => {});
+    }
+
+    performDelete(id: string) {
+      const token = this.authenticationService.getCurrentUser().accessToken;
+      this.spectrum.delete(id, token).subscribe(() => {
+        this.toaster.pop({
+          type: 'success',
+          title: 'Spectrum Deleted',
+          body: `Spectrum ${id} was successfully deleted.`
+        });
+        this.spectra = this.spectra.filter(s => s.id !== id);
+      }, (error) => {
+        this.toaster.pop({
+          type: 'error',
+          title: 'Delete Failed',
+          body: error.message || 'An error occurred while deleting the spectrum.'
+        });
       });
     }
 
