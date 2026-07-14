@@ -182,8 +182,8 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
           // Handle general queries
           if (typeof this.queryParam !== 'undefined') {
             this.logger.info('Accepting filter from URL: "' + this.queryParam + '"');
-            this.query = this.queryParam;
           }
+          this.query = this.queryParam;
 
           // Handle page number
           if (typeof this.pageParam !== 'undefined') {
