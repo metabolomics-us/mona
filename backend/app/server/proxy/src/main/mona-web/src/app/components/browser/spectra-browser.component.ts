@@ -53,6 +53,7 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     initial;
     status;
     massChartReady;
+    suppressNextLoad = false;
     faEdit = faEdit;
     faTable = faTable;
     faList = faList;
@@ -128,6 +129,16 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
           this.sizeParam = params.size || 10;
           this.pageParam = parseInt(params.page, 10);
           this.tableParam = params.table || undefined;
+
+          // setAndWatchPaginationOptions() may rewrite the URL to add a 'table' param
+          // derived from a cookie, which re-triggers this subscription. Skip that
+          // re-triggered load, it would wipe/refetch spectra we just rendered and
+          // cause the mass spec/structure charts to disappear
+          if (this.suppressNextLoad) {
+            this.suppressNextLoad = false;
+            return;
+          }
+
           this.loadData();
       });
 
@@ -220,6 +231,20 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
          queryParamsHandling: 'merge', replaceUrl: true, skipLocationChange: false}).then();
     }
 
+    // Toggling view mode doesn't change what data is fetched, only how it's displayed,
+    // so we flag the resulting URL update to not trigger a redundant fetch of spectra
+    enableTableView() {
+      this.pagination.table = true;
+      this.suppressNextLoad = true;
+      this.setTable();
+    }
+
+    disableTableView() {
+      this.pagination.table = false;
+      this.suppressNextLoad = true;
+      this.setTable();
+    }
+
     setTableColumnsSelection() {
       this.tableColumnSelectedSubject.next(this.pagination.tableColumnSelected);
     }
@@ -296,6 +321,13 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
         if (tableView) {
             this.logger.info('Setting Table View');
             this.pagination.table = tableView;
+
+            // If 'table' wasn't already in the URL, setTable() below will add it via
+            // router.navigate(), which re-triggers the queryParams subscription above
+            if (typeof this.tableParam === 'undefined') {
+              this.suppressNextLoad = true;
+            }
+
             this.setTable();
         }
 

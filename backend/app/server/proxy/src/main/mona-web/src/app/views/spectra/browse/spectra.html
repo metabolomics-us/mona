@@ -96,14 +96,14 @@
     <div class="col-md-12">
         <div class="float-left">
             <button class="btn btn-primary mr-1 accessibility" aria-label="Enable compact view"
-                    *ngIf="pagination.table === false" (click)="pagination.table = true; setTable()"
+                    *ngIf="pagination.table === false" (click)="enableTableView()"
                     placement="right"
                     ngbTooltip="Enable compact view">
               <fa-icon [icon]="faList"></fa-icon>
             </button>
 
             <button class="btn btn-primary mr-1 accessibility" aria-label="Enable expanded view"
-                    *ngIf="pagination.table === true" (click)="pagination.table = false; setTable()"
+                    *ngIf="pagination.table === true" (click)="disableTableView()"
                     placement="right"
                     ngbTooltip="Enable expanded view">
               <fa-icon [icon]="faTable"></fa-icon>
