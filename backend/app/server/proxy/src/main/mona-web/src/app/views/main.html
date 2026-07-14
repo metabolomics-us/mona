@@ -27,13 +27,25 @@
             <hr/>
 
           <div class="news-cell">
+            <span class="news-title"><h3 class="h4">Upload/Deletion Refactor</h3></span>
+            <div class="news-date">July 15th, 2026</div>
+            <div class="content">
+              <p>
+                The upload system has been refactored to be more reliable. Users can now see their upload history under 'My Uploads'. The same page can be used to delete your spectra.
+                If you encounter any issues or have any suggestions, please report them to the <a href="https://github.com/metabolomics-us/mona/issues" target="_blank" style="text-decoration: underline"> issue tracker</a>.
+                <!-- TODO: Add link to the specific release -->
+                For a more complete list of changes, see the <a href="https://github.com/metabolomics-us/mona/releases/" target="_blank" style="text-decoration: underline">release notes</a>.
+              </p>
+            </div>
+          </div>
+          <hr/>
+          <div class="news-cell">
             <span class="news-title"><h3 class="h4">MoNA Overhaul</h3></span>
             <div class="news-date">September 15th, 2025</div>
             <div class="content">
               <p>
                 MoNA has received a major overhaul. Issues such as uploading spectra are finally fixed,
                 and almost every piece of the frontend has been updated with functionality and user experience in mind.
-                If you encounter any issues or have any suggestions, please report them to the <a href="https://github.com/metabolomics-us/mona/issues" target="_blank" style="text-decoration: underline"> issue tracker</a>.
                 For a more complete list of changes, see the <a href="https://github.com/metabolomics-us/mona/releases/tag/v2025.09.15" target="_blank" style="text-decoration: underline">release notes</a>.
               </p>
             </div>
@@ -48,19 +60,6 @@
                 the RSQL query system which has been changed to the <a [routerLink]="['/documentation/query']" style="text-decoration: underline">Spring Filtering system</a>.
                 For more detailed notes of the code changes, click <a href="https://github.com/metabolomics-us/mona/releases/tag/v2023.02.13" style="text-decoration: underline">here</a>.
                 To see new schema changes, see the updated <a href="http://mona.fiehnlab.ucdavis.edu/swagger-ui.html" style="text-decoration: underline">Swagger API Docs</a>.
-              </p>
-            </div>
-          </div>
-          <hr/>
-          <div class="news-cell">
-            <span class="news-title"><h3 class="h4">Ability to Delete Your Submitted Spectra</h3></span>
-            <div class="news-date">March 4th, 2022</div>
-            <div class="content">
-              <p>
-                A new feature has been introduced that allows signed in users to delete spectra that matches their submitter ID. This feature
-                is embedded into the spectra browser where you will see a new "My Spectra" button that can query for your spectra, as
-                well as a "Mark for deletion" checkbox around your submitted spectra. Once selected, just hit the "Batch Delete" button and remove
-                spectra that needs to be removed.
               </p>
             </div>
           </div>
