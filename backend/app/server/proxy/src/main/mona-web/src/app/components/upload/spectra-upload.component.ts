@@ -10,7 +10,7 @@ import {UploadJobService} from '../../services/upload/upload-job.service';
 import {UploadJobModel} from '../../mocks/upload-job.model';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {ChunkedUploadService} from '../../services/upload/chunked-upload.service';
-import {faUser, faCloudUploadAlt, faTrash, faExclamationTriangle, faSearch, faPlay, faBan} from '@fortawesome/free-solid-svg-icons';
+import {faUser, faCloudUploadAlt, faTrash, faExclamationTriangle, faSearch, faPlay, faBan, faSpinner} from '@fortawesome/free-solid-svg-icons';
 import {NGXLogger} from 'ngx-logger';
 import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {Router} from '@angular/router';
@@ -30,6 +30,7 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
   faSearch = faSearch;
   faPlay = faPlay;
   faBan = faBan;
+  faSpinner = faSpinner;
 
   jobs: UploadJobModel[] = [];
   authSubscription: Subscription;
@@ -37,6 +38,7 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
   refreshSubscription: Subscription;
   pendingDelete: UploadJobModel = null;
   pendingDeleteSpectraCount: number = null;
+  pendingDeleteCounting = false;
   pendingCancel: UploadJobModel = null;
   deletionProgress: {[jobId: string]: number} = {};
   // Whether the previous poll tick saw an upload in progress, used for one trailing fetch
@@ -176,25 +178,32 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Fetches an up to date spectra count before showing the confirmation, so the warning always
-  // reflects exactly what deleteJob is about to delete
+  // Opens the confirmation right away and fetches an up to date spectra count in the background,
+  // since counting can take a while on huge libraries
   confirmDelete(job: UploadJobModel, modalTemplate: TemplateRef<any>) {
-    const token = this.authenticationService.getCurrentUser().accessToken;
-    this.uploadJobResource.spectraCount(job.id, token).subscribe(
-      (count) => this.openDeleteConfirm(job, count, modalTemplate),
-      (error) => {
-        this.logger.error('failed to fetch spectra count: ' + error);
-        this.openDeleteConfirm(job, null, modalTemplate);
-      }
-    );
-  }
-
-  private openDeleteConfirm(job: UploadJobModel, spectraCount: number, modalTemplate: TemplateRef<any>) {
     this.pendingDelete = job;
-    this.pendingDeleteSpectraCount = spectraCount;
+    this.pendingDeleteSpectraCount = null;
+    this.pendingDeleteCounting = true;
     this.modalService.open(modalTemplate).result.then(
       () => this.deleteJob(job),
       () => {}
+    );
+
+    const token = this.authenticationService.getCurrentUser().accessToken;
+    this.uploadJobResource.spectraCount(job.id, token).subscribe(
+      (count) => {
+        // Ignore a late response if the user already moved on to another row's modal
+        if (this.pendingDelete === job) {
+          this.pendingDeleteSpectraCount = count;
+          this.pendingDeleteCounting = false;
+        }
+      },
+      (error) => {
+        this.logger.error('failed to fetch spectra count: ' + error);
+        if (this.pendingDelete === job) {
+          this.pendingDeleteCounting = false;
+        }
+      }
     );
   }
 

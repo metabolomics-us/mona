@@ -150,10 +150,16 @@
     <div class="modal-body">
         <p>Remove the upload of <b>{{pendingDelete?.fileName}}</b>?</p>
         <p>
-            <span *ngIf="pendingDeleteSpectraCount !== null; else unknownCount">
+            <span *ngIf="pendingDeleteSpectraCount !== null; else countPending">
                 This will permanently delete <b>{{pendingDeleteSpectraCount}} spectra</b>.
             </span>
-            <ng-template #unknownCount>This will permanently delete the spectra created by this upload.</ng-template>
+            <ng-template #countPending>
+              <br>
+                <span *ngIf="pendingDeleteCounting; else unknownCount" class="alert alert-info">
+                    Counting spectra <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon>
+                </span>
+                <ng-template #unknownCount>This will permanently delete the spectra created by this upload.</ng-template>
+            </ng-template>
         </p>
         <p class="text-danger" *ngIf="pendingDeleteSpectraCount !== null && pendingDelete && pendingDeleteSpectraCount > pendingDelete.persisted">
             <fa-icon [icon]="faExclamationTriangle"></fa-icon>
@@ -161,11 +167,12 @@
             more than the <b>{{pendingDelete.persisted}}</b> recorded for this upload. This can happen if you uploaded the same file name more than once.
             If that is not the case, please report this issue to the <a href="https://github.com/metabolomics-us/mona/issues" target="_blank">issue tracker</a>.
         </p>
-        <p>This also removes the associated files stored on the server (if any).</p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary accessibility" (click)="modal.dismiss()">Cancel</button>
-        <button type="button" class="btn btn-danger accessibility" (click)="modal.close()"><fa-icon [icon]="faTrash"></fa-icon> Delete</button>
+        <button type="button" class="btn btn-danger accessibility" [disabled]="pendingDeleteCounting"
+                [title]="pendingDeleteCounting ? 'Waiting for the spectra count' : ''"
+                (click)="modal.close()"><fa-icon [icon]="faTrash"></fa-icon> Delete</button>
     </div>
 </ng-template>
 
