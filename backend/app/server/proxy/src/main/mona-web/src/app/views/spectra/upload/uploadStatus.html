@@ -113,7 +113,7 @@
                                     <span *ngIf="job.total"> of {{job.total}}</span>
                                 </span>
                             </td>
-                            <td class="text-nowrap text-right align-middle">
+                            <td class="text-nowrap text-center align-middle">
                                 <button *ngIf="job.status === 'INTERRUPTED'" class="btn btn-sm btn-outline-primary btn-file mr-1"
                                         aria-label="Resume this upload"
                                         (keydown.enter)="resumeInput.click(); $event.preventDefault()"
