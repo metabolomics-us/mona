@@ -143,6 +143,12 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
     return job.status === 'UPLOADING' || job.status === 'SCHEDULED' || job.status === 'RUNNING' || job.status === 'CANCELLING';
   }
 
+  // Jobs stopped short of completion. Their progress bars are grayed out so a stuck percentage
+  // does not read as ongoing progress
+  isHalted(job: UploadJobModel): boolean {
+    return job.status === 'FAILED' || job.status === 'INTERRUPTED' || job.status === 'CANCELLED';
+  }
+
   // Whether the row can still be cancelled. CANCELLING rows show the button disabled instead
   canCancel(job: UploadJobModel): boolean {
     return job.status === 'UPLOADING' || job.status === 'INTERRUPTED' || job.status === 'SCHEDULED' || job.status === 'RUNNING';
