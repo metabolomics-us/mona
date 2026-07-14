@@ -2,7 +2,7 @@
 # Rebuild and redeploy one or more MoNA services locally
 #
 # Usage:
-#   ./dev_deploy.sh <service> [service2 ...]
+#   ./build_and_deploy.sh <service> [service2 ...]
 #
 # Services:
 #   persistence     backend/core/rest/persistence-server
@@ -26,11 +26,11 @@
 #   --no-deploy, -nd  Build (and tag) images but skip redeploying containers
 #
 # Examples:
-#   ./dev_deploy.sh persistence
-#   ./dev_deploy.sh persistence auth
-#   ./dev_deploy.sh --dry-run persistence auth
-#   ./dev_deploy.sh --tag prod,local persistence
-#   ./dev_deploy.sh --no-deploy persistence
+#   ./build_and_deploy.sh persistence
+#   ./build_and_deploy.sh persistence auth
+#   ./build_and_deploy.sh --dry-run persistence auth
+#   ./build_and_deploy.sh --tag prod,local persistence
+#   ./build_and_deploy.sh --no-deploy persistence
 
 set -euo pipefail
 
@@ -217,7 +217,7 @@ done
 # ─── Dry run ──────────────────────────────────────────────────────────────────
 
 if [[ "$DRY_RUN" == true ]]; then
-  print_banner "$CYAN" "DRY RUN — MoNA Dev Deploy" "No commands will be executed"
+  print_banner "$CYAN" "DRY RUN — MoNA Build & Deploy" "No commands will be executed"
   echo ""
   printf "  ${DIM}flags: %s%s%s${RESET}\n" \
     "$([[ "$ALSO_MAKE" == true ]] && echo '--also-make ' || echo '')" \
@@ -245,7 +245,7 @@ fi
 
 # ─── ECR Login ────────────────────────────────────────────────────────────────
 
-print_banner "$BLUE" "MoNA Dev Deploy" "Authenticating with AWS ECR..."
+print_banner "$BLUE" "MoNA Build & Deploy" "Authenticating with AWS ECR..."
 echo ""
 printf "  ${CYAN}Logging in to public.ecr.aws/fiehnlab...${RESET}\n"
 if aws ecr-public get-login-password --region us-east-1 \
