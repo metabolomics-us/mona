@@ -19,7 +19,7 @@ import {MassDeletionService} from '../../services/persistence/mass-deletion.serv
 import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {first} from 'rxjs/operators';
-import {faExclamationTriangle, faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faChartBar, faCopy, faUser} from '@fortawesome/free-solid-svg-icons';
+import {faExclamationTriangle, faEdit, faTable, faList, faSearch, faCaretDown, faSync, faServer, faSpinner, faTrash, faChartBar, faCopy, faUser} from '@fortawesome/free-solid-svg-icons';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import {faBookmark} from '@fortawesome/free-regular-svg-icons';
@@ -57,6 +57,7 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     faTable = faTable;
     faList = faList;
     faSearch = faSearch;
+    faCaretDown = faCaretDown;
     faSync = faSync;
     faServer = faServer;
     faSpinner = faSpinner;

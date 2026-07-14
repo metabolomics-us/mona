@@ -35,14 +35,16 @@
                     [attr.aria-expanded]="!queryInfoCollapsed"
                     aria-controls="queryInfoPanel"
                     (click)="queryInfoCollapsed = !queryInfoCollapsed">
-              <fa-icon [icon]="faSearch" aria-hidden="true"></fa-icon> Query Information
+                    Query Information <fa-icon [icon]="faCaretDown"
+                                               style="display: inline-block; transition: transform 0.4s ease"
+                                               [style.transform]="queryInfoCollapsed ? 'rotate(0deg)' : 'rotate(-180deg)'"></fa-icon>
             </button>
           </div>
           <div id="queryInfoPanel" [ngbCollapse]="queryInfoCollapsed">
             <div class="card-body">
 
                   <div>
-                    <fa-icon [icon]="faExclamationTriangle"></fa-icon> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query downloads
+                    <fa-icon [icon]="faExclamationTriangle"></fa-icon> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query downloads with cURL
                   </div>
 
                   <br/>
