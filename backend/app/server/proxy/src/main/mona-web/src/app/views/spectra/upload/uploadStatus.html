@@ -164,8 +164,8 @@
         <p class="text-danger" *ngIf="pendingDeleteSpectraCount !== null && pendingDelete && pendingDeleteSpectraCount > pendingDelete.persisted">
             <fa-icon [icon]="faExclamationTriangle"></fa-icon>
             This will delete <b>{{pendingDeleteSpectraCount}}</b> spectra,
-            more than the <b>{{pendingDelete.persisted}}</b> recorded for this upload. This can happen if you uploaded the same file name more than once.
-            If that is not the case, please report this issue to the <a href="https://github.com/metabolomics-us/mona/issues" target="_blank">issue tracker</a>.
+            more than the <b>{{pendingDelete.persisted}}</b> recorded for this upload. This can happen if you uploaded the same file name more than once, or if the upload failed.
+            If either is not the case, please report this issue to the <a href="https://github.com/metabolomics-us/mona/issues" target="_blank">issue tracker</a>.
         </p>
     </div>
     <div class="modal-footer">
