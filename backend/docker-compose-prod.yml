@@ -66,6 +66,7 @@ services:
       - ./nginx_v2/certs:/etc/letsencrypt
       - ./nginx_v2/config/mona.fiehnlab.ucdavis.edu.conf:/etc/nginx/conf.d/mona.fiehnlab.ucdavis.edu.conf
       - ./nginx_v2/config/massbank.us.conf:/etc/nginx/conf.d/massbank.us.conf
+      - ./nginx_v2/maintenance:/etc/nginx/maintenance:ro
     logging:
       driver: awslogs
       options:

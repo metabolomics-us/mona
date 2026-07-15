@@ -10,7 +10,8 @@ backend/load_test/*.hprof
 ./data
 git.properties
 target/
-nginx_v2/
+backend/nginx_v2/certs/
+backend/nginx_v2/maintenance/maintenance.flag
 .todo.txt.swp
 pom.xml.bak
 release.txt
