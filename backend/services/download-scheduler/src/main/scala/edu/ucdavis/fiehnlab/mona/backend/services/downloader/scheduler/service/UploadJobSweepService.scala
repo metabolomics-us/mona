@@ -4,9 +4,13 @@ import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, UploadJob}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, UploadJob, UploadJobRequest}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, UploadJobRepository}
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.amqp.core.{Message, MessageDeliveryMode}
+import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
+import org.springframework.boot.context.event.ApplicationReadyEvent
+import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.{Propagation, Transactional}
@@ -31,11 +35,80 @@ class UploadJobSweepService extends LazyLogging {
   @Autowired
   val uploadStorageService: UploadStorageService = null
 
+  @Autowired
+  val rabbitTemplate: RabbitTemplate = null
+
+  @Autowired
+  @Qualifier("spectra-upload-queue")
+  val uploadQueueName: String = null
+
   @Value("${mona.uploads.interrupted-threshold-minutes:5}")
   val thresholdMinutes: Int = 5
 
   private val sweepInProgress: AtomicBoolean = new AtomicBoolean(false)
   private val finalizeInProgress: AtomicBoolean = new AtomicBoolean(false)
+
+  /**
+    * Reconciles upload jobs left mid-lifecycle by a previous run when the service starts. At startup
+    * the parse worker is empty and this queue is consumed in exactly one place, so a job's status is
+    * unambiguous: nothing is parsing, and no acked message will redeliver on its own. Each
+    * non-terminal state is settled so no job can sit stuck after a restart:
+    *
+    *   - RUNNING: was mid-parse in the dead run. The parser has no resume, so continuing would only
+    *     duplicate the spectra persisted before the restart. Marked FAILED with its file dropped,
+    *     leaving the user to delete and retry.
+    *   - SCHEDULED: was enqueued but never claimed. Its message is either still in the durable queue
+    *     (and will redeliver) or was acked and lost. The two are indistinguishable here, so the job
+    *     is re-enqueued rather than failed: a still-queued original just becomes a duplicate that
+    *     processJob dedups, and a lost one gets a fresh message, so queued uploads survive a restart.
+    *   - CANCELLING: a cancel was requested but never finalized by the listener. Nothing is parsing
+    *     anymore, so the requested outcome already holds; reconcileStuckCancellations closes it out.
+    *
+    * UPLOADING and INTERRUPTED are untouched (a chunked transfer still resumes), as is DELETING,
+    * whose spectra deletion can legitimately still be running in the persistence server and is
+    * settled only by the weekly reconcileStuckDeletions once its DeletionJob is known to be done
+    */
+  @EventListener(Array(classOf[ApplicationReadyEvent]))
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  def reconcileUploadsOnStartup(): Unit = {
+    failOrphanedRunningJobs()
+    reEnqueueScheduledJobs()
+    reconcileStuckCancellations()
+  }
+
+  /** A RUNNING job at startup died mid-parse and cannot resume, so it is failed and its file dropped */
+  private def failOrphanedRunningJobs(): Unit = {
+    var count = 0
+    uploadJobRepository.findByStatus(UploadJob.STATUS_RUNNING).asScala.foreach { job =>
+      uploadStorageService.deleteJob(job.getId)
+      job.setStatus(UploadJob.STATUS_FAILED)
+      job.setErrorMessage("Interrupted by a server restart, delete and retry")
+      job.setLastUpdated(new Date())
+      uploadJobRepository.save(job)
+      count += 1
+      logger.info(s"reconciled upload job ${job.getId} as FAILED (was RUNNING at startup, parse never finished)")
+    }
+    if (count > 0) {
+      logger.info(s"orphaned parse reconciliation complete: $count job(s) reconciled")
+    }
+  }
+
+  /** A SCHEDULED job at startup is re-enqueued so a queued upload survives a restart; a still-queued
+    * original just becomes a duplicate that processJob dedups against the claimed RUNNING status */
+  private def reEnqueueScheduledJobs(): Unit = {
+    var count = 0
+    uploadJobRepository.findByStatus(UploadJob.STATUS_SCHEDULED).asScala.foreach { job =>
+      rabbitTemplate.convertAndSend(uploadQueueName, new UploadJobRequest(job.getId), (message: Message) => {
+        message.getMessageProperties.setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+        message
+      })
+      count += 1
+      logger.info(s"re-enqueued upload job ${job.getId} (was SCHEDULED at startup)")
+    }
+    if (count > 0) {
+      logger.info(s"scheduled upload re-enqueue complete: $count job(s) re-enqueued")
+    }
+  }
 
   @Scheduled(cron = "0 * * * * *")
   @Transactional(propagation = Propagation.REQUIRES_NEW)

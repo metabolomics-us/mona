@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import java.util.Date
+import java.util.concurrent.{ExecutorService, Executors}
+import javax.annotation.PreDestroy
 
 /**
   * Consumes upload requests off the durable upload queue and walks the UploadJob through its
@@ -51,6 +53,15 @@ class UploadJobListener extends GenericMessageListener[UploadJobRequest] with La
   @Autowired
   val libraryPrefixCounterService: LibraryPrefixCounterService = null
 
+  // Parsing runs here rather than on the AMQP listener thread so handleMessage can return (and the
+  // broker can ack) the instant a request is received. Holding the delivery open for the whole
+  // parse (minutes to hours on a large library) trips RabbitMQ's consumer_timeout, which requeues
+  // the message and redelivers a duplicate onto the by-then-deleted file
+  private val parseExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+
+  @PreDestroy
+  def shutdown(): Unit = parseExecutor.shutdown()
+
   // Flushed to the DB every N spectra rather than on every one
   private val ProgressFlushBatchSize = 200
 
@@ -68,11 +79,43 @@ class UploadJobListener extends GenericMessageListener[UploadJobRequest] with La
       logger.error(s"no upload job found for id $jobId, ignoring request")
     } else if (job.getStatus == UploadJob.STATUS_CANCELLING) {
       // Cancelled while still sitting in the queue, nothing was parsed yet
-      job.setStatus(UploadJob.STATUS_CANCELLED)
-      job.setLastUpdated(new Date())
-      uploadJobRepository.save(job)
-      uploadStorageService.deleteJob(jobId)
-      logger.info(s"upload job $jobId cancelled before parsing started")
+      finalizeCancelledBeforeParse(job)
+    } else if (job.getStatus != UploadJob.STATUS_SCHEDULED) {
+      // Idempotency guard: only a freshly SCHEDULED job is work to be done
+      logger.warn(s"ignoring upload request for job $jobId in non-schedulable state ${job.getStatus}")
+    } else {
+      // Leave the job SCHEDULED and hand off to the background worker
+      parseExecutor.submit(new Runnable {
+        override def run(): Unit = processJob(jobId)
+      })
+    }
+  }
+
+  /** Finalizes a job that was cancelled before any parsing happened: nothing was persisted, so the
+    * spectra count stays zero and the raw file is dropped */
+  private def finalizeCancelledBeforeParse(job: UploadJob): Unit = {
+    job.setStatus(UploadJob.STATUS_CANCELLED)
+    job.setLastUpdated(new Date())
+    uploadJobRepository.save(job)
+    uploadStorageService.deleteJob(job.getId)
+    logger.info(s"upload job ${job.getId} cancelled before parsing started")
+  }
+
+  /** Parses the assembled file and persists every spectrum, walking the job to a terminal status.
+    * Runs on parseExecutor, decoupled from the AMQP delivery, driven entirely by the durable
+    * UploadJob row so it is recoverable independently of the message */
+  private def processJob(jobId: String): Unit = {
+    val job: UploadJob = uploadJobRepository.findById(jobId).orElse(null)
+
+    if (job == null) {
+      logger.error(s"no upload job found for id $jobId when starting parse, ignoring")
+    } else if (job.getStatus == UploadJob.STATUS_CANCELLING) {
+      // A cancel request can land in the window between scheduling and the worker picking the job up
+      finalizeCancelledBeforeParse(job)
+    } else if (job.getStatus != UploadJob.STATUS_SCHEDULED) {
+      // Dedup: a duplicate delivery (or a startup re-enqueue racing the original) already claimed or
+      // finished this job 
+      logger.warn(s"skipping parse for job $jobId already in state ${job.getStatus}")
     } else {
       var parsed = 0L
       var persisted = 0L
