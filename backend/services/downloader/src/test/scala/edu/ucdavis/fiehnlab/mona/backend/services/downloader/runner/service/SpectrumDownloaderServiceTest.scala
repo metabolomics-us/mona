@@ -197,7 +197,7 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
     "export predefined query for all spectra" in {
       val query: PredefinedQuery = new PredefinedQuery("All Spectra", "", "", 0, null, null, null)
       val result: PredefinedQuery = transactionTemplate.execute { x =>
-        val z = downloaderService.generatePredefinedExport(query, compress = false, enableAllSpectraStaticFiles = true)
+        val z = downloaderService.generatePredefinedExport(query, compress = false)
         Hibernate.initialize(z)
         z
       }
@@ -215,34 +215,17 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
 
       Files.delete(Paths.get(dir, result.getJsonExport.getQueryFile))
 
-
-      // Check that png export was created
+      // Static exports are disabled, so no spectrum-image or identifier-table files are produced
       val pngFile: Path = Paths.get(dir, "static", result.getJsonExport.getExportFile.replace(".json", "-spectrum-images.csv"))
-      val pngDescriptionFile: Path = Paths.get(dir, "static", result.getJsonExport.getExportFile.replace(".json", "-spectrum-images.csv") +".description.txt")
-
-      assert(Files.exists(pngFile))
-      assert(Files.exists(pngDescriptionFile))
-      assert(new String(Files.readAllBytes(pngFile)).trim.split("\n").length == 59)
-
-      Files.delete(pngFile)
-      Files.delete(pngDescriptionFile)
-
-      // Check that identifier table was created
       val idsFile: Path = Paths.get(dir, "static", result.getJsonExport.getExportFile.replace(".json", "-identifier-table.csv"))
-      val idsDescriptionFile: Path = Paths.get(dir, "static", result.getJsonExport.getExportFile.replace(".json", "-identifier-table.csv") +".description.txt")
-
-      assert(Files.exists(idsFile))
-      assert(Files.exists(idsDescriptionFile))
-      assert(new String(Files.readAllBytes(idsFile)).trim.split("\n").length == 59)
-
-      Files.delete(idsFile)
-      Files.delete(idsDescriptionFile)
+      assert(Files.notExists(pngFile))
+      assert(Files.notExists(idsFile))
     }
 
     "export predefined query for query" in {
       val query: PredefinedQuery = new PredefinedQuery("Negative Mode Spectra", "", "metaData.name:'ion mode' and metaData.value:'negative'", 0, null, null, null)
       val result: PredefinedQuery = transactionTemplate.execute { x =>
-        val z = downloaderService.generatePredefinedExport(query, compress = false, enableAllSpectraStaticFiles = true)
+        val z = downloaderService.generatePredefinedExport(query, compress = false)
         Hibernate.initialize(z)
         z
       }
@@ -259,10 +242,6 @@ class SpectrumDownloaderServiceTest extends AnyWordSpec with LazyLogging with Ev
       })
 
       Files.delete(Paths.get(dir, result.getJsonExport.getQueryFile))
-
-      // Check that png export was NOT created
-      val pngFile: Path = Paths.get(dir, "static", result.getJsonExport.getExportFile.replace(".json", "-spectrum-images.csv"))
-      assert(Files.notExists(pngFile))
     }
   }
 }

@@ -13,27 +13,3 @@
 
     </div>
 </div>
-<br/>
-<div class="row" *ngIf="static?.length > 0">
-    <div class="col-md-12">
-      <br />
-      <br />
-      <br />
-      <hr>
-      <h3>Additional Downloads</h3>
-
-        <div class="list-group panel-query-tree well">
-            <div class="list-group-item" *ngFor="let st of static">
-                <b>{{st.category}}</b>
-                <div class="list-group-item" style="padding-left: 3em;" *ngFor="let file of $any(st.files)">
-                    <span>{{file.description}}</span>
-                    <span class="pull-right">
-                        <a [routerLink]="[file.path]" target="_blank" gaEvent="['download', 'click', file.fileName]" class="btn btn-primary btn-sm">
-                          <fa-icon [icon]="faDownload"></fa-icon> Download
-                        </a>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

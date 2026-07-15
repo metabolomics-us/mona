@@ -349,24 +349,6 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateStaticQueries() {
-    if (this.auth.isAdmin()) {
-      this.adminService.updateStaticDownloads(this.auth.getCurrentUser().accessToken).subscribe(() => {
-        this.toaster.pop({
-          type: 'success',
-          title: 'Static Queries Re-Generating!',
-          body: 'Static queries are re-generating. Please allow up to an hour for this operation to complete.'
-        });
-      }, (error) => {
-        this.toaster.pop({
-          type: 'error',
-          title: 'There was a problem requesting an update to static queries.',
-          body: `${error.message}`
-        });
-      });
-    }
-  }
-
   reCurateAllData() {
     if (this.auth.isAdmin()) {
       this.adminService.reCurateAllData(this.auth.getCurrentUser().accessToken).subscribe(() => {

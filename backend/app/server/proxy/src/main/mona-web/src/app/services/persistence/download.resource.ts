@@ -15,9 +15,4 @@ export class Download{
         const api = `${environment.REST_BACKEND_SERVER}/rest/downloads/predefined`;
         return this.http.get(api);
     }
-
-    getStaticDownloads(): Observable<any> {
-        const api = `${environment.REST_BACKEND_SERVER}/rest/downloads/static`;
-        return this.http.get(api);
-    }
 }
