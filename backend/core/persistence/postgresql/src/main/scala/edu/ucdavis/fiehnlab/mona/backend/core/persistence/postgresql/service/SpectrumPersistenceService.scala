@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 
 import javax.persistence.EntityManager
 import java.lang
@@ -42,6 +44,13 @@ class SpectrumPersistenceService extends LazyLogging {
 
   @Autowired
   private val entityManager: EntityManager = null
+
+  @Autowired
+  private val transactionManager: PlatformTransactionManager = null
+
+  // Built lazily (once transactionManager is injected) rather than via @PostConstruct, since a
+  // lazy val already guarantees single, on-first-use initialization
+  private lazy val transactionTemplate = new TransactionTemplate(transactionManager)
 
   // Spectra deleted per batch before the persistence context is cleared. Keeping the context
   // small is what avoids the O(n^2) dirty checking that throttled the old delete loop
@@ -311,11 +320,49 @@ class SpectrumPersistenceService extends LazyLogging {
   }
 
   /**
-   * deletes a single batch of spectra, one row at a time so a failure on one row is isolated.
-   * The persistence context is cleared after the batch (and after any failure) to keep dirty
-   * checking cheap and to recover from a failed flush
+   * deletes a batch of spectra. Tries the fast path first, if anything in the batch fails, the whole
+   * transaction rolls back (nothing partially deleted) and the batch is retried row by row, each on
+   * its own auto-committed transaction, so a single bad row can't take down the rest of the batch.
    */
   private def deleteBatch(batch: Iterable[Spectrum], job: DeletionJob, skipped: scala.collection.mutable.Set[String]): Unit = {
+    val fastPathSucceeded =
+      try {
+        deleteBatchFast(batch)
+        true
+      } catch {
+        case e: Exception =>
+          logger.warn(s"batched delete failed for a batch of ${batch.size} spectra, retrying row by row: ${e.getMessage}")
+          entityManager.clear()
+          false
+      }
+
+    if (fastPathSucceeded) {
+      batch.foreach { spectrum =>
+        fireDeleteEvent(spectrum)
+        job.setDeleted(job.getDeleted + 1)
+      }
+    } else {
+      deleteBatchSlow(batch, job, skipped)
+    }
+
+    entityManager.clear()
+  }
+
+  /**
+   * deletes every spectrum in the batch via the normal Hibernate entity delete, all within a single
+   * transaction. This changes only how many commits the batch costs, not what gets deleted or how
+   */
+  private def deleteBatchFast(batch: Iterable[Spectrum]): Unit = {
+    transactionTemplate.execute { _ =>
+      batch.foreach(spectrumResultRepository.delete)
+    }
+  }
+
+  /**
+   * deletes a batch one row at a time, each on its own auto-committed transaction, so a failure on
+   * one row is isolated. Used as a fallback when the batched fast path fails
+   */
+  private def deleteBatchSlow(batch: Iterable[Spectrum], job: DeletionJob, skipped: scala.collection.mutable.Set[String]): Unit = {
     batch.foreach { spectrum =>
       try {
         spectrumResultRepository.delete(spectrum)
@@ -331,8 +378,6 @@ class SpectrumPersistenceService extends LazyLogging {
           entityManager.clear()
       }
     }
-
-    entityManager.clear()
   }
 
   private def saveJobProgress(job: DeletionJob): Unit = {
