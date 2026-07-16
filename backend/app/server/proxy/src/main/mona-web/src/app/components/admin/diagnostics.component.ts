@@ -3,7 +3,7 @@ import {AuthenticationService} from '../../services/authentication.service';
 import {AdminService} from '../../services/persistence/admin.resource';
 import {NGXLogger} from 'ngx-logger';
 import {ToasterService} from 'angular2-toaster';
-import {faSyncAlt} from '@fortawesome/free-solid-svg-icons';
+import {faSyncAlt, faBomb} from '@fortawesome/free-solid-svg-icons';
 import {Subscription} from 'rxjs';
 import * as d3 from 'd3';
 import 'nvd3';
@@ -14,6 +14,7 @@ import 'nvd3';
 })
 export class DiagnosticsComponent implements OnInit, OnDestroy {
   faSyncAlt = faSyncAlt;
+  faBomb = faBomb;
   services: { [key: string]: string };
   serviceKeys: string[];
   selectedService: string;

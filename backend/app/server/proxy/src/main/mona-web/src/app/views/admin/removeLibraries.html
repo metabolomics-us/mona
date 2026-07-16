@@ -1,6 +1,11 @@
+<div>
+  <br>
+  <h1 class="h2"><fa-icon [icon]="faChartBar"></fa-icon> Manage Spectra</h1>
+  <br/>
+</div>
 <div class="row" *ngIf="!auth.isLoggedIn()">
   <div class="col-md-12">
-    <h1 class="h3"><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="auth.requestModal()" class="davis-blue text-decoration-none">log in</a>!</h1>
+    <h2 class="h3"><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="auth.requestModal()" class="davis-blue text-decoration-none">log in</a>!</h2>
   </div>
 </div>
 <div *ngIf="auth.isLoggedIn() && auth.isAdmin()" class="container">
@@ -8,7 +13,7 @@
     <div class="col">
       <br/>
       <div class="row justify-content-center">
-        <h1 class="h3">Delete Libraries</h1>
+        <h2 class="h3">Delete Libraries</h2>
       </div>
       <hr/>
       <div class="row justify-content-center" *ngIf="libraryTags && libraryTags.length === 0">
@@ -46,7 +51,7 @@
     <div class="col">
       <br/>
       <div class="row justify-content-center">
-        <h1 class="h3">Admin Buttons</h1>
+        <h2 class="h3">Admin Buttons</h2>
       </div>
       <hr/>
       <admin-button label="Update Statistics" info="Updates all statistics including library and spectra counts, statistics page, submitter avg. scores, etc." (action)="updateStatistics()"></admin-button>
@@ -59,7 +64,7 @@
     <div class="col">
       <br/> <br/> <br/> <br/> <br/>
       <div class="row justify-content-center">
-        <h1 class="h3">Force Delete Spectra by ID</h1>
+        <h2 class="h3">Force Delete Spectra by ID</h2>
       </div>
       <hr/>
       <div class="row justify-content-center">
@@ -76,7 +81,7 @@
     <div class="col">
       <br/> <br/> <br/>
       <div class="row justify-content-center">
-        <h1 class="h3">Change a User's Password</h1>
+        <h2 class="h3">Change a User's Password</h2>
       </div>
       <hr/>
       <div class="row justify-content-center">

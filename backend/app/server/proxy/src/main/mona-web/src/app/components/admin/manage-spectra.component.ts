@@ -1,7 +1,7 @@
 import {AuthenticationService} from '../../services/authentication.service';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TagService} from '../../services/persistence/tag.resource';
-import {faEdit, faMinusSquare, faUser} from '@fortawesome/free-solid-svg-icons';
+import {faEdit, faMinusSquare, faUser, faChartBar} from '@fortawesome/free-solid-svg-icons';
 import {NGXLogger} from 'ngx-logger';
 import {forkJoin, interval, of, Subscription} from 'rxjs';
 import {catchError, map, switchMap} from 'rxjs/operators';
@@ -18,6 +18,7 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
   faEdit = faEdit;
   faMinusSquare = faMinusSquare;
   faUser = faUser;
+  faChartBar = faChartBar;
   libraryTags;
   formErrors;
   hidePasswords;
