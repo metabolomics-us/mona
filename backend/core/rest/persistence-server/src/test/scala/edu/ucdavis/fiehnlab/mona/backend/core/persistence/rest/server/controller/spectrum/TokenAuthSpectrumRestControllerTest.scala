@@ -204,6 +204,27 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         })
       }
 
+      "we should reject a size above the maximum page size with a 400 using GET at /rest/spectra" in {
+        given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=50001").`then`().statusCode(400)
+      }
+
+      "we should reject a size above the maximum page size with a 400 using GET at /rest/spectra/search" in {
+        given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?size=50001&query=metaData.name:'ion mode'").`then`().statusCode(400)
+      }
+
+      "we should announce the applied default page size via the X-Page-Size header when no size is given" in {
+        val response = given().contentType("application/json; charset=UTF-8").when().get("/spectra").`then`().statusCode(200).extract()
+        assert(response.header("X-Page-Size") == "50000")
+
+        val searchResponse = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData.name:'ion mode' and metaData.value:'negative'").`then`().statusCode(200).extract()
+        assert(searchResponse.header("X-Page-Size") == "50000")
+      }
+
+      "we should not add pagination headers when an explicit size is given" in {
+        val response = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10").`then`().statusCode(200).extract()
+        assert(response.header("X-Page-Size") == null)
+      }
+
       //wont work correclty as this test is dependent on deleting nothing
 //      "we need to be authenticated to delete spectra " in {
 //        given().when().delete(s"/spectra/111").`then`().statusCode(401)

@@ -8,7 +8,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.Autowired
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, SpectrumRepository}
 import com.turkraft.springfilter.boot.FilterSpecification
-import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.jpa.domain.Specification
@@ -102,7 +101,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param spectrum
    * @return
    */
-  @CacheEvict(value = Array("spectra"))
   final def update(spectrum: Spectrum): Unit = {
     spectrum.setLastUpdated(new Date())
     val result = spectrumResultRepository.save(spectrum)
@@ -117,7 +115,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @tparam S
    * @return
    */
-  @CacheEvict(value = Array("spectra"))
   final def save[S <: Spectrum](entity: S): S = {
     val result = spectrumResultRepository.save(entity)
     fireAddEvent(result)
@@ -137,7 +134,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param spectrum
    * @return
    */
-  @CacheEvict(value = Array("spectra"))
   final def delete(spectrum: Spectrum): Unit = {
     spectrumResultRepository.delete(spectrum)
     spectrumResultRepository.flush()
@@ -150,7 +146,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param id
    * @return
    */
-  @Cacheable(value = Array("spectra"))
   def findByMonaId(id: String): Spectrum = spectrumResultRepository.findById(id).orElse(null)
 
   /**
@@ -213,7 +208,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param query
    * @return
    */
-  @Cacheable(value = Array("spectra"))
   def findAll(query: String): lang.Iterable[Spectrum] = {
 
     /**
@@ -243,7 +237,6 @@ class SpectrumPersistenceService extends LazyLogging {
    *
    * @return
    */
-  @Cacheable(value = Array("spectra"))
   def count(): Long = spectrumResultRepository.count()
 
   /**
@@ -251,19 +244,16 @@ class SpectrumPersistenceService extends LazyLogging {
    *
    * @return
    */
-  @Cacheable(value = Array("spectra"))
   def count(query: String): Long = {
     val spec: Specification[Spectrum] = new FilterSpecification[Spectrum](query)
     val count: Long = spectrumResultRepository.count(spec)
     count
   }
 
-  @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteSpectraByIdIn(ids: java.util.List[String]): Unit = {
     spectrumResultRepository.findAllByIdIn(ids).asScala.foreach(delete)
   }
 
-  @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteSpectraByQuery(query: String): Unit = {
     val spec: Specification[Spectrum] = new FilterSpecification[Spectrum](query)
     spectrumResultRepository.findAll(spec).asScala.foreach(delete)
@@ -278,7 +268,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param query a RSQL or text query, must be non empty (an empty query would match everything)
    * @param job   the tracking row whose deleted/skipped counters are updated as work progresses
    */
-  @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteSpectraByQueryTracked(query: String, job: DeletionJob): Unit = {
     val baseSpec: Specification[Spectrum] = new FilterSpecification[Spectrum](query)
     val skipped = scala.collection.mutable.Set[String]()
@@ -309,7 +298,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param ids the mona ids to delete
    * @param job the tracking row whose deleted/skipped counters are updated as work progresses
    */
-  @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteSpectraByIdsTracked(ids: java.util.List[String], job: DeletionJob): Unit = {
     val skipped = scala.collection.mutable.Set[String]()
 
@@ -390,7 +378,6 @@ class SpectrumPersistenceService extends LazyLogging {
   /**
    * delete all objects in the system
    */
-  @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteAll(): Unit = spectrumResultRepository.findAll().asScala.foreach(delete)
 
   /**
@@ -399,7 +386,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param ids
    * @return
    */
-  @Cacheable(value = Array("spectra"))
   def findAll(ids: java.util.List[String]): java.util.List[Spectrum] = spectrumResultRepository.findAllByIdIn(ids)
 
   /**
@@ -408,7 +394,6 @@ class SpectrumPersistenceService extends LazyLogging {
    * @param id
    * @return
    */
-  @Cacheable(value = Array("spectra"))
   def existsById(id: String): Boolean = spectrumResultRepository.existsById(id)
 
   /**
@@ -428,10 +413,8 @@ class SpectrumPersistenceService extends LazyLogging {
   def findAll(pageable: Pageable): Page[Spectrum] = spectrumResultRepository.findAll(pageable)
 
 
-  @CacheEvict(value = Array("spectra"))
   def deleteById(id: String): Unit = spectrumResultRepository.deleteById(id)
 
-  @CacheEvict(value = Array("spectra"), allEntries = true)
   def deleteAll(entities: lang.Iterable[_ <: Spectrum]): Unit = spectrumResultRepository.deleteAll(entities)
 
   //def saveAll(spectra: List[SpectrumResult]): Unit = spectrumResultRepository.saveAll(spectra)

@@ -7,13 +7,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, Wra
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
+import org.springframework.data.domain.{PageRequest, Sort}
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, Spectrum, SpectrumDeletionRequest, SpectrumSubmitter, Submitter}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, SubmitterRepository}
 import org.springframework.amqp.core.MessageDeliveryMode
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -51,6 +50,41 @@ class SpectrumRestController extends LazyLogging {
   @Qualifier("spectra-deletion-queue")
   val deletionQueueName: String = null
 
+  // Default page size applied when a list/search request omits size, and the hard maximum for
+  // explicit sizes
+  val maxPageSize = 50000
+
+  /**
+    * Builds the response headers for a request whose size was defaulted to maxPageSize. X-Page-Size
+    * announces the applied default. When the page came back full, more results may exist, so a
+    * RFC 8288 Link rel="next" header pointing at the following page is added as well, built from
+    * the current request with any page/size parameters rewritten
+    */
+  private def defaultedPageHeaders(page: Int, resultCount: Int): HttpHeaders = {
+    val headers = new HttpHeaders()
+    headers.add("X-Page-Size", maxPageSize.toString)
+
+    if (resultCount == maxPageSize) {
+      val retainedParams = Option(httpServletRequest.getQueryString).getOrElse("")
+        .split("&").filter(_.nonEmpty)
+        .filterNot(param => param.startsWith("page=") || param.startsWith("size="))
+      val nextParams = (retainedParams :+ s"page=${page + 1}" :+ s"size=$maxPageSize").mkString("&")
+      headers.add(HttpHeaders.LINK, s"<${httpServletRequest.getRequestURL}?$nextParams>; rel=\"next\"")
+    }
+
+    headers
+  }
+
+  /**
+    * rejects an explicit size above maxPageSize loudly instead of silently truncating
+    */
+  private def oversizeError[T]: ResponseEntity[T] = {
+    val body: java.util.Map[String, String] = java.util.Map.of(
+      "error", s"requested size exceeds the maximum of $maxPageSize, use page/size pagination or the downloads API for bulk exports"
+    )
+    new ResponseEntity(body, HttpStatus.BAD_REQUEST).asInstanceOf[ResponseEntity[T]]
+  }
+
   /**
     * resolves the email of the caller from the Authorization header so deletion jobs can record
     * who triggered them. Returns null when no usable token is present
@@ -84,8 +118,8 @@ class SpectrumRestController extends LazyLogging {
   }
 
   /**
-    * Executes a search against the repository and can cause out of memory errors.  It is recommended to utilize this
-    * method with pagination
+    * Executes a search against the repository. Requests without a size get a default page of
+    * maxPageSize. Sizes above maxPageSize are rejected with a 400
     *
     * @param query
     * @return
@@ -97,31 +131,22 @@ class SpectrumRestController extends LazyLogging {
                  @RequestParam(value = "size", required = false) size: Integer,
                  @RequestParam(value = "query", required = false) query: WrappedString,
                  request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[Spectrum]]] = {
-    def sendQuery(query: String, page: Integer, size: Integer): Iterable[Spectrum] = {
+    if (query == null) {
+      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](new ResponseEntity(HttpStatus.BAD_REQUEST))
+    } else if (size != null && size > maxPageSize) {
+      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](oversizeError)
+    } else {
+      val effectivePage: Int = if (page != null) page.toInt else 0
 
       if (size != null) {
-        if (page != null) {
-          val test = spectrumPersistenceService.findAll(query, PageRequest.of(page, size)).getContent.asScala
-          test
-        } else {
-          val test = spectrumPersistenceService.findAll(query, PageRequest.of(0, size)).getContent.asScala
-          test
-        }
+        val content = spectrumPersistenceService.findAll(query.string, PageRequest.of(effectivePage, size.toInt)).getContent.asScala
+        new AsyncResult[ResponseEntity[Iterable[Spectrum]]](new ResponseEntity(content, HttpStatus.OK))
       } else {
-        val test = spectrumPersistenceService.findAll(query).asScala
-        logger.info(s"Controller return size: ${test.size}")
-        test
+        val content = spectrumPersistenceService.findAll(query.string, PageRequest.of(effectivePage, maxPageSize)).getContent.asScala
+        new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
+          new ResponseEntity(content, defaultedPageHeaders(effectivePage, content.size), HttpStatus.OK)
+        )
       }
-    }
-
-    if (query != null) {
-      val queryString = if (query != null) query.string else ""
-
-      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
-        new ResponseEntity(sendQuery(queryString, page, size), HttpStatus.OK)
-      )
-    } else {
-      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](new ResponseEntity(HttpStatus.BAD_REQUEST))
     }
   }
 
@@ -197,8 +222,9 @@ class SpectrumRestController extends LazyLogging {
   }
 
   /**
-   * Returns all the specified data in the system.  Should be utilized with pagination to avoid
-   * out of memory issues
+   * Returns all the specified data in the system. Requests without a size get a default page of
+   * maxPageSize (announced via the X-Page-Size header, with a Link rel="next" header when the
+   * page came back full), sizes above maxPageSize are rejected with a 400
    *
    * @return
    */
@@ -210,26 +236,21 @@ class SpectrumRestController extends LazyLogging {
   }
 
   def doList(page: Integer, size: Integer): Future[ResponseEntity[Iterable[Spectrum]]] = {
-    val data: Iterable[Spectrum] = {
+    if (size != null && size > maxPageSize) {
+      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](oversizeError)
+    } else {
+      val effectivePage: Int = if (page != null) page.toInt else 0
+
       if (size != null) {
-        if (page != null) {
-          spectrumPersistenceService.findAll(PageRequest.of(page, size, Sort.Direction.ASC, "id")).getContent.asScala
-        } else {
-          spectrumPersistenceService.findAll(PageRequest.of(0, size, Sort.Direction.ASC, "id")).getContent.asScala
-        }
+        val data = spectrumPersistenceService.findAll(PageRequest.of(effectivePage, size.toInt, Sort.Direction.ASC, "id")).getContent.asScala
+        new AsyncResult[ResponseEntity[Iterable[Spectrum]]](new ResponseEntity(data, HttpStatus.OK))
       } else {
-        new DynamicIterable[Spectrum, String]("", 50) {
-          // loads more data from the server for the given query
-          override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = spectrumPersistenceService.findAll(pageable)
-        }.asScala
+        val data = spectrumPersistenceService.findAll(PageRequest.of(effectivePage, maxPageSize, Sort.Direction.ASC, "id")).getContent.asScala
+        new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
+          new ResponseEntity(data, defaultedPageHeaders(effectivePage, data.size), HttpStatus.OK)
+        )
       }
     }
-    val headers = new HttpHeaders()
-    // headers.add("Content-Type", servletRequest.getContentType)
-
-    new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
-      new ResponseEntity(data, headers, HttpStatus.OK)
-    )
   }
 
   /**

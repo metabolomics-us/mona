@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.listener
 
-import akka.actor.{Actor, ActorSystem, Props}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.routing.RoundRobinPool
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, PersistenceEventListener, EventScheduler}
 
@@ -16,14 +17,18 @@ class AkkaEventScheduler[T] extends EventScheduler[T] {
 
   val system = ActorSystem("MonaEventScheduler")
 
+  // A fixed pool of workers instead of an actor per event. Actors are never garbage collected
+  // until explicitly stopped, so spawning one per event permanently leaked an actor for every
+  // persistence event and slowly exhausted the heap
+  val workers: ActorRef = system.actorOf(RoundRobinPool(5).props(Props[SchedulingActor[T]]))
+
   /**
    * Schedules the processing of the given event to be processed down stream
    *
    * @param event
    */
   override def scheduleEventProcessing(event: Event[T]): Unit = {
-    val actor = system.actorOf(Props[SchedulingActor[T]])
-    actor ! (persistenceEventListeners, event)
+    workers ! (persistenceEventListeners, event)
   }
 }
 
