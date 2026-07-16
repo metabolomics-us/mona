@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 import software.amazon.awssdk.auth.credentials.{AwsBasicCredentials, StaticCredentialsProvider}
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient
-import software.amazon.awssdk.services.cloudwatchlogs.model.{FilterLogEventsRequest, GetLogEventsRequest, ResourceNotFoundException}
+import software.amazon.awssdk.services.cloudwatchlogs.model.{FilterLogEventsRequest, FilterLogEventsResponse, GetLogEventsRequest, GetLogEventsResponse, ResourceNotFoundException}
 
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
@@ -50,7 +50,13 @@ class CloudWatchLogsService extends LazyLogging {
     ))
     .build()
 
-  private lazy val logGroup: String = System.getenv("MONA_DIAGNOSTICS_LOG_GROUP")
+  protected def logGroup: String = System.getenv("MONA_DIAGNOSTICS_LOG_GROUP")
+
+  // seams overridden by tests to stand in for the real AWS calls, so the paging/filtering
+  // logic below can be exercised without a live CloudWatch client
+  protected def filterLogEvents(request: FilterLogEventsRequest): FilterLogEventsResponse = client.filterLogEvents(request)
+
+  protected def getLogEvents(request: GetLogEventsRequest): GetLogEventsResponse = client.getLogEvents(request)
 
   // hard cap on how many matching events a single request will page through
   private val maxEntries = 500
@@ -85,7 +91,8 @@ class CloudWatchLogsService extends LazyLogging {
   @tailrec
   private def fetchErrorLogPages(streamName: String, sinceMillis: Long,
                                   nextToken: Option[String] = None,
-                                  accumulated: Seq[software.amazon.awssdk.services.cloudwatchlogs.model.FilteredLogEvent] = Seq.empty
+                                  accumulated: Seq[software.amazon.awssdk.services.cloudwatchlogs.model.FilteredLogEvent] = Seq.empty,
+                                  truncated: Boolean = false
                                  ): (Seq[software.amazon.awssdk.services.cloudwatchlogs.model.FilteredLogEvent], Boolean) = {
     val requestBuilder = FilterLogEventsRequest.builder()
       .logGroupName(logGroup)
@@ -94,13 +101,16 @@ class CloudWatchLogsService extends LazyLogging {
       .startTime(sinceMillis)
     nextToken.foreach(requestBuilder.nextToken)
 
-    val response = client.filterLogEvents(requestBuilder.build())
+    val response = filterLogEvents(requestBuilder.build())
     val events = accumulated ++ response.events().asScala.toSeq
 
+    // FilterLogEvents always returns matching events oldest-first, this ensures we get the newest maxEntries instead of oldest
+    val windowed = if (events.size > maxEntries) events.takeRight(maxEntries) else events
+    val stillTruncated = truncated || events.size > maxEntries
+
     Option(response.nextToken()) match {
-      case Some(token) if events.size < maxEntries => fetchErrorLogPages(streamName, sinceMillis, Some(token), events)
-      case Some(_) => (events.take(maxEntries), true)
-      case None => (events, false)
+      case Some(token) => fetchErrorLogPages(streamName, sinceMillis, Some(token), windowed, stillTruncated)
+      case None => (windowed, stillTruncated)
     }
   }
 
@@ -123,7 +133,7 @@ class CloudWatchLogsService extends LazyLogging {
       .limit(100)
       .build()
 
-    val events = client.getLogEvents(request).events().asScala.toSeq.sortBy(_.timestamp())
+    val events = getLogEvents(request).events().asScala.toSeq.sortBy(_.timestamp())
 
     // the first event at the anchor timestamp is the error line itself, which the caller
     // already has - only return the continuation lines that follow it
