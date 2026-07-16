@@ -143,6 +143,8 @@ The `./scripts/generate_backup.sh` script is used to generate backups of the pos
 
 1. Start the test environment:
    ```bash
+   ./scripts/start_docker.sh test
+   OR
    docker compose -f docker-compose-test.yml up -d
    ```
 
