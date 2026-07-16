@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.ucdavis.fiehnlab.mona</groupId>
     <artifactId>mona</artifactId>
-    <version>3.0.0-RELEASE</version>
+    <version>3.1.0-RELEASE</version>
     <name>mona</name>
 
     <packaging>pom</packaging>
