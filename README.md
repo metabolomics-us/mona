@@ -179,6 +179,8 @@ Ensure you have logged in to the AWS CLI before pushing to ECR.
 
 MoNA's production instance is hosted on the Gose server using Docker Compose. Ask a team member for access to Gose.
 
+There is a maintenance mode available that can be triggered manually via `./scripts/maintenance.sh`. Maintenance mode is enabled automatically by the nginx container when the proxy service is unreachable.
+
 Ensure your AWS credentials and GitHub PAT are set up on Gose before proceeding (details on YouTrack).
 
 ```bash
