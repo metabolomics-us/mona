@@ -71,7 +71,6 @@ class JWTAuthenticationFilter(authenticationService: JWTAuthenticationService) e
         true
       } catch {
         case e: AuthenticationException =>
-          logger.error(e.getMessage)
           logger.debug(e)
           SecurityContextHolder.clearContext()
 
