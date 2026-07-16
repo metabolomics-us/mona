@@ -40,7 +40,8 @@
               "src/main/mona-web/lib/ChemDoodleWeb/ChemDoodleWeb.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/angular2-toaster/toaster.scss",
-              "node_modules/cookieconsent/build/cookieconsent.min.css"
+              "node_modules/cookieconsent/build/cookieconsent.min.css",
+              "node_modules/nvd3/build/nv.d3.min.css"
             ],
             "scripts": [
               "node_modules/jquery/jquery.js",

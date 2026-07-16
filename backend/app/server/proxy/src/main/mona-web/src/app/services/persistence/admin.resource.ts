@@ -109,4 +109,40 @@ export class AdminService {
     };
     return this.http.put(`${environment.REST_BACKEND_SERVER}/rest/users/${user.emailAddress}`, user, config);
   }
+
+  // Lists the known service keys for the diagnostics page's service selector
+  getDiagnosticServices(token: any): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    };
+    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/diagnostics/services`, config);
+  }
+
+  // Fetches recent ERROR-level log lines for the given service
+  getDiagnosticLogs(token: any, service: string, hours: number): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      params: {service, hours: hours.toString()}
+    };
+    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/diagnostics/logs`, config);
+  }
+
+  // Fetches the stack trace/continuation lines following a single error entry
+  getDiagnosticLogTrace(token: any, service: string, timestamp: number): Observable<any> {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      params: {service, timestamp: timestamp.toString()},
+      responseType: 'text' as 'json'
+    };
+    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/diagnostics/logs/trace`, config);
+  }
 }

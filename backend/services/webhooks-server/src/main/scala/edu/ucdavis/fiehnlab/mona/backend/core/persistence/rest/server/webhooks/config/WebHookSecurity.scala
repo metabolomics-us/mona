@@ -50,6 +50,9 @@ class WebHookSecurity extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.POST, "/rest/webhooks/pull").hasAuthority("ADMIN")
       .antMatchers(HttpMethod.POST, "/rest/webhooks/trigger/**").hasAuthority("ADMIN")
 
+      // diagnostics exposes error logs from every service, admin only
+      .antMatchers(HttpMethod.GET, "/rest/diagnostics/**").hasAuthority("ADMIN")
+
       // saves and updates needs authentication
       .antMatchers(HttpMethod.POST, "/rest/webhooks/**").authenticated()
       .antMatchers(HttpMethod.PUT).authenticated()

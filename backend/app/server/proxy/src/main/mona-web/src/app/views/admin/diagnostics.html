@@ -1,0 +1,78 @@
+<div class="row" *ngIf="!auth.isLoggedIn()">
+  <div class="col-md-12">
+    <h1 class="h3">Please <a href="" (click)="auth.requestModal()" class="davis-blue text-decoration-none">log in</a>!</h1>
+  </div>
+</div>
+<div *ngIf="auth.isLoggedIn() && auth.isAdmin()" class="container">
+  <div class="row mb-2">
+    <div class="col">
+      <br/>
+      <div class="row justify-content-center">
+        <h1 class="h3">Service Diagnostics</h1>
+      </div>
+      <hr/>
+      <div class="row justify-content-start align-items-end">
+        <div class="col-sm-4">
+          <label for="diagnosticsService">Service</label>
+          <select id="diagnosticsService" class="form-control" [(ngModel)]="selectedService" (ngModelChange)="refresh()">
+            <option *ngFor="let key of serviceKeys" [value]="key">{{key}}</option>
+          </select>
+        </div>
+        <div class="col-sm-3">
+          <label for="diagnosticsHours">Time range</label>
+          <select id="diagnosticsHours" class="form-control" [(ngModel)]="hours" (ngModelChange)="refresh()">
+            <option [ngValue]="1">Last hour</option>
+            <option [ngValue]="12">Last 12 hours</option>
+            <option [ngValue]="24">Last 24 hours</option>
+            <option [ngValue]="72">Last 3 days</option>
+            <option [ngValue]="168">Last 7 days</option>
+          </select>
+        </div>
+        <div class="col-sm-2">
+          <button type="button" class="btn btn-primary accessibility" (click)="refresh()" [disabled]="loading">
+            <fa-icon [icon]="faSyncAlt"></fa-icon> Refresh
+          </button>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col">
+          <p *ngIf="loading"><i>Loading...</i></p>
+          <p *ngIf="!loading && !selectedService"><i>Select a service above.</i></p>
+          <p *ngIf="!loading && selectedService && !serviceExists" class="text-danger"><i>This service has no logs in this environment.</i></p>
+          <p *ngIf="!loading && selectedService && serviceExists && truncated" class="text-warning">
+            <i>Showing only the most recent {{logs.length}} matching errors - narrow the time range for a complete view.</i>
+          </p>
+          <p *ngIf="!loading && selectedService && serviceExists && logs && logs.length === 0"><i>No errors found in the selected window.</i></p>
+
+          <div *ngIf="!loading && selectedService && serviceExists && logs && logs.length > 0" class="mb-3">
+            <h2 class="h6">Errors over time</h2>
+            <nvd3 [options]="chartOptions" [data]="chartData"></nvd3>
+          </div>
+
+          <table class="table table-striped" style="table-layout: fixed; width: 100%;"
+                 *ngIf="!loading && selectedService && serviceExists && logs && logs.length > 0">
+            <thead>
+              <tr>
+                <th scope="col">Errors</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let entry of logs">
+                <td (click)="toggleExpand(entry)" style="cursor: pointer;">
+                  <pre class="mb-0" [class.text-truncate]="!entry.expanded"
+                       [style.white-space]="entry.expanded ? 'pre-wrap' : null"
+                       [style.word-break]="entry.expanded ? 'break-word' : null">{{entry.message}}</pre>
+                  <ng-container *ngIf="entry.expanded">
+                    <p class="mt-2 mb-0"><i *ngIf="entry.traceLoading">Loading stack trace...</i></p>
+                    <pre class="mb-0 mt-2 text-muted" style="white-space: pre-wrap; word-break: break-word;"
+                         *ngIf="!entry.traceLoading && entry.trace">{{entry.trace}}</pre>
+                  </ng-container>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

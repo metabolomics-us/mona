@@ -101,6 +101,7 @@ import {SpectrumFeedbackResultsCommunityComponent} from './app/components/feedba
 import {DocumentationUploadLibraryComponent} from './app/components/documentation/documentation-upload-library.component';
 import {DocumentationEntropyComponent} from './app/components/documentation/documentation-entropy.component';
 import {ManageSpectraComponent} from './app/components/admin/manage-spectra.component';
+import {DiagnosticsComponent} from './app/components/admin/diagnostics.component';
 import {AdminButtonComponent} from './app/components/admin/admin-button.component';
 import {MassDeleteModalComponent} from './app/components/browser/mass-delete-modal.component';
 import {DeleteConfirmModalComponent} from './app/components/browser/delete-confirm-modal.component';
@@ -261,6 +262,7 @@ const cookieConfig: NgcCookieConsentConfig = {
         DocumentationEntropyComponent,
         PrefixValidator,
         ManageSpectraComponent,
+        DiagnosticsComponent,
         AdminButtonComponent,
         MassDeleteModalComponent,
         DeleteConfirmModalComponent

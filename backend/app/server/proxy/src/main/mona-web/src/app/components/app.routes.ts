@@ -19,6 +19,7 @@ import {QueryTreeComponent} from './browser/query-tree.component';
 import {DocumentationUploadLibraryComponent} from './documentation/documentation-upload-library.component';
 import {DocumentationEntropyComponent} from './documentation/documentation-entropy.component';
 import {ManageSpectraComponent} from './admin/manage-spectra.component';
+import {DiagnosticsComponent} from './admin/diagnostics.component';
 
 export const routes: Routes = [
     {path: '', component: MainComponent},
@@ -31,6 +32,7 @@ export const routes: Routes = [
     {path: 'profile', component: SubmitterProfileComponent},
     {path: 'admin/submitters', component: SubmitterComponent},
     {path: 'admin/manage-spectra', component: ManageSpectraComponent},
+    {path: 'admin/diagnostics', component: DiagnosticsComponent},
     {path: 'documentation/license', component: DocumentationLicenseComponent},
     {path: 'documentation/query', component: DocumentationQueryComponent},
     {path: 'spectra/splash/:splash', redirectTo: '/spectra/browse'},

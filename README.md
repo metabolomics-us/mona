@@ -91,6 +91,17 @@ Environment="AWS_ACCESS_KEY_ID=<id>"
 Environment="AWS_SECRET_ACCESS_KEY=<secret>"
 ```
 
+### Admin diagnostics page (reading CloudWatch logs)
+
+The admin diagnostics page (`webhooks-server`, `/rest/diagnostics/**`) reads error logs from CloudWatch, which needs its own credentials, separate from the Docker daemon credentials above, since those only cover the `awslogs` driver and aren't visible inside any container. Open your `~/.bashrc` or `~/.bash_profile` and set:
+
+```bash
+export MONA_AWS_ACCESS_KEY_ID=<id>
+export MONA_AWS_SECRET_ACCESS_KEY=<secret>
+```
+
+The IAM role requires `logs:FilterLogEvents` and `logs:DescribeLogStreams` on the `mona-logs`/`mona-dev-logs`/`mona-local-logs` groups. The existing "mona-cloudwatch-logger" IAM role has all permissions needed for both the awslogs driver and the diagnostics page. Credentials can be found in the YouTrack knowledgebase.
+
 ---
 
 ## Architecture & Services
