@@ -50,7 +50,8 @@
                   <br/>
                   Current Query
                   <button class="btn btn-primary btn-xs mb-1" (click)="editQuery = !editQuery" aria-label="Edit query"><fa-icon [icon]="faEdit"></fa-icon></button>
-                  <pre *ngIf="!editQuery" class="input-group-text"><code>{{query !== '' && query !== undefined ? query : "[Empty]"}}</code></pre>
+                  <pre *ngIf="!editQuery && keywordParam !== undefined" class="input-group-text"><code>Quick search performed for: {{keywordParam}}</code></pre>
+                  <pre *ngIf="!editQuery && keywordParam === undefined" class="input-group-text"><code>{{query !== '' && query !== undefined ? query : "[Empty]"}}</code></pre>
                   <div *ngIf="editQuery">
                     <form (submit)="updateQuery(query)">
                       <div class="input-group">
@@ -65,8 +66,9 @@
                   <div>
                     <br/>
                     Current Query (as cURL command)
-                    <pre *ngIf="isSimilaritySearch()" class="input-group-text"><code>cURL request not available for similarity searches</code></pre>
-                    <pre *ngIf="!isSimilaritySearch()" class="input-group-text" id="curlCommand"><code>
+                    <pre *ngIf="isSimilaritySearch()" class="input-group-text"><code>cURL requests are not available for similarity searches</code></pre>
+                    <pre *ngIf="!isSimilaritySearch() && keywordParam !== undefined" class="input-group-text"><code>cURL requests are not available for quick searches</code></pre>
+                    <pre *ngIf="!isSimilaritySearch() && keywordParam === undefined" class="input-group-text" id="curlCommand"><code>
                       <button class="btn btn-link btn-sm" style="color: slategray; margin-left: -10px" (click)="copyCurlCommand()" aria-label="Copy query"><fa-icon [icon]="faCopy"></fa-icon></button>
                       {{{query: query} | curlPipe}}
                     </code></pre>
