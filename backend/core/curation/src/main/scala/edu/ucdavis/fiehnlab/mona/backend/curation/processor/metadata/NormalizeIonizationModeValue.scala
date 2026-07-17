@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
 
-import scala.collection.mutable.{ArrayBuffer, Buffer}
+import scala.collection.mutable.{ArrayBuffer, Buffer, LinkedHashSet}
 import scala.jdk.CollectionConverters._
 
 /**
@@ -18,6 +18,17 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
   val POSITIVE_TERMS: Array[String] = Array("positive", "pos", "p", "+")
   val NEGATIVE_TERMS: Array[String] = Array("negative", "neg", "n", "-")
   val ALL_TERMS: Array[String] = POSITIVE_TERMS ++ NEGATIVE_TERMS
+
+  // Full polarity words safe to match as substrings, catching values like "ESI Positive" or "ESI (+)"
+  val POSITIVE_WILDCARDS: Array[String] = Array("positive", "+")
+  val NEGATIVE_WILDCARDS: Array[String] = Array("negative", "-")
+
+  // Matches an exact short term or a value containing a full polarity word
+  def isPositive(value: String): Boolean =
+    POSITIVE_TERMS.contains(value) || POSITIVE_WILDCARDS.exists(value.contains)
+
+  def isNegative(value: String): Boolean =
+    NEGATIVE_TERMS.contains(value) || NEGATIVE_WILDCARDS.exists(value.contains)
 
   /**
     * processes the given spectrum
@@ -32,49 +43,31 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
 
     // Look at existing ionization mode values
     if (matches.nonEmpty) {
-      // If data is normalized, we're done
-      if (matches.exists(x => x.getValue == "positive" || x.getValue == "negative")) {
-        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Ionization mode/type provided"))
-        spectrum
+      // Normalize every ionization mode value to a standard polarity where possible
+      matches.foreach { x =>
+        val value: String = x.getValue.toString.toLowerCase.trim
+
+        if (isPositive(value)) {
+          logger.info(s"${spectrum.getId}: Identified ionization type '${x.getValue}' as positive mode")
+          x.setValue("positive")
+        } else if (isNegative(value)) {
+          logger.info(s"${spectrum.getId}: Identified ionization type '${x.getValue}' as negative mode")
+          x.setValue("negative")
+        } else {
+          logger.warn(s"${spectrum.getId}: Ionization type value '${x.getValue}' was unidentifiable - keeping metadata value")
+        }
       }
 
-      // Otherwise, if we have one match, normalize the data
-      else if (matches.length == 1) {
-        val updatedMetaData: Buffer[MetaData] = metaData.filter(_.getName != CommonMetaData.IONIZATION_MODE)
-
-        val value: String = matches.head.getValue.toString.toLowerCase.trim
-
-        if (POSITIVE_TERMS.contains(value)) {
-          logger.info(s"${spectrum.getId}: Identified ionization type 'value' as positive mode")
-
-          matches.head.setValue("positive")
-          spectrum.setMetaData((updatedMetaData :+ matches.head).asJava)
-          spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Ionization mode/type provided"))
-          spectrum
-        }
-
-        else if (NEGATIVE_TERMS.contains(value)) {
-          logger.info(s"${spectrum.getId}: Identified ionization type 'value' as negative mode")
-
-          matches.head.setValue("negative")
-          spectrum.setMetaData((updatedMetaData :+ matches.head).asJava)
-          spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Ionization mode/type provided"))
-          spectrum
-        }
-
-        else {
-          logger.warn(s"${spectrum.getId}: Ionization type value 'value' was unidentifiable - keeping metadata value")
-
-          spectrum.setMetaData((updatedMetaData :+ matches.head).asJava)
-          spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, "Ionization mode/type unidentifiable"))
-          spectrum
-        }
-      } else {
-        matches.foreach { x => logger.warn(s"\t${x.getName} = ${x.getValue}") }
+      if (matches.length > 1) {
         logger.warn(s"${spectrum.getId}: Multiple ionization mode matches!")
         spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, "Multiple ionization mode/types identified"))
-        spectrum
+      } else if (matches.exists(x => x.getValue == "positive" || x.getValue == "negative")) {
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, "Ionization mode/type provided"))
+      } else {
+        spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, "Ionization mode/type unidentifiable"))
       }
+
+      spectrum
     }
 
     // Update incorrectly named ionization mode values

@@ -19,13 +19,14 @@ import {MassDeletionService} from '../../services/persistence/mass-deletion.serv
 import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {first} from 'rxjs/operators';
-import {faExclamationTriangle, faEdit, faTable, faList, faSearch, faSync, faServer, faSpinner, faTrash, faChartBar, faCopy} from '@fortawesome/free-solid-svg-icons';
+import {faExclamationTriangle, faEdit, faTable, faList, faSearch, faCaretDown, faSync, faServer, faSpinner, faTrash, faChartBar, faCopy, faUser} from '@fortawesome/free-solid-svg-icons';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import {faBookmark} from '@fortawesome/free-regular-svg-icons';
 import {BehaviorSubject} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MassDeleteModalComponent} from './mass-delete-modal.component';
+import {DeleteConfirmModalComponent} from './delete-confirm-modal.component';
 
 @Component({
     selector: 'spectra-browser',
@@ -43,6 +44,7 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     inchikeyParam;
     splashParam;
     queryParam;
+    keywordParam;
     sizeParam;
     pageParam;
     tableParam;
@@ -52,10 +54,12 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     initial;
     status;
     massChartReady;
+    suppressNextLoad = false;
     faEdit = faEdit;
     faTable = faTable;
     faList = faList;
     faSearch = faSearch;
+    faCaretDown = faCaretDown;
     faSync = faSync;
     faServer = faServer;
     faSpinner = faSpinner;
@@ -66,6 +70,7 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     faStarEmpty = faStarEmpty;
     faStarHalf = faStarHalfAlt;
     faCopy = faCopy;
+    faUser = faUser;
     faExclamationTriangle = faExclamationTriangle;
 
     constructor(public spectrum: Spectrum, public spectraQueryBuilderService: SpectraQueryBuilderService,  public location: Location,
@@ -122,9 +127,20 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
           this.inchikeyParam = params.inchikey || undefined;
           this.splashParam = params.splash || undefined;
           this.queryParam = params.query || undefined;
+          this.keywordParam = params.keyword || undefined;
           this.sizeParam = params.size || 10;
           this.pageParam = parseInt(params.page, 10);
           this.tableParam = params.table || undefined;
+
+          // setAndWatchPaginationOptions() may rewrite the URL to add a 'table' param
+          // derived from a cookie, which re-triggers this subscription. Skip that
+          // re-triggered load, it would wipe/refetch spectra we just rendered and
+          // cause the mass spec/structure charts to disappear
+          if (this.suppressNextLoad) {
+            this.suppressNextLoad = false;
+            return;
+          }
+
           this.loadData();
       });
 
@@ -179,8 +195,8 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
           // Handle general queries
           if (typeof this.queryParam !== 'undefined') {
             this.logger.info('Accepting filter from URL: "' + this.queryParam + '"');
-            this.query = this.queryParam;
           }
+          this.query = this.queryParam;
 
           // Handle page number
           if (typeof this.pageParam !== 'undefined') {
@@ -215,6 +231,20 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
       this.tableSubject.next(this.pagination.table);
       this.router.navigate([], {queryParams: {table: this.pagination.table},
          queryParamsHandling: 'merge', replaceUrl: true, skipLocationChange: false}).then();
+    }
+
+    // Toggling view mode doesn't change what data is fetched, only how it's displayed,
+    // so we flag the resulting URL update to not trigger a redundant fetch of spectra
+    enableTableView() {
+      this.pagination.table = true;
+      this.suppressNextLoad = true;
+      this.setTable();
+    }
+
+    disableTableView() {
+      this.pagination.table = false;
+      this.suppressNextLoad = true;
+      this.setTable();
     }
 
     setTableColumnsSelection() {
@@ -293,6 +323,13 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
         if (tableView) {
             this.logger.info('Setting Table View');
             this.pagination.table = tableView;
+
+            // If 'table' wasn't already in the URL, setTable() below will add it via
+            // router.navigate(), which re-triggers the queryParams subscription above
+            if (typeof this.tableParam === 'undefined') {
+              this.suppressNextLoad = true;
+            }
+
             this.setTable();
         }
 
@@ -356,12 +393,19 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
      * Submits our query to the server
      */
     submitQuery() {
-      if(!this.spectrumCache.hasCurrentCount(this.query)) {
+      const countKey = this.countCacheKey();
+      if(!this.spectrumCache.hasCurrentCount(countKey)) {
         this.calculateResultCount();
       } else {
-        this.pagination.totalSize = this.spectrumCache.getCurrentCount(this.query);
+        this.pagination.totalSize = this.spectrumCache.getCurrentCount(countKey);
       }
       this.loadSpectra();
+    }
+
+    // Keyword searches carry no RSQL query, so they need their own count cache key to not
+    // collide with the empty browse-everything count
+    countCacheKey() {
+      return this.keywordParam !== undefined ? 'keyword:' + this.keywordParam : this.query;
     }
 
     /**
@@ -371,6 +415,10 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
       this.startTime = Date.now();
       this.pagination.loading = true;
       this.spectra = [];
+
+      const similarityQuery = this.spectraQueryBuilderService.getSimilarityQuery();
+      this.query = similarityQuery && similarityQuery.filename ?
+        'Similarity search: ' + similarityQuery.filename : 'Similarity search: pasted spectrum';
 
       if (this.initial && !this.sizeParam) {
         this.hideSplash();
@@ -393,28 +441,35 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
      * Calculates the number of results for the given query
      */
     calculateResultCount() {
-        this.spectrum.searchSpectraCount({
-            query: this.query
-        }).pipe(first()).subscribe((res: any) => {
+        const countKey = this.countCacheKey();
+        const count$ = this.keywordParam !== undefined
+            ? this.spectrum.searchKeywordCount({query: this.keywordParam})
+            : this.spectrum.searchSpectraCount({query: this.query});
+
+        count$.pipe(first()).subscribe((res: any) => {
             this.pagination.totalSize = res.count;
-            this.spectrumCache.setCurrentCount(this.query, res.count);
+            this.spectrumCache.setCurrentCount(countKey, res.count);
         });
     }
 
     /**
-     * returns the display url for the spectrum for the given index
+     * navigates to the spectrum viewer in the same tab, used for compact view
      * @param id takes spectrum id
-     * @param index not needed
      */
-    // Open spectrum viewer in new tab, used for compact view
     viewSpectrum(id) {
+      this.router.navigate(['/spectra/display', id]);
+    }
+
+    // Middle-click on the spectrum ID opens in a new tab
+    viewSpectrumMiddleClick(event: MouseEvent, id) {
+      if (event.button !== 1) {
+        return;
+      }
       const url = this.router.serializeUrl(
         this.router.createUrlTree(['/spectra/display', id])
       );
       window.open(url, '_blank');
     }
-
-
 
     /**
      * Execute query
@@ -448,6 +503,15 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
         if (this.initial && !this.sizeParam) {
           this.hideSplash();
           this.pagination.loading = false;
+        } else if (this.keywordParam !== undefined) {
+            this.logger.info('fetching spectra from keyword search: ' + this.keywordParam);
+            this.spectrum.searchSpectra({
+                endpoint: 'keyword',
+                query: this.keywordParam,
+                page: currentPage,
+                size: this.pagination.itemsPerPage
+            }).pipe(first()).subscribe(this.searchSuccess, this.searchError);
+
         } else if (this.query === undefined) {
             this.logger.info('submitting empty query');
             this.spectrum.searchSpectra({
@@ -524,6 +588,46 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
             });
           });
         }
+      });
+    }
+
+    sameSubmitter(spectrum: SpectrumModel): boolean {
+      if (this.authenticationService.isLoggedIn()) {
+        return this.authenticationService.getCurrentUser().emailAddress === spectrum.submitter.emailAddress;
+      }
+      return false;
+    }
+
+    canDelete(spectrum: SpectrumModel): boolean {
+      return this.sameSubmitter(spectrum) || this.authenticationService.isAdmin();
+    }
+
+    onSpectrumDeleted(id: string) {
+      this.spectra = this.spectra.filter(s => s.id !== id);
+    }
+
+    deleteSpectrum(id: string, event: Event) {
+      event.stopPropagation();
+      const modalRef = this.modalService.open(DeleteConfirmModalComponent);
+      modalRef.componentInstance.message = 'Are you sure you want to delete spectrum <strong>' + id + '</strong>?';
+      modalRef.result.then(() => this.performDelete(id), () => {});
+    }
+
+    performDelete(id: string) {
+      const token = this.authenticationService.getCurrentUser().accessToken;
+      this.spectrum.delete(id, token).subscribe(() => {
+        this.toaster.pop({
+          type: 'success',
+          title: 'Spectrum Deleted',
+          body: `Spectrum ${id} was successfully deleted.`
+        });
+        this.spectra = this.spectra.filter(s => s.id !== id);
+      }, (error) => {
+        this.toaster.pop({
+          type: 'error',
+          title: 'Delete Failed',
+          body: error.message || 'An error occurred while deleting the spectrum.'
+        });
       });
     }
 

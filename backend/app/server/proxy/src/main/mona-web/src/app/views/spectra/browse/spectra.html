@@ -35,20 +35,23 @@
                     [attr.aria-expanded]="!queryInfoCollapsed"
                     aria-controls="queryInfoPanel"
                     (click)="queryInfoCollapsed = !queryInfoCollapsed">
-              <fa-icon [icon]="faSearch" aria-hidden="true"></fa-icon> Query Information
+                    Query Information <fa-icon [icon]="faCaretDown"
+                                               style="display: inline-block; transition: transform 0.4s ease"
+                                               [style.transform]="queryInfoCollapsed ? 'rotate(0deg)' : 'rotate(-180deg)'"></fa-icon>
             </button>
           </div>
           <div id="queryInfoPanel" [ngbCollapse]="queryInfoCollapsed">
             <div class="card-body">
 
                   <div>
-                    <fa-icon [icon]="faExclamationTriangle"></fa-icon> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query downloads
+                    <fa-icon [icon]="faExclamationTriangle"></fa-icon> Please refer to the <a [routerLink]="['/downloads']">downloads page</a> before starting large query downloads with cURL
                   </div>
 
                   <br/>
                   Current Query
                   <button class="btn btn-primary btn-xs mb-1" (click)="editQuery = !editQuery" aria-label="Edit query"><fa-icon [icon]="faEdit"></fa-icon></button>
-                  <pre *ngIf="!editQuery" class="input-group-text"><code>{{query !== '' && query !== undefined ? query : "[Empty]"}}</code></pre>
+                  <pre *ngIf="!editQuery && keywordParam !== undefined" class="input-group-text"><code>Quick search performed for: {{keywordParam}}</code></pre>
+                  <pre *ngIf="!editQuery && keywordParam === undefined" class="input-group-text"><code>{{query !== '' && query !== undefined ? query : "[Empty]"}}</code></pre>
                   <div *ngIf="editQuery">
                     <form (submit)="updateQuery(query)">
                       <div class="input-group">
@@ -63,7 +66,9 @@
                   <div>
                     <br/>
                     Current Query (as cURL command)
-                    <pre class="input-group-text" id="curlCommand"><code>
+                    <pre *ngIf="isSimilaritySearch()" class="input-group-text"><code>cURL requests are not available for similarity searches</code></pre>
+                    <pre *ngIf="!isSimilaritySearch() && keywordParam !== undefined" class="input-group-text"><code>cURL requests are not available for quick searches</code></pre>
+                    <pre *ngIf="!isSimilaritySearch() && keywordParam === undefined" class="input-group-text" id="curlCommand"><code>
                       <button class="btn btn-link btn-sm" style="color: slategray; margin-left: -10px" (click)="copyCurlCommand()" aria-label="Copy query"><fa-icon [icon]="faCopy"></fa-icon></button>
                       {{{query: query} | curlPipe}}
                     </code></pre>
@@ -93,14 +98,14 @@
     <div class="col-md-12">
         <div class="float-left">
             <button class="btn btn-primary mr-1 accessibility" aria-label="Enable compact view"
-                    *ngIf="pagination.table === false" (click)="pagination.table = true; setTable()"
+                    *ngIf="pagination.table === false" (click)="enableTableView()"
                     placement="right"
                     ngbTooltip="Enable compact view">
               <fa-icon [icon]="faList"></fa-icon>
             </button>
 
             <button class="btn btn-primary mr-1 accessibility" aria-label="Enable expanded view"
-                    *ngIf="pagination.table === true" (click)="pagination.table = false; setTable()"
+                    *ngIf="pagination.table === true" (click)="disableTableView()"
                     placement="right"
                     ngbTooltip="Enable expanded view">
               <fa-icon [icon]="faTable"></fa-icon>
@@ -118,9 +123,6 @@
         </div>
 
         <div class="float-right">
-            <button class="btn btn-danger mr-1 accessibility" *ngIf="authenticationService.isLoggedIn() && !pagination.table" type="button" (click)="executeBatchDelete()" [disabled]="!massDeletion.showCurrentSelected().length">
-              <fa-icon [icon]="faTrash"></fa-icon> Batch Delete
-            </button>
             <button class="btn btn-primary accessibility" placement="right" ngbTooltip="Number of spectra results from this query"
             (click)="queryInfoCollapsed = !queryInfoCollapsed">
               <fa-icon [icon]="faBookmark"></fa-icon>
@@ -143,7 +145,7 @@
             </div>
         </div>
         <div class="float-right" *ngIf="authenticationService.isLoggedIn()">
-          <button class="btn btn-primary accessibility" ngbTooltip="Query your submitted spectra" placement="bottom" type="button" (click)="queryUserSpectra()">My Submitted Spectra</button>
+          <button class="btn btn-primary accessibility" ngbTooltip="Query your submitted spectra" placement="bottom" type="button" (click)="queryUserSpectra()">My Spectra</button>
         </div>
     </div>
 </div>
@@ -152,7 +154,7 @@
     <!-- display spectra as list -->
     <div class="col-md-12" *ngIf="pagination.table !== true">
         <div *ngFor="let spectrum of spectra" class="m-md-3">
-            <display-spectra-panel [spectrum]="spectrum"></display-spectra-panel>
+            <display-spectra-panel [spectrum]="spectrum" (deleted)="onSpectrumDeleted($event)"></display-spectra-panel>
         </div>
     </div>
 
@@ -160,18 +162,20 @@
     <!-- we have to use hidden tag here bug there is a rendering bug problem with
       the masspec plotter when its first loaded -->
     <div class="col-md-12" *ngIf="pagination.table === true">
-        <table class="table table-hover table-striped" style="table-layout: fixed;">
+        <table class="table table-hover table-striped" style="table-layout: auto;">
             <thead>
             <tr>
                 <th *ngFor="let column of pagination.tableColumnSelected"
-                    [ngClass]="{'text-center': column != 'ID' && column != 'Name'}">{{column}}</th>
+                    [ngClass]="{'text-center': column != 'ID' && column != 'Name'}"
+                    [ngStyle]="{'white-space': 'nowrap', 'max-width': column === 'Name' ? '350px' : null}">{{column}}</th>
+                <th *ngIf="authenticationService.isLoggedIn()" style="width: 1%; white-space: nowrap;"></th>
             </tr>
             </thead>
 
             <tbody>
             <tr *ngIf="spectra.length === 0"></tr>
 
-            <tr *ngFor="let spectrum of spectra" class="clickable" (click)="viewSpectrum(spectrum.id)">
+            <tr *ngFor="let spectrum of spectra" class="clickable" (click)="viewSpectrum(spectrum.id)" (auxclick)="viewSpectrumMiddleClick($event, spectrum.id)">
                 <td>
                     <div>
                         <div><a class="davis-blue text-decoration-none clickable" tabindex=0
@@ -179,6 +183,7 @@
                         (keydown.space)="$event.preventDefault(); $event.target.click()"
                         ><b>{{spectrum.id}}</b></a></div>
                         <div *ngIf="spectrum.score">
+                        <fa-icon *ngIf="sameSubmitter(spectrum)" size="xs" [icon]="faUser" class="mr-1" ngbTooltip="My Spectrum" placement="bottom"></fa-icon>
                         <label ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom">
                           <span *ngFor="let star of stars(spectrum)" >
                             <fa-icon size="xs" *ngIf="star === 1" [icon]="faStar"></fa-icon>
@@ -196,7 +201,7 @@
                         </div>
                     </div>
                 </td>
-                <td>
+                <td style="max-width: 350px; overflow-wrap: break-word;">
                     <div>
                       <br/>
                         <ul *ngIf="spectrum.compound[0].names.length > 1" class="list-styled" style="margin-left:0 !important; padding-left: 10px !important;">
@@ -231,6 +236,11 @@
                     <div>
                         <p class="text-center">{{spectrum.metaDataMap['total exact mass']}}</p>
                     </div>
+                </td>
+                <td *ngIf="authenticationService.isLoggedIn()" class="text-center align-middle px-3" style="width: 1%; white-space: nowrap;" (click)="$event.stopPropagation()">
+                    <button *ngIf="canDelete(spectrum)" class="btn btn-danger btn-sm" (click)="deleteSpectrum(spectrum.id, $event)" ngbTooltip="Delete this spectrum" placement="left">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
                 </td>
             </tr>
             </tbody>

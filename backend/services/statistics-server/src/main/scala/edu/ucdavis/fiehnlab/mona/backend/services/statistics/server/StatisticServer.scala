@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Import
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
-import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.scheduling.annotation.{EnableAsync, EnableScheduling}
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter, WebSecurityCustomizer}
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity
 @SpringBootApplication
 @EnableWebSecurity
 @EnableScheduling
+@EnableAsync
 @Order(3)
 @Import(Array(classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig], classOf[StatisticsRepositoryConfig], classOf[PostgresqlConfiguration]))
 class StatisticServer extends WebSecurityConfigurerAdapter {
@@ -43,6 +44,7 @@ class StatisticServer extends WebSecurityConfigurerAdapter {
 
       //update statistics need authentication
       .antMatchers(HttpMethod.POST, "/rest/statistics/update").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.POST, "/rest/tags/library/refresh").hasAuthority("ADMIN")
       .antMatchers(HttpMethod.POST, "/rest/spectra/refresh").hasAuthority("ADMIN")
   }
 

@@ -2,17 +2,14 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsSubmitter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.views.SpectrumSubmitterStatistics
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumSubmitterRepository, StatisticsSubmitterRepository}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.{Propagation, Transactional}
+import org.springframework.transaction.annotation.Transactional
 
 import javax.persistence.EntityManager
-import scala.collection.mutable.{ListBuffer, Map}
 import scala.jdk.CollectionConverters._
-import scala.jdk.StreamConverters.StreamHasToScala
 
 @Service
 @Profile(Array("mona.persistence"))
@@ -28,41 +25,21 @@ class SubmitterStatisticsService extends LazyLogging{
 
   @Transactional
   def updateSubmitterStatistics(): String = {
-    statisticsSubmitterRepository.deleteAll()
-    val submitterObjects: Map[String, SpectrumSubmitterStatistics] = Map()
-    val submitterCounter: Map[String, Integer] = Map()
-    val submitterScores: Map[String, ListBuffer[Double]] = Map()
-    var counter = 0
+    logger.info("Aggregating submitter statistics now...")
+    val start = System.currentTimeMillis()
+    statisticsSubmitterRepository.deleteAllInBatch()
 
-    spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
-      if (submitterObjects.contains(submitter.getEmailAddress)) {
-        submitterCounter(submitter.getEmailAddress) += 1
-        submitterScores(submitter.getEmailAddress).append(submitter.getScore)
-      } else {
-        submitterObjects(submitter.getEmailAddress) = submitter
-        submitterCounter(submitter.getEmailAddress) = 1
-        submitterScores(submitter.getEmailAddress) = ListBuffer[Double](submitter.getScore)
-      }
-      counter += 1
-      entityManager.detach(submitter)
-
-      if (counter % 100000 == 0) {
-        logger.info(s"\tCompleted Submitter Object #${counter}")
-      }
-
-    }
-
-    submitterObjects.foreach { case (key, value) =>
-      val averagedScore = submitterScores(key).sum / submitterScores(key).length
-      val entry = new StatisticsSubmitter(value.getEmailAddress, value.getFirstName, value.getLastName, value.getInstitution, submitterCounter(key), averagedScore)
+    // Aggregate per submitter counts and average scores in the database, grouped by email address
+    val aggregations = spectraSubmittersRepository.aggregateSubmitterStatistics().asScala
+    aggregations.foreach { aggregation =>
+      val entry = new StatisticsSubmitter(aggregation.getEmailAddress, aggregation.getFirstName,
+        aggregation.getLastName, aggregation.getInstitution, aggregation.getCount.toInt, aggregation.getScore)
       statisticsSubmitterRepository.save(entry)
       entityManager.detach(entry)
     }
-    submitterObjects.clear()
-    submitterCounter.clear()
-    submitterScores.clear()
     entityManager.flush()
     entityManager.clear()
+    logger.info(f"Submitter statistics complete: ${aggregations.size} submitters in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     "Submitter Statistics Completed"
   }
   /**

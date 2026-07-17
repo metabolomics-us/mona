@@ -1,22 +1,24 @@
 <div>
   <div class="modal-header">
-    <h1 class="h3 modal-title">Warning! The submitted file is larger than 10 MB</h1>
+    <h1 class="h3">Selected file(s) larger than 3&thinsp;MB</h1>
     <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
     <div class="modal-content" *ngIf="!authenticationService.isLoggedIn()" class="alert alert-primary">
-      <h2 class="h4"> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to spectra</h2>
+      <h2 class="h4"> You must <button class="fakeRef davis-blue" (click)="authenticationService.requestModal()">log in</button> to upload spectra</h2>
     </div>
-    <p><strong>
-      This file is too large and will not be able to utilize the advanced uploader edit screen. However, this
-      file can still be directly uploaded into MoNA. Would you like to proceed with straight through processing?
-    </strong></p>
+    <strong><p>
+      Spectra can still be uploaded as-is, but the file(s) is too large to utilize the interactive advanced uploader.
+    </p>
+    <p>
+      Upload anyway?
+    </p></strong>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-lg btn-primary mr-1" (click)="activeModal.close(true)" [disabled]="!authenticationService.isLoggedIn()">YES</button>
-    <button class="btn btn-lg btn-secondary" (click)="activeModal.close(false)">NO</button>
+    <button class="btn btn-lg btn-primary mr-1" (click)="activeModal.close(true)" [disabled]="!authenticationService.isLoggedIn()">Upload</button>
+    <button class="btn btn-lg btn-secondary" (click)="activeModal.close(false)">Cancel</button>
   </div>
 </div>
 

@@ -4,7 +4,7 @@
  */
 
 // TODO: waiting for implementation of return user data for admin from authentication Service
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {NGXLogger} from 'ngx-logger';
 import {AuthenticationService} from '../../services/authentication.service';
@@ -12,13 +12,14 @@ import {RegistrationService} from '../../services/registration.service';
 import {AuthenticationModalComponent} from './authentication-modal.component';
 import {RegistrationModalComponent} from './registration-modal.component';
 import {faUser, faCaretDown, faSignOutAlt, faUsers} from '@fortawesome/free-solid-svg-icons';
+import {Subscription} from 'rxjs';
 
 
 @Component({
     selector: 'authentication',
     templateUrl: '../../views/navbar/loginDropdown.html'
 })
-export class AuthenticationComponent implements OnInit{
+export class AuthenticationComponent implements OnInit, OnDestroy {
     ADMIN_ROLE_NAME;
     currentUser;
     welcomeMessage;
@@ -28,14 +29,18 @@ export class AuthenticationComponent implements OnInit{
     faSignOutAlt = faSignOutAlt;
     faUsers = faUsers;
 
+    private subscriptions: Subscription[] = [];
+
     constructor(public modalService: NgbModal, public authenticationService: AuthenticationService,
                 public logger: NGXLogger, public registrationService: RegistrationService) {}
 
     ngOnInit() {
         this.authenticationService.validate();
-        this.authenticationService.currentUser.subscribe((x) => {
-            this.currentUser = x;
-        });
+        this.subscriptions.push(
+            this.authenticationService.currentUser.subscribe((x) => {
+                this.currentUser = x;
+            })
+        );
 
         this.ADMIN_ROLE_NAME = 'ROLE_ADMIN';
         this.welcomeMessage = 'Login/Register';
@@ -43,35 +48,44 @@ export class AuthenticationComponent implements OnInit{
         /**
          * Create a welcome message on login
          */
-        this.authenticationService.isAuthenticated.subscribe((authorized) => {
-            if (authorized) {
-                this.welcomeMessage = `Welcome, ${this.authenticationService.getCurrentUser()}!`;
-            } else if (!authorized && this.currentUser === null) {
-                /**
-                 * Remove the welcome message on logout
-                 */
-                this.welcomeMessage = 'Login/Register';
-            }
-        });
-
+        this.subscriptions.push(
+            this.authenticationService.isAuthenticated.subscribe((authorized) => {
+                if (authorized) {
+                    this.welcomeMessage = `Welcome, ${this.authenticationService.getCurrentUser()}!`;
+                } else if (!authorized && this.currentUser === null) {
+                    /**
+                     * Remove the welcome message on logout
+                     */
+                    this.welcomeMessage = 'Login/Register';
+                }
+            })
+        );
 
         /**
          * Listen for external calls to bring up the authentication modal
          */
-        this.authenticationService.modalRequest.subscribe((request) => {
-            if (request) {
-                this.handleLogin();
-            }
-        });
+        this.subscriptions.push(
+            this.authenticationService.modalRequest.subscribe((request) => {
+                if (request) {
+                    this.handleLogin();
+                }
+            })
+        );
 
         /**
          * Listen for external calls to bring up the registration modal
          */
-        this.registrationService.modalRequest.subscribe((request) => {
-            if (request) {
-              this.handleRegistration();
-            }
-          });
+        this.subscriptions.push(
+            this.registrationService.modalRequest.subscribe((request) => {
+                if (request) {
+                  this.handleRegistration();
+                }
+            })
+        );
+    }
+
+    ngOnDestroy() {
+        this.subscriptions.forEach(s => s.unsubscribe());
     }
 
     isLoggedIn(): boolean {

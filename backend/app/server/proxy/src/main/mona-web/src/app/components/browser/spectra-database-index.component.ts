@@ -10,7 +10,7 @@ import {environment} from '../../../environments/environment';
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {first, map} from 'rxjs/operators';
-import {faSearch, faDatabase} from '@fortawesome/free-solid-svg-icons';
+import {faSearch, faDatabase, faSort} from '@fortawesome/free-solid-svg-icons';
 import * as d3 from 'd3';
 import 'nvd3';
 
@@ -28,7 +28,7 @@ export class SpectraDatabaseIndexComponent implements OnInit {
     getGlobalStatistics;
     globalData;
     getCompoundClassStatistics;
-    currentPage;
+    activeParentNode;
     activeTableData;
     compoundClassData;
     tableDataPage;
@@ -39,6 +39,7 @@ export class SpectraDatabaseIndexComponent implements OnInit {
     tabParam;
     faSearch = faSearch;
     faDatabase = faDatabase;
+    faSort = faSort;
 
     constructor( public http: HttpClient,  public location: Location,  public spectraQueryBuilderService: SpectraQueryBuilderService,
                  public route: ActivatedRoute,  public router: Router) {
@@ -124,10 +125,8 @@ export class SpectraDatabaseIndexComponent implements OnInit {
                 sunburst: {
                     mode: 'size',
                     dispatch: {
-                        chartClick: (e) => {
-                            const data = e.pos.target.__data__;
-                            this.currentPage = 1;
-                            this.activeTableData = data.children;
+                        elementClick: (e) => {
+                            this.selectNode(e.data);
                         }
                     }
                 }
@@ -293,7 +292,14 @@ export class SpectraDatabaseIndexComponent implements OnInit {
     changeSunburstDataMode(sunburstDataMode) {
         this.sunburstDataMode = sunburstDataMode;
         this.activeCompoundClassData = this.compoundClassData[this.sunburstDataMode];
-        this.activeTableData = this.compoundClassData[this.sunburstDataMode][0].children;
+        this.selectNode(this.compoundClassData[this.sunburstDataMode][0]);
+    }
+
+    // Root node of the full classification tree is a synthetic grouping, not a real
+    // classification, so it has no query of its own, only children
+    selectNode(node) {
+        this.activeParentNode = node.name === 'Chemical Compounds' ? undefined : node;
+        this.activeTableData = node.children;
         this.tableDataPage = 1;
     }
 
@@ -307,7 +313,7 @@ export class SpectraDatabaseIndexComponent implements OnInit {
 
     tableDataClick(node) {
         this.activeCompoundClassData = [node];
-        this.activeTableData = node.children;
+        this.selectNode(node);
     }
 
     tableDataExecuteQuery(node) {

@@ -1,28 +1,30 @@
-<span *ngIf="curatedFeedback !== null">
-  <strong>
-    <span *ngIf="curatedFeedback.value === 'noisy'" class="text-danger">
-      <span>
-        <a class="text-decoration-none" style="color: inherit; padding: 13px 0;" tabindex="-1"
-        [routerLink]="['/documentation/entropy']" target="_blank" (click)="$event.stopPropagation()">
-        {{curatedFeedback.value.toUpperCase()}}
-        <fa-icon ngbTooltip="Calculated by MoNA auto curation" placement="bottom" [icon]="faFlask"></fa-icon>
-        </a>
+<div class="d-flex" [ngClass]="stacked ? 'flex-column align-items-end' : 'flex-row align-items-center'">
+  <span *ngIf="curatedFeedback !== null">
+    <strong>
+      <span *ngIf="curatedFeedback.value === 'noisy'" class="text-danger">
+        <span>
+          <a class="text-decoration-none" style="color: inherit; padding: 13px 0;" tabindex="-1"
+          [routerLink]="['/documentation/entropy']" target="_blank" (click)="$event.stopPropagation()">
+          {{curatedFeedback.value.toUpperCase()}}
+          <fa-icon ngbTooltip="Calculated by MoNA auto curation" placement="bottom" [icon]="faFlask"></fa-icon>
+          </a>
+        </span>
       </span>
-    </span>
-    <span *ngIf="curatedFeedback.value === 'clean'" class="text-success">
-      <span>
-        <a class="text-decoration-none" style="color: inherit; padding: 13px 0;" tabindex="-1"
-        [routerLink]="['/documentation/entropy']" target="_blank" (click)="$event.stopPropagation()">
-        {{curatedFeedback.value.toUpperCase()}}
-        <fa-icon ngbTooltip="Calculated by MoNA auto curation" placement="bottom" [icon]="faFlask"></fa-icon>
-        </a>
+      <span *ngIf="curatedFeedback.value === 'clean'" class="text-success">
+        <span>
+          <a class="text-decoration-none" style="color: inherit; padding: 13px 0;" tabindex="-1"
+          [routerLink]="['/documentation/entropy']" target="_blank" (click)="$event.stopPropagation()">
+          {{curatedFeedback.value.toUpperCase()}}
+          <fa-icon ngbTooltip="Calculated by MoNA auto curation" placement="bottom" [icon]="faFlask"></fa-icon>
+          </a>
+        </span>
       </span>
-    </span>
-  </strong>
-</span>
+    </strong>
+  </span>
 
-<span class="ml-3" *ngIf="communityFeedback !== null">
-  <strong><span [ngClass]="communityFeedback.value === 'noisy' ? 'text-danger' : (communityFeedback.value === 'neutral' ? 'text-secondary' : 'text-success')">
-    {{communityFeedback.value.toUpperCase()}} <span><fa-icon [icon]="faUserCircle" ngbTooltip="Reviewed by MoNA Users" placement="bottom"></fa-icon></span>
-  </span></strong>
-</span>
+  <span [ngClass]="stacked ? '' : 'ml-3'" *ngIf="communityFeedback !== null">
+    <strong><span [ngClass]="communityFeedback.value === 'noisy' ? 'text-danger' : (communityFeedback.value === 'neutral' ? 'text-secondary' : 'text-success')">
+      {{communityFeedback.value.toUpperCase()}} <span><fa-icon [icon]="faUserCircle" ngbTooltip="Reviewed by MoNA Users" placement="bottom"></fa-icon></span>
+    </span></strong>
+  </span>
+</div>

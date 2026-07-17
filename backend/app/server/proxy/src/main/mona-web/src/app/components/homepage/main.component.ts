@@ -7,7 +7,7 @@ import {NgcCookieConsentService} from "ngx-cookieconsent";
 import {Subscription} from "rxjs";
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
-import {faSearch, faChartBar, faExclamationTriangle, faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {faSearch, faChartBar, faExclamationTriangle, faSpinner, faCloudUploadAlt} from '@fortawesome/free-solid-svg-icons';
 import {SpectrumModel} from "../../mocks/spectrum.model";
 
 @Component({
@@ -21,6 +21,7 @@ export class MainComponent implements OnInit, OnDestroy{
     totalCount;
     faSearch = faSearch;
     faChartBar = faChartBar;
+    faCloudUploadAlt = faCloudUploadAlt;
     faExclamationTriangle = faExclamationTriangle;
     faSpinner = faSpinner;
 

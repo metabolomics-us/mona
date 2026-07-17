@@ -1,10 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.controller.statistics
 
 import java.util.concurrent.Future
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service._
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.scheduling.annotation.{Async, AsyncResult}
+import org.springframework.http.{HttpStatus, ResponseEntity}
+import org.springframework.scheduling.annotation.AsyncResult
 import org.springframework.web.bind.annotation._
+import edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.service.StatisticsUpdateRunner
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsTag
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
@@ -20,7 +23,7 @@ import org.springframework.context.annotation.Profile
 @RestController
 @RequestMapping(Array("/rest"))
 @Profile(Array("mona.persistence"))
-class StatisticsRestController {
+class StatisticsRestController extends LazyLogging {
 
   @Autowired
   val statisticsService: StatisticsService = null
@@ -37,6 +40,8 @@ class StatisticsRestController {
   @Autowired
   val submitterStatisticsService: SubmitterStatisticsService = null
 
+  @Autowired
+  val statisticsUpdateRunner: StatisticsUpdateRunner = null
 
   /**
     * Get a list of unique tags and their respective counts
@@ -44,7 +49,6 @@ class StatisticsRestController {
     * @return
    * */
   @RequestMapping(path = Array("/tags"), method = Array(RequestMethod.GET))
-  @Async
   def listTags: Future[Iterable[StatisticsTag]] = new AsyncResult[Iterable[StatisticsTag]](tagStatisticsService.getTagStatistics)
 
   /**
@@ -53,8 +57,21 @@ class StatisticsRestController {
     * @return
    * */
   @RequestMapping(path = Array("/tags/library"), method = Array(RequestMethod.GET))
-  @Async
   def listLibraryTags: Future[Iterable[StatisticsTag]] = new AsyncResult[Iterable[StatisticsTag]](tagStatisticsService.getLibraryTagStatistics)
+
+  /**
+    * Recompute the tag statistics from live data and return the refreshed library tags. Lets the
+    * admin library list reflect deletions immediately instead of waiting for the nightly statistics run
+    *
+    * @return
+   * */
+  @RequestMapping(path = Array("/tags/library/refresh"), method = Array(RequestMethod.POST))
+  @ResponseBody
+  def refreshLibraryTags: Iterable[StatisticsTag] = {
+    logger.info("Refreshing libraries now...")
+    tagStatisticsService.updateTagStatistics()
+    tagStatisticsService.getLibraryTagStatistics
+  }
 
   /**
     * Get all metadata statistics
@@ -62,7 +79,6 @@ class StatisticsRestController {
     * @return
    * */
   @RequestMapping(path = Array("/statistics/metaData"), method = Array(RequestMethod.GET))
-  @Async
   def listMetaData: Future[Iterable[StatisticsMetaData]] = new AsyncResult[Iterable[StatisticsMetaData]](metaDataStatisticsService.getMetaDataStatistics)
 
   /**
@@ -71,7 +87,6 @@ class StatisticsRestController {
     * @return
    * */
   @RequestMapping(path = Array("/statistics/global"), method = Array(RequestMethod.GET))
-  @Async
   def getGlobalStatistics: Future[StatisticsGlobal] = new AsyncResult[StatisticsGlobal](statisticsService.getGlobalStatistics)
 
  /**
@@ -80,7 +95,6 @@ class StatisticsRestController {
     * @return
     * */
   @RequestMapping(path = Array("/statistics/compoundClasses"), method = Array(RequestMethod.GET))
-  @Async
   def getCompoundClassStatistics: Future[Iterable[StatisticsCompoundClasses]] =
     new AsyncResult[Iterable[StatisticsCompoundClasses]](compoundClassStatisticsService.getCompoundClassStatistics)
 
@@ -90,7 +104,6 @@ class StatisticsRestController {
     * @return
    * */
   @RequestMapping(path = Array("/statistics/submitters"), method = Array(RequestMethod.GET))
-  @Async
   def getSubmitterStatistics: Future[Iterable[StatisticsSubmitter]] =
     new AsyncResult[Iterable[StatisticsSubmitter]](submitterStatisticsService.getSubmitterStatistics)
 
@@ -101,9 +114,16 @@ class StatisticsRestController {
     * @return
    * */
   @RequestMapping(path = Array("/statistics/update"), method = Array(RequestMethod.POST))
-  @ResponseBody
-  def updateStatistics(): String = {
-    statisticsService.updateStatistics()
-    "Statistics update queued"
+  def updateStatistics(): ResponseEntity[String] = {
+    // Best-effort conflict response. The authoritative guard lives in StatisticsService.updateStatistics
+    // so it is shared with the nightly cron. A rare race here just no-ops in the service, never doubles work
+    if (statisticsService.isUpdateInProgress) {
+      new ResponseEntity[String]("Statistics update already in progress", HttpStatus.CONFLICT)
+    } else {
+      // Delegated to an @Async runner bean so the request returns immediately
+      // The response confirms the update was requested, not that the recompute has finished
+      statisticsUpdateRunner.runUpdate()
+      new ResponseEntity[String]("Statistics update requested", HttpStatus.ACCEPTED)
+    }
   }
 }

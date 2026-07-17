@@ -17,7 +17,7 @@ import {Component, OnInit} from '@angular/core';
                     <span style="color: white; white-space: nowrap; font-style: italic; font-weight: bold;" [textContent]="spectraUploadProgressString"></span>
                 </ngb-progressbar>
             </p>
-            <div class="text-center" *ngIf="showETA">{{etaString}}<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> </div>
+            <div class="text-center" *ngIf="showETA">{{etaString}} <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> </div>
         </div>
         <div class="text-center text-nowrap" *ngIf="spectraUploadProgress === -1"><i>No Upload Started</i></div>`,
 })
@@ -41,37 +41,35 @@ export class SpectraUploadProgressComponent implements OnInit{
 
         this.uploadLibraryService.uploadProcess.subscribe((isUploading: boolean) => {
           if (isUploading) {
-            // TODO: undo this?
-            // Temporarily counting completed and failed uploads together
-            this.completedSpectraCount = this.uploadLibraryService.completedSpectraCount + this.uploadLibraryService.failedSpectraCount;
-            this.uploadedSpectraCount = this.uploadLibraryService.uploadedSpectraCount;
-
-            this.spectraUploadProgress = (this.completedSpectraCount / this.uploadedSpectraCount) * 100;
-            this.spectraUploadProgressString = this.spectraUploadProgress + '%';
+            this.updateProgress();
+            this.spectraUploadProgressString = this.spectraUploadProgress.toFixed(1) + '%';
           }
-          else if (!isUploading && this.uploadLibraryService.isSTP) {
-            this.spectraUploadProgressString = 'Working on next batch of spectra...';
-          }
-          else if (!isUploading && !this.uploadLibraryService.isSTP) {
+          else {
             this.completedSpectraCount = this.uploadLibraryService.completedSpectraCount + this.uploadLibraryService.failedSpectraCount;
             this.uploadedSpectraCount = this.uploadLibraryService.uploadedSpectraCount;
             this.showETA = false;
             this.spectraUploadProgress = 100;
             this.spectraUploadProgressString = 'Upload Completed!';
           }
-          else {
-            this.spectraUploadProgress = -1;
-            this.spectraUploadProgressString = 'Still Processing...';
-          }
           this.buildEtaString();
         });
     }
 
+    /**
+     * Recomputes the progress counts, preferring the pre-counted file total as
+     * the denominator so batched uploads do not reset the bar every batch
+     */
+    updateProgress() {
+        // TODO: undo this?
+        // Temporarily counting completed and failed uploads together
+        this.completedSpectraCount = this.uploadLibraryService.completedSpectraCount + this.uploadLibraryService.failedSpectraCount;
+        this.uploadedSpectraCount = Math.max(this.uploadLibraryService.totalSpectraCount, this.uploadLibraryService.uploadedSpectraCount);
+
+        this.spectraUploadProgress = (this.completedSpectraCount / this.uploadedSpectraCount) * 100;
+    }
+
     buildEtaString() {
-        if (this.uploadLibraryService.isSTP) {
-          this.etaString = 'Uploading in batches...';
-        }
-        else if (this.uploadLibraryService.uploadStartTime === -1) {
+        if (this.uploadLibraryService.uploadStartTime === -1) {
             this.etaString = '';
         } else if (this.completedSpectraCount === 0) {
             this.etaString = 'Loading spectra for processing...';

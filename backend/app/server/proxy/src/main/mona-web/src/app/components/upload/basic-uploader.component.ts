@@ -218,6 +218,8 @@ export class BasicUploaderComponent implements OnInit{
             this.page = 2;
 
             this.currentSpectrum = {names: [''], meta: [{}], ions, spectrum: spectrumString};
+            // A pasted spectrum has no source file to fall back on in the history
+            this.filenames = null;
             this.showIonTable = this.currentSpectrum.ions.length < 500;
         }
     }
@@ -233,27 +235,6 @@ export class BasicUploaderComponent implements OnInit{
         this.compoundMolError = undefined;
     }
 
-
-    /**
-     * Convert an array of names to an InChIKey based on the first result
-     * @param names array of compound names
-     * @param callback callback function to get name
-     */
-    namesToInChIKey(names, callback) {
-        if (names.length === 0) {
-            callback(null);
-        } else {
-            this.compoundConversionService.nameToInChIKey(names[0], (molecule) => {
-                if (molecule !== null) {
-                    callback(molecule);
-                } else {
-                    this.namesToInChIKey(names.slice(1), callback);
-                }
-            }, (error) => {
-                this.namesToInChIKey(names.slice(1), callback);
-            });
-        }
-    }
 
     /**
      * Pull names from CTS given an InChIKey and update the currentSpectrum
@@ -303,6 +284,11 @@ export class BasicUploaderComponent implements OnInit{
     }
 
     processInChIKey(inchiKey) {
+        if (inchiKey === null || inchiKey === '') {
+            this.compoundError = 'Please provide an InChIKey, InChI, or SMILES!';
+            this.compoundProcessing = false;
+            return;
+        }
         this.compoundConversionService.getInChIByInChIKey(
             inchiKey,
              (data) => {
@@ -316,7 +302,6 @@ export class BasicUploaderComponent implements OnInit{
                 } else {
                     this.compoundError = 'Unable to process provided InChIKey!';
                 }
-
                 this.compoundProcessing = false;
             }
         );
@@ -362,19 +347,10 @@ export class BasicUploaderComponent implements OnInit{
             this.processInChIKey(this.currentSpectrum.inchiKey);
         }
 
-        // Process names
-        else if (this.currentSpectrum.names.length > 0) {
-            this.namesToInChIKey(this.currentSpectrum.names, (inchiKey) => {
-                this.logger.debug('Name to inchikey response: ' + inchiKey);
-                if (inchiKey !== null) {
-                    this.logger.info('Found InChIKey: ' + inchiKey);
-                    this.currentSpectrum.inchiKey = inchiKey;
-                    this.processInChIKey(inchiKey);
-                } else {
-                    this.compoundError = 'Unable to find a match for provided name!';
-                    this.compoundProcessing = false;
-                }
-            });
+        // A compound name on its own can no longer be resolved to a structure since the CTS name lookup was retired and replaced with CTS-Lite
+        else if (this.currentSpectrum.names.some((name) => name && name.trim() !== '')) {
+            this.compoundError = 'A compound name on its own can no longer be resolved. Please also provide an InChI, InChIKey, SMILES, or MOL/SDF file.';
+            this.compoundProcessing = false;
         }
 
         else {
@@ -450,12 +426,19 @@ export class BasicUploaderComponent implements OnInit{
     parseFiles(event) {
         this.page = 1;
         this.uploadError = null;
-        this.uploadLibraryService.isSTP = false;
-        this.uploadLibraryService.loadSpectraFile(event.target.files[0],
+        // Remember the source file so a failed upload can still be labeled with it in the
+        // history, a successful one is labeled with its spectrum id instead
+        this.filenames = event.target.files && event.target.files.length ? event.target.files[0].name : null;
+        return this.uploadLibraryService.loadSpectraFile(event.target.files[0],
              (data, origin) => {
                 this.logger.info('Loading file ' + event.target.files[0].name + '...');
 
                 this.uploadLibraryService.processData(data, (spectrum) => {
+                    if (spectrum === null || typeof spectrum === 'undefined') {
+                        // Parser could not build a valid spectrum from this block, the
+                        // zero spectra check after the file read reports it to the user
+                        return;
+                    }
                     if (!this.currentSpectrum) {
                         // Create list of ions
                         this.logger.info('Parsing ions...');
@@ -522,7 +505,16 @@ export class BasicUploaderComponent implements OnInit{
                     }
                 }, origin);
             }
-        );
+        ).then(() => {
+            // The file was read but no valid spectrum was produced, advance to the
+            // no valid mass spectra card instead of hanging on the loading page
+            if (!this.currentSpectrum) {
+                this.page = 2;
+            }
+        }).catch((reason) => {
+            this.uploadError = reason instanceof Error ? reason.message : String(reason);
+            this.page = 0;
+        });
     }
 
 
@@ -624,8 +616,13 @@ export class BasicUploaderComponent implements OnInit{
                 this.uploadLibraryService.completedSpectraCount = 0;
                 this.uploadLibraryService.failedSpectraCount = 0;
                 this.uploadLibraryService.uploadedSpectraCount = 0;
+                this.uploadLibraryService.totalSpectraCount = 0;
                 this.uploadLibraryService.uploadStartTime = new Date().getTime();
             }
+
+            // Record this upload in the My Uploads history. A basic upload is always a single
+            // spectrum, so the entry is labeled with the server assigned spectrum id
+            const token = this.authenticationService.getCurrentUser().accessToken;
 
             this.uploadLibraryService.uploadSpectra([this.currentSpectrum],  (spectrum) => {
                 this.logger.info('submitting spectrum');
@@ -636,8 +633,10 @@ export class BasicUploaderComponent implements OnInit{
                     this.logger.info('Spectra successfully Upload!');
                     this.logger.info('Reference ID: ' + data.id);
                     this.uploadLibraryService.uploadedSpectra.push(data.id);
+                    this.uploadLibraryService.trackInteractiveUpload(`Spectrum ${data.id}`, null, 1, token);
                 }, (err) => {
                         this.logger.info('ERROR', err);
+                        this.uploadLibraryService.trackInteractiveUpload(this.filenames || 'Pasted spectrum', null, 1, token);
                 });
             });
 

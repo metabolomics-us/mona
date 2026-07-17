@@ -2,7 +2,10 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain;
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Sequence.SpectrumSequenceIdGenerator;
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.validators.NullOrNotBlank;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Type;
 import org.springframework.context.annotation.Profile;
 
@@ -23,6 +26,7 @@ public class Spectrum implements Serializable {
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_id")
+    @BatchSize(size = 50)
     private List<Compound> compound;
 
     @Column(name = "id")
@@ -44,14 +48,19 @@ public class Spectrum implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_metadata_id")
     @Column(name = "metaData")
+    @BatchSize(size = 50)
     private List<MetaData> metaData;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_annotation_id")
     @Column(name = "annotations")
+    @BatchSize(size = 50)
     private List<MetaData> annotations = new ArrayList<>();
 
+    // Tolerate a missing satellite row left by an interrupted upload (resolves to null
+    // instead of throwing EntityNotFoundException) so loads and deletes never break
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "score_id")
     private Score score;
 
@@ -71,10 +80,12 @@ public class Spectrum implements Serializable {
     private Date lastCurated = null;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "splash_id")
     private Splash splash;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "submitter_id")
     @NotNull
     private SpectrumSubmitter submitter;
@@ -82,9 +93,13 @@ public class Spectrum implements Serializable {
     @Column(name = "tags")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "spectrum_id")
+    @BatchSize(size = 50)
     private List<Tag> tags;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    // Tolerate a missing library row. A dangling library_id (e.g. left by an interrupted upload)
+    // resolves to null instead of throwing EntityNotFoundException, so loads and deletes never break
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "library_id")
     private Library library;
 

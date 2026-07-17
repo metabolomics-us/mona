@@ -77,21 +77,21 @@ class MetaDataStatisticsServiceTest extends AnyWordSpec with LazyLogging{
         //assert(result.get sameElements Array(MetaDataValueCount("MS2", 59)))
       }
 
-      "get metadata aggregation for ion mode from repository" in {
-        val result = metaDataStatisticsService.getMetaDataStatistics("ion mode")
+      "get metadata aggregation for ionization mode from repository" in {
+        val result = metaDataStatisticsService.getMetaDataStatistics("ionization mode")
         val values = result.getMetaDataValueCount.asScala.sortBy(_.getCount)
 
-
-        assert(values.length == 2)
+        assert(result.getCount == 1)
+        assert(values.length == 1)
         assert(values.head.getValue == "negative")
-        assert(values.head.getCount == 25)
-        assert(values.last.getValue == "positive")
-        assert(values.last.getCount == 33)
+        assert(values.head.getCount == 1)
       }
 
       "ensure that the maximum count of each metadata group is the first value" in {
-        metaDataStatisticsService.getMetaDataStatistics.foreach { x =>
-          assert(x.getMetaDataValueCount.asScala.head.getCount == x.getMetaDataValueCount.asScala.map(_.getCount).max)
+        // Only the charted names get a value breakdown persisted; the rest have an empty list by design
+        List("ms level", "ionization mode", "precursor type").foreach { name =>
+          val valueCounts = metaDataStatisticsService.getMetaDataStatistics(name).getMetaDataValueCount.asScala
+          assert(valueCounts.head.getCount == valueCounts.map(_.getCount).max)
         }
       }
     }

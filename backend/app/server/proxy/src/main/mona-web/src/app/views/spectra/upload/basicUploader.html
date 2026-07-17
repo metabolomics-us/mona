@@ -23,7 +23,7 @@
                 <br />
 
               <label><strong>Upload a File:</strong></label>
-                <p class="help-block" *ngIf="uploadError" [ngClass]="{'has-error': uploadError}"><strong>{{uploadError}}</strong></p>
+                <p class="help-block text-danger" *ngIf="uploadError"><strong>ERROR: {{uploadError}}</strong></p>
                 <div class="input-group" [ngClass]="{'has-error': uploadError}">
                         <button class="btn btn-primary accessibility btn-file"
                             (keydown.enter)="fileUpload.click()"
@@ -76,8 +76,12 @@ OR
 
         <!-- Error message if no spectra are found -->
         <div *ngIf="page === 2 && currentSpectrum === null" class="card">
-            <div class="card-header"><strong style="font-size: 1.2em;">Loading...</strong></div>
-            <div class="card-body text-center"><strong>No valid mass spectra found in the uploaded file(s)!</strong></div>
+            <div class="card-header"><strong style="font-size: 1.2em;">No Spectra Found</strong></div>
+            <div class="card-body text-center">
+                <strong>No valid mass spectra found in the uploaded file!</strong>
+                <br /><br />
+                <button class="btn btn-primary accessibility" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Try Again</button>
+            </div>
         </div>
 
 
@@ -87,7 +91,7 @@ OR
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                     <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                      <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
+                      <li class="previous"><button class="btn btn-danger accessibility" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
                     </ul>
                   </div>
                   <div class="mx-auto order-0">
@@ -161,7 +165,7 @@ OR
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                     <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                      <li class="previous"><button class="fakeRef davis-blue accessibility" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
+                      <li class="previous"><button class="btn btn-danger accessibility" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
                     </ul>
                   </div>
                   <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
@@ -191,7 +195,7 @@ OR
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
                     <li *ngIf="compoundInfoProvided" class="next"><button class="fakeRef davis-blue accessibility" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
-                    <li *ngIf="!compoundInfoProvided" class="text-danger"><button class="fakeRef accessibility" [disabled]="true" style="color: #e46161; cursor: not-allowed" ngbTooltip="SMILES, InChI Code, or InChIKey required">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li *ngIf="!compoundInfoProvided" class="text-danger"><button class="fakeRef accessibility" [disabled]="true" style="color: #e46161 !important; cursor: not-allowed" ngbTooltip="SMILES, InChI Code, or InChIKey required">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>
@@ -203,7 +207,7 @@ OR
                         MoNA requires that every spectrum has an associated compound.  Please enter an InChI Code, InChIKey,
                         SMILES, compound name, a MOL/SDF file, or draw a structure yourself.  Then, click on
                         "Update Compound" to automatically pull the remaining fields from the
-                        <a href="http://cts.fiehnlab.ucdavis.edu" target="_blank">Chemical Translation Service</a>.
+                        <a href="https://cts-lite.metabolomics.us" target="_blank">Chemical Translation Service</a>.
                     </small>
                 </p>
                 <br />
@@ -387,7 +391,7 @@ OR
                 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                   <ul class="navbar-nav ml-auto">
                     <li *ngIf="compoundInfoProvided" class="next"><button class="fakeRef davis-blue accessibility" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
-                    <li *ngIf="!compoundInfoProvided" class="text-danger"><button class="fakeRef accessibility" [disabled]="true" style="color: #e46161; cursor: not-allowed" ngbTooltip="SMILES, InChI Code, or InChIKey required">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    <li *ngIf="!compoundInfoProvided" class="text-danger"><button class="fakeRef accessibility" [disabled]="true" style="color: #e46161 !important; cursor: not-allowed" ngbTooltip="SMILES, InChI Code, or InChIKey required">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                   </ul>
                 </div>
               </nav>

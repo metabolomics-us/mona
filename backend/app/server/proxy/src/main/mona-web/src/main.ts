@@ -6,7 +6,6 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {TagInputModule} from 'ngx-chips';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {BrowserModule} from '@angular/platform-browser';
-import {CtsLibModule} from 'angular-cts-service/dist/cts-lib';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ToasterModule} from 'angular2-toaster';
 import {NgxGoogleAnalyticsModule} from 'ngx-google-analytics';
@@ -21,7 +20,6 @@ import {NvD3Module} from 'ng2-nvd3';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {NgcCookieConsentModule, NgcCookieConsentConfig} from 'ngx-cookieconsent';
 
-import {CtsService, ChemifyService} from 'angular-cts-service/dist/cts-lib';
 import {NgMassSpecPlotterModule} from '@wcmc/ng-mass-spec-plotter';
 import {MassbankParserLibService, MassbankParserLibModule} from 'angular-massbank-parser/dist/massbank-parser-lib';
 import {MgfParserLibModule, MgfParserLibService} from 'angular-mgf-parser/dist/mgf-parser-lib';
@@ -40,6 +38,9 @@ import {QueryCacheService} from './app/services/cache/query-cache.service';
 import {CookieMain} from './app/services/cookie/cookie-main.service';
 import {AsyncService} from './app/services/upload/async.service';
 import {UploadLibraryService} from './app/services/upload/upload-library.service';
+import {UploadJobResource} from './app/services/upload/upload-job.resource';
+import {UploadJobService} from './app/services/upload/upload-job.service';
+import {ChunkedUploadService} from './app/services/upload/chunked-upload.service';
 import {AuthenticationService} from './app/services/authentication.service';
 import {CompoundConversionService} from './app/services/compound-conversion.service';
 import {RegistrationService} from './app/services/registration.service';
@@ -100,7 +101,10 @@ import {SpectrumFeedbackResultsCommunityComponent} from './app/components/feedba
 import {DocumentationUploadLibraryComponent} from './app/components/documentation/documentation-upload-library.component';
 import {DocumentationEntropyComponent} from './app/components/documentation/documentation-entropy.component';
 import {ManageSpectraComponent} from './app/components/admin/manage-spectra.component';
+import {DiagnosticsComponent} from './app/components/admin/diagnostics.component';
+import {AdminButtonComponent} from './app/components/admin/admin-button.component';
 import {MassDeleteModalComponent} from './app/components/browser/mass-delete-modal.component';
+import {DeleteConfirmModalComponent} from './app/components/browser/delete-confirm-modal.component';
 
 import {PrefixValidator} from './app/directives/PrefixValidatorDirective';
 
@@ -142,7 +146,6 @@ const cookieConfig: NgcCookieConsentConfig = {
         HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
-        CtsLibModule.forRoot({apiUrl: environment.ctsUrl}),
         NgMassSpecPlotterModule,
         MassbankParserLibModule,
         MgfParserLibModule,
@@ -178,8 +181,9 @@ const cookieConfig: NgcCookieConsentConfig = {
         QueryCacheService,
         AsyncService,
         UploadLibraryService,
-        CtsService,
-        ChemifyService,
+        UploadJobResource,
+        UploadJobService,
+        ChunkedUploadService,
         AuthenticationService,
         RegistrationService,
         CompoundConversionService,
@@ -258,7 +262,10 @@ const cookieConfig: NgcCookieConsentConfig = {
         DocumentationEntropyComponent,
         PrefixValidator,
         ManageSpectraComponent,
-        MassDeleteModalComponent
+        DiagnosticsComponent,
+        AdminButtonComponent,
+        MassDeleteModalComponent,
+        DeleteConfirmModalComponent
     ],
     bootstrap: [
         AppRootComponent

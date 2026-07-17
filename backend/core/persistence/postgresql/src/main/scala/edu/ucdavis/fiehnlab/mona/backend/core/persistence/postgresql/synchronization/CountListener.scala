@@ -5,8 +5,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, PersistenceEventListener}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.{Lazy, Profile}
 import org.springframework.stereotype.Component
-import org.springframework.context.annotation.Profile
 
 /**
  * Created by wohlgemuth on 3/17/16.
@@ -14,7 +14,10 @@ import org.springframework.context.annotation.Profile
 @Component
 @Profile(Array("mona.persistence"))
 class CountListener extends PersistenceEventListener[Spectrum] with LazyLogging {
+  // Lazy breaks the cycle: SpectrumPersistenceService -> EventScheduler -> this listener -> SpectrumPersistenceService.
+  // Only needed inside the event handlers below, never during construction, so a lazy proxy is safe here
   @Autowired
+  @Lazy
   val spectrumPersistenceService: SpectrumPersistenceService = null
 
   /**

@@ -47,7 +47,7 @@ class DownloaderService extends LazyLogging {
     * @param query
     * @return
     */
-  def generatePredefinedExport(query: PredefinedQuery, compress: Boolean = true, enableAllSpectraStaticFiles: Boolean = false): PredefinedQuery = {
+  def generatePredefinedExport(query: PredefinedQuery, compress: Boolean = true): PredefinedQuery = {
 
     val jsonDownloader: SpectrumDownloader = SpectrumDownloader(query, query.getJsonExport, "json", downloadDir, compress)
     val mspDownloader: SpectrumDownloader = SpectrumDownloader(query, query.getMspExport, "msp", downloadDir, compress)
@@ -55,12 +55,6 @@ class DownloaderService extends LazyLogging {
 
     val downloaders: ArrayBuffer[SpectrumDownloader] = new ArrayBuffer()
     downloaders.append(jsonDownloader, mspDownloader, sdfDownloader)
-
-    // Create additional static files if this query corresponds to all spectra
-    if (enableAllSpectraStaticFiles && query.getQuery.isEmpty) {
-      downloaders.append(SpectrumDownloader(query.getLabel, query.getQuery, "png", staticDownloadDir, compress))
-      downloaders.append(SpectrumDownloader(query.getLabel, query.getQuery, "ids", staticDownloadDir, compress))
-    }
 
     val count: Long = downloadWriterService.exportQuery(query.getQuery, query.getLabel, downloaders.toArray)
 
@@ -76,13 +70,12 @@ class DownloaderService extends LazyLogging {
     * @param compress
     */
   def generateStaticExports(export: QueryExport, compress: Boolean = true): QueryExport = {
-    val downloaders = Array(
-      SpectrumDownloader(export.getLabel, export.getQuery, "png", staticDownloadDir, compress),
-      SpectrumDownloader(export.getLabel, export.getQuery, "ids", staticDownloadDir, compress)
-    )
-
-    downloadWriterService.exportQuery(export.getQuery, export.getLabel, downloaders)
-    export.setCount(downloaders.head.toQueryExport.getCount)
+    // Static exports (base64 spectrum-image CSV and identifier table) are disabled. They were never
+    // reachable in the UI and the per-spectrum PNG rendering made a full-library run take hours,
+    // which a queued request would then re-run on every downloader restart. Left as a no-op so any
+    // request still sitting on the durable queue finishes instantly instead of scanning everything
+    logger.info(s"static exports are disabled, skipping ${export.getLabel}")
+    export.setCount(0)
     export
   }
 

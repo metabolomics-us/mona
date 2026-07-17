@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.{Propagation, Transactional}
 import javax.persistence.EntityManager
 import scala.collection.mutable.Map
 import scala.jdk.CollectionConverters._
-import scala.jdk.StreamConverters.StreamHasToScala
 
 /**
   * Created by sajjan on 9/27/16.
@@ -38,40 +37,30 @@ class TagStatisticsService extends LazyLogging{
    * */
   @Transactional
   def updateTagStatistics(): String = {
-    statisticsTagRepository.deleteAll()
+    logger.info("Aggregating tag statistics now...")
+    val start = System.currentTimeMillis()
+    statisticsTagRepository.deleteAllInBatch()
 
+    // Aggregate tag counts in the database, excluding library tags with no spectrum or compound
+    // association, then combine the ruleBased variants of each text into a single total
     val tagsCounter: Map[String, Int] = Map()
     val tagsRuleBase: Map[String, Boolean] = Map()
-    var counter = 0
-    tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
-      //Exclude spectrum.library associated tags since they are already included in the spectrum.tags object
-      if (tag.getSpectrum == null && tag.getCompound == null) {
-        logger.debug(s"Don't count library tags as count as duplicates")
-      } else {
-        if (tagsCounter.contains(tag.getText)) {
-          tagsCounter(tag.getText) += 1
-        } else {
-          tagsCounter(tag.getText) = 1
-          tagsRuleBase(tag.getText) = tag.getRuleBased
-        }
-      }
-      counter += 1
-      entityManager.detach(tag)
-
-      if (counter % 100000 == 0) {
-        logger.info(s"\tCompleted Tag Object #${counter}")
+    tagsRepository.aggregateTagCounts().asScala.foreach { aggregation =>
+      val text = aggregation.getText
+      tagsCounter(text) = tagsCounter.getOrElse(text, 0) + aggregation.getCount.toInt
+      if (!tagsRuleBase.contains(text)) {
+        tagsRuleBase(text) = aggregation.getRuleBased
       }
     }
 
-    tagsCounter.foreach { case (key, value) =>
-      val newStatisticTag = new StatisticsTag(key, tagsRuleBase(key), value, if (libraryRepository.existsByLibrary(key)) "library" else null)
+    tagsCounter.foreach { case (text, count) =>
+      val newStatisticTag = new StatisticsTag(text, tagsRuleBase(text), count, if (libraryRepository.existsByLibrary(text)) "library" else null)
       statisticsTagRepository.save(newStatisticTag)
-      //entityManager.detach(newStatisticTag)
     }
-    tagsCounter.clear()
-    tagsRuleBase.clear()
+    val tagCount = tagsCounter.size
     entityManager.flush()
     entityManager.clear()
+    logger.info(f"Tag statistics complete: $tagCount tags in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     "Tag Statistics Completed"
   }
 

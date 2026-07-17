@@ -1,6 +1,11 @@
+<div>
+  <br>
+  <h1 class="h2"><fa-icon [icon]="faChartBar"></fa-icon> Manage Spectra</h1>
+  <br/>
+</div>
 <div class="row" *ngIf="!auth.isLoggedIn()">
   <div class="col-md-12">
-    <h1 class="h3"><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="auth.requestModal()" class="davis-blue text-decoration-none">log in</a>!</h1>
+    <h2 class="h3"><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="auth.requestModal()" class="davis-blue text-decoration-none">log in</a>!</h2>
   </div>
 </div>
 <div *ngIf="auth.isLoggedIn() && auth.isAdmin()" class="container">
@@ -8,9 +13,12 @@
     <div class="col">
       <br/>
       <div class="row justify-content-center">
-        <h1 class="h3">Delete Libraries</h1>
+        <h2 class="h3">Delete Libraries</h2>
       </div>
       <hr/>
+      <div class="row justify-content-center" *ngIf="libraryTags && libraryTags.length === 0">
+        <p>No libraries detected</p>
+      </div>
       <div class="row justify-content-start" *ngIf="libraryTags && libraryTags.length > 0">
         <form (ngSubmit)="submitDeletionQuery()" class="col">
           <div *ngFor="let x of libraryTags">
@@ -28,35 +36,35 @@
           </div>
         </form>
       </div>
+      <div class="row mt-3" *ngIf="deletionJob">
+        <div class="col">
+          <div class="text-center">
+            <i>Deletion {{deletionJob.status | lowercase}}<span *ngIf="deletionLabel"> of {{deletionLabel}}</span>: {{deletionJob.deleted + deletionJob.skipped | number: '1.0-0'}} / {{deletionJob.total | number: '1.0-0'}} spectra<span *ngIf="deletionJob.skipped > 0"> ({{deletionJob.skipped | number: '1.0-0'}} skipped)</span></i>
+          </div>
+          <ngb-progressbar class="custom-progress" [ngClass]="{active: isDeletionRunning(), 'progress-striped': isDeletionRunning()}" [type]="deletionJob.status === 'FAILED' ? 'danger' : ''" max="100" [value]="deletionProgress()">
+            <span style="color: white; white-space: nowrap; font-style: italic; font-weight: bold;">{{deletionProgress()}}%</span>
+          </ngb-progressbar>
+          <div class="text-center text-danger" *ngIf="deletionJob.status === 'FAILED'">{{deletionJob.errorMessage}}</div>
+        </div>
+      </div>
     </div>
     <div class="col">
       <br/>
       <div class="row justify-content-center">
-        <h1 class="h3">Admin Buttons (Force Updates)</h1>
+        <h2 class="h3">Admin Buttons</h2>
       </div>
       <hr/>
-      <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2 accessibility" (click)="updateStatistics()">Update Statistics</button>
-      </div>
-      <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2 accessibility" (click)="refreshSimilarity()">Refresh Similarity Service</button>
-      </div>
-      <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2 accessibility" (click)="updatePredefinedQueries()">Update Predefined Queries</button>
-      </div>
-      <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2 accessibility" (click)="updateStaticQueries()">Update Static Queries</button>
-      </div>
-      <div class="row justify-content-center mb-2">
-        <button class="btn btn-primary mr-2 accessibility" (click)="reCurateAllData()">Re-Curate All Data</button>
-      </div>
+      <admin-button label="Update Statistics" info="Updates all statistics including library and spectra counts, statistics page, submitter avg. scores, etc." (action)="updateStatistics()"></admin-button>
+      <admin-button label="Rebuild Similarity Index" info="Rebuilds the spectral similarity search index" (action)="refreshSimilarity()"></admin-button>
+      <admin-button label="Regenerate Downloads" info="Regenerates all library exports (JSON, MSP, SDF) on the downloads page" (action)="updatePredefinedQueries()"></admin-button>
+      <admin-button label="Re-Curate All Spectra" info="Re-curates all spectra (can take days on prod)" (action)="reCurateAllData()"></admin-button>
     </div>
   </div>
   <div class="row">
     <div class="col">
       <br/> <br/> <br/> <br/> <br/>
       <div class="row justify-content-center">
-        <h1 class="h3">Force Delete Spectra by ID</h1>
+        <h2 class="h3">Force Delete Spectra by ID</h2>
       </div>
       <hr/>
       <div class="row justify-content-center">
@@ -73,7 +81,7 @@
     <div class="col">
       <br/> <br/> <br/>
       <div class="row justify-content-center">
-        <h1 class="h3">Change a User's Password</h1>
+        <h2 class="h3">Change a User's Password</h2>
       </div>
       <hr/>
       <div class="row justify-content-center">

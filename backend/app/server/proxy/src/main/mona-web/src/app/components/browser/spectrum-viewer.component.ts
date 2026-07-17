@@ -12,13 +12,13 @@ import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {FeedbackCacheService} from '../../services/feedback/feedback-cache.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {NGXLogger} from 'ngx-logger';
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {OrderbyPipe} from '../../filters/orderby.pipe';
 import {ActivatedRoute, Router} from '@angular/router';
 import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
-import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
+import {faQuestionCircle, faFlask, faExclamationTriangle, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
@@ -27,12 +27,14 @@ import {Observable, throwError} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {ToasterService} from 'angular2-toaster';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {DeleteConfirmModalComponent} from './delete-confirm-modal.component';
 
 @Component({
     selector: 'spectrum-viewer',
     templateUrl: '../../views/spectra/display/viewSpectrum.html'
 })
-export class SpectrumViewerComponent implements OnInit, AfterViewInit{
+export class SpectrumViewerComponent implements OnInit{
     delayedspectrum: SpectrumModel;
     spectrum: SpectrumModel;
     score;
@@ -49,10 +51,13 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     intensity;
     showScore;
     id;
+    showSpectrumChart = false;
     faAngleRight = faAngleRight;
     faAngleDown = faAngleDown;
     faQuestionCircle = faQuestionCircle;
     faFlask = faFlask;
+    faTrash = faTrash;
+    faExclamationTriangle = faExclamationTriangle;
     faSpinner = faSpinner;
     faStar = faStar;
     faStarEmpty = faStarEmpty;
@@ -63,7 +68,8 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
                  public spectrumService: Spectrum,  public authenticationService: AuthenticationService,
                  public location: Location,  public spectrumCache: SpectrumCacheService,
                  public route: ActivatedRoute,  public router: Router, public orderbyPipe: OrderbyPipe,
-                 public feedbackCache: FeedbackCacheService, public http: HttpClient, public toaster: ToasterService){
+                 public feedbackCache: FeedbackCacheService, public http: HttpClient, public toaster: ToasterService,
+                 public modalService: NgbModal){
       this.currentFeedback = [];
     }
 
@@ -74,7 +80,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
           this.currentFeedback = res;
         });
         this.accordionStatus = {
-          isSpectraOpen: false,
+          isSpectraOpen: true,
           isIonTableOpen: false,
           isMetadataOpen: false,
           isSimilarSpectraOpen: false,
@@ -116,18 +122,15 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
           return this.truncateDecimal(mass, 4);
         };
         this.setSpectrum();
+
+        this.showSpectrumChart = false;
+        setTimeout(() => {
+          this.showSpectrumChart = true;
+        });
       });
     }
 
-    ngAfterViewInit() {
-      // Have to use timeout timer since canvas won't draw fast enough on first load for masspecPanel
-      // Commented out so that it does not automatically open by itself 9/3/25
-      // setTimeout(() => {
-      //   this.setAccordionStatus();
-      // }, 100);
-    }
-
-  setAccordionStatus() {
+    setAccordionStatus() {
       this.accordionStatus.isSpectraOpen = true;
     }
 
@@ -280,6 +283,41 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
 
     isAdmin() {
       return this.authenticationService.isAdmin();
+    }
+
+    sameSubmitter(): boolean {
+      if (this.authenticationService.isLoggedIn() && this.spectrum && this.spectrum.submitter) {
+        return this.authenticationService.getCurrentUser().emailAddress === this.spectrum.submitter.emailAddress;
+      }
+      return false;
+    }
+
+    canDelete(): boolean {
+      return this.sameSubmitter() || this.isAdmin();
+    }
+
+    deleteSpectrum() {
+      const modalRef = this.modalService.open(DeleteConfirmModalComponent);
+      modalRef.componentInstance.message = 'Are you sure you want to delete spectrum <strong>' + this.spectrum.id + '</strong>?';
+      modalRef.result.then(() => this.performDelete(), () => {});
+    }
+
+    performDelete() {
+      const token = this.authenticationService.getCurrentUser().accessToken;
+      this.spectrumService.delete(this.spectrum.id, token).subscribe(() => {
+        this.toaster.pop({
+          type: 'success',
+          title: 'Spectrum Deleted',
+          body: `Spectrum ${this.spectrum.id} was successfully deleted.`
+        });
+        this.router.navigate(['/spectra/browse']);
+      }, (error) => {
+        this.toaster.pop({
+          type: 'error',
+          title: 'Delete Failed',
+          body: error.message || 'An error occurred while deleting the spectrum.'
+        });
+      });
     }
 
     reCurateSpectrum(id: string) {

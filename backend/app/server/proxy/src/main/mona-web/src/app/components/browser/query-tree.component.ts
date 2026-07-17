@@ -7,7 +7,7 @@ import {NGXLogger} from 'ngx-logger';
 import {environment} from '../../../environments/environment';
 import {Component, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
-import {faDownload, faTable, faCloudDownloadAlt} from '@fortawesome/free-solid-svg-icons';
+import {faTable, faCloudDownloadAlt} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'query-tree',
@@ -18,9 +18,7 @@ export class QueryTreeComponent implements OnInit {
     showEmptyDownloads;
     queries;
     queryTree;
-    static;
     tree;
-    faDownload = faDownload;
     faTable = faTable;
     faCloudDownloadAlt = faCloudDownloadAlt;
 
@@ -31,10 +29,8 @@ export class QueryTreeComponent implements OnInit {
         this.queries = {};
         this.queryTree = [];
         this.tree = {};
-        this.static = [];
 
         this.getPredefinedQueries();
-        this.getStaticDownloads();
     }
 
     executeQuery(node: any): string {
@@ -119,35 +115,6 @@ export class QueryTreeComponent implements OnInit {
                         return (a === 'All Spectra' ? 1 : -1);
                     } else {
                         return 0;
-                    }
-                });
-            },
-            (error) => {
-                this.logger.error('query tree failed: ' + error);
-            }
-        );
-    }
-
-    getStaticDownloads() {
-        this.download.getStaticDownloads().pipe(first()).subscribe(
-            (res: any) => {
-                res.forEach((x) => {
-                    if (typeof x.category !== 'undefined') {
-                        const categoryName = x.category[0].toUpperCase() + x.category.substr(1);
-
-                        if (!this.static.hasOwnProperty(categoryName)) {
-                            this.static[categoryName] = [];
-                        }
-
-                        x.path = `${environment.REST_BACKEND_SERVER}/rest/downloads/static/${x.category}/${x.fileName}`;
-                        this.static[categoryName].push(x);
-                    } else {
-                        if (!this.static.hasOwnProperty('General')) {
-                            this.static.General = [];
-                        }
-
-                        x.path = `${environment.REST_BACKEND_SERVER}/rest/downloads/static/${x.fileName}`;
-                        this.static.General.push(x);
                     }
                 });
             },

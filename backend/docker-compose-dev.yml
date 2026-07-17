@@ -31,7 +31,7 @@ services:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: postgres
 
   postgresql-hero:
@@ -44,7 +44,7 @@ services:
       mode: replicated
 
   rabbitmq:
-    image: rabbitmq:3.10-management
+    image: rabbitmq:3.6-management
     ports:
       - "15672:15672"
       - "5672:5672"
@@ -52,7 +52,7 @@ services:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: rabbitmq
 
 
@@ -63,7 +63,7 @@ services:
   # The discovery service provided us with a local overview of our services
   # and allows for easy scaling and load balancing using our proxy at a later stage
   discovery:
-    image: public.ecr.aws/fiehnlab/mona-discovery:test
+    image: public.ecr.aws/fiehnlab/mona-discovery:dev
     ports:
       - "8761:8761"
     depends_on:
@@ -77,11 +77,11 @@ services:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: discovery-service
 
   config-server:
-    image: public.ecr.aws/fiehnlab/mona-config:test
+    image: public.ecr.aws/fiehnlab/mona-config:dev
     ports:
       - "1111:1111"
     depends_on:
@@ -95,7 +95,7 @@ services:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: config-service
 
 
@@ -105,7 +105,7 @@ services:
 
   # Bootstrap service which pre-populated and synchronizes the databases
   bootstrap:
-    image: public.ecr.aws/fiehnlab/mona-bootstrap:test
+    image: public.ecr.aws/fiehnlab/mona-bootstrap:dev
     depends_on:
       - config-server
     entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
@@ -113,27 +113,31 @@ services:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: bootstrap-service
 #
 #  # Webhook support to notify external apis
   webhooks:
-    image: public.ecr.aws/fiehnlab/mona-webhooks-server:test
+    image: public.ecr.aws/fiehnlab/mona-webhooks-server:dev
     ports:
       - "4444:4444"
     depends_on:
       - config-server
     entrypoint: bash -c "./wait-for-it.sh config-server:1111 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    environment:
+      - MONA_AWS_ACCESS_KEY_ID=${MONA_AWS_ACCESS_KEY_ID}
+      - MONA_AWS_SECRET_ACCESS_KEY=${MONA_AWS_SECRET_ACCESS_KEY}
+      - MONA_DIAGNOSTICS_LOG_GROUP=mona-dev-logs
     logging:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: webhooks-service
 #
 #  # Scheduler for curation jobs
   curationScheduler:
-    image: public.ecr.aws/fiehnlab/mona-curation-scheduler:test
+    image: public.ecr.aws/fiehnlab/mona-curation-scheduler:dev
     ports:
       - "5555:5555"
     depends_on:
@@ -144,7 +148,7 @@ services:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: curation-scheduler-service
 
   #
@@ -153,20 +157,20 @@ services:
 
   # Persistence service with query interface
   persistence:
-    image: public.ecr.aws/fiehnlab/mona-persistence-server:test
+    image: public.ecr.aws/fiehnlab/mona-persistence-server:dev
     depends_on:
       - webhooks
       - discovery
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: persistence-service
 
   statistics:
-    image: public.ecr.aws/fiehnlab/mona-statistics-server:test
+    image: public.ecr.aws/fiehnlab/mona-statistics-server:dev
     depends_on:
       - webhooks
       - discovery
@@ -175,34 +179,34 @@ services:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: statistics-service
 
   # Main authentication service
   auth:
-    image: public.ecr.aws/fiehnlab/mona-auth-server:test
+    image: public.ecr.aws/fiehnlab/mona-auth-server:dev
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: auth-service
 
   # MoNA similarity service
   similarity:
-    image: public.ecr.aws/fiehnlab/mona-similarity:test
+    image: public.ecr.aws/fiehnlab/mona-similarity:dev
     ports:
     - "9999:9999"
     depends_on:
       - webhooks
       - discovery
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx3g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx5g -XX:+UseG1GC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     logging:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: similarity-service
 
 
@@ -212,7 +216,7 @@ services:
 
   # The main entrypoint for MoNA
   proxy:
-    image: public.ecr.aws/fiehnlab/mona-proxy:test
+    image: public.ecr.aws/fiehnlab/mona-proxy:dev
     ports:
       - "8080:8080"
     depends_on:
@@ -224,12 +228,12 @@ services:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: proxy-service
 
   # Download service for scheduling and running download jobs
   downloader:
-    image: public.ecr.aws/fiehnlab/mona-download-scheduler:test
+    image: public.ecr.aws/fiehnlab/mona-download-scheduler:dev
     ports:
       - "7777:7777"
     depends_on:
@@ -238,16 +242,18 @@ services:
     entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.config.import=configserver:http://config-server:1111/ -Dspring.profiles.active=docker,prod -jar *.jar"
     volumes:
       - downloader-data:/data
+    environment:
+      MONA_UPLOADS: /data/mona_uploads
     logging:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: downloader-service
 
   # Run scheduled curation tasks
   curationRunner:
-    image: public.ecr.aws/fiehnlab/mona-curation-runner:test
+    image: public.ecr.aws/fiehnlab/mona-curation-runner:dev
     depends_on:
       - persistence
       - webhooks
@@ -256,5 +262,5 @@ services:
       driver: awslogs
       options:
         awslogs-region: us-west-2
-        awslogs-group: mona-test-logs
+        awslogs-group: mona-dev-logs
         awslogs-stream: curation-runner-service

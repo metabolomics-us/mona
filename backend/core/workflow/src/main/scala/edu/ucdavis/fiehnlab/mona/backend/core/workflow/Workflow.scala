@@ -35,7 +35,7 @@ class Workflow[TYPE: ClassTag](val graph: Graph[String, Node[TYPE, TYPE], Edge] 
     * associated listener
     */
   @Autowired(required = false)
-  val listeners: java.util.List[WorkflowListener[TYPE]] = new java.util.ArrayList[WorkflowListener[TYPE]]
+  val listeners: java.util.List[WorkflowListener[TYPE]] = new java.util.concurrent.CopyOnWriteArrayList[WorkflowListener[TYPE]]
 
   /**
     * registers an additional listener

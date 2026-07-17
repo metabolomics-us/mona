@@ -2,11 +2,12 @@
     <div class="card-header">
         <div class="card-title">
             <span *ngIf="spectrum.compound[0].names.length > 0" class="float-left">
-                <a class="davis-blue" style="cursor: pointer; padding: 15px 0;" [routerLink]="[viewSpectrum()]" target="_blank"><b>{{spectrum.compound[0].names[0].name}}</b></a>
+                <a class="davis-blue" style="cursor: pointer; padding: 15px 0;" [routerLink]="[viewSpectrum()]"><b>{{spectrum.compound[0].names[0].name}}</b></a>
             </span>
             <span *ngIf="spectrum.compound[0].names.length === 0" class="float-left">
-                <a class="davis-blue" style="cursor: pointer; padding: 15px 0;" [routerLink]="[viewSpectrum()]" target="_blank"><b>{{spectrum.id}}</b></a>
+                <a class="davis-blue" style="cursor: pointer; padding: 15px 0;" [routerLink]="[viewSpectrum()]"><b>{{spectrum.id}}</b></a>
             </span>
+            <fa-icon *ngIf="sameSubmitter()" [icon]="faUser" class="float-right ml-2" ngbTooltip="My Spectrum" placement="bottom"></fa-icon>
             <span class="float-right" ngbTooltip="{{0.0 + spectrum.score.score | number:'1.2-2'}} / 5.00" placement="bottom">
               <span *ngFor="let star of stars">
                 <fa-icon size="sm" *ngIf="star === 1" [icon]="faStar"></fa-icon>
@@ -75,17 +76,17 @@
     </div>
 
     <div class="card-footer">
-      <ng-container *ngIf="(auth.isAdmin() && auth.isLoggedIn()) || sameSubmitter(); else tagsWithButton">
-        <div class="d-flex flex-wrap mb-1">
-          <div class="mr-1" *ngFor="let tag of spectrum.tags">
-            <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
-          </div>
-        </div>
+      <ng-container *ngIf="canDelete(); else tagsWithButton">
         <div class="d-flex justify-content-between align-items-center">
-          <label class="clickable mb-0">
-            <input type="checkbox" id="massDeleteToggle" [checked]="deletionMark.selected" (change)="massDeleteToggle($event)"> Mark for deletion
-          </label>
-          <a class="btn btn-primary" style="height: 44px; display: flex; align-items: center;" [routerLink]="[viewSpectrum()]" target="_blank">
+          <div class="d-flex flex-wrap align-items-center">
+            <button class="btn btn-danger btn-sm mr-2" (click)="deleteSpectrum()" ngbTooltip="Delete this spectrum" placement="top">
+              <fa-icon [icon]="faTrash"></fa-icon>
+            </button>
+            <div class="mr-1" *ngFor="let tag of spectrum.tags">
+              <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
+            </div>
+          </div>
+          <a class="btn btn-primary flex-shrink-0" style="height: 44px; display: flex; align-items: center;" [routerLink]="[viewSpectrum()]" target="_blank">
             <fa-icon [icon]="faExternalLinkAlt"></fa-icon>&nbsp;Display Full Record
           </a>
         </div>

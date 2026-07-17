@@ -45,7 +45,7 @@
                   <p class="font-weight-bold"><a class="text-decoration-none" ngbTooltip="How to create a new library" placement="right" target="_blank" [routerLink]="['/documentation/uploadLibrary']">Help <fa-icon [icon]="faQuestionCircle" size="sm"></fa-icon></a></p>
                   <br/>
                   <form #libForm="ngForm"  id="libForm" class="form-horizontal" novalidate role="form">
-                    <div class="form-group row">
+                    <div class="form-group row" style="margin-bottom: -1rem;">
                       <label for="libraryLink" class="col-sm-3 col-form-label"><strong>Library</strong></label>
                     </div>
                     <hr/>
@@ -95,43 +95,63 @@
                     </div>
                     <br />
 
-                    <div class="form-group row">
-                      <label class="col-sm-3 col-form-label"><strong>Submitter</strong></label>
+                    <div class="form-group row" style="margin-bottom: -1.5rem;">
+                      <div class="col-sm-3 text-nowrap">
+                        <label class="col-form-label"><strong>Submitter (Optional)</strong></label>
+                        <p class="text-muted">Fill out if you are not the original submitter</p>
+                      </div>
                     </div>
                     <hr/>
-                    <div class="form-group row">
-                      <label class="col-sm-2 col-form-label" for="librarySubmitterEmail" ngbTooltip="Fill out if original submitter is not yourself">Email Address: </label>
+                    <div class="form-group row" [ngClass]="{ 'has-error': !librarySubmitterEmail.valid }">
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterEmail">Email Address: </label>
                       <div class="col-sm-9">
                         <input type="email" class="form-control" id="librarySubmitterEmail" name="librarySubmitterEmail"
-                               placeholder="Optional" [(ngModel)]="library.submitter.emailAddress">
+                               placeholder="Optional" [(ngModel)]="library.submitter.emailAddress" #librarySubmitterEmail="ngModel"
+                               [required]="isSubmitterFieldRequired()">
+                        <p *ngIf="!librarySubmitterEmail.valid" class="help-block text-danger">
+                          Required when another submitter field is filled out
+                        </p>
                       </div>
                     </div>
-                    <div class="form-group row">
-                      <label class="col-sm-2 col-form-label" for="librarySubmitterFirst" ngbTooltip="Fill out if original submitter is not yourself">First Name: </label>
+                    <div class="form-group row" [ngClass]="{ 'has-error': !librarySubmitterFirst.valid }">
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterFirst">First Name: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="librarySubmitterFirst" name="librarySubmitterFirst"
-                               placeholder="Optional" [(ngModel)]="library.submitter.firstName">
+                               placeholder="Optional" [(ngModel)]="library.submitter.firstName" #librarySubmitterFirst="ngModel"
+                               [required]="isSubmitterFieldRequired()">
+                        <p *ngIf="!librarySubmitterFirst.valid" class="help-block text-danger">
+                          Required when another submitter field is filled out
+                        </p>
                       </div>
                     </div>
-                    <div class="form-group row">
-                      <label class="col-sm-2 col-form-label" for="librarySubmitterLast" ngbTooltip="Fill out if original submitter is not yourself">Last Name: </label>
+                    <div class="form-group row" [ngClass]="{ 'has-error': !librarySubmitterLast.valid }">
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterLast">Last Name: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="librarySubmitterLast" name="librarySubmitterLast"
-                               placeholder="Optional" [(ngModel)]="library.submitter.lastName">
+                               placeholder="Optional" [(ngModel)]="library.submitter.lastName" #librarySubmitterLast="ngModel"
+                               [required]="isSubmitterFieldRequired()">
+                        <p *ngIf="!librarySubmitterLast.valid" class="help-block text-danger">
+                          Required when another submitter field is filled out
+                        </p>
                       </div>
                     </div>
-                    <div class="form-group row">
-                      <label class="col-sm-2 col-form-label" for="librarySubmitterInstitution" ngbTooltip="Fill out if original submitter is not yourself">Institution: </label>
+                    <div class="form-group row" [ngClass]="{ 'has-error': !librarySubmitterInstitution.valid }">
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterInstitution">Institution: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="librarySubmitterInstitution" name="librarySubmitterInstitution"
-                               placeholder="Optional" [(ngModel)]="library.submitter.institution">
+                               placeholder="Optional" [(ngModel)]="library.submitter.institution" #librarySubmitterInstitution="ngModel"
+                               [required]="isSubmitterFieldRequired()">
+                        <p *ngIf="!librarySubmitterInstitution.valid" class="help-block text-danger">
+                          Required when another submitter field is filled out
+                        </p>
                       </div>
                     </div>
                     <br/>
-                    <div class="form-group row">
-                      <label class="col-sm-7 col-form-label flex-nowrap">
-                        <strong>Additional Tags <fa-icon [icon]="faQuestionCircle" ngbTooltip="Press ENTER to register a new tag (max of 3)"></fa-icon> </strong>
-                      </label>
+                    <div class="form-group row" style="margin-bottom: -2rem;">
+                      <div class="col-sm-3 col-form-label flex-nowrap text-nowrap">
+                        <strong><label>Additional Tags</label></strong>
+                        <p class="text-muted">Press ENTER to register a new tag (max of 3)</p>
+                      </div>
                     </div>
                     <hr/>
                     <div class="row">
@@ -164,8 +184,11 @@
 
         <!-- Error message if no spectra are found -->
         <div *ngIf="spectraLoaded === 2 && spectra.length === 0" class="card">
-            <div class="card-header"><strong>Loading and parsing data</strong></div>
-            <div class="card-body text-center"><p class="lead">No valid mass spectra found in the uploaded file(s)!</p></div>
+            <div class="card-header"><strong>No Spectra Found</strong></div>
+            <div class="card-body text-center">
+                <p class="lead">No valid mass spectra found in the uploaded file(s)!</p>
+                <button class="btn btn-primary accessibility" (click)="resetFile()"><fa-icon [icon]="faArrowLeft"></fa-icon> Try Again</button>
+            </div>
         </div>
 
 
@@ -574,8 +597,11 @@
                     <button class="btn btn-danger mr-1 accessibility" (click)="resetFile()">Restart</button>
                     <button class="btn btn-primary ml-1 mr-1 accessibility" (click)="exportFile()"><fa-icon [icon]="faFileExport"></fa-icon> Export as MSP</button>
                     <button *ngIf="!authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="waitForLogin(); authenticationService.requestModal()">Login to Upload to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
-                    <span [ngbTooltip]="!compoundInfoProvided ? 'Each spectrum requires either a SMILES, InChI Code, or InChIKey before uploading' : null" placement="right">
-                      <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary ml-1 accessibility" (click)="uploadFile()" [disabled]="!compoundInfoProvided"><fa-icon [icon]="faCloudUploadAlt" ></fa-icon> Upload to MoNA</button>
+                    <span [ngbTooltip]="!allSpectraLoaded ? 'Please wait until all spectra have been parsed' : (!compoundInfoProvided ? 'Each spectrum requires either a SMILES, InChI Code, or InChIKey before uploading' : null)" placement="right">
+                      <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary ml-1 accessibility" (click)="uploadFile()" [disabled]="!allSpectraLoaded || !compoundInfoProvided">
+                        <span *ngIf="allSpectraLoaded"><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Upload to MoNA</span>
+                        <span *ngIf="!allSpectraLoaded"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Parsing spectra</span>
+                      </button>
                     </span>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import java.util
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.deletion.DeletionQueueConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -19,7 +20,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
   * this class configures all our controller and also prepares security measures for these mentioned controllers
   */
 @Configuration
-@Import(Array(classOf[PostgresqlConfiguration], classOf[SwaggerConfig], classOf[SerializationConfig]))
+@Import(Array(classOf[PostgresqlConfiguration], classOf[DeletionQueueConfig], classOf[SwaggerConfig], classOf[SerializationConfig]))
 @EnableAutoConfiguration
 @ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller"))
 @Order(1)
@@ -47,6 +48,9 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.POST, "/rest/spectra/**").authenticated()
       .antMatchers(HttpMethod.POST, "/rest/submitters").authenticated()
 
+      //classification cache writes need authentication, the curation runner authenticates with its token
+      .antMatchers(HttpMethod.POST, "/rest/classificationCache/**").authenticated()
+
       //updates needs authentication
       .antMatchers(HttpMethod.PUT, "/rest/spectra/**").authenticated()
       .antMatchers(HttpMethod.PUT, "/rest/submitters").authenticated()
@@ -55,7 +59,15 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.PUT, "/rest/news/**").hasAuthority("ADMIN")
       .antMatchers(HttpMethod.POST, "/rest/news/**").hasAuthority("ADMIN")
 
-      //deletes need authentication
+      //bulk spectra deletes (by query or by id list) are admin only. The /search rule must come
+      //before the single resource rule below since /rest/spectra/* would otherwise match it
+      .antMatchers(HttpMethod.DELETE, "/rest/spectra/search").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.DELETE, "/rest/spectra").hasAuthority("ADMIN")
+
+      //single spectrum delete is allowed for an admin or the owner (ownership enforced in the controller)
+      .antMatchers(HttpMethod.DELETE, "/rest/spectra/*").authenticated()
+
+      //all other deletes need authentication
       .antMatchers(HttpMethod.DELETE).authenticated()
   }
 
@@ -71,6 +83,7 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.GET, "/rest/spectra/**")
       .antMatchers(HttpMethod.GET, "/rest/news/**")
       .antMatchers(HttpMethod.GET, "/rest/feedback/**")
+      .antMatchers(HttpMethod.GET, "/rest/classificationCache/**")
 
       .antMatchers(HttpMethod.POST, "/rest/feedback")
       .antMatchers(HttpMethod.POST, "/rest/spectra/count")

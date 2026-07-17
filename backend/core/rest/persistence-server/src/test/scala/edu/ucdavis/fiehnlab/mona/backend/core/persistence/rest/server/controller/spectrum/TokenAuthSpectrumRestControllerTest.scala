@@ -67,7 +67,10 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  override val deleteRequiresAuthentication: Boolean = false
+  // single spectrum delete is now restricted to an admin or the spectrum owner, so a plain
+  // authenticated non owner must be rejected. The authorization branch of the shared test asserts
+  // exactly that: non admin gets 403 and admin gets 200
+  override val deleteRequiresAuthentication: Boolean = true
 
   "we will be connecting to the REST controller" when {
     RestAssured.baseURI = s"http://localhost:$port/rest"
@@ -199,6 +202,27 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         exampleRecords.foreach(spectrum => {
           assert(!firstRecords.contains(spectrum))
         })
+      }
+
+      "we should reject a size above the maximum page size with a 400 using GET at /rest/spectra" in {
+        given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=50001").`then`().statusCode(400)
+      }
+
+      "we should reject a size above the maximum page size with a 400 using GET at /rest/spectra/search" in {
+        given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?size=50001&query=metaData.name:'ion mode'").`then`().statusCode(400)
+      }
+
+      "we should announce the applied default page size via the X-Page-Size header when no size is given" in {
+        val response = given().contentType("application/json; charset=UTF-8").when().get("/spectra").`then`().statusCode(200).extract()
+        assert(response.header("X-Page-Size") == "50000")
+
+        val searchResponse = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData.name:'ion mode' and metaData.value:'negative'").`then`().statusCode(200).extract()
+        assert(searchResponse.header("X-Page-Size") == "50000")
+      }
+
+      "we should not add pagination headers when an explicit size is given" in {
+        val response = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10").`then`().statusCode(200).extract()
+        assert(response.header("X-Page-Size") == null)
       }
 
       //wont work correclty as this test is dependent on deleting nothing

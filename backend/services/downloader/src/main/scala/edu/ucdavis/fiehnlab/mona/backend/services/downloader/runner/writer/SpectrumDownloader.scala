@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
-import java.io.{BufferedInputStream, BufferedWriter, FileInputStream}
+import java.io.{BufferedOutputStream, BufferedWriter, OutputStreamWriter}
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Path}
 import java.util.zip.{ZipEntry, ZipOutputStream}
@@ -50,6 +50,18 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
     * @return
     */
   protected def temporaryExportFile: Path = downloadDir.resolve(exportFilename +".tmp")
+
+  /**
+    * Defines the path to the temporary compressed export file written during streaming compression
+    *
+    * @return
+    */
+  protected def compressedTemporaryFile: Path = downloadDir.resolve(compressedExportFilename + ".tmp")
+
+  /**
+    * Holds the zip stream while compressing so the entry can be finalized on close
+    */
+  private var zipOutputStream: ZipOutputStream = _
 
   /**
     * Spectrum counter
@@ -105,9 +117,20 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
 
 
   /**
-    * Export file writer definition for temporary export file
+    * Export file writer. When compressing, characters are streamed straight into a zip entry so we
+    * never write an uncompressed temp file and never re-read it. Otherwise it writes plain text to
+    * the temporary export file
     */
-  protected lazy val exportWriter: BufferedWriter = Files.newBufferedWriter(temporaryExportFile)
+  protected lazy val exportWriter: BufferedWriter = {
+    if (compress) {
+      val zip: ZipOutputStream = new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(compressedTemporaryFile)))
+      zip.putNextEntry(new ZipEntry(exportFilename))
+      zipOutputStream = zip
+      new BufferedWriter(new OutputStreamWriter(zip, StandardCharsets.UTF_8))
+    } else {
+      Files.newBufferedWriter(temporaryExportFile)
+    }
+  }
 
   /**
     * Initialize buffered writer and write the file prefix
@@ -141,36 +164,20 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
     */
   def closeExport(): Unit = {
     exportWriter.write(getContentSuffix)
-    exportWriter.close()
 
     if (compress) {
-      logger.info(s"Compressing ${temporaryExportFile.getFileName} -> $compressedExportFilename")
+      // Finish the streamed zip entry, then close the whole writer chain down to the file
+      exportWriter.flush()
+      zipOutputStream.closeEntry()
+      exportWriter.close()
 
+      // Move the finished compressed file into place so readers never see a partial file
       val compressedFile: Path = downloadDir.resolve(compressedExportFilename)
-      val compressedTemporaryFile: Path = downloadDir.resolve(compressedExportFilename + ".tmp")
-
-      // Setup zip export
-      val zipFile: ZipOutputStream = new ZipOutputStream(Files.newOutputStream(compressedTemporaryFile))
-      zipFile.putNextEntry(new ZipEntry(exportFilename))
-
-      val inputStream: BufferedInputStream = new BufferedInputStream(Files.newInputStream(temporaryExportFile))
-      val buffer: Array[Byte] = new Array[Byte](1024)
-      var length: Int = inputStream.read(buffer, 0, 1024)
-
-      while (length != -1) {
-        zipFile.write(buffer, 0, length)
-        length = inputStream.read(buffer, 0, 1024)
-      }
-
-      inputStream.close()
-      zipFile.closeEntry()
-      zipFile.close()
-
-      // Delete exported file and move temporary export file to stored location
-      Files.deleteIfExists(temporaryExportFile)
       Files.deleteIfExists(compressedFile)
       Files.move(compressedTemporaryFile, compressedFile)
     } else {
+      exportWriter.close()
+
       // Move the temporary export
       val exportFile: Path = downloadDir.resolve(exportFilename)
 

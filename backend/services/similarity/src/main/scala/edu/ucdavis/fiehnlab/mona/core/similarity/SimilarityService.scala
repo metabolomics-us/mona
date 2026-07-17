@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.{ComponentScan, Import}
 import org.springframework.core.annotation.Order
+import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
@@ -22,6 +23,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
   */
 @SpringBootApplication
 @EnableWebSecurity
+@EnableAsync
 @Order(5)
 @Import(Array(classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig], classOf[PostgresqlConfiguration]))
 class SimilarityService extends WebSecurityConfigurerAdapter {

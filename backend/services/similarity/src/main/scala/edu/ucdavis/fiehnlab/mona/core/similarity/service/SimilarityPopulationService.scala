@@ -53,7 +53,9 @@ class SimilarityPopulationService extends LazyLogging {
     }
   }
 
-  @Transactional()
+  private val sessionClearInterval: Int = 500
+
+  @Transactional(readOnly = true)
   def populateIndices(): Unit = {
     logger.info("Populating indices...")
 
@@ -74,7 +76,10 @@ class SimilarityPopulationService extends LazyLogging {
       } catch {
         case nfe: NumberFormatException => logger.error(s"Invalid spectrum: ${spectrum}")
       }
-      entityManager.detach(spectrum)
+
+      if (counter % sessionClearInterval == 0) {
+        entityManager.clear()
+      }
     }
     logger.info(s"\tFinished indexing $counter spectrum, index size = ${indexUtils.getIndexSize}")
   }

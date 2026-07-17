@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
+import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
@@ -27,6 +28,7 @@ import org.springframework.web.client.{RestOperations, RestTemplate}
   */
 @SpringBootApplication
 @EnableWebSecurity
+@EnableAsync
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration],
   classOf[JWTAuthenticationConfig], classOf[CurationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig]))

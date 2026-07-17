@@ -1,9 +1,10 @@
 import {AuthenticationService} from '../../services/authentication.service';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TagService} from '../../services/persistence/tag.resource';
-import {faEdit, faMinusSquare, faUser} from '@fortawesome/free-solid-svg-icons';
+import {faEdit, faMinusSquare, faUser, faChartBar} from '@fortawesome/free-solid-svg-icons';
 import {NGXLogger} from 'ngx-logger';
-import {Subscription} from 'rxjs';
+import {forkJoin, interval, of, Subscription} from 'rxjs';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {ToasterService} from 'angular2-toaster';
@@ -17,6 +18,7 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
   faEdit = faEdit;
   faMinusSquare = faMinusSquare;
   faUser = faUser;
+  faChartBar = faChartBar;
   libraryTags;
   formErrors;
   hidePasswords;
@@ -24,6 +26,10 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
   currentUser;
   librarySubscription: Subscription;
   deleteSubscription: Subscription;
+  deletionPollSubscription: Subscription;
+  deletionJob: any;
+  // Human readable label for what is being deleted (selected library names), shown alongside progress
+  deletionLabel: string;
   removeIDs: string;
   constructor(public auth: AuthenticationService, public tagService: TagService,
               public logger: NGXLogger, public spectraQueryBuilderService: SpectraQueryBuilderService,
@@ -37,6 +43,9 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     };
     this.currentUser = {};
     this.deleteSubscription = null;
+    this.deletionPollSubscription = null;
+    this.deletionJob = null;
+    this.deletionLabel = null;
     this.libraryTags = [];
     this.removeIDs = null;
     this.hidePasswords = true;
@@ -59,19 +68,96 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
     if (this.deleteSubscription !== null) {
       this.deleteSubscription.unsubscribe();
     }
+    if (this.deletionPollSubscription !== null) {
+      this.deletionPollSubscription.unsubscribe();
+    }
   }
 
-  refreshTags() {
-    this.tagService.query().subscribe((tags: any) => {
-      if (tags.length > 0) {
-        this.libraryTags = tags.filter((x) => {
-          return x.category === 'library';
-        });
+  // Polls the deletion job until it reaches a terminal state, updating the progress bar each tick
+  startDeletionPolling(jobId: string) {
+    if (this.deletionPollSubscription !== null) {
+      this.deletionPollSubscription.unsubscribe();
+    }
+
+    this.deletionPollSubscription = interval(2000).pipe(
+      switchMap(() => this.spectrum.deletionStatus(jobId))
+    ).subscribe((job: any) => {
+      this.deletionJob = job;
+
+      if (job.status === 'COMPLETE' || job.status === 'FAILED') {
+        this.deletionPollSubscription.unsubscribe();
+
+        if (job.status === 'COMPLETE') {
+          this.toaster.pop({
+            type: 'success',
+            title: 'Deletion Complete!',
+            body: `Deleted ${job.deleted}${job.skipped > 0 ? ', skipped ' + job.skipped : ''} spectra${this.deletionLabel ? ' from ' + this.deletionLabel : ''}. The library list will refresh shortly.`
+          });
+          this.refreshTags();
+        } else {
+          this.toaster.pop({
+            type: 'error',
+            title: 'Deletion Failed',
+            body: job.errorMessage || 'See server logs for details.'
+          });
+        }
       }
+    }, (error) => {
+      this.logger.error('Deletion status poll failed: ' + error);
+    });
+  }
+
+  // Percentage complete (deleted + skipped) of the current deletion job, for the progress bar
+  deletionProgress(): number {
+    if (!this.deletionJob || !this.deletionJob.total) {
+      return 0;
+    }
+    return Math.floor(((this.deletionJob.deleted + this.deletionJob.skipped) / this.deletionJob.total) * 100);
+  }
+
+  isDeletionRunning(): boolean {
+    return this.deletionJob && (this.deletionJob.status === 'SCHEDULED' || this.deletionJob.status === 'RUNNING');
+  }
+
+  // Recomputes tag statistics from live data so deleted libraries drop off immediately, then
+  // updates the displayed library list
+  refreshTags() {
+    this.adminService.refreshLibraries(this.auth.getCurrentUser().accessToken).subscribe((tags: any) => {
+      this.libraryTags = (tags || []).filter((x) => {
+        return x.category === 'library';
+      });
+      this.toaster.pop({
+        type: 'success',
+        title: 'Libraries Refreshed!',
+        body: 'The library list has been refreshed.'
+      });
+      // Statistics now reflect the deletion, so prune predefined downloads for libraries that are gone
+      this.reconcilePredefinedDownloads();
     },
       (error) => {
-        this.logger.error('Tag pull failed: ' + error);
+        this.logger.error('Library refresh failed: ' + error);
+        this.toaster.pop({
+          type: 'error',
+          title: 'There was a problem refreshing the libraries.',
+          body: `${error.message}`
+        });
       });
+  }
+
+  // Drops predefined library downloads whose library was just deleted. Runs after the statistics
+  // refresh so the backend sees the deletion, and stays silent unless something was actually removed
+  reconcilePredefinedDownloads() {
+    this.adminService.reconcilePredefinedDownloads(this.auth.getCurrentUser().accessToken).subscribe((removed: any) => {
+      if (removed && removed.length > 0) {
+        this.toaster.pop({
+          type: 'info',
+          title: 'Download List Updated',
+          body: `Removed ${removed.length} download${removed.length === 1 ? '' : 's'} for deleted libraries.`
+        });
+      }
+    }, (error) => {
+      this.logger.error('Predefined download reconciliation failed: ' + error);
+    });
   }
 
   submitDeletionQuery() {
@@ -90,15 +176,19 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
         this.spectraQueryBuilderService.addTagToQuery(libraryTags, undefined);
       }
 
+      this.deletionLabel = libraryTags.join(', ');
+
       this.deleteSubscription = this.spectrum.batchDelete({
         query: this.spectraQueryBuilderService.getFilter()
       }, this.auth.getCurrentUser().accessToken)
-        .subscribe(() => {
+        .subscribe((job: any) => {
+          this.deletionJob = job;
           this.toaster.pop({
             type: 'success',
-            title: 'Deletion Successful!',
-            body: 'Deletion was successful, libraries will persist until they reload overnight. Please wait a few minutes then validate that the libraries were deleted.'
+            title: 'Deletion Started',
+            body: 'The deletion runs in the background and continues even if you leave. Live progress is shown on this page.'
           });
+          this.startDeletionPolling(job.id);
         }, (error) => {
           this.toaster.pop({
             type: 'error',
@@ -112,24 +202,74 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
   deleteByIds() {
     if (this.auth.isAdmin()) {
       if (this.removeIDs !== null) {
-        const parsed = this.removeIDs.replace(/\s+/g, '').split(',');
-        this.spectrum.batchDeleteByIds(parsed, this.auth.getCurrentUser().accessToken).subscribe(() => {
-          this.toaster.pop({
-            type: 'success',
-            title: 'Deletion Successful!',
-            body: 'Deletion was successful, libraries associated with the deleted spectra will persist until they reload overnight. Please wait a few minutes then validate that the spectra were deleted.'
-          });
-          this.removeIDs = null;
+        const parsed = this.removeIDs.replace(/\s+/g, '').split(',').filter((id) => id.length > 0);
+
+        if (parsed.length === 0) {
+          return;
+        }
+
+        // Verify each id actually exists before enqueuing a deletion job, so deleting a
+        // nonexistent id surfaces a clear message instead of a misleading success 0/n
+        const existenceChecks = parsed.map((id) =>
+          this.spectrum.get(id).pipe(
+            map(() => ({id, exists: true})),
+            catchError(() => of({id, exists: false}))
+          )
+        );
+
+        forkJoin(existenceChecks).subscribe((results: any[]) => {
+          const validIds = results.filter((r) => r.exists).map((r) => r.id);
+          const invalidIds = results.filter((r) => !r.exists).map((r) => r.id);
+
+          if (validIds.length === 0) {
+            this.toaster.pop({
+              type: 'error',
+              title: 'No Matching Spectra',
+              body: `None of the provided IDs exist: ${invalidIds.join(', ')}`
+            });
+            return;
+          }
+
+          if (invalidIds.length > 0) {
+            this.toaster.pop({
+              type: 'warning',
+              title: 'Some IDs Not Found',
+              body: `Skipping ${invalidIds.length} ID(s) that do not exist: ${invalidIds.join(', ')}`
+            });
+          }
+
+          this.submitIdDeletion(validIds);
         }, (error) => {
           this.toaster.pop({
             type: 'error',
-            title: 'There was a problem deleting libraries.',
+            title: 'There was a problem validating spectra IDs.',
             body: `${error.message}`
           });
-          this.removeIDs = null;
         });
       }
     }
+  }
+
+  // Enqueues the actual id based deletion job for the ids that were confirmed to exist
+  submitIdDeletion(ids: string[]) {
+    this.deletionLabel = null;
+    this.spectrum.batchDeleteByIds(ids, this.auth.getCurrentUser().accessToken).subscribe((job: any) => {
+      this.deletionJob = job;
+      this.toaster.pop({
+        type: 'success',
+        title: 'Deletion Started',
+        body: 'The deletion runs in the background and continues even if you leave. Live progress is shown on this page.'
+      });
+      this.startDeletionPolling(job.id);
+      this.removeIDs = null;
+    }, (error) => {
+      this.toaster.pop({
+        type: 'error',
+        title: 'There was a problem deleting spectra.',
+        body: `${error.message}`
+      });
+      this.removeIDs = null;
+    });
   }
 
   updateStatistics() {
@@ -137,10 +277,18 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       this.adminService.updateStatistics(this.auth.getCurrentUser().accessToken).subscribe((res) => {
         this.toaster.pop({
           type: 'success',
-          title: 'Statistics Being Updated!',
-          body: 'Statistics are currently being recalculated. Please allow up to an hour for this operation to complete.'
+          title: 'Statistics Update Scheduled!',
+          body: 'Statistics will be recalculated. Please allow up to an hour for this operation to complete.'
         });
       }, (error) => {
+        if (error.status === 409) {
+          this.toaster.pop({
+            type: 'info',
+            title: 'Update already in progress',
+            body: 'A statistics update is already running. Please wait for it to finish.'
+          });
+          return;
+        }
         this.toaster.pop({
           type: 'error',
           title: 'There was a problem requesting statistic update.',
@@ -155,10 +303,18 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       this.adminService.refreshSimilarity(this.auth.getCurrentUser().accessToken).subscribe((res) => {
         this.toaster.pop({
           type: 'success',
-          title: 'Similarity Service Being Updated!',
+          title: 'Similarity Index Rebuild Queued!',
           body: 'Similarity Service is being repopulated. Please allow up to an hour for this operation to complete.'
         });
       }, (error) => {
+        if (error.status === 409) {
+          this.toaster.pop({
+            type: 'info',
+            title: 'Update already in progress',
+            body: 'A similarity refresh is already running. Please wait for it to finish.'
+          });
+          return;
+        }
         this.toaster.pop({
           type: 'error',
           title: 'There was a problem requesting similarity refresh.',
@@ -173,31 +329,21 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       this.adminService.updatePredefinedDownloads(this.auth.getCurrentUser().accessToken).subscribe(() => {
         this.toaster.pop({
           type: 'success',
-          title: 'Predefined Queries Re-Generating!',
-          body: 'Predefined queries are re-generating. Please allow up to an hour for this operation to complete.'
+          title: 'Re-Generating Downloads!',
+          body: 'Predefined queries are now re-generating. Please allow up to an hour for this operation to complete.'
         });
       }, (error) => {
+        if (error.status === 409) {
+          this.toaster.pop({
+            type: 'info',
+            title: 'Update already in progress',
+            body: 'A predefined query regeneration is already running. Please wait for it to finish.'
+          });
+          return;
+        }
         this.toaster.pop({
           type: 'error',
           title: 'There was a problem requesting an update to predefined queries.',
-          body: `${error.message}`
-        });
-      });
-    }
-  }
-
-  updateStaticQueries() {
-    if (this.auth.isAdmin()) {
-      this.adminService.updateStaticDownloads(this.auth.getCurrentUser().accessToken).subscribe(() => {
-        this.toaster.pop({
-          type: 'success',
-          title: 'Static Queries Re-Generating!',
-          body: 'Static queries are re-generating. Please allow up to an hour for this operation to complete.'
-        });
-      }, (error) => {
-        this.toaster.pop({
-          type: 'error',
-          title: 'There was a problem requesting an update to static queries.',
           body: `${error.message}`
         });
       });
@@ -209,10 +355,18 @@ export class ManageSpectraComponent implements OnInit, OnDestroy {
       this.adminService.reCurateAllData(this.auth.getCurrentUser().accessToken).subscribe(() => {
         this.toaster.pop({
           type: 'success',
-          title: 'Curation Scheduling for All Data Successful',
-          body: 'All data is being re-curated, this can be a lengthy process and involve a few days depending on size of current database.'
+          title: 'Curation Scheduling for All Spectra Successful',
+          body: 'All data is being re-curated, this can take up to a few days.'
         });
       }, (error) => {
+        if (error.status === 409) {
+          this.toaster.pop({
+            type: 'info',
+            title: 'Update already in progress',
+            body: 'A re-curation is already running. Please wait for it to finish.'
+          });
+          return;
+        }
         this.toaster.pop({
           type: 'error',
           title: 'There was a problem scheduling data for curation.',

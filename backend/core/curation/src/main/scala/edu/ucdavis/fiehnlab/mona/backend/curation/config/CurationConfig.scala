@@ -5,9 +5,8 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{Workflow, WorkflowBuilder}
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.{CalculateCompoundProperties, ResolveCompoundNames}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.adduct.AdductPrediction
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.ClassyfireProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata._
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateMassAccuracy, CalculateSplash, NormalizeSpectrum, SpectrumIonCountScoringRule}
@@ -59,20 +58,17 @@ class CurationConfig extends LazyLogging {
   }
 
   /**
-    * just binding the different queues together
+    * just binding the different queues together. References the queue and exchange bean methods directly
+    * (this @Configuration is proxied so they return the singletons) rather than injecting them by type, so
+    * additional Queue or DirectExchange beans elsewhere cannot make this binding ambiguous
     *
-    * @param queue
-    * @param exchange
     * @return
     */
   @Bean
-  def binding(queue: Queue, exchange: DirectExchange): Binding = {
+  def binding: Binding = {
     BindingBuilder.bind(queue).to(exchange).`with`(queueName)
   }
 
-
-  @Bean
-  def classifierProcessor = new ClassyfireProcessor
 
   /**
     * This defines the spectra curation workflow processor bean
@@ -81,7 +77,7 @@ class CurationConfig extends LazyLogging {
     * @return
     */
   @Bean
-  def curationWorkflow(classifierProcessor: ClassyfireProcessor, calculateCompoundProperties: CalculateCompoundProperties): ItemProcessor[Spectrum, Spectrum] = {
+  def curationWorkflow(calculateCompoundProperties: CalculateCompoundProperties, resolveCompoundNames: ResolveCompoundNames): ItemProcessor[Spectrum, Spectrum] = {
     val flow: Workflow[Spectrum] = WorkflowBuilder
       .create[Spectrum]
       .enableAnnotationLinking(false)
@@ -92,7 +88,9 @@ class CurationConfig extends LazyLogging {
 
           // Compound curation
           calculateCompoundProperties,
-          classifierProcessor,
+          resolveCompoundNames,
+          // ClassyFire classification is no longer part of the main workflow. It runs on the dedicated
+          // single consumer classyfire queue so it cannot bottleneck curation (see ClassyfireListener)
 
           // Spectrum-level curation
           new NormalizeSpectrum,

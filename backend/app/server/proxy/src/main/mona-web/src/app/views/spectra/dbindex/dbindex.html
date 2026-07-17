@@ -19,7 +19,7 @@
                             <td>{{globalData.spectrumCount | number}}</td>
                         </tr>
                         <tr>
-                            <td>Unique Compounds (by InChIKey layer):</td>
+                            <td>Unique Compounds (by first block of InChIKey):</td>
                             <td>{{globalData.compoundCount | number}}</td>
                         </tr>
                         <tr>
@@ -108,30 +108,55 @@
                     </div>
                     <br />
 
-                    <h2 class="h3">
-                        Sub-Classifications <br />
-                        <small>Click on the sunburst chart to refine your queries</small>
-                    </h2>
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th style="width: 35%;"><a [routerLink]="" (click)="tableDataSort('name')" class="davis-blue text-decoration-none">Classification</a></th>
-                            <th style="width: 25%;"><a [routerLink]="" (click)="tableDataSort('spectra')" class="davis-blue text-decoration-none">Spectra</a></th>
-                            <th style="width: 25%;"><a [routerLink]="" (click)="tableDataSort('compounds')" class="davis-blue text-decoration-none">Compounds</a></th>
-                            <th style="width: 15%;">Query Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr *ngFor="let node of activeTableData | orderBy: tableSort | slice: (tableDataPage - 1) * 5: tableDataPage * 5 ">
-                            <td>{{node.name}}</td>
-                            <td>{{node.spectra | number:'1.0-0'}}</td>
-                            <td>{{node.compounds | number:'1.0-0'}}</td>
-                          <td><button class="btn btn-primary" (click)="tableDataExecuteQuery(node)"><fa-icon [icon]="faSearch"></fa-icon> Query</button></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="d-flex justify-content-center">
-                      <ngb-pagination *ngIf="activeTableData" [collectionSize]="activeTableData.length" [(page)]="tableDataPage" [pageSize]="5" class="pagination davis-blue" boundaryLinks="true"></ngb-pagination>
+                    <div *ngIf="activeParentNode">
+                        <h2 class="h3">
+                            Selected Classification
+                        </h2>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th style="width: 35%; color: #0b3f6c">Classification</th>
+                                <th style="width: 25%; color: #0b3f6c">Spectra</th>
+                                <th style="width: 25%; color: #0b3f6c">Compounds</th>
+                                <th style="width: 15%;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{activeParentNode.name}}</td>
+                                <td>{{activeParentNode.spectra | number:'1.0-0'}}</td>
+                                <td>{{activeParentNode.compounds | number:'1.0-0'}}</td>
+                              <td><button class="btn btn-primary" (click)="tableDataExecuteQuery(activeParentNode)"><fa-icon [icon]="faSearch"></fa-icon> Query</button></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div *ngIf="activeTableData?.length">
+                        <h2 class="h3">
+                            Children
+                        </h2>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th style="width: 35%;"><a [routerLink]="" (click)="tableDataSort('name')" class="davis-blue text-decoration-none">Classification <fa-icon [icon]="faSort" size="xs"></fa-icon></a></th>
+                                <th style="width: 25%;"><a [routerLink]="" (click)="tableDataSort('spectra')" class="davis-blue text-decoration-none">Spectra <fa-icon [icon]="faSort" size="xs"></fa-icon></a></th>
+                                <th style="width: 25%;"><a [routerLink]="" (click)="tableDataSort('compounds')" class="davis-blue text-decoration-none">Compounds <fa-icon [icon]="faSort" size="xs"></fa-icon></a></th>
+                                <th style="width: 15%;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let node of activeTableData | orderBy: tableSort | slice: (tableDataPage - 1) * 5: tableDataPage * 5 ">
+                                <td>{{node.name}}</td>
+                                <td>{{node.spectra | number:'1.0-0'}}</td>
+                                <td>{{node.compounds | number:'1.0-0'}}</td>
+                              <td><button class="btn btn-primary" (click)="tableDataExecuteQuery(node)"><fa-icon [icon]="faSearch"></fa-icon> Query</button></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-center">
+                          <ngb-pagination [collectionSize]="activeTableData.length" [(page)]="tableDataPage" [pageSize]="5" class="pagination davis-blue" boundaryLinks="true"></ngb-pagination>
+                        </div>
                     </div>
                 </ng-template>
             </li>

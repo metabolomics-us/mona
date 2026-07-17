@@ -4,7 +4,7 @@ import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, Spectrum, Submitter}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.SubmitterRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
@@ -15,9 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.concurrent.duration._
+import scala.jdk.CollectionConverters._
 import scala.language.postfixOps
 
 /**
@@ -125,6 +127,69 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
         assert(result.getId == "test")
 
         given().contentType("application/json; charset=UTF-8").when().get("/spectra/test").`then`().statusCode(200)
+      }
+    }
+
+    "we expect DELETE requests" should {
+      "reject deletion of a spectrum the user does not own" in {
+        authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").when().delete("/spectra/test").`then`().statusCode(403)
+        assert(spectrumRepository.count() == 2)
+      }
+
+      "allow the owner to delete their own spectrum" in {
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().delete("/spectra/test").`then`().statusCode(200)
+        assert(spectrumRepository.count() == 1)
+      }
+    }
+
+    "we expect bulk DELETE requests to be admin only" should {
+      "reject a query based deletion for a non admin user" in {
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8")
+          .queryParam("query", "tags.text:'LCMS'")
+          .when().delete("/spectra/search").`then`().statusCode(403)
+      }
+
+      "reject an id based deletion for a non admin user" in {
+        authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8")
+          .body(List("MoNA_0000001").asJava)
+          .when().delete("/spectra").`then`().statusCode(403)
+      }
+
+      "reject an empty query deletion even for an admin since it would match everything" in {
+        authenticate().contentType("application/json; charset=UTF-8")
+          .when().delete("/spectra/search").`then`().statusCode(400)
+      }
+
+      "accept an admin query based deletion and return a scheduled job retrievable by status" in {
+        val job = authenticate().contentType("application/json; charset=UTF-8")
+          .queryParam("query", "tags.text:'NONEXISTENT_LIBRARY_XYZ'")
+          .when().delete("/spectra/search").`then`().statusCode(202).extract().as(classOf[DeletionJob])
+
+        assert(job.getId != null)
+        assert(job.getStatus == DeletionJob.STATUS_SCHEDULED)
+
+        // the status endpoint is open and returns the tracking row
+        given().contentType("application/json; charset=UTF-8")
+          .when().get(s"/spectra/delete/status/${job.getId}").`then`().statusCode(200)
+      }
+
+      "return 404 from the status endpoint for an unknown job" in {
+        given().contentType("application/json; charset=UTF-8")
+          .when().get("/spectra/delete/status/does-not-exist").`then`().statusCode(404)
+      }
+
+      "actually delete the spectra through the background job for an admin" in {
+        val ids = spectrumPersistenceService.findAll(PageRequest.of(0, 100)).getContent.asScala.map(_.getId).toList
+        assert(ids.nonEmpty)
+
+        authenticate().contentType("application/json; charset=UTF-8")
+          .body(ids.asJava)
+          .when().delete("/spectra").`then`().statusCode(202)
+
+        // the listener consumes the durable queue and deletes asynchronously
+        eventually(timeout(30 seconds)) {
+          assert(spectrumPersistenceService.count() == 0)
+        }
       }
     }
   }

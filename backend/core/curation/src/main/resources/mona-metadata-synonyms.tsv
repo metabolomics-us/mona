@@ -1,74 +1,131 @@
-ADC Sampling Frequency	sampling frequency
-mass difference	delta M
-pi	senior author
+spectrumid	accession
+spectrum id	accession
+accession number	accession
+authors	author
+author name	author
+creator	author
+bp	base peak
+basepeak	base peak
+base peak m/z	base peak
+z	charge state
+charge	charge state
+charge number	charge state
+ion charge	charge state
+collisionenergy	collision energy
+collision energies	collision energy
+ce	collision energy
+ces	collision energy spread
 column name	column
-precursortype	precursor type
+column type	column
+column model	column
+compoundclass	compound class
+chemical class	compound class
+datacollector	data collector
+collector	data collector
+dataformat	data format
+file format	data format
+data processing	data transformation
+dataprocessing	data transformation
+mass difference	delta M
+delta mass	delta M
+m/z difference	delta m/z
+mz difference	delta m/z
+delta mz	delta m/z
+derivative formula	derivatization formula
+derivative form	derivatization formula
+derivative mass	derivatization mass
+derivative mw	derivatization mass
+derivative weight	derivatization mass
+derivative type	derivatization type
+derivative	derivatization type
+derivatization	derivatization type
+activation method	dissociation method
+fragmentation method	dissociation method
+fragmentation mode	dissociation method
+dissociation type	dissociation method
+scan duration	dwell time
+dwell	dwell time
+dwelltime	dwell time
+exactmass	exact mass
+mz exact	exact mass
+accuratemass	exact mass
+accurate mass	exact mass
+monoisotopic mass	exact mass
+flowrate	flow rate
+flow	flow rate
+source instrument	instrument
+instrument configuration	instrument
+instrument name	instrument
+instrument model	instrument
+ie	ionization energy
+ionizationenergy	ionization energy
+electron energy	ionization energy
+ionizationmode	ionization mode
+ion mode	ionization mode
+scan polarity	ionization mode
+polarity	ionization mode
+ionization type	ionization mode
+ac$mass_spectrometry: ion_mode	ionization mode
+ac$analytical_condition: mode	ionization mode
+ionmode	ionization mode
+ionisation mode	ionization mode
+ion polarity	ionization mode
+mass-to-charge ratio	m/z
+th	m/z
+thomson	m/z
+mz	m/z
+mass to charge	m/z
+b	magnetic field strength
+magnetic field	magnetic field strength
+field strength	magnetic field strength
+analyzer	mass analyzer
+analyser	mass analyzer
+mass analyser	mass analyzer
+chemical formula	molecular formula
+molecule formula	molecular formula
+formula	molecular formula
+mw	molecular weight
+weight	molecular weight
+molecular mass	molecular weight
+molweight	molecular weight
 mslevel	ms level
 ms type	ms level
 spectrum type	ms level
-authors	author
-spectrumid	accession
-mw	molecular weight
-Tandem Scanning Method	scanning method
-mass-to-charge ratio	m/z
-dataformat	data format
-flowrate	flow rate
-weight	molecular weight
-transfarline temperature	transfer line temperature
-ionizationmode	ionization mode
+ms-level	ms level
+activation	precursor activation
 precursormz	precursor m/z
 precursor mass	precursor m/z
 adductionaccuratemass	precursor m/z
 precursor mz	precursor m/z
+selected ion m/z	precursor m/z
+parent m/z	precursor m/z
+parent mz	precursor m/z
+precursortype	precursor type
 adductionname	precursor type
 adduct ion name	precursor type
 adduct	precursor type
 precursor ion	precursor type
 parent ion	precursor type
-selected ion m/z	precursor m/z
-m/z difference	delta m/z
-source instrument	instrument
-z	charge state
-principal investigator	senior author
-instrument configuration	instrument
-submituser	submitter
-Th	m/z
-datacollector	data collector
-Activation Method	dissociation method
-chemical formula	molecular formula
-retentiontime	retention time
-BP	base peak
-charge	charge state
-B	magnetic field strength
-ion mode	ionization mode
-scan polarity	ionization mode
-data processing	data transformation
-molecule formula	molecular formula
-flow	flow rate
-polarity	ionization mode
+adduct type	precursor type
 retentionindex	retention index
 ri	retention index
-ionization type	ionization mode
-AC$MASS_SPECTROMETRY: ION_MODE	ionization mode
-AC$ANALYTICAL_CONDITION: MODE	ionization mode
-compoundclass	compound class
-exactmass	exact mass
-mz exact	exact mass
-Magnetic Field	magnetic field strength
-IE	ionization energy
-thomson	m/z
-activation	precursor activation
-ionmode	ionization mode
-Scan Duration	dwell time
-scan function	scan law
+kovats index	retention index
+kovats retention index	retention index
+retentiontime	retention time
 rt	retention time
-analyzer	mass analyzer
-derivative type	derivatization type
-derivative formula	derivatization formula
-derivative form	derivatization formula
-derivative mass	derivatization mass
-derivative mw	derivatization mass
-accuratemass	exact mass
-collisionenergy	collision energy
-ce	collision energy
-ces	collision energy spread
+rtinseconds	retention time
+rtseconds	retention time
+adc sampling frequency	sampling frequency
+sampling rate	sampling frequency
+scan function	scan law
+scanlaw	scan law
+tandem scanning method	scanning method
+scan method	scanning method
+pi	senior author
+principal investigator	senior author
+submituser	submitter
+submit user	submitter
+submitted by	submitter
+transfarline temperature	transfer line temperature
+transferline temperature	transfer line temperature
+transfer line temp	transfer line temperature

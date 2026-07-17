@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.config.PostgresqlConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.deletion.DeletionQueueConfig
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 
@@ -25,5 +26,5 @@ class EmbeddedRestServerConfig extends LazyLogging {
 }
 
 @SpringBootApplication(scanBasePackageClasses = Array())
-@Import(Array(classOf[PostgresqlConfiguration]))
+@Import(Array(classOf[PostgresqlConfiguration], classOf[DeletionQueueConfig]))
 class TestConfig

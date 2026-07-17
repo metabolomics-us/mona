@@ -137,15 +137,27 @@ class DownloadSchedulerController extends LazyLogging {
   @RequestMapping(path = Array("/generatePredefined"), method = Array(RequestMethod.GET))
   @Async
   def generatePredefinedExports(): ResponseEntity[Array[PredefinedQuery]] = {
-    new ResponseEntity(downloadSchedulerService.generatePredefinedExports(), HttpStatus.OK)
+    // Reject if a regeneration is still draining the queue so we never re-enqueue the whole set
+    if (downloadSchedulerService.isPredefinedExportInProgress) {
+      new ResponseEntity(HttpStatus.CONFLICT)
+    } else {
+      new ResponseEntity(downloadSchedulerService.generatePredefinedExports(), HttpStatus.ACCEPTED)
+    }
   }
 
   /**
-    * Schedules the re-generation of static exports
+    * Removes predefined library downloads whose library no longer exists. Called by the library
+    * deletion flow so the downloads page stops listing exports for deleted libraries
     */
-  @RequestMapping(path = Array("/generateStatic"), method = Array(RequestMethod.GET))
-  @Async
-  def generateStaticExports(): ResponseEntity[Array[QueryExport]] = {
-    new ResponseEntity(downloadSchedulerService.generateStaticExports(), HttpStatus.OK)
+  @RequestMapping(path = Array("/predefined/reconcile"), method = Array(RequestMethod.POST))
+  @ResponseBody
+  def reconcilePredefinedExports(): ResponseEntity[Array[PredefinedQuery]] = {
+    // Reject if a regeneration is still draining the queue, pruning now would be undone by the in-flight listener
+    if (downloadSchedulerService.isPredefinedExportInProgress) {
+      new ResponseEntity(HttpStatus.CONFLICT)
+    } else {
+      new ResponseEntity(downloadSchedulerService.reconcilePredefinedLibraryQueries(), HttpStatus.OK)
+    }
   }
+
 }

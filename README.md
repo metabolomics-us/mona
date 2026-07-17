@@ -34,7 +34,6 @@ It is highly recommended to use Linux for development (preferably Ubuntu LTS 18.
 | NPM | — | Node Package Manager |
 | Docker & Docker Compose | — | — |
 | AWS CLI | — | Required for ECR image push/pull |
-| corsproxy | — | `npm install -g corsproxy` (npm v8) |
 
 ### Access Requirements
 
@@ -54,21 +53,21 @@ You'll need a `settings.xml` for your Maven User Settings File — this includes
 
 ## Starting Development
 
-There are three scripts in the root of the project to easily start development:
+There are four scripts in the `./scripts/` dir to easily get you started with development:
 
 **1. Start all necessary Docker microservices:**
 ```bash
-./start_docker_dev.sh
+./start_docker.sh
 ```
 
-**2. Solve CORS issues between the frontend and microservices:**
-```bash
-./start_corsproxy.sh
-```
-
-**3. Start the Angular frontend with live reload at `localhost:9090`:**
+**2. Start the Angular frontend with live reload at `localhost:9090`:**
 ```bash
 ./start_frontend.sh
+```
+
+**3. Rebuild and redeploy microservices during dev:**
+```bash
+./dev_deploy.sh   # see usage
 ```
 
 ### AWS CloudWatch logging
@@ -91,6 +90,17 @@ Then add the credentials:
 Environment="AWS_ACCESS_KEY_ID=<id>"
 Environment="AWS_SECRET_ACCESS_KEY=<secret>"
 ```
+
+### Admin diagnostics page (reading CloudWatch logs)
+
+The admin diagnostics page (`webhooks-server`, `/rest/diagnostics/**`) reads error logs from CloudWatch, which needs its own credentials, separate from the Docker daemon credentials above, since those only cover the `awslogs` driver and aren't visible inside any container. Open your `~/.bashrc` or `~/.bash_profile` and set:
+
+```bash
+export MONA_AWS_ACCESS_KEY_ID=<id>
+export MONA_AWS_SECRET_ACCESS_KEY=<secret>
+```
+
+The IAM role requires `logs:FilterLogEvents` and `logs:DescribeLogStreams` on the `mona-logs`/`mona-dev-logs`/`mona-local-logs` groups. The existing "mona-cloudwatch-logger" IAM role has all permissions needed for both the awslogs driver and the diagnostics page. Credentials can be found in the YouTrack knowledgebase.
 
 ---
 
@@ -123,7 +133,7 @@ MoNA is a microservices application. All services run as Docker containers.
 
 ## Backups
 
-The `generate_backup.sh` script is used to generate backups of the postgres database on Gose. It is run monthly with cron. See the script for more details.
+The `./scripts/generate_backup.sh` script is used to generate backups of the postgres database on Gose. It is run monthly with cron. See the script for more details.
 
 ---
 
@@ -133,10 +143,19 @@ The `generate_backup.sh` script is used to generate backups of the postgres data
 
 1. Start the test environment:
    ```bash
+   ./scripts/start_docker.sh test
+   OR
    docker compose -f docker-compose-test.yml up -d
    ```
 
 2. Using the built-in Maven tab in IntelliJ (right-hand side by default), run `mvn clean install` on the `backend` folder.
+- Or run `mvn clean test` from the terminal inside the `backend/` folder.
+
+**Frontend tests:**
+
+1. cd into `./backend/app/server/proxy/src/main`
+2. nvm use 14.16.1
+3. ng test --watch=false --browsers=ChromeHeadless
 
 ---
 
@@ -151,7 +170,7 @@ Select the module to build using the folder dropdown in IntelliJ's Maven build w
 | Command | What it does |
 |---|---|
 | `mvn clean install` | Builds a local Docker image tagged `test` (configurable via `<docker.tag>` in root `pom.xml`); also builds with `latest` and version tags |
-| `./deploy_to_docker.sh` | Pushes the production images to ECR |
+| `./push_to_ecr.sh` | Pushes the production images to ECR |
 | `docker push <image_name>:<tag>` | Pushes a single image to ECR |
 
 Ensure you have logged in to the AWS CLI before pushing to ECR.
@@ -161,6 +180,8 @@ Ensure you have logged in to the AWS CLI before pushing to ECR.
 ## Production Deployment
 
 MoNA's production instance is hosted on the Gose server using Docker Compose. Ask a team member for access to Gose.
+
+There is a maintenance mode available that can be triggered manually via `./scripts/maintenance.sh`. Maintenance mode is enabled automatically by the nginx container when the proxy service is unreachable.
 
 Ensure your AWS credentials and GitHub PAT are set up on Gose before proceeding (details on YouTrack).
 

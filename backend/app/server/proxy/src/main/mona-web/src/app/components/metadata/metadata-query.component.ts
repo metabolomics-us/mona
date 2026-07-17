@@ -40,7 +40,10 @@ export class MetadataQueryComponent {
         if (typeof this.compound !== 'undefined') {
             this.spectraQueryBuilderService.addCompoundMetaDataToQuery(this.metaData.name, this.metaData.value, undefined);
         } else if (typeof this.classification !== 'undefined') {
-            this.spectraQueryBuilderService.addClassificationToQuery(this.metaData.name, this.metaData.value, undefined);
+            // Frontend relabels 'direct parent level N' as 'intermediate parent N', need to translate back to db value before querying
+            const intermediateMatch = this.metaData.name.match(/^intermediate parent (\d+)$/i);
+            const queryName = intermediateMatch ? 'direct parent level ' + intermediateMatch[1] : this.metaData.name;
+            this.spectraQueryBuilderService.addClassificationToQuery(queryName, this.metaData.value, undefined);
         } else {
             this.spectraQueryBuilderService.addMetaDataToQuery(this.metaData.name, this.metaData.value, undefined);
         }

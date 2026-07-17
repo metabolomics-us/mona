@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.{Propagation, Transactional}
 
 import javax.persistence.EntityManager
-import scala.collection.mutable.Map
+import scala.collection.mutable.{ListBuffer, Map}
 import scala.jdk.CollectionConverters._
-import scala.jdk.StreamConverters.StreamHasToScala
 
 
 /**
@@ -28,6 +27,11 @@ class MetaDataStatisticsService extends LazyLogging{
 
   @Autowired
   private val entityManager: EntityManager = null
+
+  // Metadata names whose per value breakdown is charted on the database statistics page
+  // (see spectra-database-index.component.ts). Only these names get their values aggregated
+  // and stored, since no other consumer reads the value counts of the remaining names
+  private val valueDetailNames: List[String] = List("ms level", "ionization mode", "precursor type")
 
   /**
     * Get all data in the metadata statistics repository
@@ -64,45 +68,36 @@ class MetaDataStatisticsService extends LazyLogging{
     */
   @Transactional
   def updateMetaDataStatistics(): String = {
-    statisticsMetaDataRepository.deleteAll()
-    val metaDataNameMap: Map[String, Map[String, Int]] = Map()
-    val metaDataCounterMap: Map[String, Int] = Map()
-    var counter = 0
+    logger.info("Aggregating metadata statistics now...")
+    val start = System.currentTimeMillis()
+    // Bulk delete child value counts first, then parent rows, in single statements
+    statisticsMetaDataRepository.deleteAllMetaDataValueCountsInBatch()
+    statisticsMetaDataRepository.deleteAllInBatch()
 
-    metaDataRepository.streamAllBy().toScala(Iterator).foreach { metaData =>
-      if (metaDataNameMap.contains(metaData.getName)) {
-        if (metaDataNameMap(metaData.getName).contains(metaData.getValue)) {
-          metaDataNameMap(metaData.getName)(metaData.getValue) += 1
-          metaDataCounterMap(metaData.getName) += 1
-        } else {
-          metaDataNameMap(metaData.getName)(metaData.getValue) = 1
-          metaDataCounterMap(metaData.getName) += 1
-        }
-      } else {
-        metaDataNameMap(metaData.getName) = Map(metaData.getValue -> 1)
-        metaDataCounterMap(metaData.getName) = 1
-      }
-      counter += 1
-      entityManager.detach(metaData)
+    // Aggregate the per value breakdown in the database, but only for the charted names, then
+    // group the results by name in memory
+    val metaDataValueMap: Map[String, ListBuffer[MetaDataValueCount]] = Map()
 
-      if (counter % 100000 == 0) {
-        logger.info(s"\tCompleted MetaData Object #${counter}")
-      }
+    metaDataRepository.aggregateValueCountsForNames(valueDetailNames.asJava).asScala.foreach { aggregation =>
+      metaDataValueMap.getOrElseUpdate(aggregation.getName, ListBuffer()) +=
+        new MetaDataValueCount(aggregation.getValue, aggregation.getCount.toInt)
     }
 
-    metaDataNameMap.foreach{ case(key, value) =>
-      val metaDataValueList: List[MetaDataValueCount] = value.toList.map{case(value, count) =>
-        new MetaDataValueCount(value, count)
-      }
-      val entry = new StatisticsMetaData(key, metaDataCounterMap(key), metaDataValueList.asJava)
+    // Aggregate the total count for every name in the database and save a parent row per name,
+    // attaching the value breakdown only for the charted names
+    val nameAggregations = metaDataRepository.aggregateNameCounts().asScala
+    nameAggregations.foreach { aggregation =>
+      val valueCounts = metaDataValueMap.getOrElse(aggregation.getName, ListBuffer())
+      val entry = new StatisticsMetaData(aggregation.getName, aggregation.getCount.toInt, valueCounts.toList.asJava)
       statisticsMetaDataRepository.save(entry)
       entityManager.detach(entry)
-
     }
-    metaDataNameMap.clear()
-    metaDataCounterMap.clear()
+    val nameCount = nameAggregations.size
+    val valuePairCount = metaDataValueMap.valuesIterator.map(_.size).sum
+    metaDataValueMap.clear()
     entityManager.flush()
     entityManager.clear()
+    logger.info(f"Metadata statistics complete: $nameCount names, $valuePairCount value pairs across ${valueDetailNames.size} charted names in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     "MetaData Statistics Updated"
   }
 }

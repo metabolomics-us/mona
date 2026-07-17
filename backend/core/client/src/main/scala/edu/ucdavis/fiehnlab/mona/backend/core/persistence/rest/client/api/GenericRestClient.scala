@@ -25,7 +25,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * authorization token
     * which should be kept secret
     */
-  private var token: String = _
+  @volatile private var token: String = _
 
   @Autowired
   @Qualifier("monaRestServer")

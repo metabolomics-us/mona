@@ -48,7 +48,7 @@ object AdductBuilder extends LazyLogging {
     * @param adduct
     * @return
     */
-  def findAdduct(adduct: String): (String, String, Double => Double) = {
+  def findAdduct(adduct: String, id: String): (String, String, Double => Double) = {
     if (adduct == null) {
       (adduct, "not found", null)
     } else {
@@ -74,11 +74,11 @@ object AdductBuilder extends LazyLogging {
         .map(blocks.head + _.mkString)
         .collectFirst {
           case x if ionizationMode != "negative" && LCMS_POSITIVE_ADDUCTS.contains(s"[$x]+") =>
-            logger.info(s"Found adduct match: $adduct -> [$x]+")
+            logger.info(s"$id: Found adduct match: $adduct -> [$x]+")
             (s"[$x]+", "positive", LCMS_POSITIVE_ADDUCTS(s"[$x]+"))
 
           case x if ionizationMode != "positive" && LCMS_NEGATIVE_ADDUCTS.contains(s"[$x]-") =>
-            logger.info(s"Found adduct match: $adduct -> [$x]-")
+            logger.info(s"$id: Found adduct match: $adduct -> [$x]-")
             (s"[$x]-", "negative", LCMS_NEGATIVE_ADDUCTS(s"[$x]-"))
         }.getOrElse((adduct, "not found", null))
     }

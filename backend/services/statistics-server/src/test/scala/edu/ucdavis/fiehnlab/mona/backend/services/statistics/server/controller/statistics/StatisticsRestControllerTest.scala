@@ -17,13 +17,15 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.{StatisticsCompo
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.StatisticServer
 import edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.controller.config.EmbeddedRestServerConfig
+import org.scalatest.concurrent.Eventually
+import org.scalatest.time.{Seconds, Span}
 
 /**
   * Created by wohlgemuth on 3/8/16.
   */
 @SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig]), webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
-class StatisticsRestControllerTest extends AbstractSpringControllerTest {
+class StatisticsRestControllerTest extends AbstractSpringControllerTest with Eventually {
 
   @LocalServerPort
   private val port = 0
@@ -58,7 +60,12 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
       }
 
       "update the statistics as an admin" in {
-        authenticate().contentType("application/json; charset=UTF-8").log().all(true).when().post("/statistics/update").`then`().log().all(true).statusCode(200).extract()
+        // Update runs asynchronously, so the response only confirms it was accepted, not that it finished
+        authenticate().contentType("application/json; charset=UTF-8").log().all(true).when().post("/statistics/update").`then`().log().all(true).statusCode(202).extract()
+        eventually(timeout(Span(10, Seconds))) {
+          val result: StatisticsGlobal = given().contentType("application/json; charset=UTF-8").when().get("/statistics/global").`then`().extract().as(classOf[StatisticsGlobal])
+          assert(result.getSpectrumCount == 50)
+        }
       }
 
       "get metadata statistics" in {

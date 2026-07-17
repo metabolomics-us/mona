@@ -5,16 +5,14 @@ import {NgxLoggerLevel} from 'ngx-logger';
 
 export const environment = {
   production: false,
-  // REST_BACKEND_SERVER: 'http://0.0.0.0:8080',
-  // REST_BACKEND_SERVER: 'http://127.0.0.1:8080',
-  REST_BACKEND_SERVER: 'http://127.0.0.1:8010/127.0.0.1:8080', // WORKS FOR DEV WHEN USING LOCAL CORSPROXY SCRIPT
+  REST_BACKEND_SERVER: '',
   APP_NAME: 'MassBank of North America',
   APP_NAME_ABBR: 'MoNA',
   APP_VERSION: 'v1.1',
   google_analytics: '',
   loggerLevel: NgxLoggerLevel.DEBUG,
   serverLevel: NgxLoggerLevel.OFF,
-  ctsUrl: 'http://cts.fiehnlab.ucdavis.edu'
+  ctsLiteUrl: 'https://cts-lite.metabolomics.us'
 };
 
 /*

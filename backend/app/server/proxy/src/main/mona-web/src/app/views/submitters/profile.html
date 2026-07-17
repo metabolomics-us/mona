@@ -36,7 +36,10 @@
                 </div>
 
                 <div class="panel-footer">
-                    <button class="btn btn-primary" (click)="queryUserSpectra()">My Submitted Spectra</button>
+                    <button class="btn btn-primary accessibility" (click)="queryUserSpectra()">Browse My Spectra</button>
+                    <button [routerLink]="['/upload/status']" class="btn btn-primary accessibility ml-3">My Uploads</button>
+                    <br>
+                    <button class="btn btn-secondary accessibility mt-3" (click)="authenticationService.logout()">Log Out</button>
                     <!--
                     <a data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
                     <span class="pull-right">

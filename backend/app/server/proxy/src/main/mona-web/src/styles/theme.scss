@@ -133,6 +133,10 @@ body {
 }
 
 // Text Style
+html .text-muted {
+    color: #6A7077 !important;
+}
+
 .news-date {
     font-size: smaller;
     margin: 0 0 4px;
@@ -195,18 +199,6 @@ body {
 .carousel-control.left,
 .carousel-control.right {
     background: transparent;
-}
-
-@media (min-width: 992px) {
-    .col-md-4 {
-        font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
-    }
-}
-
-@media (min-width: 992px) {
-    .col-md-8 {
-        font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
-    }
 }
 
 /* Navigation */
@@ -285,7 +277,6 @@ body {
 
 .dropdown-menu > li > a,
 .dropdown-menu > li > button {
-    font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
     color: black;
 }
 
@@ -761,6 +752,14 @@ input[type="checkbox"] {
 .dropdown-item:active,
 .dropdown-item.active {
   background-color: #0b3f6c !important;
+  color: white !important;
+}
+
+/* Danger colored dropdown items stay red at rest but turn white when highlighted, matching the other items */
+.query-btn.text-danger:hover,
+.query-btn.text-danger:focus,
+.query-btn.text-danger:active,
+.query-btn.text-danger.active {
   color: white !important;
 }
 

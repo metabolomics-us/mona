@@ -5,7 +5,6 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Impacts, MetaData, Score, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Tag
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.FetchCTSCompoundData
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.batch.item.ItemProcessor
@@ -17,7 +16,7 @@ import scala.jdk.CollectionConverters._
 /**
   * Created by sajjan on 4/4/16.
   */
-@Step(description = "this step calculates the compound properties using the CDK", previousClass = classOf[FetchCTSCompoundData], workflow = "spectra-curation")
+@Step(description = "this step calculates the compound properties using the CDK", workflow = "spectra-curation")
 class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   @Autowired
@@ -76,10 +75,16 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
     if (molecule == null) {
       logger.warn(s"$id: Unable to load provided structure information with CDK")
       impacts.append(new Impacts(-10, "Unable to generate a molecular structure from provided compound data"))
+
+      // Keep the submitted InChI and InChIKey that were promoted into the metadata buffer above
+      // so they survive even when no structure could be generated
+      compound.setMetaData(metaData.asJava)
       compound
     } else if (molDefinition == null) {
       logger.warn(s"$id: No MOL definition found")
       impacts.append(new Impacts(-2, "Unable to read or generate MOL data"))
+
+      compound.setMetaData(metaData.asJava)
       compound
     } else {
       // Read MOL data
@@ -95,8 +100,8 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
 
       // Calculate InChI and InChIKey and only add them to the record if they differ from provided values
-      val computedInChI: String = compoundConversion.moleculeToInChI(molecule)
-      val computedInChIKey: String = compoundConversion.moleculeToInChIKey(molecule)
+      val computedInChI: String = compoundConversion.moleculeToInChI(molecule, id)
+      val computedInChIKey: String = compoundConversion.moleculeToInChIKey(molecule, id)
 
       val providedInChI: Option[MetaData] = (compound.getMetaData.asScala ++ metaData)
         .find(x => x.getName.toLowerCase == CommonMetaData.INCHI_CODE.toLowerCase && !x.getComputed)

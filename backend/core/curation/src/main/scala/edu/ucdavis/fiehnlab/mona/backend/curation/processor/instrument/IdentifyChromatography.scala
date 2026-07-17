@@ -60,7 +60,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
       logger.info(s"${spectrum.getId}: Spectrum already has identified chromatography: ${tags(0).getText}")
 
 
-      spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, -1, s"Chromatography identified as ${tags(0).getText}"))
+      spectrum.setScore(CurationUtilities.addImpact(spectrum.getScore, 1, s"Chromatography identified as ${tags(0).getText}"))
       spectrum
     }
 

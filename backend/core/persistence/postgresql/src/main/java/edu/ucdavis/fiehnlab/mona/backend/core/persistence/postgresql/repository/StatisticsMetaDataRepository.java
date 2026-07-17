@@ -4,6 +4,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaDa
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaDataId;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
@@ -29,4 +30,10 @@ public interface StatisticsMetaDataRepository extends JpaRepository<StatisticsMe
     })
     @Query("SELECT new edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsMetaData(s.name, s.count) FROM StatisticsMetaData s")
     public List<StatisticsMetaData> findByProjection();
+
+    // Bulk delete the child value count rows in a single statement. Must run before
+    // deleting the parent statistics_metadata rows since deleteAllInBatch does not cascade
+    @Modifying
+    @Query("DELETE FROM MetaDataValueCount")
+    void deleteAllMetaDataValueCountsInBatch();
 }

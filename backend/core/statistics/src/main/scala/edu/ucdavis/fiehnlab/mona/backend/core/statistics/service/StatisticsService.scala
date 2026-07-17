@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.util.Date
+import java.util.concurrent.atomic.AtomicBoolean
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{CompoundRepository, MetaDataRepository, SpectrumRepository, SpectrumSubmitterRepository, StatisticsGlobalRepository, StatisticsTagRepository, TagsRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.statistics.StatisticsGlobal
@@ -13,9 +14,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.{Propagation, Transactional}
 
 import javax.persistence.EntityManager
-import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.jdk.CollectionConverters._
-import scala.jdk.StreamConverters.StreamHasToScala
 
 /**
   * Created by sajjan on 8/2/16.
@@ -59,95 +58,45 @@ class StatisticsService extends LazyLogging {
   @Autowired
   private val entityManager: EntityManager = null
 
+  // Guards against overlapping recomputes whether triggered by the admin button or the nightly cron
+  private val updateInProgress: AtomicBoolean = new AtomicBoolean(false)
+
+  // True while a statistics recompute is running, used by the admin endpoint to report a conflict
+  def isUpdateInProgress: Boolean = updateInProgress.get()
+
 
   def generateCompoundCount(): Long = {
-    var counter = 0
-    val inchiKeys: ArrayBuffer[String] = ArrayBuffer()
-    compoundRepository.streamAllBy().toScala(Iterator).foreach { compound =>
-      compound.getMetaData.asScala.foreach { metadata =>
-        if (metadata.getName == "InChIKey") {
-          inchiKeys.append(metadata.getValue.substring(0, 14))
-        }
-      }
-      counter+=1
-      entityManager.detach(compound)
-      if (counter % 100000 == 0) {
-        logger.info(s"\tCompleted Compound Count #${counter}")
-      }
-    }
-    val finalCount = inchiKeys.distinct.length
-    inchiKeys.clearAndShrink()
-    entityManager.flush()
-    entityManager.clear()
+    logger.info("Counting unique compounds now...")
+    val start = System.currentTimeMillis()
+    val finalCount = metaDataRepository.countDistinctCompoundInchiKeyBlocks()
+    logger.info(f"Counted $finalCount unique compounds in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     finalCount
   }
 
 
   def generateMetaDataCount(): Long = {
-    val metaDataCounterMap: Map[String, Int] = Map()
-    var counter = 0
-    metaDataRepository.streamAllBy().toScala(Iterator).foreach{ metaData =>
-      if(!metaDataCounterMap.contains(metaData.getName)) {
-        metaDataCounterMap(metaData.getName) = 1
-      }
-      counter+=1
-      entityManager.detach(metaData)
-      if (counter % 100000 == 0) {
-        logger.info(s"\tCompleted MetaData Count #${counter}")
-        entityManager.flush()
-        entityManager.clear()
-      }
-    }
-    val finalCount = metaDataCounterMap.size.toLong
-    metaDataCounterMap.clear()
-    entityManager.flush()
-    entityManager.clear()
+    logger.info("Counting unique metadata names now...")
+    val start = System.currentTimeMillis()
+    val finalCount = metaDataRepository.countDistinctNames()
+    logger.info(f"Counted $finalCount unique metadata names in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     finalCount
   }
 
 
   def generateTagCount(): Long = {
-    val tagsCounter: Map[String, Int] = Map()
-    var counter = 0
-    tagsRepository.streamAllBy().toScala(Iterator).foreach { tag =>
-      if(tag.getSpectrum == null && tag.getCompound == null) {
-        logger.debug(s"Exclude Library Tag Duplicates")
-      } else {
-        if (!tagsCounter.contains(tag.getText)) {
-          tagsCounter(tag.getText) = 1
-        }
-      }
-      counter+=1
-      entityManager.detach(tag)
-      if (counter % 100000 == 0) {
-        logger.info(s"\tCompleted Tag Count #${counter}")
-      }
-    }
-    val finalCount = tagsCounter.size.toLong
-    tagsCounter.clear()
-    entityManager.flush()
-    entityManager.clear()
+    logger.info("Counting unique tags now...")
+    val start = System.currentTimeMillis()
+    val finalCount = tagsRepository.countDistinctTags()
+    logger.info(f"Counted $finalCount unique tags in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     finalCount
   }
 
 
   def generateSubmitterCount(): Long = {
-    val submitterCounter: Map[String, Integer] = Map()
-    var counter = 0
-    spectraSubmittersRepository.streamAllBy().toScala(Iterator).foreach { submitter =>
-      if (!submitterCounter.contains(submitter.getEmailAddress)) {
-        submitterCounter(submitter.getEmailAddress) = 1
-      }
-      counter+=1
-      entityManager.detach(submitter)
-      if (counter % 10000 == 0) {
-        logger.info(s"\tCompleted Submitter Count #${counter}")
-      }
-    }
-    val finalCount = submitterCounter.size.toLong
-    submitterCounter.clear()
-    entityManager.flush()
-    entityManager.clear()
+    logger.info("Counting unique submitters now...")
+    val start = System.currentTimeMillis()
+    val finalCount = spectraSubmittersRepository.countDistinctEmailAddresses()
+    logger.info(f"Counted $finalCount unique submitters in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     finalCount
   }
   /**
@@ -157,13 +106,27 @@ class StatisticsService extends LazyLogging {
     **/
 
   def updateGlobalStatistics(): String = {
-    globalStatisticsRepository.deleteAll()
+    logger.info("Updating global statistics now...")
+    val start = System.currentTimeMillis()
+    globalStatisticsRepository.deleteAllInBatch()
+
     // Spectrum count
+    var stepStart = System.currentTimeMillis()
     val spectrumCount: Long = spectrumPersistenceService.count()
+    logger.info(f"Counted $spectrumCount spectra in ${(System.currentTimeMillis() - stepStart) / 1000.0}%.2fs")
+
     val compoundCount: Long = generateCompoundCount()
+
+    stepStart = System.currentTimeMillis()
     val metaDataValueCount: Long = metaDataRepository.count()
+    logger.info(f"Counted $metaDataValueCount metadata values in ${(System.currentTimeMillis() - stepStart) / 1000.0}%.2fs")
+
     val metaDataCount: Long = generateMetaDataCount()
+
+    stepStart = System.currentTimeMillis()
     val tagValueCount: Long = tagsRepository.count()
+    logger.info(f"Counted $tagValueCount tag values in ${(System.currentTimeMillis() - stepStart) / 1000.0}%.2fs")
+
     val tagCount: Long = generateTagCount()
     val submitterCount: Long = generateSubmitterCount()
 
@@ -173,6 +136,7 @@ class StatisticsService extends LazyLogging {
     entityManager.flush()
     entityManager.clear()
 
+    logger.info(f"Global statistics updated in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs")
     "Global Statistics Updated"
   }
 
@@ -191,13 +155,25 @@ class StatisticsService extends LazyLogging {
   @Scheduled(cron = "0 0 0 * * *")
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   def updateStatistics(): Unit = {
-    metaDataStatisticsService.updateMetaDataStatistics()
-    submitterStatisticsService.updateSubmitterStatistics()
-    compoundClassStatisticsService.updateCompoundClassStatistics()
-    tagStatisticsService.updateTagStatistics()
-    updateGlobalStatistics()
-    entityManager.flush()
-    entityManager.clear()
-    logger.info(s"Statistics Update is Completed!")
+    // Skip if an update is already running so the admin button and the nightly cron never overlap
+    // This is the single shared guard for both trigger paths since both call this method
+    if (!updateInProgress.compareAndSet(false, true)) {
+      logger.info("Statistics update already in progress, skipping this run")
+    } else {
+      try {
+        logger.info("Starting statistics update now...")
+        val start = System.currentTimeMillis()
+        metaDataStatisticsService.updateMetaDataStatistics()
+        submitterStatisticsService.updateSubmitterStatistics()
+        compoundClassStatisticsService.updateCompoundClassStatistics()
+        tagStatisticsService.updateTagStatistics()
+        updateGlobalStatistics()
+        entityManager.flush()
+        entityManager.clear()
+        logger.info(f"Statistics Update is Completed in ${(System.currentTimeMillis() - start) / 1000.0}%.2fs!")
+      } finally {
+        updateInProgress.set(false)
+      }
+    }
   }
 }

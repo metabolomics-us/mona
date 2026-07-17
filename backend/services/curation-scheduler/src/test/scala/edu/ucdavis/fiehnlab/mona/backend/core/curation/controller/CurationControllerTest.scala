@@ -3,10 +3,10 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.controller
 import java.io.{InputStreamReader, StringWriter}
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaNotificationBusCounterConfiguration, Notification}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.MonaNotificationBusCounterConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.PostgresLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
+import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.TestCurationRunner
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
@@ -30,6 +30,10 @@ import scala.language.postfixOps
   * Created by wohlg on 4/13/2016.
   */
 
+// Uses the same classes array as CompoundConversionControllerTest/CompoundConversionServiceTest so all four
+// test classes in this module share one cached Spring context. Otherwise this module boots two contexts, each
+// with its own TestCurationRunner competing (unintentionally) as a consumer on the same physical curation-queue,
+// splitting scheduled messages between them and undercounting whichever context's assertions are being checked
 @SpringBootTest(classes = Array(classOf[CurationScheduler], classOf[MonaNotificationBusCounterConfiguration]), webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class CurationControllerTest extends AbstractSpringControllerTest with Eventually {
@@ -38,7 +42,7 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
   private val port = 0
 
   @Autowired
-  val notificationCounter: ReceivedEventCounter[Notification] = null
+  val testCurationRunner: TestCurationRunner = null
 
   @Autowired
   val spectrumResultRepository: SpectrumRepository = null
@@ -86,13 +90,13 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
 
     "these must all pass, since we are logged in " must {
       "curateByQuery" in {
-        val count: Long = notificationCounter.getEventCount
-        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData.name:'ion mode' and metaData.value:'negative'").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
+        testCurationRunner.resetMessageStatus()
 
-        assert(result.count == 25)
+        // Scheduling now happens asynchronously, so the endpoint returns 202 immediately
+        authenticate().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData.name:'ion mode' and metaData.value:'negative'").`then`().statusCode(202)
 
         eventually(timeout(80 seconds)) {
-          assert(notificationCounter.getEventCount - count == result.count)
+          assert(testCurationRunner.messageCount == 25)
         }
       }
 
@@ -101,25 +105,27 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
       }
 
       "curateById" in {
-        val count: Long = notificationCounter.getEventCount
+        testCurationRunner.resetMessageStatus()
         val spec: Spectrum = spectrumResultRepository.findAll().iterator().next()
         val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/curation/${spec.getId}").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
 
         assert(result.count == 1)
 
         eventually(timeout(80 seconds)) {
-          assert(notificationCounter.getEventCount - count == result.count)
+          assert(testCurationRunner.messageCount == result.count)
         }
       }
 
       "curateAll" in {
-        val count: Long = notificationCounter.getEventCount
-        val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
+        testCurationRunner.resetMessageStatus()
 
-        assert(result.count == exampleRecords.length)
+        // Scheduling now happens asynchronously, so the endpoint returns 202 immediately
+        eventually(timeout(80 seconds)) {
+          authenticate().contentType("application/json; charset=UTF-8").when().get("/curation").`then`().statusCode(202)
+        }
 
         eventually(timeout(80 seconds)) {
-          assert(notificationCounter.getEventCount - count == result.count)
+          assert(testCurationRunner.messageCount == exampleRecords.length)
         }
       }
 

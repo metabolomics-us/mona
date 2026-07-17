@@ -3,6 +3,10 @@ spring:
     import: optional:configserver:${SPRING_CONFIG_URI:http://localhost:1111}
   application:
     name: curation-service
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true

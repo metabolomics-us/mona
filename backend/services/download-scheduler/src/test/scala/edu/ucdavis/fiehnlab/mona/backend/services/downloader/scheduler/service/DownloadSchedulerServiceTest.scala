@@ -130,6 +130,38 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       assert(predefinedQueryRepository.existsById("Libraries - 1 - 2"))
       assert(predefinedQueryRepository.existsById("Libraries - 1 - 2 - 3"))
     }
+
+    "reconcile removes generated library downloads whose library no longer exists" in {
+      // Generated entry for a library that is not present in the statistics tags
+      predefinedQueryRepository.save(new PredefinedQuery("Libraries - deleted", "deleted", "tags.text:'deleted'", 0, null, null, null))
+      assert(predefinedQueryRepository.existsById("Libraries - deleted"))
+
+      val removed: Array[PredefinedQuery] = downloadSchedulerService.reconcilePredefinedLibraryQueries()
+
+      assert(removed.exists(_.getLabel == "Libraries - deleted"))
+      assert(!predefinedQueryRepository.existsById("Libraries - deleted"))
+    }
+
+    "reconcile keeps generated library downloads whose library still exists" in {
+      // "1 - 2 - 3" is still present as a library statistics tag from the previous test
+      assert(predefinedQueryRepository.existsById("Libraries - 1"))
+      assert(predefinedQueryRepository.existsById("Libraries - 1 - 2 - 3"))
+
+      downloadSchedulerService.reconcilePredefinedLibraryQueries()
+
+      assert(predefinedQueryRepository.existsById("Libraries - 1"))
+      assert(predefinedQueryRepository.existsById("Libraries - 1 - 2"))
+      assert(predefinedQueryRepository.existsById("Libraries - 1 - 2 - 3"))
+    }
+
+    "reconcile leaves hand-curated library downloads untouched" in {
+      // A bootstrap style entry whose query does not follow the generated "tags.text:'<label suffix>'" form
+      predefinedQueryRepository.save(new PredefinedQuery("Libraries - MassBank - CASMI 2012", "CASMI 2012", "tags.text:'CASMI 2012'", 0, null, null, null))
+
+      downloadSchedulerService.reconcilePredefinedLibraryQueries()
+
+      assert(predefinedQueryRepository.existsById("Libraries - MassBank - CASMI 2012"))
+    }
   }
 }
 

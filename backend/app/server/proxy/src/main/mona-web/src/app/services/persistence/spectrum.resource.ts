@@ -50,6 +50,15 @@ export class Spectrum {
 			}));
 	}
 
+	// Count for the trigram backed keyword (contains) search used by the navbar search box
+	searchKeywordCount(data: any): Observable<any> {
+		const params = this.cleanParameters(data);
+		return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/keyword/count`, { params })
+			.pipe(map((res) => {
+				return {count: res};
+			}));
+	}
+
 	searchSimilarSpectra(data: any): Observable<any> {
     const config = {
       headers: {
@@ -98,28 +107,44 @@ export class Spectrum {
 		return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra/associate/allByQuery`, data);
 	}
 
+  // Deletes a single spectrum by id. Allowed for the owning submitter or an admin. Returns an empty 200 body
+  delete(id: string, token: string): Observable<any> {
+    const config = {
+      headers: {
+        Authorization: 'Bearer ' + token
+      },
+      responseType: 'text' as 'json'
+    };
+    return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/spectra/${id}`, config);
+  }
+
+  // Enqueues a query based deletion job and returns the DeletionJob (202 Accepted) for progress polling
   batchDelete(data: any, token: any): Observable<any> {
     const config = {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + token
       },
-      params: this.cleanParameters(data),
-      responseType: 'text' as 'json'
+      params: this.cleanParameters(data)
     };
     return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/spectra/search`, config);
   }
 
+  // Enqueues an id based deletion job and returns the DeletionJob (202 Accepted) for progress polling
   batchDeleteByIds(data: any, token: any): Observable<any> {
     const config = {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + token
       },
-      body: data,
-      responseType: 'text' as 'json'
+      body: data
     };
     return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/spectra`, config);
+  }
+
+  // Polls the progress of a deletion job by id
+  deletionStatus(jobId: string): Observable<any> {
+    return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/delete/status/${jobId}`);
   }
 }
 
