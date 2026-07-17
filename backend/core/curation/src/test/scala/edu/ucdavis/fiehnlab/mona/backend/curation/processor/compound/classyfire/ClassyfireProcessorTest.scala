@@ -135,7 +135,7 @@ class ClassyfireProcessorTest extends AnyWordSpec with LazyLogging {
     def compoundWithStructure(inchiKey: String): Compound = {
       val compound: Compound = new Compound()
       compound.setInchiKey(inchiKey)
-      compound.setMetaData(List[MetaData](new MetaData(null, CommonMetaData.INCHI_CODE, "InChI=1S/CH4/h1H4", true, "none", false, null)).asJava)
+      compound.setMetaData(List[MetaData](new MetaData(null, CommonMetaData.INCHI_CODE, "InChI=1S/CH4/h1H4", false, "computed", true, null)).asJava)
       compound.setClassification(List[MetaData]().asJava)
       compound
     }
