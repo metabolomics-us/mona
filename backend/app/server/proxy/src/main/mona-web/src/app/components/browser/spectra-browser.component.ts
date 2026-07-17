@@ -44,6 +44,7 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     inchikeyParam;
     splashParam;
     queryParam;
+    keywordParam;
     sizeParam;
     pageParam;
     tableParam;
@@ -126,6 +127,7 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
           this.inchikeyParam = params.inchikey || undefined;
           this.splashParam = params.splash || undefined;
           this.queryParam = params.query || undefined;
+          this.keywordParam = params.keyword || undefined;
           this.sizeParam = params.size || 10;
           this.pageParam = parseInt(params.page, 10);
           this.tableParam = params.table || undefined;
@@ -391,12 +393,19 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
      * Submits our query to the server
      */
     submitQuery() {
-      if(!this.spectrumCache.hasCurrentCount(this.query)) {
+      const countKey = this.countCacheKey();
+      if(!this.spectrumCache.hasCurrentCount(countKey)) {
         this.calculateResultCount();
       } else {
-        this.pagination.totalSize = this.spectrumCache.getCurrentCount(this.query);
+        this.pagination.totalSize = this.spectrumCache.getCurrentCount(countKey);
       }
       this.loadSpectra();
+    }
+
+    // Keyword searches carry no RSQL query, so they need their own count cache key to not
+    // collide with the empty browse-everything count
+    countCacheKey() {
+      return this.keywordParam !== undefined ? 'keyword:' + this.keywordParam : this.query;
     }
 
     /**
@@ -432,11 +441,14 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
      * Calculates the number of results for the given query
      */
     calculateResultCount() {
-        this.spectrum.searchSpectraCount({
-            query: this.query
-        }).pipe(first()).subscribe((res: any) => {
+        const countKey = this.countCacheKey();
+        const count$ = this.keywordParam !== undefined
+            ? this.spectrum.searchKeywordCount({query: this.keywordParam})
+            : this.spectrum.searchSpectraCount({query: this.query});
+
+        count$.pipe(first()).subscribe((res: any) => {
             this.pagination.totalSize = res.count;
-            this.spectrumCache.setCurrentCount(this.query, res.count);
+            this.spectrumCache.setCurrentCount(countKey, res.count);
         });
     }
 
@@ -491,6 +503,15 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
         if (this.initial && !this.sizeParam) {
           this.hideSplash();
           this.pagination.loading = false;
+        } else if (this.keywordParam !== undefined) {
+            this.logger.info('fetching spectra from keyword search: ' + this.keywordParam);
+            this.spectrum.searchSpectra({
+                endpoint: 'keyword',
+                query: this.keywordParam,
+                page: currentPage,
+                size: this.pagination.itemsPerPage
+            }).pipe(first()).subscribe(this.searchSuccess, this.searchError);
+
         } else if (this.query === undefined) {
             this.logger.info('submitting empty query');
             this.spectrum.searchSpectra({

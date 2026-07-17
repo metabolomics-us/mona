@@ -233,6 +233,27 @@ class SpectrumPersistenceService extends LazyLogging {
   def findAll(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, pageable)
 
   /**
+   * case insensitive contains search over metadata values and compound names, backed by trigram
+   * indexes. Used by the search box instead of the generic filter path, whose OR across joined
+   * tables cannot use any index
+   *
+   * @param keyword the raw search term, matched as a substring
+   * @param page    zero based page number
+   * @param size    page size
+   * @return the requested page of matching spectra, newest id first
+   */
+  def findByKeyword(keyword: String, page: Int, size: Int): java.util.List[Spectrum] =
+    spectrumResultRepository.findByKeyword(keyword, page, size)
+
+  /**
+   * count of spectra matched by findByKeyword for the given keyword
+   *
+   * @param keyword the raw search term, matched as a substring
+   * @return number of distinct matching spectra
+   */
+  def countByKeyword(keyword: String): Long = spectrumResultRepository.countByKeyword(keyword)
+
+  /**
    * returns the count of all spectra
    *
    * @return

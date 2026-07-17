@@ -50,6 +50,15 @@ export class Spectrum {
 			}));
 	}
 
+	// Count for the trigram backed keyword (contains) search used by the navbar search box
+	searchKeywordCount(data: any): Observable<any> {
+		const params = this.cleanParameters(data);
+		return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/keyword/count`, { params })
+			.pipe(map((res) => {
+				return {count: res};
+			}));
+	}
+
 	searchSimilarSpectra(data: any): Observable<any> {
     const config = {
       headers: {

@@ -150,6 +150,67 @@ class SpectrumRestController extends LazyLogging {
     }
   }
 
+  // Keyword terms below this length cannot use the trigram indexes and would degrade to full
+  // scans, so they are rejected loudly
+  val minKeywordLength = 3
+
+  private def keywordError[T]: ResponseEntity[T] = {
+    val body: java.util.Map[String, String] = java.util.Map.of(
+      "error", s"keyword searches require a query of at least $minKeywordLength characters"
+    )
+    new ResponseEntity(body, HttpStatus.BAD_REQUEST).asInstanceOf[ResponseEntity[T]]
+  }
+
+  /**
+    * Case insensitive contains search over metadata values and compound names, used by the search
+    * box. Runs as a per branch trigram indexed lookup instead of the generic filter path, whose OR
+    * across joined tables cannot use any index. Same pagination contract as /search
+    *
+    * @param query the raw search term, matched as a substring
+    * @return
+    */
+  @RequestMapping(path = Array("/keyword"), method = Array(RequestMethod.GET), produces = Array("application/json"))
+  @Async
+  @ResponseBody
+  def keywordSearch(@RequestParam(value = "page", required = false) page: Integer,
+                    @RequestParam(value = "size", required = false) size: Integer,
+                    @RequestParam(value = "query", required = false) query: WrappedString): Future[ResponseEntity[Iterable[Spectrum]]] = {
+    if (query == null || query.string.trim.length < minKeywordLength) {
+      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](keywordError)
+    } else if (size != null && size > maxPageSize) {
+      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](oversizeError)
+    } else {
+      val effectivePage: Int = if (page != null) page.toInt else 0
+
+      if (size != null) {
+        val content = spectrumPersistenceService.findByKeyword(query.string.trim, effectivePage, size.toInt).asScala
+        new AsyncResult[ResponseEntity[Iterable[Spectrum]]](new ResponseEntity(content, HttpStatus.OK))
+      } else {
+        val content = spectrumPersistenceService.findByKeyword(query.string.trim, effectivePage, maxPageSize).asScala
+        new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
+          new ResponseEntity(content, defaultedPageHeaders(effectivePage, content.size), HttpStatus.OK)
+        )
+      }
+    }
+  }
+
+  /**
+    * Returns the count of spectra the keyword search would match
+    *
+    * @param query the raw search term, matched as a substring
+    * @return
+    */
+  @RequestMapping(path = Array("/keyword/count"), method = Array(RequestMethod.GET))
+  @Async
+  @ResponseBody
+  def keywordCount(@RequestParam(value = "query", required = false) query: WrappedString): Future[ResponseEntity[Long]] = {
+    if (query == null || query.string.trim.length < minKeywordLength) {
+      new AsyncResult[ResponseEntity[Long]](keywordError)
+    } else {
+      new AsyncResult[ResponseEntity[Long]](new ResponseEntity(spectrumPersistenceService.countByKeyword(query.string.trim), HttpStatus.OK))
+    }
+  }
+
   /**
     * Returns the counts of objects, which would be received by the given query
     *
