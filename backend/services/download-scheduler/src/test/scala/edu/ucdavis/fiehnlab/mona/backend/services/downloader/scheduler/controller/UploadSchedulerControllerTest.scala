@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.controller
 
 import com.jayway.restassured.RestAssured
-import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.builder.MultiPartSpecBuilder
-import com.jayway.restassured.specification.MultiPartSpecification
+import com.jayway.restassured.specification.{MultiPartSpecification, RequestSpecification}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{DeletionJob, UploadJob, UploadJobRequest}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{DeletionJobRepository, UploadJobRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSpringControllerTest
@@ -44,6 +43,17 @@ class UploadSchedulerControllerTest extends AbstractSpringControllerTest {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
+  // RestAssured.baseURI is a single JVM-wide static also mutated by DownloadSchedulerControllerTest and
+  // StaticDownloadControllerTest (both point it at /rest/downloads), and all three suites share one cached
+  // Spring context in the same JVM fork, so whichever suite's assignment runs last wins for everyone; scope
+  // the base URI per request instead of relying on that shared, racy static
+  val baseUri: String = s"http://localhost:$port/rest/uploads"
+
+  def given(): RequestSpecification = RestAssured.given().baseUri(baseUri)
+
+  override def authenticate(user: String, password: String): RequestSpecification =
+    super.authenticate(user, password).baseUri(baseUri)
+
   // Content sent in two chunks to exercise offset based assembly
   val chunkOne: Array[Byte] = "BEGIN IONS\nTITLE=first half\n".getBytes
   val chunkTwo: Array[Byte] = "100.0 200.0\nEND IONS\n".getBytes
@@ -53,8 +63,6 @@ class UploadSchedulerControllerTest extends AbstractSpringControllerTest {
     new MultiPartSpecBuilder(bytes).fileName("chunk").controlName("chunk").build()
 
   "UploadSchedulerControllerTest" should {
-    RestAssured.baseURI = s"http://localhost:$port/rest/uploads"
-
     "start with an empty job table" in {
       uploadJobRepository.deleteAll()
     }

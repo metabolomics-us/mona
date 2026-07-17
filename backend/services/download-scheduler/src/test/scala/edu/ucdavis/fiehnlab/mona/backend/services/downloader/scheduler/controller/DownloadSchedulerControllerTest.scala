@@ -4,6 +4,7 @@ import java.io.InputStreamReader
 import java.util.Date
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
+import com.jayway.restassured.specification.RequestSpecification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.repository.{SpectrumRepository, StatisticsTagRepository}
@@ -48,9 +49,18 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "DownloadSchedulerControllerTest" should {
-    RestAssured.baseURI = s"http://localhost:$port/rest/downloads"
+  // RestAssured.baseURI is a single JVM-wide static also mutated by UploadSchedulerControllerTest (which
+  // points it at /rest/uploads), and all suites in this module share one cached Spring context in the same
+  // JVM fork, so whichever suite's assignment runs last wins for everyone; scope the base URI per request
+  // instead of relying on that shared, racy static
+  val baseUri: String = s"http://localhost:$port/rest/downloads"
 
+  def given(): RequestSpecification = RestAssured.given().baseUri(baseUri)
+
+  override def authenticate(user: String, password: String): RequestSpecification =
+    super.authenticate(user, password).baseUri(baseUri)
+
+  "DownloadSchedulerControllerTest" should {
     // Populate the database
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
