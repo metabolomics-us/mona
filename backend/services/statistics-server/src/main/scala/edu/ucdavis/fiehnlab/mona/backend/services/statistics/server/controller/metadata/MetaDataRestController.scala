@@ -42,6 +42,10 @@ class MetaDataRestController {
   /**
     * List unique metadata values for a given metadata name and search values if query is given
     *
+    * Only returns a populated value breakdown for the names in MetaDataStatisticsService.valueDetailNames
+    * (the ones charted on the database statistics page). Any other name resolves with an empty
+    * metaDataValueCount, since only those names' per-value counts are aggregated and stored
+    *
     * @param metaDataName
     * @return
     */

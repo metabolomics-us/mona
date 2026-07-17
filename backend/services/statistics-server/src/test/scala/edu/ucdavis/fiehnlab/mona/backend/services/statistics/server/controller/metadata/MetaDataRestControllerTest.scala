@@ -13,6 +13,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.AbstractSp
 import edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.StatisticServer
 import edu.ucdavis.fiehnlab.mona.backend.services.statistics.server.controller.config.EmbeddedRestServerConfig
 import org.scalatest.concurrent.Eventually
+import org.scalatest.time.{Seconds, Span}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
@@ -59,7 +60,11 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest with Event
       }
 
       "we should be able to generate statistics" in {
-        authenticate().contentType("application/json; charset=UTF-8").when().post("/statistics/update").`then`().log().all(true).statusCode(200).extract()
+        // Update runs asynchronously, so the response only confirms it was accepted, not that it finished
+        authenticate().contentType("application/json; charset=UTF-8").when().post("/statistics/update").`then`().log().all(true).statusCode(202).extract()
+        eventually(timeout(Span(10, Seconds))) {
+          assert(given().contentType("application/json; charset=UTF-8").when().get("/metaData/names").`then`().extract().body().as(classOf[Array[StatisticsMetaData]]).length == 239)
+        }
       }
 
       "we should be able to query all meta data names from the service" in {
@@ -75,10 +80,10 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest with Event
       "we should be able to query all the meta data values for a specific name" in {
         val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/values?name=authors").`then`().log().all(true).statusCode(200).extract().body().as(classOf[StatisticsMetaData])
 
+        // "authors" isn't one of MetaDataStatisticsService's charted names, so no value breakdown is computed for it
         assert(result.getName == "authors")
-        assert(result.getMetaDataValueCount.size() == 1)
-        assert(result.getMetaDataValueCount.asScala.head.getValue == "Mark Earll, Stephan Beisken, EMBL-EBI")
-        assert(result.getMetaDataValueCount.asScala.head.getCount == 58)
+        assert(result.getCount == 58)
+        assert(result.getMetaDataValueCount.size() == 0)
       }
 
       "we should be able to query all the meta data values for a specific name that contains spaces" in {
@@ -93,13 +98,16 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest with Event
       "we should be able to query all the meta data values for a specific name that special characters" in {
         val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/values?name=precursor m/z").`then`().log().all(true).statusCode(200).extract().body().as(classOf[StatisticsMetaData])
 
+        // "precursor m/z" isn't charted either, so it's also an empty breakdown, same as "authors" above
         assert(result.getName == "precursor m/z")
-        assert(result.getMetaDataValueCount.size() == 56)
+        assert(result.getCount == 59)
+        assert(result.getMetaDataValueCount.size() == 0)
       }
 
       "we should be able to search for metadata values" in {
+        // Filtering the (empty, since "authors" isn't charted) value breakdown by a search term stays empty
         val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/values?name=authors&search=Mark").`then`().log().all(true).statusCode(200).extract().body().as(classOf[StatisticsMetaData])
-        assert(result.getMetaDataValueCount.size() == 1)
+        assert(result.getMetaDataValueCount.size() == 0)
       }
     }
   }
