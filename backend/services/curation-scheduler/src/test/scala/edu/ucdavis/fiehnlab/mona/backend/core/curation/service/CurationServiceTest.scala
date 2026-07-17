@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.service
 import java.io.InputStreamReader
 import javax.annotation.PostConstruct
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.MonaNotificationBusCounterConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessageListener
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.controller.CurationController
@@ -31,7 +32,11 @@ import scala.language.postfixOps
 /**
   * Created by wohlg on 4/12/2016.
   */
-@SpringBootTest(classes = Array(classOf[CurationScheduler]), webEnvironment = WebEnvironment.RANDOM_PORT)
+// Uses the same classes array as CompoundConversionControllerTest/CompoundConversionServiceTest so all four
+// test classes in this module share one cached Spring context. Otherwise this module boots two contexts, each
+// with its own TestCurationRunner competing (unintentionally) as a consumer on the same physical curation-queue,
+// splitting scheduled messages between them and undercounting whichever context's assertions are being checked
+@SpringBootTest(classes = Array(classOf[CurationScheduler], classOf[MonaNotificationBusCounterConfiguration]), webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Array("test", "mona.persistence", "mona.persistence.init"))
 class CurationServiceTest extends AbstractSpringControllerTest with Eventually with BeforeAndAfterEach {
 
