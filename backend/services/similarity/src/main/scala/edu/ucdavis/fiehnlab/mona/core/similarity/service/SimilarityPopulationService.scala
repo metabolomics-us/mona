@@ -39,7 +39,10 @@ class SimilarityPopulationService extends LazyLogging {
       } else {
         null
       }
-    val theoreticalAdducts: mutable.Buffer[Double] = biologicalCompound.getMetaData.asScala.filter(x => x.getCategory == "theoretical adduct").map(_.getValue.toDouble)
+    val theoreticalAdducts: mutable.Buffer[Double] = Option(biologicalCompound) match {
+      case Some(compound) => compound.getMetaData.asScala.filter(x => x.getCategory == "theoretical adduct").map(_.getValue.toDouble)
+      case None => mutable.Buffer.empty
+    }
 
     if (precursorMZ.isDefined) {
       try {
@@ -74,7 +77,7 @@ class SimilarityPopulationService extends LazyLogging {
           logger.debug(s"\tIndexed spectrum #$counter with id ${spectrum.getId}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
         }
       } catch {
-        case nfe: NumberFormatException => logger.error(s"Invalid spectrum: ${spectrum}")
+        case t: Throwable => logger.error(s"Invalid spectrum: ${spectrum}", t)
       }
 
       if (counter % sessionClearInterval == 0) {

@@ -203,11 +203,11 @@ public class MetaData implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MetaData metaData = (MetaData) o;
-        return Objects.equals(id, metaData.id) && Objects.equals(spectrumMetadata, metaData.spectrumMetadata) && Objects.equals(spectrumAnnotation, metaData.spectrumAnnotation) && Objects.equals(compoundMetadata, metaData.compoundMetadata) && Objects.equals(compoundClassification, metaData.compoundClassification) && Objects.equals(url, metaData.url) && Objects.equals(name, metaData.name) && Objects.equals(value, metaData.value) && Objects.equals(hidden, metaData.hidden) && Objects.equals(category, metaData.category) && Objects.equals(computed, metaData.computed) && Objects.equals(unit, metaData.unit);
+        return Objects.equals(id, metaData.id) && Objects.equals(url, metaData.url) && Objects.equals(name, metaData.name) && Objects.equals(value, metaData.value) && Objects.equals(hidden, metaData.hidden) && Objects.equals(category, metaData.category) && Objects.equals(computed, metaData.computed) && Objects.equals(unit, metaData.unit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrumMetadata, spectrumAnnotation, compoundMetadata, compoundClassification, url, name, value, hidden, category, computed, unit);
+        return Objects.hash(id, url, name, value, hidden, category, computed, unit);
     }
 }

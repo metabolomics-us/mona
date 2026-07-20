@@ -64,7 +64,7 @@
                         <p></p>
                     </div>
 
-                    <div style="height: 600px; width: 100%" class="text-center">
+                    <div style="height: 600px; width: 100%" class="d-flex justify-content-center">
                       <nvd3 [options]="metadataChartOptions"
                             [data]="selectedMetadataField.data"></nvd3>
                     </div>
@@ -101,7 +101,7 @@
                   </div>
 
                   <br />
-                    <div class="text-center">
+                    <div class="d-flex justify-content-center">
                       <nvd3 [options]="sunburstOptions"
                             [data]="activeCompoundClassData"
                             class="with-3d-shadow with-transitions"></nvd3>

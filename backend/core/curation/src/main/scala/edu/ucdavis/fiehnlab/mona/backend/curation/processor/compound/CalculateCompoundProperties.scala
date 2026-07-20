@@ -95,8 +95,10 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
       metaData.append(new MetaData(null, CommonMetaData.TOTAL_EXACT_MASS, compoundConversion.moleculeToTotalExactMass(molecule).toString, false, "computed", true, null))
 
-      // Calculate SMILES
-      metaData.append(new MetaData(null, CommonMetaData.SMILES, compoundConversion.moleculeToSMILES(molecule), false, "computed", true, null))
+      // Calculate SMILES, replacing any previously computed SMILES instead of accumulating duplicates
+      val computedSMILES: String = compoundConversion.moleculeToSMILES(molecule)
+      metaData --= metaData.filter(x => x.getName.toLowerCase == CommonMetaData.SMILES.toLowerCase && x.getComputed)
+      metaData.append(new MetaData(null, CommonMetaData.SMILES, computedSMILES, false, "computed", true, null))
 
 
       // Calculate InChI and InChIKey and only add them to the record if they differ from provided values

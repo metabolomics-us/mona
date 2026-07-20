@@ -2,11 +2,14 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.service
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
+import org.hibernate.Hibernate
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by wohlg on 4/12/2016.
@@ -41,8 +44,10 @@ class CurationService {
     * Loads a single keyset (cursor) page of spectra and schedules each one for curation
     * Walks the id ordering with a cursor (id < lastId) instead of offset paging, so there is no
     * per-page count query and no growing offset on large runs. Runs in a read-only transaction so
-    * a Hibernate session stays open while each spectrum is serialized to the queue, letting lazy
-    * associations (e.g. compound) initialize
+    * a Hibernate session stays open while each spectrum's lazy associations are force-initialized
+    * before being handed to the AMQP converter. MonaMessageConverter's Hibernate5Module serializes
+    * an association Jackson finds still uninitialized as null/empty instead of loading it, so the
+    * load has to happen explicitly here rather than relying on serialization to trigger it
     *
     * @param query  optional query, or null/empty for all spectra
     * @param lastId id of the last spectrum scheduled on the previous page, or null for the first page
@@ -52,8 +57,51 @@ class CurationService {
   @Transactional(readOnly = true)
   def scheduleSpectraKeysetPage(query: String, lastId: String, limit: Int): java.util.List[Spectrum] = {
     val page: java.util.List[Spectrum] = spectrumPersistenceService.findAllForExport(query, lastId, limit)
-    page.forEach(spectrum => scheduleSpectrum(spectrum))
+    page.forEach(spectrum => {
+      initializeLazyAssociations(spectrum)
+      scheduleSpectrum(spectrum)
+    })
     page
+  }
+
+  /**
+    * Loads a single spectrum by id and schedules it for curation. Fetch, lazy-association
+    * initialization, and enqueue all happen inside one transaction here rather than relying on
+    * open-session-in-view to keep the session alive between spectrumPersistenceService.findByMonaId
+    * returning and scheduleSpectrum serializing the result
+    *
+    * @param id
+    * @return the loaded spectrum, or null if no spectrum exists with that id
+    */
+  @Transactional(readOnly = true)
+  def curateById(id: String): Spectrum = {
+    val spectrum: Spectrum = spectrumPersistenceService.findByMonaId(id)
+    if (spectrum != null) {
+      initializeLazyAssociations(spectrum)
+      scheduleSpectrum(spectrum)
+    }
+    spectrum
+  }
+
+  /**
+    * Forces the compound/metaData/tags collections, and each compound's own nested
+    * tags/names/metaData/classification, to load while the caller's session is still open
+    *
+    * @param spectrum
+    */
+  private def initializeLazyAssociations(spectrum: Spectrum): Unit = {
+    Hibernate.initialize(spectrum.getCompound)
+    Hibernate.initialize(spectrum.getMetaData)
+    Hibernate.initialize(spectrum.getTags)
+
+    if (spectrum.getCompound != null) {
+      spectrum.getCompound.asScala.foreach { compound =>
+        Hibernate.initialize(compound.getMetaData)
+        Hibernate.initialize(compound.getNames)
+        Hibernate.initialize(compound.getTags)
+        Hibernate.initialize(compound.getClassification)
+      }
+    }
   }
 
   /**

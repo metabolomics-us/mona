@@ -88,11 +88,11 @@ public class Score implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Score score1 = (Score) o;
-        return Objects.equals(id, score1.id) && Objects.equals(spectrum, score1.spectrum) && Objects.equals(impacts, score1.impacts) && Objects.equals(score, score1.score) && Objects.equals(relativeScore, score1.relativeScore) && Objects.equals(scaledScore, score1.scaledScore);
+        return Objects.equals(id, score1.id) && Objects.equals(impacts, score1.impacts) && Objects.equals(score, score1.score) && Objects.equals(relativeScore, score1.relativeScore) && Objects.equals(scaledScore, score1.scaledScore);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrum, impacts, score, relativeScore, scaledScore);
+        return Objects.hash(id, impacts, score, relativeScore, scaledScore);
     }
 }

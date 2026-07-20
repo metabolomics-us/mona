@@ -67,11 +67,11 @@ public class Tag implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tag tag = (Tag) o;
-        return Objects.equals(id, tag.id) && Objects.equals(spectrum, tag.spectrum) && Objects.equals(compound, tag.compound) && Objects.equals(text, tag.text) && Objects.equals(ruleBased, tag.ruleBased);
+        return Objects.equals(id, tag.id) && Objects.equals(text, tag.text) && Objects.equals(ruleBased, tag.ruleBased);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrum, compound, text, ruleBased);
+        return Objects.hash(id, text, ruleBased);
     }
 }

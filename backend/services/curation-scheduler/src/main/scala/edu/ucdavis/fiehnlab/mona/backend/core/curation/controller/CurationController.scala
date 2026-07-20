@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.{CurationRunner, CurationService}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.postgresql.service.SpectrumPersistenceService
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
@@ -21,9 +20,6 @@ import org.springframework.web.bind.annotation._
 @RestController
 @RequestMapping(value = Array("/rest/curation"))
 class CurationController extends LazyLogging {
-  @Autowired
-  val spectrumPersistenceService: SpectrumPersistenceService = null
-
   @Autowired
   val curationService: CurationService = null
 
@@ -52,12 +48,11 @@ class CurationController extends LazyLogging {
     */
   @RequestMapping(path = Array("/{id}"))
   def curateById(@PathVariable("id") id: String, request: HttpServletRequest): ResponseEntity[CurationJobScheduled] = {
-    val spectrum = spectrumPersistenceService.findByMonaId(id)
+    val spectrum = curationService.curateById(id)
 
     if (spectrum == null) {
       new ResponseEntity(HttpStatus.NOT_FOUND)
     } else {
-      curationService.scheduleSpectrum(spectrum)
       new ResponseEntity[CurationJobScheduled](CurationJobScheduled(1), HttpStatus.OK)
     }
   }

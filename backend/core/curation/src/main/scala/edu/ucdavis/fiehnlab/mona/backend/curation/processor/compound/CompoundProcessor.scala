@@ -41,7 +41,8 @@ class CompoundProcessor extends LazyLogging {
           (null, null)
       }
 
-    def isValid(result: (String, IAtomContainer)): Boolean = result != null && result._1 != null && result._2 != null
+    def isValid(result: (String, IAtomContainer)): Boolean =
+      result != null && result._1 != null && result._2 != null && result._2.getAtomCount > 0
 
     // Try each structure source in priority order, stopping at the first that yields a molecule.
     // The InChIKey lookup is an external call, so it only runs as a last resort when no structure
@@ -107,9 +108,9 @@ class CompoundInChIProcessor extends AbstractCompoundProcessor {
     val inchiMetaData: Option[MetaData] = compound.getMetaData.asScala.find(_.getName.toLowerCase == CommonMetaData.INCHI_CODE.toLowerCase)
 
     val inchi: String =
-      if (compound.getInchi != null && !compound.getInchi.isEmpty)
+      if (compound.getInchi != null && compound.getInchi.startsWith("InChI="))
         compound.getInchi
-      else if (inchiMetaData.isDefined && inchiMetaData.get.getValue.toString != "")
+      else if (inchiMetaData.isDefined && inchiMetaData.get.getValue.toString.startsWith("InChI="))
         inchiMetaData.get.getValue.toString
       else
         null
@@ -143,7 +144,9 @@ class CompoundInChIProcessor extends AbstractCompoundProcessor {
 class CompoundSMILESProcessor extends AbstractCompoundProcessor with LazyLogging {
 
   def process(compound: Compound, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
-    val smiles: Option[MetaData] = compound.getMetaData.asScala.find(_.getName.toLowerCase == CommonMetaData.SMILES.toLowerCase)
+    val smiles: Option[MetaData] = compound.getMetaData.asScala
+      .filter(_.getName.toLowerCase == CommonMetaData.SMILES.toLowerCase)
+      .find(m => m.getValue != null && m.getValue.toString.nonEmpty)
 
     // Parse SMILES
     if (smiles.isDefined && !smiles.get.getValue.toString.isEmpty) {

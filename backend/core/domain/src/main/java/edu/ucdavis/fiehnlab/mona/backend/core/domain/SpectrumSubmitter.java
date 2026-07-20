@@ -94,12 +94,12 @@ public class SpectrumSubmitter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SpectrumSubmitter that = (SpectrumSubmitter) o;
-        return Objects.equals(id, that.id) && Objects.equals(spectrum, that.spectrum) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(institution, that.institution);
+        return Objects.equals(id, that.id) && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(institution, that.institution);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrum, emailAddress, firstName, lastName, institution);
+        return Objects.hash(id, emailAddress, firstName, lastName, institution);
     }
 
     @Override
