@@ -238,6 +238,9 @@ export class SpectraBrowserComponent implements OnInit, AfterViewInit{
     enableTableView() {
       this.pagination.table = true;
       this.suppressNextLoad = true;
+      this.massChartReady = false;
+      setTimeout(() => this.massChartReady = true, 250);
+
       this.setTable();
     }
 
