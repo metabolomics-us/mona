@@ -144,7 +144,9 @@ class CompoundInChIProcessor extends AbstractCompoundProcessor {
 class CompoundSMILESProcessor extends AbstractCompoundProcessor with LazyLogging {
 
   def process(compound: Compound, id: String, impacts: ArrayBuffer[Impacts]): (String, IAtomContainer) = {
-    val smiles: Option[MetaData] = compound.getMetaData.asScala.find(_.getName.toLowerCase == CommonMetaData.SMILES.toLowerCase)
+    val smiles: Option[MetaData] = compound.getMetaData.asScala
+      .filter(_.getName.toLowerCase == CommonMetaData.SMILES.toLowerCase)
+      .find(m => m.getValue != null && m.getValue.toString.nonEmpty)
 
     // Parse SMILES
     if (smiles.isDefined && !smiles.get.getValue.toString.isEmpty) {
