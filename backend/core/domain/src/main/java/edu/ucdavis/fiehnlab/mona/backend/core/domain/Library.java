@@ -84,11 +84,11 @@ public class Library implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Library library1 = (Library) o;
-        return Objects.equals(id, library1.id) && Objects.equals(spectrum, library1.spectrum) && Objects.equals(description, library1.description) && Objects.equals(link, library1.link) && Objects.equals(library, library1.library);
+        return Objects.equals(id, library1.id) && Objects.equals(description, library1.description) && Objects.equals(link, library1.link) && Objects.equals(library, library1.library);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrum, description, link, library);
+        return Objects.hash(id, description, link, library);
     }
 }

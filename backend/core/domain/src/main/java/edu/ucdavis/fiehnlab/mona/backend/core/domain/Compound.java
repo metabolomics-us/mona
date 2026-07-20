@@ -174,11 +174,11 @@ public class Compound implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Compound that = (Compound) o;
-        return Objects.equals(id, that.id) && Objects.equals(spectrum, that.spectrum) && Objects.equals(kind, that.kind) && Objects.equals(tags, that.tags) && Objects.equals(inchi, that.inchi) && Objects.equals(names, that.names) && Objects.equals(molFile, that.molFile) && Objects.equals(computed, that.computed) && Objects.equals(inchiKey, that.inchiKey) && Objects.equals(metaData, that.metaData) && Objects.equals(classification, that.classification);
+        return Objects.equals(id, that.id) && Objects.equals(kind, that.kind) && Objects.equals(tags, that.tags) && Objects.equals(inchi, that.inchi) && Objects.equals(names, that.names) && Objects.equals(molFile, that.molFile) && Objects.equals(computed, that.computed) && Objects.equals(inchiKey, that.inchiKey) && Objects.equals(metaData, that.metaData) && Objects.equals(classification, that.classification);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrum, kind, tags, inchi, names, molFile, computed, inchiKey, metaData, classification);
+        return Objects.hash(id, kind, tags, inchi, names, molFile, computed, inchiKey, metaData, classification);
     }
 }

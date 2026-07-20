@@ -102,11 +102,11 @@ public class Splash implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Splash splash1 = (Splash) o;
-        return id.equals(splash1.id) && spectrum.equals(splash1.spectrum) && Objects.equals(block1, splash1.block1) && Objects.equals(block2, splash1.block2) && Objects.equals(block3, splash1.block3) && Objects.equals(block4, splash1.block4) && Objects.equals(splash, splash1.splash);
+        return Objects.equals(id, splash1.id) && Objects.equals(block1, splash1.block1) && Objects.equals(block2, splash1.block2) && Objects.equals(block3, splash1.block3) && Objects.equals(block4, splash1.block4) && Objects.equals(splash, splash1.splash);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, spectrum, block1, block2, block3, block4, splash);
+        return Objects.hash(id, block1, block2, block3, block4, splash);
     }
 }
