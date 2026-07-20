@@ -149,7 +149,10 @@ The `./scripts/generate_backup.sh` script is used to generate backups of the pos
    ```
 
 2. Using the built-in Maven tab in IntelliJ (right-hand side by default), run `mvn clean install` on the `backend` folder.
-- Or run `mvn clean test` from the terminal inside the `backend/` folder.
+
+OR
+
+2. From the terminal, run `mvn clean install -P '!docker'` inside the `backend/` folder. Ensure you are using Java 17.
 
 **Frontend tests:**
 
