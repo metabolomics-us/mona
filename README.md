@@ -1,6 +1,6 @@
 # MassBank of North America (MoNA)
 
-The MoNA application can be found at https://mona.fiehnlab.ucdavis.edu/ or https://massbank.us/
+The MoNA website can be found at https://mona.fiehnlab.ucdavis.edu/ or https://massbank.us/
 
 ---
 
