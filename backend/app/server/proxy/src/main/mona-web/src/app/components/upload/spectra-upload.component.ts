@@ -291,6 +291,12 @@ export class SpectraUploadComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Search by library tag instead of file name for libraries
+    if (job.libraryName) {
+      this.router.navigate(['/spectra/browse'], {queryParams: {query: `exists(tags.text:'${job.libraryName}')`}});
+      return;
+    }
+
     const query = job.fileName.split(',')
       .map((name) => name.trim())
       .filter((name) => name.length > 0)
