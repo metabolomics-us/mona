@@ -13,6 +13,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 
 import scala.reflect._
 
@@ -30,6 +31,9 @@ abstract class EventBusListener[T: ClassTag](val eventBus: EventBus[T]) extends 
 
   @Autowired
   private val rabbitAdmin: RabbitAdmin = null
+
+  @Autowired
+  private val beanFactory: ConfigurableListableBeanFactory = null
 
   @Value("${spring.application.name:unknown}")
   private var queueName = "unknown"
@@ -52,9 +56,18 @@ abstract class EventBusListener[T: ClassTag](val eventBus: EventBus[T]) extends 
     }
 
     val queue = new Queue(queueName, false, false, true)
+    val binding = BindingBuilder.bind(queue).to(eventBus.exchange)
 
     rabbitAdmin.declareQueue(queue)
-    rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(eventBus.exchange))
+    rabbitAdmin.declareBinding(binding)
+
+    // The declarations above only cover this startup. Registering them as beans as well puts them in the
+    // set RabbitAdmin rebuilds on every connection, so a broker restart no longer leaves this listener
+    // with no queue to consume from. The names are derived from the queue, which is unique per listener,
+    // so several listeners in one context keep their own queue and each still receive every event
+    BusDeclarations.register(beanFactory, s"$queueName-queue", queue)
+    BusDeclarations.register(beanFactory, s"$queueName-binding", binding)
+
     rabbitAdmin.afterPropertiesSet()
 
     logger.info(s"connecting to queue: ${queue.getName}")
@@ -63,6 +76,10 @@ abstract class EventBusListener[T: ClassTag](val eventBus: EventBus[T]) extends 
     container.setMessageListener(this)
     container.setAmqpAdmin(rabbitAdmin)
     container.setExclusive(exclusive)
+
+    // A queue that disappeared with the broker must not stop this consumer for good, it keeps retrying
+    // until RabbitAdmin has re-declared the queue on reconnect
+    container.setMissingQueuesFatal(false)
 
     logger.info("starting container")
     container.start()
