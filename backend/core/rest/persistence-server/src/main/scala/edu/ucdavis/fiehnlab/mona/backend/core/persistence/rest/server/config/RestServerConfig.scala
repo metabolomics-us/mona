@@ -87,6 +87,9 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
 
       .antMatchers(HttpMethod.POST, "/rest/feedback")
       .antMatchers(HttpMethod.POST, "/rest/spectra/count")
+
+      // errors are re-dispatched to /error and report a wrong 401 error message without this
+      .antMatchers("/error")
   }
 }
 

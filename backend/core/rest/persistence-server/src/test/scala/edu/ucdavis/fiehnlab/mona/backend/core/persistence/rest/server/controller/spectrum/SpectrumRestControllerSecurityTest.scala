@@ -192,5 +192,26 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
         }
       }
     }
+
+    /**
+      * These depend on /error being excluded from the security chain in RestServerConfig. Spring
+      * re-dispatches an error to /error and Spring Boot runs the chain on the ERROR dispatch as well,
+      * where JWTAuthenticationFilter answers 401 for a request without an authorization header. Since
+      * the open GET endpoints never carry one, every status below used to reach the caller as an empty
+      * 401 instead of its own
+      */
+    "errors raised on the openly accessible endpoints" should {
+
+      "keep a bad request status rather than report an authentication failure" in {
+        given().contentType("application/json; charset=UTF-8")
+          .queryParam("size", "abc")
+          .when().get("/spectra").`then`().statusCode(400)
+      }
+
+      "keep a not found status for an unmapped path below an open endpoint" in {
+        given().contentType("application/json; charset=UTF-8")
+          .when().get("/spectra/a/b/c").`then`().statusCode(404)
+      }
+    }
   }
 }
