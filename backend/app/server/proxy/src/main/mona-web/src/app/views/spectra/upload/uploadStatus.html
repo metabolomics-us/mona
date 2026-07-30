@@ -87,7 +87,8 @@
                                     Upload cancelled before completion
                                 </div>
                                 <div *ngIf="job.status === 'DELETED' && job.deletedDate" class="small text-muted">
-                                    <fa-icon [icon]="faTrash" size="xs"></fa-icon> {{job.deletedDate | date:'shortDate'}} {{job.deletedDate | date:'shortTime'}}
+                                    <fa-icon [icon]="faTrash" size="xs"></fa-icon> {{job.deletedDate | date:'shortDate'}}<br/>
+                                    {{job.deletedDate | date:'shortTime'}}
                                 </div>
                             </td>
                             <td class="align-middle">
