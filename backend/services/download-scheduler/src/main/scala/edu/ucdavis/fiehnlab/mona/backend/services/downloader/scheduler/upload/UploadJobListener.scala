@@ -244,17 +244,19 @@ class UploadJobListener extends GenericMessageListener[UploadJobRequest] with La
 
   // Cheap first pass so the progress bar has a real denominator before the main parse loop starts
   private def countTotal(storedPath: String, format: String): Long = format match {
-    case "msp" => countOccurrences(storedPath, "Num Peaks")
-    case "mgf" => countOccurrences(storedPath, "BEGIN IONS")
+    case "msp" => countOccurrences(storedPath, """(?i)num\s?peaks\s*:""")
+    case "mgf" => countOccurrences(storedPath, """BEGIN IONS""")
     case "massbank" =>
-      val count = countOccurrences(storedPath, "PK$NUM_PEAK")
+      val count = countOccurrences(storedPath, """PK\$NUM_PEAK""")
       if (count > 1) 0L else count
     case _ => 0L
   }
 
-  /** Streams the file in bounded chunks rather than loading it whole, carrying a marker sized
-    * tail across chunk boundaries so an occurrence split across two chunks is still counted */
+  /** Streams the file in bounded chunks rather than loading it whole, carrying a short tail across
+    * chunk boundaries so an occurrence split across two chunks is still counted, resuming that tail
+    * after the last counted match so nothing is counted twice */
   private def countOccurrences(path: String, marker: String): Long = {
+    val pattern = marker.r
     val reader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)
     try {
       val buf = new Array[Char](1024 * 1024)
@@ -263,12 +265,13 @@ class UploadJobListener extends GenericMessageListener[UploadJobRequest] with La
       var n = reader.read(buf)
       while (n != -1) {
         val text = carryTail + new String(buf, 0, n)
-        var idx = text.indexOf(marker)
-        while (idx != -1) {
+        var lastEnd = 0
+        pattern.findAllMatchIn(text).foreach { m =>
           count += 1
-          idx = text.indexOf(marker, idx + 1)
+          lastEnd = m.end
         }
-        carryTail = if (text.length >= marker.length) text.substring(text.length - marker.length + 1) else text
+        // 31 chars comfortably exceeds the longest marker match
+        carryTail = text.substring(math.max(text.length - 31, lastEnd))
         n = reader.read(buf)
       }
       count

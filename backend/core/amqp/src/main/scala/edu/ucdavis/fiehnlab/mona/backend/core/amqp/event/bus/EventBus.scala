@@ -7,9 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import org.springframework.amqp.core.FanoutExchange
+import org.springframework.amqp.core.{Declarable, FanoutExchange}
 import org.springframework.amqp.rabbit.core.{RabbitAdmin, RabbitTemplate}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 
 import scala.reflect.ClassTag
 
@@ -46,14 +47,22 @@ class EventBus[T: ClassTag](val busName: String = "mona-event-bus") extends Lazy
   @Autowired
   private val rabbitAdmin: RabbitAdmin = null
 
+  @Autowired
+  private val beanFactory: ConfigurableListableBeanFactory = null
+
   val objectMapper: ObjectMapper = MonaMapper.create
 
-  val exchange = new FanoutExchange(busName, false, true)
+  /**
+    * Durable so a broker restart cannot drop the exchange, and not auto-delete so it also survives its last
+    * binding going away when every listener disconnects.
+    */
+  val exchange = new FanoutExchange(busName, true, false)
 
 
   @PostConstruct
   def init(): Unit = {
     rabbitAdmin.declareExchange(exchange)
+    BusDeclarations.register(beanFactory, s"$busName-exchange", exchange)
     rabbitAdmin.afterPropertiesSet()
   }
 
@@ -66,6 +75,30 @@ class EventBus[T: ClassTag](val busName: String = "mona-event-bus") extends Lazy
     logger.debug(s"sending event to bus: ${event.content.getClass.getSimpleName}")
     rabbitTemplate.convertAndSend(busName, "", event)
     logger.debug("event sent!")
+  }
+}
+
+/**
+  * The bus builds its exchange, queues and bindings at runtime rather than as configuration beans, since a
+  * listener only knows its queue name once the application name has been resolved. 
+  *
+  * Registering each declaration as a singleton bean puts it in the set RabbitAdmin walks in initialize(),
+  * which its own ConnectionListener runs on every connection creation. 
+  */
+object BusDeclarations {
+
+  /**
+    * Register a declaration under the given bean name, ignoring a name that is already taken so a second
+    * bus or listener sharing a name cannot fail the context
+    *
+    * @param beanFactory
+    * @param name
+    * @param declarable
+    */
+  def register(beanFactory: ConfigurableListableBeanFactory, name: String, declarable: Declarable): Unit = {
+    if (!beanFactory.containsSingleton(name)) {
+      beanFactory.registerSingleton(name, declarable)
+    }
   }
 }
 

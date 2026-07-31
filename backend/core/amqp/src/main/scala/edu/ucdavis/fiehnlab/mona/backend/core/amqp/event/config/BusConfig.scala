@@ -6,7 +6,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, Received
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.converter.MonaMessageConverter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
-import org.springframework.amqp.rabbit.connection.ConnectionFactory
+import org.springframework.amqp.core.ReturnedMessage
+import org.springframework.amqp.rabbit.connection.{CachingConnectionFactory, ConnectionFactory}
 import org.springframework.amqp.rabbit.core.{RabbitAdmin, RabbitTemplate}
 import org.springframework.amqp.support.converter._
 import org.springframework.context.annotation.{Bean, Configuration, Import, Primary}
@@ -36,10 +37,38 @@ class BusConfig extends LazyLogging {
   @Bean
   def rabbitTemplate(jsonConverter: MessageConverter, connectionFactory: ConnectionFactory): RabbitTemplate = {
     logger.info("creating custom rabbit template")
+
+    connectionFactory match {
+      case caching: CachingConnectionFactory => caching.setPublisherReturns(true)
+      case _ => logger.warn("connection factory does not support publisher returns, undeliverable messages will not be reported")
+    }
+
     val template = new RabbitTemplate(connectionFactory)
     template.setMessageConverter(jsonConverter)
+
+    template.setMandatory(true)
+    template.setReturnsCallback(new RabbitTemplate.ReturnsCallback {
+      override def returnedMessage(returned: ReturnedMessage): Unit = {
+        // The notification bus has no subscriber outside tests, so nothing routing off it is expected
+        // rather than a lost event, and reporting it would bury the cases that matter
+        if (returned.getExchange != BusConfig.NotificationBusName) {
+          logger.error(s"message reached no queue, exchange '${returned.getExchange}' " +
+            s"routing key '${returned.getRoutingKey}': ${returned.getReplyText}")
+        }
+      }
+    })
+
     template
   }
+}
+
+object BusConfig {
+
+  /**
+    * Named here rather than inline so the notification bus and the returns callback that has to recognise it
+    * cannot drift apart
+    */
+  val NotificationBusName: String = "mona-notification-bus"
 }
 
 /**
@@ -83,7 +112,7 @@ class MonaEventBusCounterConfiguration {
 class MonaNotificationBusConfiguration {
 
   @Bean
-  def notificationsBus: EventBus[Notification] = new EventBus[Notification]("mona-notification-bus")
+  def notificationsBus: EventBus[Notification] = new EventBus[Notification](BusConfig.NotificationBusName)
 }
 
 @Import(Array(classOf[BusConfig], classOf[MonaNotificationBusConfiguration]))
