@@ -1,0 +1,49 @@
+# Woodpecker CI (ci.metabolomics.us) -- default pipeline for mona.
+#
+# Runs on hive's dynamic Slurm agents (labels: cluster: hive). The agent
+# runs the whole workflow inside the CI Apptainer image, so 'image:' names
+# an EXECUTABLE in that image, not a container to pull: 'bash' is the
+# agent's own shell. There is no docker, no apt and no sudo; whatever a
+# step needs is already in the image or is fetched by the step.
+#
+# The clone plugin fails invisibly on this backend (plugins produce no step
+# logs), so skip_clone + a plain git checkout, with the forge credential
+# staged by the agent at /etc/woodpecker-git-credentials.
+#
+# This is the standard harness: it proves the repo builds in CI and gives
+# every push a status. Replace the 'gate' step's commands with real checks
+# when the repo has them -- house pattern: a script under ops/ci/ that a
+# step calls, so a check changes in the same commit as the code it covers.
+when:
+  - event: [push, pull_request, manual]
+
+skip_clone: true
+
+labels:
+  cluster: hive
+
+steps:
+  - name: checkout
+    image: bash
+    commands:
+      - 'set -eu'
+      - 'test -r /etc/woodpecker-git-credentials || { echo "the job staged no forge credential" >&2; exit 1; }'
+      - 'git init -q -b "master" .'
+      - 'git remote add origin "https://github.com/.git"'
+      - 'git fetch --no-tags --depth=1 origin ""'
+      - 'git checkout -q FETCH_HEAD'
+      - 'git --no-pager log --oneline -1'
+
+  - name: gate
+    image: bash
+    commands:
+      - 'set -eu'
+      - 'echo "repo:  @  (branch master)"'
+      - 'test -n ".gitignore
+.omx/artifacts/inference-throughput-2026-09-29/final-verification.md
+.omx/artifacts/inference-throughput-2026-09-29/production-baseline.md
+TERN_OPERATIONS_UI_IMPLEMENTATION.md
+TERN_OPERATIONS_UI_SHIFT_DIFF.txt
+docs/superpowers/plans/2026-09-29-inference-throughput-recovery.md
+docs/superpowers/specs/2026-09-29-inference-throughput-recovery-design.md" || { echo "repo has no tracked files" >&2; exit 1; }'
+      - 'echo "tracked files: 7"'
