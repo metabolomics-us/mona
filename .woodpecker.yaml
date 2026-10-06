@@ -28,9 +28,9 @@ steps:
     commands:
       - 'set -eu'
       - 'test -r /etc/woodpecker-git-credentials || { echo "the job staged no forge credential" >&2; exit 1; }'
-      - 'git init -q -b "master" .'
-      - 'git remote add origin "https://github.com/.git"'
-      - 'git fetch --no-tags --depth=1 origin ""'
+      - 'git init -q -b "${CI_COMMIT_BRANCH:-master}" .'
+      - 'git remote add origin "https://github.com/${CI_REPO}.git"'
+      - 'git fetch --no-tags --depth=1 origin "${CI_COMMIT_SHA}"'
       - 'git checkout -q FETCH_HEAD'
       - 'git --no-pager log --oneline -1'
 
@@ -38,12 +38,6 @@ steps:
     image: bash
     commands:
       - 'set -eu'
-      - 'echo "repo:  @  (branch master)"'
-      - 'test -n ".gitignore
-.omx/artifacts/inference-throughput-2026-09-29/final-verification.md
-.omx/artifacts/inference-throughput-2026-09-29/production-baseline.md
-TERN_OPERATIONS_UI_IMPLEMENTATION.md
-TERN_OPERATIONS_UI_SHIFT_DIFF.txt
-docs/superpowers/plans/2026-09-29-inference-throughput-recovery.md
-docs/superpowers/specs/2026-09-29-inference-throughput-recovery-design.md" || { echo "repo has no tracked files" >&2; exit 1; }'
-      - 'echo "tracked files: 7"'
+      - 'echo "repo: ${CI_REPO} @ ${CI_COMMIT_SHA} (branch ${CI_COMMIT_BRANCH:-master})"'
+      - 'test -n "$(git ls-files)" || { echo "repo has no tracked files" >&2; exit 1; }'
+      - 'echo "tracked files: $(git ls-files | wc -l)"'
